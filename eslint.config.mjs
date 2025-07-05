@@ -1,12 +1,16 @@
 // @ts-check
 
-import js from '@eslint/js';
+import { fixupPluginRules } from '@eslint/compat';
+import pluginJs from '@eslint/js';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import prettierConfig from 'eslint-config-prettier';
 import { readGitignoreFiles } from 'eslint-gitignore';
 import prettierPlugin from 'eslint-plugin-prettier';
 import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import pluginYml from 'eslint-plugin-yml';
 import globals from 'globals';
@@ -18,7 +22,11 @@ const __dirname = dirname(__filename);
 
 export default [
   {
-    ignores: [...readGitignoreFiles({ cwd: __dirname }), '**/*.{css,scss}'],
+    ignores: [
+      // Ignore `.gitignore` specified fiels etc...
+      ...readGitignoreFiles({ cwd: __dirname }),
+      '.next/**',
+    ],
   },
 
   // TypeScript configuration
@@ -27,17 +35,17 @@ export default [
   // Base JS configuration for all JavaScript/TypeScript files
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    ignores: ['**/*.{css,scss}'],
     linterOptions: {
       reportUnusedDisableDirectives: true,
     },
     languageOptions: {
       globals: {
         ...globals.browser,
+        ...globals.node,
       },
     },
     rules: {
-      ...js.configs.recommended.rules,
+      ...pluginJs.configs.recommended.rules,
       semi: ['warn', 'always'],
       'no-console': 'warn',
       'no-debugger': 'warn',
@@ -47,19 +55,76 @@ export default [
       'no-unreachable': 'warn',
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'prefer-const': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      'no-constant-binary-expression': 'off',
+    },
+  },
+
+  // Tailwind CSS configuration
+  {
+    files: ['src/**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      tailwindcss: tailwindcssPlugin,
+      'react-hooks': fixupPluginRules(pluginReactHooks),
+    },
+    rules: {
+      ...tailwindcssPlugin.configs.recommended.rules,
+      'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
+      ...pluginReactHooks.configs.recommended.rules,
     },
   },
 
   // React configuration with version specified
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    ignores: ['**/*.{css,scss}'],
+    files: ['**/*.{jsx,tsx}'],
     ...pluginReact.configs.flat.recommended,
+    plugins: {
+      react: pluginReact,
+    },
     settings: {
       react: {
         version: 'detect',
       },
+    },
+    rules: {
+      ...pluginJs.configs.recommended.rules,
+      ...pluginReact.configs.recommended.rules,
+      'react/react-in-jsx-scope': 'off',
+    },
+  },
+
+  // Typescript files
+  {
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...pluginJs.configs.recommended.rules,
+      ...tsPlugin.configs.recommended.rules,
+      '@typescript-eslint/no-empty-object-type': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      'no-constant-binary-expression': 'off',
+      'no-undef': 'off', // Disable for TypeScript files - TypeScript handles this
     },
   },
 
@@ -95,7 +160,6 @@ export default [
   {
     files: ['src/**/*.{js,ts}'],
     rules: {
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-unused-vars': 'off',
     },
   },
@@ -113,17 +177,6 @@ export default [
       ...pluginYml.configs.recommended.rules,
       '@typescript-eslint/no-unused-expressions': 'off',
       'no-unused-expressions': 'off',
-    },
-  },
-
-  // Tailwind CSS configuration
-  {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    plugins: {
-      tailwindcss: tailwindcssPlugin,
-    },
-    rules: {
-      ...tailwindcssPlugin.configs.recommended.rules,
     },
   },
 

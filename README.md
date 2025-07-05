@@ -1,21 +1,21 @@
 <!--
- @since 2024.12.01, 07:56
- @changed 2025.05.30, 15:24
+ @since 2025.07.05
+ @changed 2025.07.05, 23:26
 -->
 
-# team-tree-app
+# NextJS application for memorizing answers to questions
 
 The minmal nextjs setup for IIS iisnode produciton environment
 
 ## Build info (auto-generated)
 
-- Project info: v.0.0.12 / 2025.05.30 15:13:21 +0300
+- Project info: v.0.0.0 / 2025.07.05 23:34:37 +0300
 
 ## Resources
 
-- Vercel deployment: https://team-tree-app.vercel.app/
-- Repository: https://github.com/lilliputten/team-tree-app/
-- Project reference: https://lilliputten.com/projects/2025/team-tree-app/
+- Vercel deployment: https://trainwizzz.vercel.app/
+- Repository: https://github.com/lilliputten/trainwizzz/
+- Project reference: https://lilliputten.com/projects/2025/trainwizzz/
 
 ## Installation
 
@@ -26,5 +26,3 @@ The minmal nextjs setup for IIS iisnode produciton environment
 ## See also
 
 - [Changelog](CHANGELOG.md)
-- [IIS iisnode extension readme](README.iisnode.md)
-- [NextJS original readme file](README.nextjs.md)

@@ -1,0 +1,77 @@
+{
+  "BotMenu": {
+    "status": "Check your status",
+    "start": "Start",
+    "language": "Change language",
+    "help": "Help"
+  },
+  "Bot": {
+    "localeInfo": "Bot language: {localeText}",
+    "registeredAtInfo": "You've registered at {createdAt}",
+    "haveTopicsInfo": "You've created topics: {topicsCount}",
+    "noTopicsInfo": "You do not have any topics yet",
+    "gettingData": "Getting the data...",
+    "creatingAccount": "Creating an account...",
+    "accountCreated": "✅ Your account has been successfully created.",
+    "no": "No",
+    "yes": "Yes",
+    "canNotCreateAccount": "❌ Error creating account profile.",
+    "noUserData": "No user information found",
+    "statusNoUser": "Your data not found. Apparently, you have not registered on the site yet. Do you want to create an account?",
+    "checkingStatus": "Checking your application status...",
+    "openApp": "Open App",
+    "start": "👋 Hi, how can I /help you?",
+    "selectLanguage": "Select language",
+    "languageChangedFor": "Language has been changed for",
+    "help": "Send me some text, and I can make it bold for you.\n\nYou can change my language using the /language command."
+  },
+  "RootPage": {
+    "title": "TrainWizzz!",
+    "about": "Go to the about page"
+  },
+  "DataPage": {
+    "title": "Data editor - TrainWizzz!"
+  },
+  "TestPage": {
+    "title": "Test - TrainWizzz!"
+  },
+  "WelcomePage": {
+    "title": "Welcome - TrainWizzz!"
+  },
+  "SmallWelcomeText": {
+    "content": "<p>This is a small hierarchical data editor. Take a look at a small <infolink>instruction manual</infolink>.</p>",
+    "title": "Welcome!"
+  },
+  "NavAuthButton": {
+    "sign-in": "Sign In",
+    "Dashboard": "Dashboard"
+  },
+  "NavLocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Unknown}}"
+  },
+  "NavModeToggle": {
+    "label": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "NavUserAccount": {
+    "Admin": "Administration",
+    "Dashboard": "Dashboard",
+    "Settings": "Settings",
+    "Log out": "Log out"
+  },
+  "SiteMenu": {
+    "dataEditor": "Data",
+    "info": "Information"
+  },
+  "SignInForm": {
+    "sign-in": "Sign In",
+    "sign-in-with-github": "Sign In with GitHub",
+    "sign-in-with-google": "Sign In with Google",
+    "sign-in-with-yandex": "Sign In with Yandex",
+    "sign-in-with-telegram": "Sign In with Telegram",
+    "intro": "Login to be able editibg your own data."
+  }
+}

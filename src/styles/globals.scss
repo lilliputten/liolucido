@@ -1,0 +1,242 @@
+@use 'sass:color';
+@use 'utils' as *;
+@use 'variables' as *;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * NOTE: On modern tailwind configuration most of colors come are in the HSL color model.
+ *
+ * @see:
+ *
+ * - https://www.w3schools.com/colors/colors_hsl.asp
+ * - https://htmlcolors.com/hex-to-hsl
+ *
+ * RGB colors:
+ *
+ * - https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/rgb
+ *
+ * See also:
+ *
+ * - https://medium.com/@oodri/tailwind-dynamic-color-theme-solution-4351d0495c7f
+ */
+
+@layer base {
+  :root {
+    // NOTE: See also (duplicating) definitions in: `config/theme.ts`
+
+    // Core colors
+
+    --primaryColor: #{$primaryColor};
+    --primaryColorRGB: #{rgbComponents($primaryColor)};
+    --primaryForegroundColor: #{$primaryForegroundColor};
+    --primaryForegroundColorRGB: #{rgbComponents($primaryForegroundColor)};
+
+    --secondaryColor: #{$secondaryColor};
+    --secondaryColorRGB: #{rgbComponents($secondaryColor)};
+    --secondaryForegroundColor: #{$secondaryForegroundColor};
+    --secondaryForegroundColorRGB: #{rgbComponents($secondaryForegroundColor)};
+
+    --appDestructiveColor: #{$appDestructiveColor};
+    --appDestructiveColorRGB: #{rgbComponents($appDestructiveColor)};
+    --appDestructiveForegroundColor: #{$appDestructiveForegroundColor};
+    --appDestructiveForegroundColorRGB: #{rgbComponents($appDestructiveForegroundColor)};
+
+    // Dimensions
+
+    --borderRadiusSize: 0.5rem;
+
+    // Chart colors
+
+    // XXX: OLD
+    // --chart1ColorHSL: 43 100% 50%; // 271.5 81.3% 55.9%;
+    // --chart2ColorHSL: 43 100% 60%; // 270 95% 75%;
+    // --chart3ColorHSL: 43 100% 70%; // 270 91% 65%;
+    // --chart4ColorHSL: 43 100% 80%; // 269 97% 85%;
+    // --chart5ColorHSL: 43 100% 90%; // 269 100% 92%;
+
+    --chart1Color: #{$chart1Color};
+    --chart1ColorRGB: #{rgbComponents($chart1Color)};
+    --chart2Color: #{$chart2Color};
+    --chart2ColorRGB: #{rgbComponents($chart2Color)};
+    --chart3Color: #{$chart3Color};
+    --chart3ColorRGB: #{rgbComponents($chart3Color)};
+    --chart4Color: #{$chart4Color};
+    --chart4ColorRGB: #{rgbComponents($chart4Color)};
+    --chart5Color: #{$chart5Color};
+    --chart5ColorRGB: #{rgbComponents($chart5Color)};
+
+    // Adaptive layouts
+
+    --smallTreshold: #{$smallTreshold};
+    --mobileTreshold: #{$mobileTreshold};
+    --wideTreshold: #{$wideTreshold};
+
+    // Delays
+
+    --transitionTimeMs: #{$transitionTimeMs};
+    --animationTimeMs: #{$animationTimeMs};
+    --disappearTimeMs: #{$disappearTimeMs};
+
+    // Themed light colors
+
+    --backgroundLightColor: #{$backgroundLightColor};
+    --backgroundLightColorRGB: #{rgbComponents($backgroundLightColor)};
+    --foregroundLightColor: #{$foregroundLightColor};
+    --foregroundLightColorRGB: #{rgbComponents($foregroundLightColor)};
+
+    --backgroundDarkColor: #{$backgroundDarkColor};
+    --backgroundDarkColorRGB: #{rgbComponents($backgroundDarkColor)};
+    --foregroundDarkColor: #{$foregroundDarkColor};
+    --foregroundDarkColorRGB: #{rgbComponents($foregroundDarkColor)};
+
+    --backgroundColor: #{$backgroundLightColor};
+    --backgroundColorRGB: #{rgbComponents($backgroundLightColor)};
+    --foregroundColor: #{$foregroundLightColor};
+    --foregroundColorRGB: #{rgbComponents($foregroundLightColor)};
+    --cardColor: #{$cardLightColor};
+    --cardColorRGB: #{rgbComponents($cardLightColor)};
+    --cardForegroundColor: #{$cardForegroundLightColor};
+    --cardForegroundColorRGB: #{rgbComponents($cardForegroundLightColor)};
+    --popoverColor: #{$popoverLightColor};
+    --popoverColorRGB: #{rgbComponents($popoverLightColor)};
+    --popoverForegroundColor: #{$popoverForegroundLightColor};
+    --popoverForegroundColorRGB: #{rgbComponents($popoverForegroundLightColor)};
+    --mutedColor: #{$mutedLightColor};
+    --mutedColorRGB: #{rgbComponents($mutedLightColor)};
+    --mutedForegroundColor: #{$mutedForegroundLightColor};
+    --mutedForegroundColorRGB: #{rgbComponents($mutedForegroundLightColor)};
+    --accentColor: #{$accentLightColor};
+    --accentColorRGB: #{rgbComponents($accentLightColor)};
+    --accentForegroundColor: #{$accentForegroundLightColor};
+    --accentForegroundColorRGB: #{rgbComponents($accentForegroundLightColor)};
+    --destructiveColor: #{$destructiveLightColor};
+    --destructiveColorRGB: #{rgbComponents($destructiveLightColor)};
+    --destructiveForegroundColor: #{$destructiveForegroundLightColor};
+    --destructiveForegroundColorRGB: #{rgbComponents($destructiveForegroundLightColor)};
+    --errorColor: #{$errorLightColor};
+    --errorColorRGB: #{rgbComponents($errorLightColor)};
+    --borderColor: #{$borderLightColor};
+    --borderColorRGB: #{rgbComponents($borderLightColor)};
+    --inputColor: #{$inputLightColor};
+    --inputColorRGB: #{rgbComponents($inputLightColor)};
+    --ringColor: #{$ringLightColor};
+    --ringColorRGB: #{rgbComponents($ringLightColor)};
+  }
+
+  .dark {
+    // Themed dark colors
+
+    --backgroundColor: #{$backgroundDarkColor};
+    --backgroundColorRGB: #{rgbComponents($backgroundDarkColor)};
+    --foregroundColor: #{$foregroundDarkColor};
+    --foregroundColorRGB: #{rgbComponents($foregroundDarkColor)};
+    --cardColor: #{$cardDarkColor};
+    --cardColorRGB: #{rgbComponents($cardDarkColor)};
+    --cardForegroundColor: #{$cardForegroundDarkColor};
+    --cardForegroundColorRGB: #{rgbComponents($cardForegroundDarkColor)};
+    --popoverColor: #{$popoverDarkColor};
+    --popoverColorRGB: #{rgbComponents($popoverDarkColor)};
+    --popoverForegroundColor: #{$popoverForegroundDarkColor};
+    --popoverForegroundColorRGB: #{rgbComponents($popoverForegroundDarkColor)};
+    --mutedColor: #{$mutedDarkColor};
+    --mutedColorRGB: #{rgbComponents($mutedDarkColor)};
+    --mutedForegroundColor: #{$mutedForegroundDarkColor};
+    --mutedForegroundColorRGB: #{rgbComponents($mutedForegroundDarkColor)};
+    --accentColor: #{$accentDarkColor};
+    --accentColorRGB: #{rgbComponents($accentDarkColor)};
+    --accentForegroundColor: #{$accentForegroundDarkColor};
+    --accentForegroundColorRGB: #{rgbComponents($accentForegroundDarkColor)};
+    --destructiveColor: #{$destructiveDarkColor};
+    --destructiveColorRGB: #{rgbComponents($destructiveDarkColor)};
+    --destructiveForegroundColor: #{$destructiveForegroundDarkColor};
+    --destructiveForegroundColorRGB: #{rgbComponents($destructiveForegroundDarkColor)};
+    --errorColor: #{$errorDarkColor};
+    --errorColorRGB: #{rgbComponents($errorDarkColor)};
+    --borderColor: #{$borderDarkColor};
+    --borderColorRGB: #{rgbComponents($borderDarkColor)};
+    --inputColor: #{$inputDarkColor};
+    --inputColorRGB: #{rgbComponents($inputDarkColor)};
+    --ringColor: #{$ringDarkColor};
+    --ringColorRGB: #{rgbComponents($ringDarkColor)};
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+}
+
+@layer utilities {
+  .step {
+    counter-increment: step;
+  }
+
+  .step:before {
+    @apply absolute inline-flex h-9 w-9 items-center justify-center rounded-full border-4 border-background bg-muted text-center -indent-px font-mono text-base font-medium;
+    @apply ml-[-50px] mt-[-4px];
+    content: counter(step);
+  }
+}
+
+.text-gradient_brand {
+  background: linear-gradient(
+    15deg,
+    rgba(var(--secondaryColorRGB) / 80%) 0%,
+    var(--primaryColor) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 50%;
+  cursor: default;
+}
+
+.text-content {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  ul,
+  ol {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+  h1,
+  h2,
+  h3 {
+    color: $primaryColor;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.75rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  a {
+    color: $primaryColor;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

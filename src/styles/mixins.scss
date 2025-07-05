@@ -1,0 +1,19 @@
+@mixin basicActiveLink {
+  button,
+  a {
+    transition: all var(--transitionTimeMs);
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+}
+
+@mixin activeLink {
+  @include basicActiveLink;
+  button,
+  a {
+    &:hover {
+      text-decoration: underline !important;
+    }
+  }
+}

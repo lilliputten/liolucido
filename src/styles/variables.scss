@@ -1,0 +1,66 @@
+// Colors...
+
+$primaryColor: #48f; // #b22;
+$primaryForegroundColor: #fff;
+$secondaryColor: #fb1;
+$secondaryForegroundColor: #000;
+$appDestructiveColor: #f55;
+$appDestructiveForegroundColor: #fff;
+
+// Themed colors (light)
+
+$backgroundLightColor: #ffffff;
+$foregroundLightColor: #0a0a0a;
+$cardLightColor: #ffffff;
+$cardForegroundLightColor: #0a0a0a;
+$popoverLightColor: #ffffff;
+$popoverForegroundLightColor: #0a0a0a;
+$mutedLightColor: #ddd; // #f5f5f5;
+$mutedForegroundLightColor: #737373;
+$accentLightColor: #f6f6f6; // #fafafa;
+$accentForegroundLightColor: #171717;
+$destructiveLightColor: #ef4444;
+$destructiveForegroundLightColor: $accentLightColor; // #fafafa;
+$errorLightColor: $destructiveLightColor; // #fafafa;
+$borderLightColor: #e5e5e5;
+$inputLightColor: #e5e5e5;
+$ringLightColor: #0a0a0a;
+
+// Themed colors (dark)
+
+$backgroundDarkColor: #0a0a0a;
+$foregroundDarkColor: #fafafa;
+$cardDarkColor: #0a0a0a;
+$cardForegroundDarkColor: #fafafa;
+$popoverDarkColor: #0a0a0a;
+$popoverForegroundDarkColor: #fafafa;
+$mutedDarkColor: #111;
+$mutedForegroundDarkColor: #a3a3a3;
+$accentDarkColor: #141414;
+$accentForegroundDarkColor: #fafafa;
+$destructiveDarkColor: #7f1d1d;
+$destructiveForegroundDarkColor: #fafafa;
+$errorDarkColor: $destructiveDarkColor;
+$borderDarkColor: #262626;
+$inputDarkColor: #262626;
+$ringDarkColor: #d4d4d4;
+
+// Chart colors
+
+$chart1Color: #ffb700; // 271.5 81.3% 55.9%;
+$chart2Color: #ffc533; // 270 95% 75%;
+$chart3Color: #ffd466; // 270 91% 65%;
+$chart4Color: #ffe299; // 269 97% 85%;
+$chart5Color: #fff1cc; // 269 100% 92%;
+
+// Adaptive layouts (TODO: Adjust to radix variables)...
+
+$smallTreshold: 660px;
+$mobileTreshold: 980px;
+$wideTreshold: 1200px;
+
+// Delays
+
+$transitionTimeMs: 250ms;
+$animationTimeMs: 500ms;
+$disappearTimeMs: 1000ms;

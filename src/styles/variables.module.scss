@@ -1,0 +1,71 @@
+@use 'variables' as *;
+
+// stylelint-disable selector-pseudo-class-no-unknown, property-no-unknown
+:export {
+  // Export variables (see re-exports in `cssVariables.ts`)
+
+  // Colors
+
+  primaryColor: #{$primaryColor};
+  primaryForegroundColor: #{$primaryForegroundColor};
+  secondaryColor: #{$secondaryColor};
+  secondaryForegroundColor: #{$secondaryForegroundColor};
+  appDestructiveColor: #{$appDestructiveColor};
+  appDestructiveForegroundColor: #{$appDestructiveForegroundColor};
+
+  // Themed colors (light)
+
+  backgroundLightColor: #{$backgroundLightColor};
+  foregroundLightColor: #{$foregroundLightColor};
+  cardLightColor: #{$cardLightColor};
+  cardForegroundLightColor: #{$cardForegroundLightColor};
+  popoverLightColor: #{$popoverLightColor};
+  popoverForegroundLightColor: #{$popoverForegroundLightColor};
+  mutedLightColor: #{$mutedLightColor};
+  mutedForegroundLightColor: #{$mutedForegroundLightColor};
+  accentLightColor: #{$accentLightColor};
+  accentForegroundLightColor: #{$accentForegroundLightColor};
+  destructiveLightColor: #{$destructiveLightColor};
+  destructiveForegroundLightColor: #{$destructiveForegroundLightColor};
+  borderLightColor: #{$borderLightColor};
+  inputLightColor: #{$inputLightColor};
+  ringLightColor: #{$ringLightColor};
+
+  // Themed colors (dark)
+
+  backgroundDarkColor: #{$backgroundDarkColor};
+  foregroundDarkColor: #{$foregroundDarkColor};
+  cardDarkColor: #{$cardDarkColor};
+  cardForegroundDarkColor: #{$cardForegroundDarkColor};
+  popoverDarkColor: #{$popoverDarkColor};
+  popoverForegroundDarkColor: #{$popoverForegroundDarkColor};
+  mutedDarkColor: #{$mutedDarkColor};
+  mutedForegroundDarkColor: #{$mutedForegroundDarkColor};
+  accentDarkColor: #{$accentDarkColor};
+  accentForegroundDarkColor: #{$accentForegroundDarkColor};
+  destructiveDarkColor: #{$destructiveDarkColor};
+  destructiveForegroundDarkColor: #{$destructiveForegroundDarkColor};
+  borderDarkColor: #{$borderDarkColor};
+  inputDarkColor: #{$inputDarkColor};
+  ringDarkColor: #{$ringDarkColor};
+
+  // Chart colors
+
+  chart1Color: #{$chart1Color};
+  chart2Color: #{$chart2Color};
+  chart3Color: #{$chart3Color};
+  chart4Color: #{$chart4Color};
+  chart5Color: #{$chart5Color};
+
+  // Adaptive layouts
+
+  smallTreshold: #{$smallTreshold};
+  mobileTreshold: #{$mobileTreshold};
+  wideTreshold: #{$wideTreshold};
+
+  // Delays
+
+  transitionTimeMs: #{$transitionTimeMs};
+  animationTimeMs: #{$animationTimeMs};
+  disappearTimeMs: #{$disappearTimeMs};
+}

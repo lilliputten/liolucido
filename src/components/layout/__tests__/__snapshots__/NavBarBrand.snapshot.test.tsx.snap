@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NavBarBrand snapshot 1`] = `
+<div>
+  <a
+    class="h-12 flex items-center space-x-1.5 gap-2 transition-all mr-10 select-none hover:opacity-80"
+    href="/welcome"
+  >
+    <img
+      alt="Logo"
+      class="size-8"
+      data-nimg="1"
+      decoding="async"
+      height="36"
+      loading="lazy"
+      src="/static/logo/LogoWhite-min.svg"
+      style="color: transparent;"
+      width="36"
+    />
+    <h1
+      class="font-urban text-xl text-primary-foreground font-bold whitespace-nowrap overflow-hidden text-ellipsis"
+      data-testid="NavBarBrandTitle"
+      role="heading"
+    >
+      Team Tree
+    </h1>
+  </a>
+</div>
+`;

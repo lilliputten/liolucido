@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// See for `DATABASE_URL` parameter in the environment for the sqlite file location (under the `prisma` folder).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// provider = "sqlite" | "postgresql", see 'prisma-switch.mjs'
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// System scope
+
+model Account {
+  id String @id @default(cuid())
+
+  type          String
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  provider          String
+  providerAccountId String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("Accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  expires      DateTime
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("Sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @map("updated_at")
+  role          String    @default("USER") // "USER" OR "ADMIN", instead of `UserRole` enum (unsupported in sqlite): `role UserRole  @default(USER)`
+  accounts      Account[]
+  sessions      Session[]
+
+  topics Topic[] // Owned topics
+
+  @@map("Users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("VerificationTokens")
+}
+
+// Telegram user session
+model TelegramSession {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String // Session data in json string
+}
+
+// Applied data scope
+
+model Topic {
+  // Unique id
+  id Int @id @default(autoincrement())
+
+  isCorrect   Boolean @default(false)
+  isGenerated Boolean @default(false)
+
+  // Custom text
+  name String
+
+  topicsCountRandom Boolean?
+  topicsCountMin    Int?
+  topicsCountMax    Int?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questions Question[] // Questions in this topic
+
+  @@index([userId])
+  @@map("Topics")
+}
+
+model Question {
+  // Unique id
+  id Int @id @default(autoincrement())
+
+  // // Created by user (optional)
+  // userId String?
+  // user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Custom text
+  text String
+
+  answersCountRandom Boolean?
+  answersCountMin    Int?
+  answersCountMax    Int?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  topicId Int
+  topic   Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  answers Answer[] // Answers for this question
+
+  @@index([topicId])
+  @@map("Questions")
+}
+
+model Answer {
+  // Unique id
+  id Int @id @default(autoincrement())
+
+  isCorrect   Boolean @default(false)
+  isGenerated Boolean @default(false)
+
+  // Custom text
+  text String
+
+  answersCountRandom Boolean?
+  answersCountMin    Int?
+  answersCountMax    Int?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("Answers")
+}
