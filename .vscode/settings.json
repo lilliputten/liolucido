@@ -1,0 +1,17 @@
+{
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+  "stylelint.enable": true,
+  "stylelint.configFile": "stylelint.config.js",
+  "stylelint.validate": ["css", "scss"],
+  "stylelint.packageManager": "pnpm",
+  "stylelint.configBasedir": "./",
+  "files.associations": {
+    "*.css": "css",
+    "*.scss": "scss"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.stylelint": "explicit"
+  }
+}

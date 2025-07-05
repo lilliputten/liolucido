@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es5",
+    "types": ["@testing-library/jest-dom"],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      // "@/next-auth/*": ["./next-auth/*"],
+      // "@/telegram-auth/*": ["./telegram-auth/*"],
+      // "@auth/core/*": ["./auth-core/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "typeRoots": ["src/@types/**/*"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types.d.ts", ".next/types/**/*.ts"],
+  "exclude": ["**/*~", "node_modules", ".next", "**/*.tmp", "**/*.bak", "**/.*.sw?"]
+}
