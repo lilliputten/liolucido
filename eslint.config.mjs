@@ -148,7 +148,7 @@ export default [
 
   // Jest test files
   {
-    files: ['**/*.test.{js,ts}', '**/*.spec.{js,ts}'],
+    files: ['**/*.test.{js,ts}', '**/*.spec.{js,ts}', 'src/jest/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.jest,

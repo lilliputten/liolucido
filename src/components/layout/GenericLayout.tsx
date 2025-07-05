@@ -1,7 +1,7 @@
 import { useLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 
-import { env } from '@/env';
+import * as envApp from '@/env/app';
 import { TPropsWithChildren } from '@/shared/types/generic';
 // import { TExtendedUser } from '@/features/users/types/TUser';
 import { getCurrentUser } from '@/lib/session';
@@ -15,7 +15,7 @@ function GenericLayoutContent(props: TPropsWithChildren & { user?: TExtendedUser
   const { children, user } = props;
   const isUser = !!user;
   const locale = useLocale() as TLocale;
-  const isUserRequired = env.USER_REQUIRED;
+  const isUserRequired = envApp.USER_REQUIRED;
   setRequestLocale(locale);
   return (
     <>

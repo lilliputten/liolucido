@@ -1,7 +1,21 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+import './src/env/app';
+import './src/env/client';
+
 const isDev = process.env.NODE_ENV === 'development';
+
+/* // Show loaded environment variables
+ * declare global {
+ *   var __IS_NEXT_STARTED: boolean | undefined;
+ * }
+ * if (isDev && !global.__IS_NEXT_STARTED) {
+ *   global.__IS_NEXT_STARTED = true;
+ *   console.log('Loaded app environment variables:', { ...envApp });
+ *   console.log('Loaded client environment variables:', { ...envClient });
+ * }
+ */
 
 // @see https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
 const withNextIntl = createNextIntlPlugin();

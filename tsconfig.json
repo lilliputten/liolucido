@@ -21,9 +21,6 @@
     ],
     "baseUrl": ".",
     "paths": {
-      // "@/next-auth/*": ["./next-auth/*"],
-      // "@/telegram-auth/*": ["./telegram-auth/*"],
-      // "@auth/core/*": ["./auth-core/*"],
       "@/*": ["./src/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/@types"]

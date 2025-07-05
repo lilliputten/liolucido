@@ -5,7 +5,7 @@ import { LoginButton, TelegramAuthData } from '@telegram-auth/react';
 import { signIn, SignInAuthorizationParams, SignInOptions } from 'next-auth/react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { env } from '@/env';
+import * as envClient from '@/env/client';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -135,7 +135,7 @@ function OAuthSignInButton(props: OAuthSignInButtonProps) {
           */}
           <LoginButton
             // @see
-            botUsername={env.NEXT_PUBLIC_BOT_USERNAME}
+            botUsername={envClient.NEXT_PUBLIC_BOT_USERNAME}
             onAuthCallback={onSignIn}
             // showAvatar={false}
             buttonSize="large"

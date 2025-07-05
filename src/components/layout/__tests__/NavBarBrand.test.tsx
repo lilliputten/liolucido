@@ -1,19 +1,14 @@
-/** @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 
 import '@/jest/jestDomSetup';
+import '@/jest/jestReactSetup';
 
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import { getErrorText } from '@/lib/helpers/strings';
 
 import { NavBarBrand } from '../NavBarBrand';
-
-jest.mock('next-intl', () => ({
-  useLocale() {
-    return 'en';
-  },
-}));
 
 describe('NavBarBrand', () => {
   it('renders a heading', () => {

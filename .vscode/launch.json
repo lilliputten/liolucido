@@ -19,8 +19,8 @@
       "request": "launch",
       "command": "pnpm run dev",
       "cwd": "${workspaceFolder}",
-      "skipFiles": ["!${workspaceRoot}/node_modules/**/*.js"],
-      "runtimeArgs": ["--preserve-symlinks"]
+      "skipFiles": ["!${workspaceRoot}/node_modules/**/*.js"]
+      // "runtimeArgs": ["--preserve-symlinks"]
     },
     {
       "type": "node-terminal",
@@ -29,7 +29,7 @@
       "command": "pnpm run dev:https",
       "cwd": "${workspaceFolder}",
       "skipFiles": ["!${workspaceRoot}/node_modules/**/*.js"],
-      "runtimeArgs": ["--preserve-symlinks"],
+      // "runtimeArgs": ["--preserve-symlinks"],
       "resolveSourceMapLocations": [
         "${workspaceFolder}/**",
         "!**/node_modules/**",
@@ -118,7 +118,7 @@
       "name": "Jest single test",
       "type": "node-terminal",
       "request": "launch",
-      "command": "pnpm exec jest --no-watch --testTimeout=60000 deleteUser.test"
+      "command": "pnpm exec jest --no-watch --testTimeout=60000 NavBarBrand.test"
     }
   ]
 }

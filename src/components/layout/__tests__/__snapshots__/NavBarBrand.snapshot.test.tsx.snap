@@ -22,7 +22,7 @@ exports[`NavBarBrand snapshot 1`] = `
       data-testid="NavBarBrandTitle"
       role="heading"
     >
-      Team Tree
+      TrainWizzz!
     </h1>
   </a>
 </div>

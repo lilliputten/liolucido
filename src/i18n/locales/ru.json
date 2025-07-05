@@ -35,6 +35,9 @@
   "TestPage": {
     "title": "Test - TrainWizzz!"
   },
+  "WelcomePage": {
+    "title": "Добро пожаловать - Team Tree"
+  },
   "SmallWelcomeText": {
     "content": "<p>Это небольшой иерархический редактор данных. Взгляните на небольшую <infolink>инструкцию</infolink>.\n</p>",
     "title": "Добро пожаловать!"

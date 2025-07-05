@@ -9,7 +9,7 @@ import {
   useSession,
 } from 'next-auth/react';
 
-import { env } from '@/env';
+import * as envClient from '@/env/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -90,7 +90,7 @@ export function NavTgSignInButton() {
   return (
     <LoginButton
       // @see
-      botUsername={env.NEXT_PUBLIC_BOT_USERNAME}
+      botUsername={envClient.NEXT_PUBLIC_BOT_USERNAME}
       onAuthCallback={onSignIn}
       showAvatar={false}
       buttonSize="large"

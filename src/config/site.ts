@@ -1,8 +1,8 @@
-import { env } from '@/env';
+import * as envClient from '@/env/client';
 import { SiteConfig } from '@/shared/types/site/SiteConfig';
 import appInfoModule from '@/app-info.json';
 
-const siteUrl = env.NEXT_PUBLIC_APP_URL;
+const siteUrl = envClient.NEXT_PUBLIC_APP_URL;
 
 export const siteConfig: SiteConfig = {
   name: 'TrainWizzz!',
