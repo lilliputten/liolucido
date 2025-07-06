@@ -1,11 +1,8 @@
-import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { commonXPaddingTwStyle } from '@/config/ui';
 import { cn, constructMetadata } from '@/lib/utils';
 import { DemoList } from '@/components/debug/DemoList';
-import { MaxWidthWrapper } from '@/components/shared/MaxWidthWrapper';
-import { UseScrollableLayout } from '@/components/shared/ScrollableLayout';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { isDev } from '@/constants';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
@@ -43,33 +40,15 @@ export async function DataPage({ params }: TDataPageProps) {
    */
 
   return (
-    <div
+    <PageWrapper
       className={cn(
         isDev && '__DataPage', // DEBUG
-        'flex flex-1 flex-col items-center',
-        'layout-follow',
-        commonXPaddingTwStyle,
       )}
+      innerClassName="w-full"
+      scrollable
+      limitWidth
     >
-      <UseScrollableLayout type="clippable" />
-      <MaxWidthWrapper
-        className={cn(
-          isDev && '__DataPage_HeaderContainer', // DEBUG
-          'flex flex-col',
-          'layout-follow',
-          'm-auto',
-        )}
-      >
-        <ScrollArea
-          className={cn(
-            isDev && '__DataPage_Scroll', // DEBUG
-            'flex flex-col items-center',
-            'layout-scrollable',
-          )}
-        >
-          <DemoList count={50} className="w-full" />
-        </ScrollArea>
-      </MaxWidthWrapper>
-    </div>
+      <DemoList count={50} className="w-full" />
+    </PageWrapper>
   );
 }

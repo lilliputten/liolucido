@@ -2,9 +2,6 @@
 
 import React from 'react';
 
-// import { useLocale } from 'next-intl';
-// import { setRequestLocale } from 'next-intl/server';
-
 import { TPropsWithChildren } from '@/shared/types/generic';
 import { sidebarLinks } from '@/config/dashboard';
 import { cn } from '@/lib/utils';
@@ -13,10 +10,7 @@ import { SiteFooter } from '@/components/layout/SiteFooter';
 import { isDev } from '@/constants';
 import { TExtendedUser } from '@/features/users/types/TUser';
 
-// import { TLocale } from '@/i18n/types';
-
 import { DashboardSidebar, MobileSheetSidebar, MobileSheetWrapper } from './DashboardSidebar';
-import { NavMobile } from './NavMobile';
 
 interface TGenericLayoutContentProps extends TPropsWithChildren {
   isUserRequired: boolean;
@@ -39,11 +33,10 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
   return (
     <div
       className={cn(
-        isDev && '__GenericLayout', // DEBUG
+        isDev && '__GenericLayoutContent', // DEBUG
         'relative flex size-full flex-col',
-        // 'flex flex-1 flex-col items-center',
+        'flex-1 flex-col items-center',
         'layout-follow',
-        // commonXPaddingTwStyle,
       )}
     >
       {/*
@@ -57,10 +50,8 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
       <div
         className={cn(
           isDev && '__GenericLayout_HLayout', // DEBUG
-          'relative flex size-full',
-          // 'flex flex-1 flex-col items-center',
+          'relative flex size-full flex-1',
           'layout-follow',
-          // commonXPaddingTwStyle,
         )}
       >
         {/*

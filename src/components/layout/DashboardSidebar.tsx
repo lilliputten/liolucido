@@ -3,7 +3,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, PanelLeftClose, PanelRightClose } from 'lucide-react';
+import { DialogTitle } from '@radix-ui/react-dialog';
+import { PanelLeftClose, PanelRightClose } from 'lucide-react';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
 import { SidebarNavItem } from '@/shared/types/site/NavItem';
@@ -13,7 +14,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ProjectSwitcher } from '@/components/dashboard/ProjectSwitcher';
 import { UpgradeCard } from '@/components/dashboard/UpgradeCard';
@@ -203,12 +204,15 @@ export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren
   if (isSm || isMobile) {
     return (
       <Sheet open={open} onOpenChange={setOpen}>
+        <DialogTitle className="sr-only">Navigation menu</DialogTitle>
+        {/*
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="size-9 shrink-0 md:hidden">
             <Menu className="size-5" />
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
+         */}
         <SheetContent side="left" className="flex flex-col p-0">
           <ScrollArea className="h-full overflow-y-auto bg-primary/10">
             {/* MobileSheetSidebar */}
