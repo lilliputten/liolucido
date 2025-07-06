@@ -1,7 +1,7 @@
 import tailwindcssTypography from '@tailwindcss/typography';
 import { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
-import { fontFamily } from 'tailwindcss/defaultTheme';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 import { getColorSpread } from './build-utils/getColorSpread';
 // NOTE: It's not possible to export css modules on this stage
@@ -14,7 +14,7 @@ const primaryColorSpread = getColorSpread('primary', primaryColor);
 const secondaryColorSpread = getColorSpread('secondary', secondaryColor);
 
 export default {
-  darkMode: ['class'],
+  darkMode: 'class',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -70,11 +70,11 @@ export default {
         sm: 'calc(var(--borderRadiusSize) - 4px)',
       },
       fontFamily: {
-        default: ['var(--font-default)', ...fontFamily.sans],
-        heading: ['var(--font-heading)', ...fontFamily.sans],
-        mono: ['var(--font-mono)', ...fontFamily.mono],
-        // sans: ['var(--font-sans)', ...fontFamily.sans],
-        // urban: ['var(--font-urban)', ...fontFamily.sans],
+        default: ['var(--font-default)', ...defaultTheme.fontFamily.sans],
+        heading: ['var(--font-heading)', ...defaultTheme.fontFamily.sans],
+        mono: ['var(--font-mono)', ...defaultTheme.fontFamily.mono],
+        // sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+        // urban: ['var(--font-urban)', ...defaultTheme.fontFamily.sans],
       },
       keyframes: {
         'accordion-down': {

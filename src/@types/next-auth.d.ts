@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client';
+// import { UserRole } from '@prisma/client';
 import { User } from 'next-auth';
 // NOTE: False-positive eslint error for extending existed type (see below)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

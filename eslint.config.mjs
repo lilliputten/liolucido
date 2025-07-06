@@ -11,7 +11,7 @@ import { readGitignoreFiles } from 'eslint-gitignore';
 import prettierPlugin from 'eslint-plugin-prettier';
 import pluginReact from 'eslint-plugin-react';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
-import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
+// import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import pluginYml from 'eslint-plugin-yml';
 import globals from 'globals';
 import * as tseslint from 'typescript-eslint';
@@ -67,17 +67,17 @@ export default [
     },
   },
 
-  // Tailwind CSS configuration
+  // Source files JS configuration
   {
     files: ['src/**/*.{js,jsx,ts,tsx}'],
     plugins: {
-      tailwindcss: tailwindcssPlugin,
+      // tailwindcss: tailwindcssPlugin,
       'react-hooks': fixupPluginRules(pluginReactHooks),
     },
     rules: {
-      ...defaultJsRules,
-      ...tailwindcssPlugin.configs.recommended.rules,
-      'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
+      // ...defaultJsRules,
+      // ...tailwindcssPlugin.configs.recommended.rules,
+      // 'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
       ...pluginReactHooks.configs.recommended.rules,
     },
   },
@@ -95,7 +95,7 @@ export default [
       },
     },
     rules: {
-      ...defaultJsRules,
+      // ...defaultJsRules,
       ...pluginJs.configs.recommended.rules,
       ...pluginReact.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
@@ -124,7 +124,7 @@ export default [
     rules: {
       // NOTE: The order is important
       ...pluginJs.configs.recommended.rules,
-      ...defaultJsRules,
+      // ...defaultJsRules,
       ...tsPlugin.configs.recommended.rules,
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-unused-vars': [

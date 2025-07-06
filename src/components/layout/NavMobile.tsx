@@ -64,9 +64,9 @@ export function NavMobile(props: NavMobileProps) {
         )}
       >
         {open ? (
-          <X className="size-5 text-primary-foreground" />
+          <X className="text-primary-foreground size-5" />
         ) : (
-          <Menu className="size-5 text-primary-foreground" />
+          <Menu className="text-primary-foreground size-5" />
         )}
       </button>
 
@@ -88,7 +88,7 @@ export function NavMobile(props: NavMobileProps) {
           open && 'max-md:block',
         )}
       >
-        <ul className="grid divide-y divide-muted">
+        <ul className="divide-muted grid divide-y">
           {hasLinks &&
             links
               .filter((item) => !isUserRequired || !item.userRequiredOnly || isUser)

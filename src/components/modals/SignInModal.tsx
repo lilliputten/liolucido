@@ -34,7 +34,7 @@ function SignInModal(props: TSignInModalProps) {
         'text-primary-foreground',
       )}
     >
-      <div className="w-full bg-primary">
+      <div className="bg-primary w-full">
         <div
           className={cn(
             // prettier-ignore

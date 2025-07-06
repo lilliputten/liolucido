@@ -34,7 +34,7 @@ export function NavUserAccount(props: TNavUserAccountProps) {
   const [open, setOpen] = useState(false);
 
   if (!user) {
-    return <div className="size-8 animate-pulse rounded-full border bg-muted" />;
+    return <div className="bg-muted size-8 animate-pulse rounded-full border" />;
   }
 
   // const isAdmin = user.role === 'ADMIN';
@@ -69,7 +69,7 @@ export function NavUserAccount(props: TNavUserAccountProps) {
           <div className="flex flex-col space-y-1 leading-none">
             {user.name && <p className="font-medium">{user.name}</p>}
             {user.email && (
-              <p className="w-[200px] truncate text-sm text-muted-foreground">{user.email}</p>
+              <p className="text-muted-foreground w-[200px] truncate text-sm">{user.email}</p>
             )}
           </div>
         </div>
