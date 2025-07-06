@@ -31,14 +31,14 @@ model Account {
   updatedAt DateTime @default(now()) @map("updated_at")
 
   provider          String
-  providerAccountId String
+  providerAccountId String @map("provider_account_id")
 
-  userId String
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
-  @@map("Accounts")
+  @@map("accounts")
 }
 
 model Session {
@@ -50,14 +50,14 @@ model Session {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@map("Sessions")
+  @@map("sessions")
 }
 
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
-  emailVerified DateTime?
+  emailVerified DateTime? @map("email_verified")
   image         String?
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @default(now()) @map("updated_at")
@@ -67,7 +67,7 @@ model User {
 
   topics Topic[] // Owned topics
 
-  @@map("Users")
+  @@map("users")
 }
 
 model VerificationToken {
@@ -76,14 +76,16 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-  @@map("VerificationTokens")
+  @@map("verification_tokens")
 }
 
 // Telegram user session
 model TelegramSession {
-  id    Int    @id @default(autoincrement())
-  key   String @unique
+  // id    Int    @id @default(autoincrement())
+  key   String @id @unique
   value String // Session data in json string
+
+  @@map("telegram_sessions")
 }
 
 // Applied data scope
@@ -92,15 +94,15 @@ model Topic {
   // Unique id
   id Int @id @default(autoincrement())
 
-  isCorrect   Boolean @default(false)
-  isGenerated Boolean @default(false)
+  isCorrect   Boolean @default(false) @map("is_correct")
+  isGenerated Boolean @default(false) @map("is_generated")
 
   // Custom text
   name String
 
-  topicsCountRandom Boolean?
-  topicsCountMin    Int?
-  topicsCountMax    Int?
+  topicsCountRandom Boolean? @map("topics_count_random")
+  topicsCountMin    Int?     @map("topics_count_min")
+  topicsCountMax    Int?     @map("topics_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
@@ -111,7 +113,7 @@ model Topic {
   questions Question[] // Questions in this topic
 
   @@index([userId])
-  @@map("Topics")
+  @@map("topics")
 }
 
 model Question {
@@ -125,42 +127,42 @@ model Question {
   // Custom text
   text String
 
-  answersCountRandom Boolean?
-  answersCountMin    Int?
-  answersCountMax    Int?
+  answersCountRandom Boolean? @map("answers_count_random")
+  answersCountMin    Int?     @map("answers_count_min")
+  answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  topicId Int
+  topicId Int   @map("topic_id")
   topic   Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   answers Answer[] // Answers for this question
 
   @@index([topicId])
-  @@map("Questions")
+  @@map("questions")
 }
 
 model Answer {
   // Unique id
   id Int @id @default(autoincrement())
 
-  isCorrect   Boolean @default(false)
-  isGenerated Boolean @default(false)
+  isCorrect   Boolean @default(false) @map("is_correct")
+  isGenerated Boolean @default(false) @map("is_generated")
 
   // Custom text
   text String
 
-  answersCountRandom Boolean?
-  answersCountMin    Int?
-  answersCountMax    Int?
+  answersCountRandom Boolean? @map("answers_count_random")
+  answersCountMin    Int?     @map("answers_count_min")
+  answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  questionId Int
+  questionId Int      @map("question_id")
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@index([questionId])
-  @@map("Answers")
+  @@map("answers")
 }
