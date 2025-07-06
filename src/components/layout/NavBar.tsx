@@ -1,9 +1,10 @@
 'use client';
 
+import { Menu, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { siteMenu } from '@/config/siteMenu';
-import { commonXPaddingTwStyle } from '@/config/ui';
+import { commonXMarginTwStyle, commonXPaddingTwStyle } from '@/config/ui';
 import { getAllRouteSynonyms } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
@@ -19,10 +20,12 @@ interface NavBarProps {
   large?: boolean;
   isUser: boolean;
   isUserRequired: boolean;
+  open: boolean;
+  setOpen: (p: boolean) => void;
 }
 
 export function NavBar(props: NavBarProps) {
-  const { isUser, isUserRequired } = props;
+  const { isUser, isUserRequired, open, setOpen } = props;
   const links = siteMenu.mainNav;
   const t = useTranslations('SiteMenu');
   const locale = useLocale() as TLocale;
@@ -124,6 +127,34 @@ export function NavBar(props: NavBarProps) {
           <NavLocaleSwitcher onPrimary />
           <NavUserAuthButton onPrimary />
         </div>
+
+        {/* Mobile panel toggler icon */}
+        <button
+          onClick={() => setOpen(!open)}
+          className={cn(
+            isDev && '__NavMobile', // DEBUG
+            'fixed',
+            'right-3',
+            'top-3.5',
+            'z-50',
+            'rounded-full',
+            'p-2',
+            commonXMarginTwStyle,
+            'transition-colors',
+            'duration-200',
+            'text-primary-foreground hover:bg-primary-400/50',
+            'focus:outline-none',
+            'active:bg-primary-300',
+            'md:hidden',
+            open && 'hover:bg-primary-400',
+          )}
+        >
+          {open ? (
+            <X className="size-5 text-primary-foreground" />
+          ) : (
+            <Menu className="size-5 text-primary-foreground" />
+          )}
+        </button>
       </div>
     </header>
   );

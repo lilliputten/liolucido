@@ -26,7 +26,7 @@ export default function NotFound() {
       <h1 className="text-2xl font-normal">
         Error: Page <u>{pathname}</u> not found!
       </h1>
-      <div className="text-muted-foreground flex flex-row gap-2 text-base">
+      <div className="flex flex-row gap-2 text-base text-muted-foreground">
         <Button onClick={() => router.back()}>Go back</Button>
         <Button onClick={() => router.push('/')}>Go home</Button>
       </div>

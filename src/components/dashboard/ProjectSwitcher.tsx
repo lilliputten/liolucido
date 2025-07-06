@@ -60,7 +60,7 @@ export function ProjectSwitcher({ large = false }: { large?: boolean }) {
               </span>
             </div>
           </div>
-          <ChevronsUpDown className="text-muted-foreground size-4" aria-hidden="true" />
+          <ChevronsUpDown className="size-4 text-muted-foreground" aria-hidden="true" />
         </PopoverTrigger>
         <PopoverContent align="start" className="max-w-60 p-2">
           <ProjectList selected={selected} projects={projects} setOpenPopover={setOpenPopover} />
@@ -86,7 +86,7 @@ function ProjectList({
           key={slug}
           className={cn(
             buttonVariants({ variant: 'ghost' }),
-            'text-muted-foreground hover:text-foreground relative flex h-9 items-center gap-3 p-3',
+            'relative flex h-9 items-center gap-3 p-3 text-muted-foreground hover:text-foreground',
           )}
           href="#"
           onClick={() => setOpenPopover(false)}
@@ -94,13 +94,13 @@ function ProjectList({
           <div className={cn('size-3 shrink-0 rounded-full', color)} />
           <span
             className={`flex-1 truncate text-sm ${
-              selected.slug === slug ? 'text-foreground font-medium' : 'font-normal'
+              selected.slug === slug ? 'font-medium text-foreground' : 'font-normal'
             }`}
           >
             {slug}
           </span>
           {selected.slug === slug && (
-            <span className="text-foreground absolute inset-y-0 right-0 flex items-center pr-3">
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-foreground">
               <Check size={18} aria-hidden="true" />
             </span>
           )}
@@ -113,7 +113,7 @@ function ProjectList({
           setOpenPopover(false);
         }}
       >
-        <Plus size={18} className="absolute top-2 left-2.5" />
+        <Plus size={18} className="absolute left-2.5 top-2" />
         <span className="flex-1 truncate text-center">New Project</span>
       </Button>
     </div>
@@ -123,7 +123,7 @@ function ProjectList({
 function ProjectSwitcherPlaceholder() {
   return (
     <div className="flex animate-pulse items-center space-x-1.5 rounded-lg px-1.5 py-2 sm:w-60">
-      <div className="bg-muted h-8 w-36 animate-pulse rounded-md xl:w-[180px]" />
+      <div className="h-8 w-36 animate-pulse rounded-md bg-muted xl:w-[180px]" />
     </div>
   );
 }

@@ -115,7 +115,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                       <p
                         className={cn(
                           isDev && '__DashboardSidebar_Section_Title', // DEBUG
-                          'text-muted-foreground mb-4 text-xs uppercase',
+                          'mb-4 text-xs uppercase text-muted-foreground',
                         )}
                       >
                         {section.titleId}
@@ -133,12 +133,12 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 key={`link-${item.titleId}`}
                                 href={item.disabled ? '#' : item.href}
                                 className={cn(
-                                  'hover:bg-primary flex items-center gap-3 rounded-md p-2 text-sm font-medium',
+                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-primary',
                                   path === item.href
                                     ? 'bg-muted'
                                     : 'text-muted-foreground hover:text-accent-foreground',
                                   item.disabled &&
-                                    'hover:text-muted-foreground cursor-not-allowed opacity-50 hover:bg-transparent',
+                                    'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
                                 )}
                               >
                                 <Icon className="size-5" />
@@ -156,12 +156,12 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                     key={`link-tooltip-${item.titleId}`}
                                     href={item.disabled ? '#' : item.href}
                                     className={cn(
-                                      'hover:bg-primary flex items-center gap-3 rounded-md py-2 text-sm font-medium',
+                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-primary',
                                       path === item.href
                                         ? 'bg-muted'
                                         : 'text-muted-foreground hover:text-accent-foreground',
                                       item.disabled &&
-                                        'hover:text-muted-foreground pointer-events-none cursor-not-allowed opacity-80 hover:bg-transparent',
+                                        'pointer-events-none cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
                                     )}
                                   >
                                     <span className="flex size-full items-center justify-center">
@@ -210,7 +210,7 @@ export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col p-0">
-          <ScrollArea className="bg-primary/10 h-full overflow-y-auto">
+          <ScrollArea className="h-full overflow-y-auto bg-primary/10">
             {/* MobileSheetSidebar */}
             {children}
           </ScrollArea>
@@ -218,7 +218,7 @@ export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren
       </Sheet>
     );
   }
-  return <div className="bg-muted flex size-9 animate-pulse rounded-lg md:hidden" />;
+  return <div className="flex size-9 animate-pulse rounded-lg bg-muted md:hidden" />;
 }
 
 export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetProps) {
@@ -236,7 +236,7 @@ export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetPr
 
         {links.map((section) => (
           <section key={section.titleId} className="flex flex-col gap-0.5">
-            <p className="text-muted-foreground mb-4 text-xs uppercase">{section.titleId}</p>
+            <p className="mb-4 text-xs uppercase text-muted-foreground">{section.titleId}</p>
 
             {section.items.map((item) => {
               const Icon = Icons[item.icon || 'arrowRight'];
@@ -252,12 +252,12 @@ export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetPr
                       }}
                       href={item.disabled ? '#' : item.href}
                       className={cn(
-                        'hover:bg-primary flex items-center gap-3 rounded-md p-2 text-sm font-medium',
+                        'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-primary',
                         path === item.href
                           ? 'bg-muted'
                           : 'text-muted-foreground hover:text-accent-foreground',
                         item.disabled &&
-                          'hover:text-muted-foreground pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent',
+                          'pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
                       )}
                     >
                       <Icon className="size-5" />

@@ -26,7 +26,6 @@ interface TGenericLayoutContentProps extends TPropsWithChildren {
 export function GenericLayoutContent(props: TGenericLayoutContentProps) {
   const { children, user, isUserRequired } = props;
   const isUser = !!user;
-  // const locale = useLocale() as TLocale;
 
   const [open, setOpen] = React.useState(false);
 
@@ -36,8 +35,6 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
       ({ authorizedOnly }) => !authorizedOnly || authorizedOnly === user?.role,
     ),
   }));
-
-  // setRequestLocale(locale);
 
   return (
     <div
@@ -51,12 +48,12 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
     >
       {/*
       <DashboardSidebar links={filteredLinks} />
-      */}
       <NavMobile isUser={isUser} isUserRequired={isUserRequired} />
+      */}
       <MobileSheetWrapper open={open} setOpen={setOpen}>
         <MobileSheetSidebar links={filteredLinks} open={open} setOpen={setOpen} />
       </MobileSheetWrapper>
-      <NavBar isUser={isUser} isUserRequired={isUserRequired} />
+      <NavBar isUser={isUser} isUserRequired={isUserRequired} open={open} setOpen={setOpen} />
       <div
         className={cn(
           isDev && '__GenericLayout_HLayout', // DEBUG
