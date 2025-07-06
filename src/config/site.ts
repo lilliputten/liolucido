@@ -1,4 +1,4 @@
-import * as envClient from '@/env/client';
+import { envClient } from '@/env/envClient';
 import { SiteConfig } from '@/shared/types/site/SiteConfig';
 import appInfoModule from '@/app-info.json';
 

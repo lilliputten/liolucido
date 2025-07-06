@@ -21,8 +21,8 @@ if (!parsedEnv.success) {
 }
 
 const env = parsedEnv.data;
-export const client = env;
+export const envClient = env;
 export type TClientEnv = z.infer<typeof envSchema>;
 
-export const NEXT_PUBLIC_BOT_USERNAME = env.NEXT_PUBLIC_BOT_USERNAME;
-export const NEXT_PUBLIC_APP_URL = env.NEXT_PUBLIC_APP_URL;
+// export const NEXT_PUBLIC_BOT_USERNAME = env.NEXT_PUBLIC_BOT_USERNAME;
+// export const NEXT_PUBLIC_APP_URL = env.NEXT_PUBLIC_APP_URL;

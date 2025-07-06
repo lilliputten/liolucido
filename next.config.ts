@@ -1,8 +1,9 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-import './src/env/app';
-import './src/env/client';
+// Import environments to ensure if they're ok
+import './src/env/envServer';
+import './src/env/envClient';
 
 const isDev = process.env.NODE_ENV === 'development';
 

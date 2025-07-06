@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { pathnames } from '@/constants/routes';
 
 jest.mock('next-intl', () => ({
@@ -21,4 +22,3 @@ jest.mock('@/i18n/routing', () => ({
   },
   pathnames,
 }));
-

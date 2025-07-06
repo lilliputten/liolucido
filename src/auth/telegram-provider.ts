@@ -1,7 +1,7 @@
 import { AuthDataValidator, objectToAuthDataMap } from '@telegram-auth/server';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { toast } from 'sonner';
 
+import { envServer } from '@/env/envServer';
 import { getErrorText } from '@/lib/helpers/strings';
 import { createUserOrUpdateTelegramUser } from '@/features/users/actions/';
 
@@ -11,7 +11,7 @@ export const telegramProvider = CredentialsProvider({
   credentials: {},
   async authorize(_credentials, req) {
     const validator = new AuthDataValidator({
-      botToken: `${process.env.BOT_TOKEN}`,
+      botToken: `${envServer.BOT_TOKEN}`,
     });
     const queryStr = req.url.split('?').pop();
     const sp = new URLSearchParams(queryStr);
@@ -64,9 +64,6 @@ export const telegramProvider = CredentialsProvider({
           description,
         });
         debugger; // eslint-disable-line no-debugger
-        toast.error(title, {
-          description,
-        });
       }
       return returned;
     }

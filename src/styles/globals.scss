@@ -50,12 +50,13 @@
 
     // Chart colors
 
-    // XXX: OLD
-    // --chart1ColorHSL: 43 100% 50%; // 271.5 81.3% 55.9%;
-    // --chart2ColorHSL: 43 100% 60%; // 270 95% 75%;
-    // --chart3ColorHSL: 43 100% 70%; // 270 91% 65%;
-    // --chart4ColorHSL: 43 100% 80%; // 269 97% 85%;
-    // --chart5ColorHSL: 43 100% 90%; // 269 100% 92%;
+    /* // XXX: Original chart colors
+     * --chart1ColorHSL: 43 100% 50%; // 271.5 81.3% 55.9%;
+     * --chart2ColorHSL: 43 100% 60%; // 270 95% 75%;
+     * --chart3ColorHSL: 43 100% 70%; // 270 91% 65%;
+     * --chart4ColorHSL: 43 100% 80%; // 269 97% 85%;
+     * --chart5ColorHSL: 43 100% 90%; // 269 100% 92%;
+     */
 
     --chart1Color: #{$chart1Color};
     --chart1ColorRGB: #{rgbComponents($chart1Color)};

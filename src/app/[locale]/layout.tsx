@@ -91,11 +91,12 @@ async function RootLayout(props: TRootLayoutProps) {
               disableTransitionOnChange
             >
               <ModalProvider>
+                {/* NOTE: The toaster should be locatred before the content */}
+                <Toaster richColors closeButton />
                 <GenericLayout>
                   {/* Core content */}
                   {children}
                 </GenericLayout>
-                <Toaster richColors closeButton />
                 <TailwindIndicator />
               </ModalProvider>
             </ThemeProvider>

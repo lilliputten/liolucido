@@ -5,7 +5,7 @@ import { LoginButton, TelegramAuthData } from '@telegram-auth/react';
 import { signIn, SignInAuthorizationParams, SignInOptions } from 'next-auth/react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import * as envClient from '@/env/client';
+import { envClient } from '@/env/envClient';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

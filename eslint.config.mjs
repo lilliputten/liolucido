@@ -20,6 +20,24 @@ import yamlParser from 'yaml-eslint-parser';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const defaultJsRules = {
+  ...pluginJs.configs.recommended.rules,
+  semi: ['warn', 'always'],
+  'no-console': 'warn',
+  'no-debugger': 'warn',
+  'no-extra-semi': 'warn',
+  'no-redeclare': 'warn',
+  'no-undef': 'error',
+  'no-unreachable': 'warn',
+  'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+  'prefer-const': 'warn',
+  '@typescript-eslint/no-unused-vars': [
+    'warn',
+    { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+  ],
+  'no-constant-binary-expression': 'off',
+};
+
 export default [
   {
     ignores: [
@@ -45,21 +63,7 @@ export default [
       },
     },
     rules: {
-      ...pluginJs.configs.recommended.rules,
-      semi: ['warn', 'always'],
-      'no-console': 'warn',
-      'no-debugger': 'warn',
-      'no-extra-semi': 'warn',
-      'no-redeclare': 'warn',
-      'no-undef': 'error',
-      'no-unreachable': 'warn',
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      'prefer-const': 'warn',
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
-      'no-constant-binary-expression': 'off',
+      ...defaultJsRules,
     },
   },
 
@@ -71,6 +75,7 @@ export default [
       'react-hooks': fixupPluginRules(pluginReactHooks),
     },
     rules: {
+      ...defaultJsRules,
       ...tailwindcssPlugin.configs.recommended.rules,
       'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
       ...pluginReactHooks.configs.recommended.rules,
@@ -90,6 +95,7 @@ export default [
       },
     },
     rules: {
+      ...defaultJsRules,
       ...pluginJs.configs.recommended.rules,
       ...pluginReact.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
@@ -116,7 +122,9 @@ export default [
       '@typescript-eslint': tsPlugin,
     },
     rules: {
+      // NOTE: The order is important
       ...pluginJs.configs.recommended.rules,
+      ...defaultJsRules,
       ...tsPlugin.configs.recommended.rules,
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-unused-vars': [
@@ -142,6 +150,7 @@ export default [
       },
     },
     rules: {
+      // ...defaultJsRules,
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
@@ -154,12 +163,17 @@ export default [
         ...globals.jest,
       },
     },
+    rules: {
+      // ...defaultJsRules,
+      '@typescript-eslint/no-require-imports': 'off',
+    },
   },
 
   // Override for source files to disable specific rules
   {
     files: ['src/**/*.{js,ts}'],
     rules: {
+      // ...defaultJsRules,
       'no-unused-vars': 'off',
     },
   },

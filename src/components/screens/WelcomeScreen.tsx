@@ -1,5 +1,8 @@
 'use client';
 
+import React from 'react';
+import { toast } from 'sonner';
+
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { SignInBlock } from '@/components/blocks/SignInBlock';
@@ -9,6 +12,9 @@ import { isDev } from '@/constants';
 
 export function WelcomeScreen(props: TPropsWithClassName) {
   const { className } = props;
+  React.useEffect(() => {
+    toast.info('Sample toast');
+  }, []);
   return (
     <div
       className={cn(

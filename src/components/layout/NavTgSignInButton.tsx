@@ -9,7 +9,7 @@ import {
   useSession,
 } from 'next-auth/react';
 
-import * as envClient from '@/env/client';
+import { envClient } from '@/env/envClient';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
