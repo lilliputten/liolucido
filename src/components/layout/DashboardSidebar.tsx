@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, PanelLeftClose, PanelRightClose } from 'lucide-react';
 
+import { TPropsWithChildren } from '@/shared/types/generic';
 import { SidebarNavItem } from '@/shared/types/site/NavItem';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -14,7 +15,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { UpgradeCard } from '@/components/dashboard/upgrade-card';
+import { ProjectSwitcher } from '@/components/dashboard/ProjectSwitcher';
+import { UpgradeCard } from '@/components/dashboard/UpgradeCard';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 
@@ -59,23 +61,33 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
     <TooltipProvider delayDuration={0}>
       <div
         className={cn(
-          '__DashboardSidebar',
-          'sticky top-0 h-full',
+          isDev && '__DashboardSidebar', // DEBUG
+          'bg-primary/10',
+          // 'bg-[var(--primaryColor)]/50',
+          // 'sticky top-0 h-full',
           // NOTE: Set sidebar atop the main content (ensure that this z-index is enough)
-          'z-10',
+          // 'z-10',
         )}
       >
-        <ScrollArea className="h-full overflow-y-auto border-r">
+        <ScrollArea
+          className={cn(
+            isDev && '__DashboardSidebar_Scroll', // DEBUG
+            'h-full overflow-y-auto border-r',
+          )}
+          viewportClassName={cn(
+            isDev && '__DashboardSidebar_ScrollViewport', // DEBUG
+            '[&>div]:h-full',
+          )}
+        >
           <aside
             className={cn(
               isSidebarExpanded ? 'w-[220px] xl:w-[260px]' : 'w-[68px]',
-              'hidden h-screen md:block',
+              '__h-screen hidden h-full md:block',
             )}
           >
-            <div className="flex h-full max-h-screen flex-1 flex-col gap-2">
+            <div className="flex h-full flex-1 flex-col gap-2">
               <div className="flex h-14 items-center p-4 lg:h-[60px]">
-                {/* {isSidebarExpanded ? <ProjectSwitcher /> : null} */}
-
+                {isSidebarExpanded && <ProjectSwitcher />}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -98,15 +110,15 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                 )}
               >
                 {links.map((section) => (
-                  <section key={section.title} className="flex flex-col gap-0.5">
+                  <section key={section.titleId} className="flex flex-col gap-0.5">
                     {isSidebarExpanded ? (
                       <p
                         className={cn(
-                          isDev && '__DashboardSidebar_Section', // DEBUG
-                          'Title text-xs uppercase text-muted-foreground',
+                          isDev && '__DashboardSidebar_Section_Title', // DEBUG
+                          'text-muted-foreground mb-4 text-xs uppercase',
                         )}
                       >
-                        {section.title}
+                        {section.titleId}
                       </p>
                     ) : (
                       <div className="h-4" />
@@ -121,18 +133,18 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 key={`link-${item.titleId}`}
                                 href={item.disabled ? '#' : item.href}
                                 className={cn(
-                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted',
+                                  'hover:bg-primary flex items-center gap-3 rounded-md p-2 text-sm font-medium',
                                   path === item.href
                                     ? 'bg-muted'
                                     : 'text-muted-foreground hover:text-accent-foreground',
                                   item.disabled &&
-                                    'cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
+                                    'hover:text-muted-foreground cursor-not-allowed opacity-50 hover:bg-transparent',
                                 )}
                               >
                                 <Icon className="size-5" />
                                 {item.titleId}
                                 {item.badge && (
-                                  <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
+                                  <Badge className="flex size-5 shrink-0 items-center justify-center rounded-full">
                                     {item.badge}
                                   </Badge>
                                 )}
@@ -144,12 +156,12 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                     key={`link-tooltip-${item.titleId}`}
                                     href={item.disabled ? '#' : item.href}
                                     className={cn(
-                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-muted',
+                                      'hover:bg-primary flex items-center gap-3 rounded-md py-2 text-sm font-medium',
                                       path === item.href
                                         ? 'bg-muted'
                                         : 'text-muted-foreground hover:text-accent-foreground',
                                       item.disabled &&
-                                        'cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
+                                        'hover:text-muted-foreground pointer-events-none cursor-not-allowed opacity-80 hover:bg-transparent',
                                     )}
                                   >
                                     <span className="flex size-full items-center justify-center">
@@ -177,9 +189,15 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
   );
 }
 
-export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
-  const path = usePathname();
-  const [open, setOpen] = useState(false);
+interface TMobileSheetProps {
+  open: boolean;
+  setOpen: (p: boolean) => void;
+}
+
+export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren) {
+  const { children, open, setOpen } = props;
+  // const path = usePathname();
+  // const [open, setOpen] = useState(false);
   const { isSm, isMobile } = useMediaQuery();
 
   if (isSm || isMobile) {
@@ -192,67 +210,77 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col p-0">
-          <ScrollArea className="h-full overflow-y-auto">
-            <div className="flex h-screen flex-col">
-              <nav className="flex flex-1 flex-col gap-y-8 p-6 text-lg font-medium">
-                <Link href="#" className="flex items-center gap-2 text-lg font-semibold">
-                  <Icons.logo className="size-6" />
-                  <span className="text-xl font-bold">{siteConfig.name}</span>
-                </Link>
-
-                {/* <ProjectSwitcher large /> */}
-
-                {links.map((section) => (
-                  <section key={section.title} className="flex flex-col gap-0.5">
-                    <p className="text-xs text-muted-foreground">{section.title}</p>
-
-                    {section.items.map((item) => {
-                      const Icon = Icons[item.icon || 'arrowRight'];
-                      return (
-                        item.href && (
-                          <Fragment key={`link-fragment-${item.titleId}`}>
-                            <Link
-                              key={`link-${item.titleId}`}
-                              onClick={() => {
-                                if (!item.disabled) {
-                                  setOpen(false);
-                                }
-                              }}
-                              href={item.disabled ? '#' : item.href}
-                              className={cn(
-                                'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted',
-                                path === item.href
-                                  ? 'bg-muted'
-                                  : 'text-muted-foreground hover:text-accent-foreground',
-                                item.disabled &&
-                                  'cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
-                              )}
-                            >
-                              <Icon className="size-5" />
-                              {item.titleId}
-                              {item.badge && (
-                                <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
-                                  {item.badge}
-                                </Badge>
-                              )}
-                            </Link>
-                          </Fragment>
-                        )
-                      );
-                    })}
-                  </section>
-                ))}
-
-                <div className="mt-auto">
-                  <UpgradeCard />
-                </div>
-              </nav>
-            </div>
+          <ScrollArea className="bg-primary/10 h-full overflow-y-auto">
+            {/* MobileSheetSidebar */}
+            {children}
           </ScrollArea>
         </SheetContent>
       </Sheet>
     );
   }
+  return <div className="bg-muted flex size-9 animate-pulse rounded-lg md:hidden" />;
+}
 
-  return <div className="flex size-9 animate-pulse rounded-lg bg-muted md:hidden" />;
+export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetProps) {
+  const { links, setOpen } = props;
+  const path = usePathname();
+  return (
+    <div className="flex h-screen flex-col">
+      <nav className="flex flex-1 flex-col gap-y-8 p-6 text-lg font-medium">
+        <Link href="#" className="flex items-center gap-2 text-lg font-semibold">
+          <Icons.logo className="size-6" />
+          <span className="text-xl font-bold">{siteConfig.name}</span>
+        </Link>
+
+        {<ProjectSwitcher large />}
+
+        {links.map((section) => (
+          <section key={section.titleId} className="flex flex-col gap-0.5">
+            <p className="text-muted-foreground mb-4 text-xs uppercase">{section.titleId}</p>
+
+            {section.items.map((item) => {
+              const Icon = Icons[item.icon || 'arrowRight'];
+              return (
+                item.href && (
+                  <Fragment key={`link-fragment-${item.titleId}`}>
+                    <Link
+                      key={`link-${item.titleId}`}
+                      onClick={() => {
+                        if (!item.disabled) {
+                          setOpen(false);
+                        }
+                      }}
+                      href={item.disabled ? '#' : item.href}
+                      className={cn(
+                        'hover:bg-primary flex items-center gap-3 rounded-md p-2 text-sm font-medium',
+                        path === item.href
+                          ? 'bg-muted'
+                          : 'text-muted-foreground hover:text-accent-foreground',
+                        item.disabled &&
+                          'hover:text-muted-foreground pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent',
+                      )}
+                    >
+                      <Icon className="size-5" />
+                      {item.titleId}
+                      {item.badge && (
+                        <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
+                          {item.badge}
+                        </Badge>
+                      )}
+                    </Link>
+                  </Fragment>
+                )
+              );
+            })}
+          </section>
+        ))}
+
+        {/* TODO: Show menu if collapsed */}
+
+        <div className="mt-auto">
+          <UpgradeCard />
+        </div>
+      </nav>
+    </div>
+  );
 }

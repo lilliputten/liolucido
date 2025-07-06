@@ -1,3 +1,4 @@
+import { TUserRole } from '@/shared/types/db/TUserRole';
 import { Icons } from '@/components/shared/icons';
 import { TRoutePath } from '@/i18n/routing';
 
@@ -9,7 +10,7 @@ export type NavItem = {
   disabled?: boolean;
   external?: boolean;
   userRequiredOnly?: boolean;
-  // authorizedOnly?: UserRole;
+  authorizedOnly?: TUserRole;
   icon?: keyof typeof Icons;
 };
 
@@ -20,8 +21,8 @@ export type MarketingConfig = {
 };
 
 export type SidebarNavItem = {
-  title: string;
+  titleId: string;
   items: NavItem[];
-  authorizeOnly?: UserRole;
+  authorizedOnly?: TUserRole;
   icon?: keyof typeof Icons;
 };

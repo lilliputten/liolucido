@@ -1,14 +1,13 @@
 import { siteConfig } from '@/config/site';
 import { commonXPaddingTwStyle } from '@/config/ui';
 import { cn } from '@/lib/utils';
-import { MaxWidthWrapper } from '@/components/shared/MaxWidthWrapper';
 import { isDev } from '@/constants';
 
 interface SiteFooterProps {
   large?: boolean;
 }
-export function SiteFooter(props: SiteFooterProps) {
-  const { large } = props;
+export function SiteFooter(_props: SiteFooterProps) {
+  // const { large } = props;
   return (
     <div
       className={cn(
@@ -17,10 +16,10 @@ export function SiteFooter(props: SiteFooterProps) {
         'w-full',
         'bg-muted',
         commonXPaddingTwStyle,
-        'justify-center',
+        'max-sm:justify-center',
       )}
     >
-      <MaxWidthWrapper
+      <div // Ex: MaxWidthWrapper
         className={cn(
           'flex',
           'justify-between',
@@ -30,8 +29,9 @@ export function SiteFooter(props: SiteFooterProps) {
           'flex-col',
           'items-center',
           'sm:flex-row',
+          'max-sm:text-center',
         )}
-        large={large}
+        // large={large}
       >
         <div className="flex flex-row items-center gap-3 gap-y-0 max-sm:flex-col">
           <span className="font-normal">{siteConfig.name} </span>
@@ -40,7 +40,7 @@ export function SiteFooter(props: SiteFooterProps) {
         {/* // Right side
         <div className="text-xs">{siteConfig.versionInfo}</div>
         */}
-      </MaxWidthWrapper>
+      </div>
     </div>
   );
 }

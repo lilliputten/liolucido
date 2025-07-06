@@ -22,7 +22,7 @@ interface NavBarProps {
 }
 
 export function NavBar(props: NavBarProps) {
-  const { large, isUser, isUserRequired } = props;
+  const { isUser, isUserRequired } = props;
   const links = siteMenu.mainNav;
   const t = useTranslations('SiteMenu');
   const locale = useLocale() as TLocale;
@@ -38,58 +38,60 @@ export function NavBar(props: NavBarProps) {
         'w-full',
         'bg-primary',
         commonXPaddingTwStyle,
-        'justify-center',
+        'justify-stretch',
         'transition-all',
       )}
     >
-      <MaxWidthWrapper
+      <div // Ex: MaxWidthWrapper
         className={cn(
           // prettier-ignore
+          isDev && '__NavBar_Wrapper', // DEBUG
           'flex',
+          'w-full',
           'items-center',
           'justify-between',
+          // 'max-sm:justify-center',
           'py-2',
           'z-10',
         )}
-        large={large}
+        // large={large}
       >
-        <div className="flex gap-6 md:gap-10">
-          <NavBarBrand isUser={isUser} isUserRequired={isUserRequired} />
-          {links && links.length > 0 ? (
-            <nav className="hidden gap-6 md:flex">
-              {links
-                .filter((item) => !isUserRequired || !item.userRequiredOnly || isUser)
-                .map((item) => {
-                  // Check if it's current item using `getAllRouteSynonyms(item.href, locale)`
-                  const allHrefs = getAllRouteSynonyms(item.href, locale);
-                  const isCurrent = allHrefs.includes(pathname);
-                  const isDisabled = !!item.disabled || isCurrent;
-                  return (
-                    <Link
-                      key={'navbar-' + item.href}
-                      href={item.href}
-                      prefetch
-                      className={cn(
-                        'flex',
-                        'items-center',
-                        'text-lg',
-                        'font-medium',
-                        'transition-all',
-                        'text-primary-foreground/80',
-                        'opacity-100',
-                        'hover:opacity-80',
-                        'sm:text-sm',
-                        isCurrent && 'underline',
-                        isDisabled && 'disabled',
-                      )}
-                    >
-                      {t(item.titleId)}
-                    </Link>
-                  );
-                })}
-            </nav>
-          ) : null}
-        </div>
+        <NavBarBrand isUser={isUser} isUserRequired={isUserRequired} />
+
+        {links && links.length > 0 ? (
+          <nav className="hidden gap-6 md:flex">
+            {links
+              .filter((item) => !isUserRequired || !item.userRequiredOnly || isUser)
+              .map((item) => {
+                // Check if it's current item using `getAllRouteSynonyms(item.href, locale)`
+                const allHrefs = getAllRouteSynonyms(item.href, locale);
+                const isCurrent = allHrefs.includes(pathname);
+                const isDisabled = !!item.disabled || isCurrent;
+                return (
+                  <Link
+                    key={'navbar-' + item.href}
+                    href={item.href}
+                    prefetch
+                    className={cn(
+                      'flex',
+                      'items-center',
+                      'text-lg',
+                      'font-medium',
+                      'transition-all',
+                      'text-primary-foreground/80',
+                      'opacity-100',
+                      'hover:opacity-80',
+                      'sm:text-sm',
+                      isCurrent && 'underline',
+                      isDisabled && 'disabled',
+                    )}
+                  >
+                    {t(item.titleId)}
+                  </Link>
+                );
+              })}
+          </nav>
+        ) : null}
 
         <div
           className={cn(
@@ -122,7 +124,7 @@ export function NavBar(props: NavBarProps) {
           <NavLocaleSwitcher onPrimary />
           <NavUserAuthButton onPrimary />
         </div>
-      </MaxWidthWrapper>
+      </div>
     </header>
   );
 }

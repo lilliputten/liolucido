@@ -104,11 +104,6 @@ export const nextAuthApp = NextAuth({
        *   "trigger": "signIn"
        * }
        */
-      /* console.log('[auth:callbacks:jwt]', {
-       *   token,
-       *   params,
-       * });
-       */
       if (!token.sub) {
         return token;
       }
@@ -119,12 +114,7 @@ export const nextAuthApp = NextAuth({
       token.name = dbUser.name;
       token.email = dbUser.email;
       token.picture = dbUser.image;
-      token.role = dbUser.role;
-      /* console.log('[auth:callbacks:jwt] Updated token', {
-       *   token,
-       *   params,
-       * });
-       */
+      token.role = dbUser.role as UserRole;
       return token;
     },
   } satisfies AuthConfig['callbacks'],

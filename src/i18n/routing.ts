@@ -11,6 +11,18 @@ export const pathnames = {
   '/welcome': '/welcome',
   '/data': '/data',
 
+  '/dashboard/languages': '/dashboard/languages',
+  '/dashboard/wordsSets': '/dashboard/wordsSets',
+  '/dashboard/words': '/dashboard/words',
+  '/admin': '/admin',
+  '/dashboard': '/dashboard',
+  '/dashboard/billing': '/dashboard/billing',
+  '/dashboard/charts': '/dashboard/charts',
+  '/admin/orders': '/admin/orders',
+  '/dashboard/posts': '/dashboard/posts',
+  '/dashboard/settings': '/dashboard/settings',
+  '/docs': '/docs',
+
   // Localized path example (for peoduction mode)
   '/info': isDev
     ? '/info'
