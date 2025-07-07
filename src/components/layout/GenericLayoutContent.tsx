@@ -22,12 +22,14 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
 
   const [open, setOpen] = React.useState(false);
 
-  const filteredLinks = sidebarLinks.map((section) => ({
-    ...section,
-    items: section.items.filter(
-      ({ authorizedOnly }) => !authorizedOnly || authorizedOnly === user?.role,
-    ),
-  }));
+  const filteredLinks = sidebarLinks
+    .filter(({ authorizedOnly }) => !authorizedOnly || authorizedOnly === user?.role)
+    .map((section) => ({
+      ...section,
+      items: section.items.filter(
+        ({ authorizedOnly }) => !authorizedOnly || authorizedOnly === user?.role,
+      ),
+    }));
 
   return (
     <div

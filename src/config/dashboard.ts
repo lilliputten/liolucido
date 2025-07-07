@@ -27,17 +27,18 @@ export const sidebarLinks: SidebarNavItem[] = [
         icon: 'laptop',
         titleId: 'Admin Panel',
         authorizedOnly: UserRoles.ADMIN,
+        disabled: true,
       },
-      { href: dashboardRoute, icon: 'dashboard', titleId: 'Dashboard' },
-      { href: chartsRoute, icon: 'lineChart', titleId: 'Charts' },
+      { href: dashboardRoute, icon: 'dashboard', titleId: 'Dashboard', disabled: true },
+      { href: chartsRoute, icon: 'lineChart', titleId: 'Charts', disabled: true },
     ],
   },
   {
     titleId: 'Options',
     items: [
-      { href: settingsRoute, icon: 'settings', titleId: 'Settings' },
+      { href: settingsRoute, icon: 'settings', titleId: 'Settings', disabled: true },
       { href: rootRoute, icon: 'home', titleId: 'Homepage' },
-      // { href: '/docs', icon: 'bookOpen', titleId: 'Documentation' },
+      { href: rootRoute, icon: 'bookOpen', titleId: 'Documentation', disabled: true },
       {
         href: rootRoute,
         icon: 'messages',

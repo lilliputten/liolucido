@@ -11,6 +11,7 @@ interface TPageWrapperProps extends TPropsWithChildrenAndClassName {
   innerClassName?: string;
   scrollable?: boolean;
   limitWidth?: boolean;
+  padded?: boolean;
   layoutType?: TLayoutType;
 }
 
@@ -20,6 +21,7 @@ export function PageWrapper(props: TPageWrapperProps) {
     children,
     scrollable,
     limitWidth,
+    padded,
     layoutType = 'clippable',
     innerClassName,
   } = props;
@@ -31,11 +33,7 @@ export function PageWrapper(props: TPageWrapperProps) {
       className={cn(
         isDev && '__PageWrapper_InnerWrapper', // DEBUG
         'flex flex-1 flex-col',
-        // 'flex flex-1 flex-col", // items-center justify-center',
         innerClassName,
-        // 'justify-center',
-        // 'layout-follow',
-        // 'layout-scrollable',
       )}
     >
       {content}
@@ -48,8 +46,6 @@ export function PageWrapper(props: TPageWrapperProps) {
         className={cn(
           isDev && '__PageWrapper_Scroll', // DEBUG
           'flex flex-col items-center',
-          // 'justify-center',
-          // 'layout-follow',
           'layout-scrollable',
         )}
       >
@@ -78,8 +74,7 @@ export function PageWrapper(props: TPageWrapperProps) {
       className={cn(
         isDev && '__PageWrapper', // DEBUG
         'flex flex-1 flex-col items-center',
-        // 'layout-follow',
-        commonXPaddingTwStyle,
+        padded && commonXPaddingTwStyle,
         className,
       )}
     >

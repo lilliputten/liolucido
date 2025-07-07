@@ -3,7 +3,6 @@ import { TRoutePath } from '@/config/routesConfig';
 import { Icons } from '@/components/shared/icons';
 
 export type NavItem = {
-  // title: string;
   titleId: string; // Id for i18n
   href: TRoutePath;
   badge?: number;
