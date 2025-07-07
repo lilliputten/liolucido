@@ -20,11 +20,13 @@ import yamlParser from 'yaml-eslint-parser';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const defaultJsRules = {
-  ...pluginJs.configs.recommended.rules,
-  semi: ['warn', 'always'],
+const commonJsRules = {
   'no-console': 'warn',
   'no-debugger': 'warn',
+};
+
+const defaultJsRules = {
+  semi: ['warn', 'always'],
   'no-extra-semi': 'warn',
   'no-redeclare': 'warn',
   'no-undef': 'error',
@@ -63,7 +65,9 @@ export default [
       },
     },
     rules: {
+      ...pluginJs.configs.recommended.rules,
       ...defaultJsRules,
+      ...commonJsRules,
     },
   },
 
@@ -79,6 +83,7 @@ export default [
       // ...tailwindcssPlugin.configs.recommended.rules,
       // 'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
       ...pluginReactHooks.configs.recommended.rules,
+      ...commonJsRules,
     },
   },
 
@@ -98,6 +103,7 @@ export default [
       // ...defaultJsRules,
       ...pluginJs.configs.recommended.rules,
       ...pluginReact.configs.recommended.rules,
+      ...commonJsRules,
       'react/react-in-jsx-scope': 'off',
     },
   },
@@ -126,13 +132,14 @@ export default [
       ...pluginJs.configs.recommended.rules,
       // ...defaultJsRules,
       ...tsPlugin.configs.recommended.rules,
+      ...commonJsRules,
+      'no-undef': 'off', // Disable for TypeScript files - TypeScript handles this
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'no-constant-binary-expression': 'off',
-      'no-undef': 'off', // Disable for TypeScript files - TypeScript handles this
     },
   },
 
@@ -150,7 +157,7 @@ export default [
       },
     },
     rules: {
-      // ...defaultJsRules,
+      ...commonJsRules,
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
@@ -164,7 +171,7 @@ export default [
       },
     },
     rules: {
-      // ...defaultJsRules,
+      ...commonJsRules,
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
@@ -173,7 +180,7 @@ export default [
   {
     files: ['src/**/*.{js,ts}'],
     rules: {
-      // ...defaultJsRules,
+      ...commonJsRules,
       'no-unused-vars': 'off',
     },
   },
