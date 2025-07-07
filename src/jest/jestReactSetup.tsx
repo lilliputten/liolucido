@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { pathnames } from '@/constants/routes';
+import { pathnames } from '@/config/routesConfig';
 
 jest.mock('next-intl', () => ({
   useLocale() {

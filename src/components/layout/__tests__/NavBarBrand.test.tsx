@@ -13,7 +13,7 @@ import { NavBarBrand } from '../NavBarBrand';
 describe('NavBarBrand', () => {
   it('renders a heading', () => {
     try {
-      render(<NavBarBrand isUser={false} isUserRequired={false} />);
+      render(<NavBarBrand isUser={false} />);
       const titleNode = screen.getByTestId('NavBarBrandTitle');
       expect(titleNode).toBeInTheDocument();
     } catch (error) {

@@ -11,20 +11,19 @@ import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
 import { NavBarBrand } from '@/components/layout/NavBarBrand';
 import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
-import { isDev } from '@/constants';
+import { isDev, isUserRequired } from '@/constants';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
 interface NavBarProps {
   large?: boolean;
   isUser: boolean;
-  isUserRequired: boolean;
   open: boolean;
   setOpen: (p: boolean) => void;
 }
 
 export function NavBar(props: NavBarProps) {
-  const { isUser, isUserRequired, open, setOpen } = props;
+  const { isUser, open, setOpen } = props;
   const links = siteMenu.mainNav;
   const t = useTranslations('SiteMenu');
   const locale = useLocale() as TLocale;
@@ -58,7 +57,7 @@ export function NavBar(props: NavBarProps) {
         )}
         // large={large}
       >
-        <NavBarBrand isUser={isUser} isUserRequired={isUserRequired} />
+        <NavBarBrand isUser={isUser} />
 
         {links && links.length > 0 ? (
           <nav className="hidden gap-6 md:flex">

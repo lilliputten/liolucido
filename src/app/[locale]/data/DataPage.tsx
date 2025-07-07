@@ -20,9 +20,9 @@ export async function generateMetadata({ params }: TAwaitedLocaleProps) {
 export async function DataPage({ params }: TDataPageProps) {
   const { locale } = await params;
 
-  /* // NOTE: Checking USER_REQUIRED or existed user session
+  /* // NOTE: Checking NEXT_PUBLIC_USER_REQUIRED or existed user session
    * const user = await getCurrentUser();
-   * if (!user && env.USER_REQUIRED) {
+   * if (!user && env.NEXT_PUBLIC_USER_REQUIRED) {
    *   redirect(welcomeRoute);
    * }
    */

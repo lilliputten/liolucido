@@ -6,6 +6,7 @@ import { signIn, SignInAuthorizationParams, SignInOptions } from 'next-auth/reac
 import { useLocale, useTranslations } from 'next-intl';
 
 import { envClient } from '@/env/envClient';
+import { dataRoute } from '@/config/routesConfig';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,6 @@ import { ModalContext } from '@/components/modals/providers';
 import { Icons, IconType } from '@/components/shared/icons';
 import { Logo } from '@/components/shared/Logo';
 import { isDev } from '@/constants';
-import { dataRoute } from '@/constants/routes';
 import { TLocale } from '@/i18n/types';
 
 type TSignInParameters = Parameters<typeof signIn>;

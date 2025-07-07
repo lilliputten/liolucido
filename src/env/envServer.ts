@@ -11,7 +11,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   NEXTAUTH_URL: z.string().url().optional(),
   RESEND_API_KEY: z.string().min(1),
-  USER_REQUIRED: z.enum(['true', 'false']).transform((v) => v === 'true'), // z.boolean(),
+  NEXT_PUBLIC_USER_REQUIRED: z.enum(['true', 'false']).transform((v) => v === 'true'), // z.boolean(),
   YANDEX_CLIENT_ID: z.string().min(1),
   YANDEX_CLIENT_SECRET: z.string().min(1),
 });
@@ -40,6 +40,6 @@ export type TAppEnv = z.infer<typeof envSchema>;
 // export const GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
 // export const NEXTAUTH_URL = env.NEXTAUTH_URL;
 // export const RESEND_API_KEY = env.RESEND_API_KEY;
-// export const USER_REQUIRED = env.USER_REQUIRED;
+// export const NEXT_PUBLIC_USER_REQUIRED = env.NEXT_PUBLIC_USER_REQUIRED;
 // export const YANDEX_CLIENT_ID = env.YANDEX_CLIENT_ID;
 // export const YANDEX_CLIENT_SECRET = env.YANDEX_CLIENT_SECRET;

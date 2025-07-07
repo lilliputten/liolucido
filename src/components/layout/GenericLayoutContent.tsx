@@ -13,12 +13,11 @@ import { TExtendedUser } from '@/features/users/types/TUser';
 import { DashboardSidebar, MobileSheetSidebar, MobileSheetWrapper } from './DashboardSidebar';
 
 interface TGenericLayoutContentProps extends TPropsWithChildren {
-  isUserRequired: boolean;
   user?: TExtendedUser;
 }
 
 export function GenericLayoutContent(props: TGenericLayoutContentProps) {
-  const { children, user, isUserRequired } = props;
+  const { children, user } = props;
   const isUser = !!user;
 
   const [open, setOpen] = React.useState(false);
@@ -41,12 +40,12 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
     >
       {/*
       <DashboardSidebar links={filteredLinks} />
-      <NavMobile isUser={isUser} isUserRequired={isUserRequired} />
+      <NavMobile isUser={isUser} />
       */}
       <MobileSheetWrapper open={open} setOpen={setOpen}>
         <MobileSheetSidebar links={filteredLinks} open={open} setOpen={setOpen} />
       </MobileSheetWrapper>
-      <NavBar isUser={isUser} isUserRequired={isUserRequired} open={open} setOpen={setOpen} />
+      <NavBar isUser={isUser} open={open} setOpen={setOpen} />
       <div
         className={cn(
           isDev && '__GenericLayout_HLayout', // DEBUG
@@ -55,7 +54,7 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
         )}
       >
         {/*
-        <NavMobile isUser={isUser} isUserRequired={isUserRequired} />
+        <NavMobile isUser={isUser} />
         */}
         <DashboardSidebar links={filteredLinks} />
         {children}

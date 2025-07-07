@@ -13,17 +13,16 @@ import { Button } from '@/components/ui/button';
 import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
 import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
-import { isDev } from '@/constants';
+import { isDev, isUserRequired } from '@/constants';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
 interface NavMobileProps {
   isUser: boolean;
-  isUserRequired: boolean;
 }
 
 export function NavMobile(props: NavMobileProps) {
-  const { isUser, isUserRequired } = props;
+  const { isUser } = props;
   const [open, setOpen] = React.useState(false);
   const selectedLayout = useSelectedLayoutSegment();
   const isDocs = selectedLayout === 'docs';

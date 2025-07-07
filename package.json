@@ -168,6 +168,7 @@
     "prisma-generate": "echo --Generate database client-- && node prisma-switch.mjs && prisma generate",
     "prisma-db-push": "echo --Create database-- && prisma db push",
     "prisma-db-push-test": "echo --Create test database-- && cross-env DATABASE_URL='file:.data/test.db' prisma db push",
+    "prisma-db-push-all": "echo --Create all databases-- && npm-run-all prisma-db-push prisma-db-push-test",
     "prisma-studio": "echo --Run database explorer-- && prisma studio",
     "husky-init": "husky init",
     "postinstall": "pnpm run prisma-generate && pnpm run prisma-db-push",
