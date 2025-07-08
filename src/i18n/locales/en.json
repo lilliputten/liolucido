@@ -1,4 +1,8 @@
 {
+  "MyTopicsPage": {
+    "title": "My Topics",
+    "description": "Topics created by me"
+  },
   "BotMenu": {
     "status": "Check your status",
     "start": "Start",

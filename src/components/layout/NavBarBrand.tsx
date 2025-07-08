@@ -20,7 +20,7 @@ interface NavBarBrandProps {
 function BrandWrapper(props: TPropsWithChildrenAndClassName & NavBarBrandProps) {
   const { isUser, children, className: parentClassName } = props;
   const locale = useLocale() as TLocale;
-  const pathname = decodeURI(usePathname());
+  const pathname = decodeURI(usePathname() || '');
   const rootRoute = isUser ? infoRoute : welcomeRoute;
   const rootRoutesList = getAllRouteSynonyms(rootRoute, locale);
   const isRoot = !pathname || rootRoutesList.includes(pathname);

@@ -1,7 +1,6 @@
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
-import { commonXPaddingTwStyle } from '@/config/ui';
 import { cn } from '@/lib/utils';
 import { MaxWidthWrapper } from '@/components/shared/MaxWidthWrapper';
 import { TLayoutType, UseScrollableLayout } from '@/components/shared/ScrollableLayout';
@@ -12,6 +11,7 @@ interface TPageWrapperProps extends TPropsWithChildrenAndClassName {
   scrollable?: boolean;
   limitWidth?: boolean;
   padded?: boolean;
+  vPadded?: boolean;
   layoutType?: TLayoutType;
 }
 
@@ -22,6 +22,7 @@ export function PageWrapper(props: TPageWrapperProps) {
     scrollable,
     limitWidth,
     padded,
+    vPadded,
     layoutType = 'clippable',
     innerClassName,
   } = props;
@@ -33,6 +34,7 @@ export function PageWrapper(props: TPageWrapperProps) {
       className={cn(
         isDev && '__PageWrapper_InnerWrapper', // DEBUG
         'flex flex-1 flex-col',
+        !scrollable && 'overflow-hidden',
         innerClassName,
       )}
     >
@@ -74,7 +76,8 @@ export function PageWrapper(props: TPageWrapperProps) {
       className={cn(
         isDev && '__PageWrapper', // DEBUG
         'flex flex-1 flex-col items-center',
-        padded && commonXPaddingTwStyle,
+        padded && 'mx-4', // commonXMarginTwStyle,
+        vPadded && 'my-4', // commonYMarginTwStyle,
         className,
       )}
     >

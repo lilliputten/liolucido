@@ -5,9 +5,9 @@ import {
   adminRoute,
   chartsRoute,
   dashboardRoute,
+  myTopicsRoute,
   rootRoute,
   settingsRoute,
-  topicsRoute,
 } from './routesConfig';
 
 export const sidebarLinks: SidebarNavItem[] = [
@@ -16,9 +16,10 @@ export const sidebarLinks: SidebarNavItem[] = [
     authorizedOnly: UserRoles.USER,
     items: [
       // Other links?
-      { href: topicsRoute, icon: 'lineChart', titleId: 'Topics' },
+      { href: myTopicsRoute, icon: 'lineChart', titleId: 'My Topics' },
     ],
   },
+  // All available topics list
   {
     titleId: 'Application',
     items: [

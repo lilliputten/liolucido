@@ -97,10 +97,11 @@ model Topic {
   // Unique id
   id Int @id @default(autoincrement())
 
-  isCorrect   Boolean @default(false) @map("is_correct")
-  isGenerated Boolean @default(false) @map("is_generated")
-
   name     String
+
+  isCorrect   Boolean? @map("is_correct")
+  isGenerated Boolean? @map("is_generated")
+
   keywords String?
   language String?
 

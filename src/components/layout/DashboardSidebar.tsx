@@ -222,7 +222,7 @@ export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren
       </Sheet>
     );
   }
-  return <div className="flex size-9 animate-pulse rounded-lg bg-muted md:hidden" />;
+  // return <div className="flex size-9 animate-pulse rounded-lg bg-muted md:hidden" />;
 }
 
 export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetProps) {
