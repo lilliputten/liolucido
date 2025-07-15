@@ -6,7 +6,7 @@ export const infoRoute = '/info';
 export const myTopicsRoute = '/my-topics';
 export const rootRoute = '/';
 export const settingsRoute = '/settings';
-export const topicsRoute = '/topics';
+// export const topicsRoute = '/topics';
 export const welcomeRoute = '/welcome';
 
 /** NOTE: That's used only to mock real intl context */
@@ -19,7 +19,7 @@ export const pathnames = {
   [myTopicsRoute]: myTopicsRoute,
   [rootRoute]: rootRoute,
   [settingsRoute]: settingsRoute,
-  [topicsRoute]: topicsRoute,
+  // [topicsRoute]: topicsRoute,
   [welcomeRoute]: welcomeRoute,
 };
 

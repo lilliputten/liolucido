@@ -16,10 +16,11 @@ import { NavUserAccount } from './NavUserAccount';
 
 interface TNavAuthButtonProps extends TPropsWithClassName {
   onPrimary?: boolean;
+  isUser?: boolean;
 }
 
 export function NavUserAuthButton(props: TNavAuthButtonProps) {
-  const { onPrimary, className } = props;
+  const { onPrimary, isUser, className } = props;
   const { data: session, status } = useSession();
   const { setShowSignInModal } = useContext(ModalContext);
   const t = useTranslations('NavAuthButton');
@@ -30,6 +31,8 @@ export function NavUserAuthButton(props: TNavAuthButtonProps) {
     // isPending && 'transition-opacity [&:disabled]:opacity-30',
   );
 
+  const hasValidUser = !!isUser && !!session && status === 'authenticated';
+
   return (
     <div
       className={cn(
@@ -39,11 +42,13 @@ export function NavUserAuthButton(props: TNavAuthButtonProps) {
         'items-center',
       )}
     >
-      {session ? (
+      {hasValidUser ? (
         <>
           <NavUserAccount onPrimary={onPrimary} />
         </>
-      ) : status === 'unauthenticated' ? (
+      ) : status === 'loading' ? (
+        <Skeleton className="h-9 w-28 rounded-full lg:flex" />
+      ) : (
         <Button
           className="gap-2 px-5 md:flex"
           variant={onPrimary ? 'ghostOnPrimary' : 'ghost'}
@@ -53,8 +58,6 @@ export function NavUserAuthButton(props: TNavAuthButtonProps) {
           <span>{t('sign-in')}</span>
           <Icons.arrowRight className="size-4" />
         </Button>
-      ) : (
-        <Skeleton className="h-9 w-28 rounded-full lg:flex" />
       )}
     </div>
   );

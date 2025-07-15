@@ -33,7 +33,8 @@ export async function MyTopicsPage({ params }: TMyTopicsPageProps) {
   const user = await getCurrentUser();
   const userId = user?.id;
   // TODO: Check also if the user really exists in the database>
-  if (!userId || !checkIfUserExists(userId)) {
+  const isValidUser = !!userId && (await checkIfUserExists(userId));
+  if (!isValidUser) {
     redirect(welcomeRoute);
   }
 

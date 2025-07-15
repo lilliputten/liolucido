@@ -3,6 +3,7 @@ import 'server-only';
 import { cache } from 'react';
 
 import { auth } from '@/auth';
+import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TOptionalExtendedUser } from '@/features/users/types/TUser';
 
 /** Server: Get user data from auth data.
@@ -10,8 +11,15 @@ import { TOptionalExtendedUser } from '@/features/users/types/TUser';
  */
 export const getCurrentUser = cache<() => Promise<TOptionalExtendedUser>>(async () => {
   const session = await auth();
-  if (!session?.user) {
+  const user = session?.user;
+  if (!user) {
     return undefined;
   }
-  return session.user;
+  const userId = user.id;
+  // TODO: Check also if the user really exists in the database>
+  const isValidUser = !!userId && (await checkIfUserExists(userId));
+  if (!isValidUser) {
+    return undefined;
+  }
+  return user;
 });

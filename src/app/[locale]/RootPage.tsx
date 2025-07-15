@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
-import { dataRoute, welcomeRoute } from '@/config/routesConfig';
+import { myTopicsRoute, welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { TAwaitedLocaleProps } from '@/i18n/types';
@@ -21,6 +21,6 @@ export async function RootPage() {
   if (!user) {
     redirect(welcomeRoute);
   } else {
-    redirect(dataRoute);
+    redirect(myTopicsRoute);
   }
 }

@@ -123,7 +123,7 @@ export function NavBar(props: NavBarProps) {
           */}
           <NavModeToggle onPrimary />
           <NavLocaleSwitcher onPrimary />
-          <NavUserAuthButton onPrimary />
+          <NavUserAuthButton isUser={isUser} onPrimary />
         </div>
 
         {/* Mobile panel toggler icon */}
