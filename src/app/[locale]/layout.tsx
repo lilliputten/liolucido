@@ -92,7 +92,32 @@ async function RootLayout(props: TRootLayoutProps) {
             >
               <ModalProvider>
                 {/* NOTE: The toaster should be locatred before the content */}
-                <Toaster richColors closeButton />
+                <Toaster
+                  // @see https://sonner.emilkowal.ski/toaster#api-reference
+                  expand
+                  richColors
+                  closeButton
+                  // invert?: boolean;
+                  // theme?: 'light' | 'dark' | 'system';
+                  // position?: Position;
+                  // hotkey?: string[];
+                  // richColors?: boolean;
+                  // expand?: boolean;
+                  // duration?: number;
+                  // gap?: number;
+                  // visibleToasts?: number;
+                  // closeButton?: boolean;
+                  // toastOptions?: ToastOptions;
+                  // className?: string;
+                  // style?: React.CSSProperties;
+                  // offset?: Offset;
+                  // mobileOffset?: Offset;
+                  // dir?: 'rtl' | 'ltr' | 'auto';
+                  // swipeDirections?: SwipeDirection[];
+                  // icons?: ToastIcons;
+                  // containerAriaLabel?: string;
+                  // pauseWhenPageIsHidden?: boolean;
+                />
                 <GenericLayout>
                   {/* Core content */}
                   {children}

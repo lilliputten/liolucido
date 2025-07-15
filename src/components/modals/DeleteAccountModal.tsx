@@ -45,8 +45,8 @@ function DeleteAccountModal({
 
   return (
     <Modal
-      showModal={showDeleteAccountModal}
-      setShowModal={setShowDeleteAccountModal}
+      isVisible={showDeleteAccountModal}
+      toggleModal={setShowDeleteAccountModal}
       className="gap-0"
     >
       <div className="flex flex-col items-center justify-center space-y-3 border-b p-4 pt-8 sm:px-16">

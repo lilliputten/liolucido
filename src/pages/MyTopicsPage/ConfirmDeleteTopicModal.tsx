@@ -5,18 +5,19 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
+import { TTopic } from '@/features/topics/types';
 
-import { AddTopicForm, TAddTopicFormProps } from './AddTopicForm';
+import { ConfirmDeleteTopicForm, TConfirmDeleteTopicFormProps } from './ConfirmDeleteTopicForm';
 
-interface TAddTopicModalProps {
-  isVisible: boolean;
+interface TConfirmDeleteTopicModalProps {
+  deletingTopic?: TTopic;
   hideModal: () => void;
-  handleAddTopic: TAddTopicFormProps['handleAddTopic']; // (p: TAddTopicParams) => Promise<unknown>;
+  handleConfirm: TConfirmDeleteTopicFormProps['handleConfirm'];
 }
 
-// TODO: To check if the topic with an entered name is existed
-export function AddTopicModal(props: TAddTopicModalProps) {
-  const { isVisible, hideModal, handleAddTopic } = props;
+export function ConfirmDeleteTopicModal(props: TConfirmDeleteTopicModalProps) {
+  const { deletingTopic, hideModal, handleConfirm } = props;
+  const isVisible = !!deletingTopic;
   const [isPending, setPending] = React.useState(false);
   const { isMobile } = useMediaQuery();
   return (
@@ -24,32 +25,36 @@ export function AddTopicModal(props: TAddTopicModalProps) {
       isVisible={isVisible}
       hideModal={hideModal}
       className={cn(
-        isDev && '__AddTopicModal', // DEBUG
+        isDev && '__ConfirmDeleteTopicModal', // DEBUG
         'gap-0',
         isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div
         className={cn(
-          isDev && '__AddTopicModal_Header', // DEBUG
+          isDev && '__ConfirmDeleteTopicModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
           'flex flex-col border-b bg-accent px-8 py-4',
         )}
       >
-        <DialogTitle className="DialogTitle">Add Topic</DialogTitle>
+        <DialogTitle className="DialogTitle">Delete Topic?</DialogTitle>
         <DialogDescription aria-hidden="true" hidden>
-          Add topic dialog
+          Delete topic dialog
         </DialogDescription>
       </div>
       <div
         className={cn(
-          isDev && '__AddTopicModal_Body', // DEBUG
+          isDev && '__ConfirmDeleteTopicModal_Body', // DEBUG
           'flex flex-col px-8 py-4',
         )}
       >
-        <AddTopicForm
-          handleAddTopic={handleAddTopic}
-          className={cn('__AddTopicModal__Form', 'p-8')}
+        <ConfirmDeleteTopicForm
+          name={deletingTopic?.name || ''}
+          handleConfirm={handleConfirm}
+          className={cn(
+            isDev && '__ConfirmDeleteTopicModal__Form', // DEBUG
+            'p-8',
+          )}
           forwardPending={setPending}
           handleClose={hideModal}
         />

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { X } from 'lucide-react';
@@ -14,10 +14,11 @@ import { isDev } from '@/constants';
 interface ModalProps {
   children: React.ReactNode;
   className?: string;
-  showModal?: boolean;
-  // setShowModal?: (v: boolean) => void; // Dispatch<SetStateAction<boolean>>;
-  setShowModal?: Dispatch<SetStateAction<boolean>>;
-  onClose?: () => void;
+  isVisible?: boolean;
+  // NOTE: It's possible to use any of these forms: toggleModal or hideModal (it will only close action from inside the modal component)
+  hideModal?: () => void;
+  toggleModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  // toggleModal?: (v: boolean) => void; // toggleModal?: Dispatch<SetStateAction<boolean>>;
   desktopOnly?: boolean;
   preventDefaultClose?: boolean;
   title?: string;
@@ -28,28 +29,26 @@ interface ModalProps {
 export function Modal({
   children,
   className,
-  showModal,
-  setShowModal,
-  onClose,
+  isVisible,
+  toggleModal,
+  hideModal,
   desktopOnly,
   preventDefaultClose,
   title,
   hiddenTitle,
   description,
 }: ModalProps) {
-  // const router = useRouter();
-
   const closeModal = ({ dragged }: { dragged?: boolean } = {}) => {
     if (preventDefaultClose && !dragged) {
       return;
     }
-    // fire onClose event if provided
+    // fire hideModal event if provided
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    onClose && onClose();
+    hideModal && hideModal();
 
-    // if setShowModal is defined, use it to close modal
-    if (setShowModal) {
-      setShowModal(false);
+    // if toggleModal is defined, use it to close modal
+    if (toggleModal) {
+      toggleModal(false);
     }
   };
   const { isMobile } = useMediaQuery();
@@ -57,7 +56,7 @@ export function Modal({
   if (isMobile && !desktopOnly) {
     return (
       <Drawer.Root
-        open={setShowModal ? showModal : true}
+        open={hideModal || toggleModal ? isVisible : true}
         onOpenChange={(open) => {
           if (!open) {
             closeModal({ dragged: true });
@@ -100,7 +99,7 @@ export function Modal({
 
   return (
     <Dialog
-      open={setShowModal ? showModal : true}
+      open={hideModal || toggleModal ? isVisible : true}
       onOpenChange={(open) => {
         if (!open) {
           closeModal();

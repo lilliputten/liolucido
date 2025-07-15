@@ -45,7 +45,7 @@ export async function MyTopicsPage({ params }: TMyTopicsPageProps) {
     const topics: TTopic[] | undefined = await getAllTopics();
     // throw new Error('Sample error');
     // return <MyTopicsLoading />;
-    /*
+    /* // DEMO: Error sample?
      * return (
      *   <MyTopicsPageWrapper inError>
      *     <PageError error="Test Error" />
