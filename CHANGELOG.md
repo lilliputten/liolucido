@@ -17,4 +17,3 @@ See also:
 ## [v.0.0.0](https://github.com/lilliputten/trainwizzz/releases/tag/v.0.0.0) - 2025.07.05
 
 - Created initial project.
-

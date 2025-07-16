@@ -1,61 +1,23 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 
-import { myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { WaitingWrapper } from '@/components/ui/WaitingWrapper';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
-import { ContentSkeleton } from './ContentSkeleton';
 import { MyTopicsListTable } from './MyTopicsListTable';
 import { PageEmpty } from './PageEmpty';
 
 interface TTopicsListProps {
-  showAddModal?: boolean;
-  deleteTopicId?: TTopicId;
-}
-
-interface TMemo {
-  isUpdating?: boolean;
+  openDeleteTopicModal: (topicId: TTopicId) => void;
+  openAddTopicModal: () => void;
 }
 
 export function MyTopicsList(props: TTopicsListProps) {
-  const router = useRouter();
-  const { showAddModal, deleteTopicId } = props;
+  const { openDeleteTopicModal, openAddTopicModal } = props;
   const { topics } = useTopicsContext();
-
-  const openDeleteTopicModal = React.useCallback(
-    (topicId: TTopicId) => {
-      router.push(`${myTopicsRoute}/delete?id=${topicId}`);
-    },
-    [router],
-  );
-
-  const openAddTopicModal = React.useCallback(() => router.push(myTopicsRoute + '/add'), [router]);
-
-  React.useEffect(() => {
-    if (showAddModal) {
-      openAddTopicModal();
-    }
-  }, [showAddModal, openAddTopicModal]);
-  React.useEffect(() => {
-    if (deleteTopicId) {
-      openDeleteTopicModal(deleteTopicId);
-    }
-  }, [deleteTopicId, openDeleteTopicModal]);
-
-  const [isUpdating, _startUpdating] = React.useTransition(); // ???
-
-  const memo = React.useMemo<TMemo>(() => ({}), []);
-
-  // Effect: Update memo data
-  React.useEffect(() => {
-    memo.isUpdating = isUpdating;
-  }, [memo, isUpdating]);
 
   const hasTopics = !!topics.length;
 
@@ -79,7 +41,6 @@ export function MyTopicsList(props: TTopicsListProps) {
             )}
             topics={topics}
             handleDeleteTopic={openDeleteTopicModal}
-            // handleAddTopic={() => toggleAddTopicModal(true)}
             handleAddTopic={openAddTopicModal}
           />
         </>
@@ -92,9 +53,11 @@ export function MyTopicsList(props: TTopicsListProps) {
           description="You dont have any topics yet. Add any topic to your profile."
         />
       )}
+      {/*
       <WaitingWrapper show={isUpdating}>
         <ContentSkeleton />
       </WaitingWrapper>
+      */}
     </div>
   );
 }

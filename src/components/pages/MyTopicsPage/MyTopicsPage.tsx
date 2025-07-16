@@ -1,6 +1,6 @@
 import { TTopicId } from '@/features/topics/types';
 
-import { MyTopicsList } from './MyTopicsList';
+import { MyTopicsPageModalsWrapper } from './MyTopicsPageModalsWrapper';
 
 interface MyTopicsPageProps {
   showAddModal?: boolean;
@@ -8,5 +8,5 @@ interface MyTopicsPageProps {
 }
 
 export async function MyTopicsPage({ showAddModal, deleteTopicId }: MyTopicsPageProps = {}) {
-  return <MyTopicsList showAddModal={showAddModal} deleteTopicId={deleteTopicId} />;
+  return <MyTopicsPageModalsWrapper showAddModal={showAddModal} deleteTopicId={deleteTopicId} />;
 }
