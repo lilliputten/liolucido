@@ -1,5 +1,5 @@
+import { ConfirmDeleteTopicModal } from '@/components/pages/MyTopicsPage/ConfirmDeleteTopicModal';
 import { TTopicId } from '@/features/topics/types';
-import { ConfirmDeleteTopicModal } from '@/pages/MyTopicsPage/ConfirmDeleteTopicModal';
 
 interface DeleteTopicModalPageProps {
   searchParams: Promise<{ id?: string }>;

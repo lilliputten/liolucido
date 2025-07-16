@@ -1,6 +1,6 @@
 'use client';
 
-import { AddTopicModal } from '@/pages/MyTopicsPage/AddTopicModal';
+import { AddTopicModal } from '@/components/pages/MyTopicsPage/AddTopicModal';
 
 export default function AddTopicModalPage() {
   return <AddTopicModal />;

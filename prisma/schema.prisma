@@ -9,7 +9,7 @@ generator client {
 
 // provider = "sqlite" | "postgresql", see 'prisma-switch.mjs'
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

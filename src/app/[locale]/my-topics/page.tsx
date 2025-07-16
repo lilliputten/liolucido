@@ -1,7 +1,7 @@
 import {
   //  generateMetadata,
   MyTopicsPage,
-} from '@/pages/MyTopicsPage/MyTopicsPage';
+} from '@/components/pages/MyTopicsPage/MyTopicsPage';
 
 // export const dynamic = 'force-dynamic';
 

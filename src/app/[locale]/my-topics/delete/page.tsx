@@ -1,5 +1,5 @@
+import { MyTopicsPage } from '@/components/pages/MyTopicsPage/MyTopicsPage';
 import { TTopicId } from '@/features/topics/types';
-import { MyTopicsPage } from '@/pages/MyTopicsPage/MyTopicsPage';
 
 interface DeleteTopicPageProps {
   searchParams: Promise<{ id: string }>;

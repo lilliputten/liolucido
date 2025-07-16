@@ -1,4 +1,4 @@
-import { generateMetadata, MyTopicsLayout } from '@/pages/MyTopicsPage/MyTopicsLayout';
+import { generateMetadata, MyTopicsLayout } from '@/components/pages/MyTopicsPage/MyTopicsLayout';
 
 // export const dynamic = 'force-dynamic';
 
