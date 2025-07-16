@@ -84,8 +84,8 @@ model VerificationToken {
 
 // Telegram user session
 model TelegramSession {
-  id    Int    @id @default(autoincrement())
-  key   String @unique
+  // id    Int    @id @default(autoincrement())
+  key   String @id @unique
   value String // Session data in json string
 
   @@map("telegram_session")
@@ -105,6 +105,9 @@ model Topic {
   keywords String?
   language String?
 
+  topicsCountRandom Boolean? @map("topics_count_random")
+  topicsCountMin    Int?     @map("topics_count_min")
+  topicsCountMax    Int?     @map("topics_count_max")
   topicsCountRandom Boolean? @map("topics_count_random")
   topicsCountMin    Int?     @map("topics_count_min")
   topicsCountMax    Int?     @map("topics_count_max")
@@ -130,9 +133,9 @@ model Question {
   // Custom text
   text String
 
-  answersCountRandom Boolean?
-  answersCountMin    Int?
-  answersCountMax    Int?
+  answersCountRandom Boolean? @map("answers_count_random")
+  answersCountMin    Int?     @map("answers_count_min")
+  answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
@@ -165,7 +168,7 @@ model Answer {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  questionId Int
+  questionId Int      @map("question_id")
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@index([questionId])
