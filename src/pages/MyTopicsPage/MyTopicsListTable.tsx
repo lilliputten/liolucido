@@ -15,11 +15,11 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { TTopic } from '@/features/topics/types';
+import { TTopic, TTopicId } from '@/features/topics/types';
 
 interface TMyTopicsListTableProps extends TPropsWithClassName {
   topics: TTopic[];
-  handleDeleteTopic: (topic: TTopic) => void;
+  handleDeleteTopic: (topicId: TTopicId) => void;
   handleAddTopic: () => void; // React.Dispatch<React.SetStateAction<void>>;
 }
 type TChildProps = Omit<TMyTopicsListTableProps, 'className'>;
@@ -86,9 +86,10 @@ function TopicTableHeader() {
   );
 }
 
+// type TTopicTableRowProps = Pick<TMyTopicsListTableProps, 'topic' | 'handleDeleteTopic'>;
 interface TTopicTableRowProps {
   topic: TTopic;
-  handleDeleteTopic: (topic: TTopic) => void;
+  handleDeleteTopic: TMyTopicsListTableProps['handleDeleteTopic']; // (topicId: TTopicId) => void;
 }
 
 function TopicTableRow(props: TTopicTableRowProps) {
@@ -124,7 +125,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             variant="ghost"
             size="icon"
             className="size-9 shrink-0"
-            onClick={() => handleDeleteTopic(topic)}
+            onClick={() => handleDeleteTopic(topic.id)}
             aria-label="Delete"
             title="Delete"
           >

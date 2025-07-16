@@ -6,6 +6,7 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
   if (!err) {
     return '';
   }
+  // Error object
   if (err instanceof Error) {
     // return String(err);
     return [
@@ -15,6 +16,10 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
     ]
       .filter(Boolean)
       .join(': ');
+  }
+  // An object with the `digest` property
+  if (err instanceof Object && Object.prototype.hasOwnProperty.call(err, 'digest')) {
+    return String((err as { digest: string }).digest);
   }
   return String(err);
 }

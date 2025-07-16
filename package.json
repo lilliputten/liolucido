@@ -144,7 +144,7 @@
     "zod": "^3.23.8"
   },
   "scripts": {
-    "prettier": "echo --Run prettier-- && prettier --write --cache . | grep -v '(cached)' || true",
+    "prettier": "echo --Run prettier-- && prettier --write --cache . | grep -v -e cached -e unchanged || true",
     "stylelint": "echo --Lint styles-- && stylelint --allow-empty-input ./**/*.{css,scss}",
     "stylelint-fix": "echo --Lint styles-- && stylelint --allow-empty-input ./**/*.{css,scss} --fix",
     "type-check": "echo --Run typescript linter-- && tsc --pretty --noEmit",

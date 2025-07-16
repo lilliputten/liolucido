@@ -1,74 +1,12 @@
-import { redirect } from 'next/navigation';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-
-import { welcomeRoute } from '@/config/routesConfig';
-import { getCurrentUser } from '@/lib/session';
-import { constructMetadata } from '@/lib/utils';
-import { PageError } from '@/components/shared/PageError';
-import { getAllTopics } from '@/features/topics/actions/getAllTopics';
-import { TTopic } from '@/features/topics/types';
-import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
-import { TAwaitedLocaleProps } from '@/i18n/types';
+import { TTopicId } from '@/features/topics/types';
 
 import { MyTopicsList } from './MyTopicsList';
-import { MyTopicsPageWrapper } from './MyTopicsPageWrapper';
-import { PageHeader } from './PageHeader';
 
-type TMyTopicsPageProps = TAwaitedLocaleProps;
-
-export async function generateMetadata({ params }: TAwaitedLocaleProps) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'MyTopicsPage' });
-  const title = t('title');
-  return constructMetadata({
-    title,
-    locale,
-  });
+interface MyTopicsPageProps {
+  showAddModal?: boolean;
+  deleteTopicId?: TTopicId;
 }
 
-export async function MyTopicsPage({ params }: TMyTopicsPageProps) {
-  const { locale } = await params;
-
-  // NOTE: Checking NEXT_PUBLIC_USER_REQUIRED or existed user session
-  const user = await getCurrentUser();
-  const userId = user?.id;
-  // TODO: Check also if the user really exists in the database>
-  const isValidUser = !!userId && (await checkIfUserExists(userId));
-  if (!isValidUser) {
-    redirect(welcomeRoute);
-  }
-
-  // Enable static rendering
-  setRequestLocale(locale);
-
-  try {
-    const topics: TTopic[] | undefined = await getAllTopics();
-    // throw new Error('Sample error');
-    // return <MyTopicsLoading />;
-    /* // DEMO: Error sample?
-     * return (
-     *   <MyTopicsPageWrapper inError>
-     *     <PageError error="Test Error" />
-     *   </MyTopicsPageWrapper>
-     * );
-     */
-    return (
-      <MyTopicsPageWrapper>
-        <PageHeader />
-        <MyTopicsList initialTopics={topics} />
-        {/*
-        <DemoList count={50} className="w-full flex-1" />
-        */}
-      </MyTopicsPageWrapper>
-    );
-  } catch (error) {
-    // TODO: Probably there are no such user in the DB? To do logout and redirect then?
-    const errText = 'Can not load topics'; // getErrorText(error);
-    // eslint-disable-next-line no-console
-    console.error('[MyTopicsPage]', errText, {
-      error,
-    });
-    // debugger; // eslint-disable-line no-debugger
-    return <PageError error={errText} />;
-  }
+export async function MyTopicsPage({ showAddModal, deleteTopicId }: MyTopicsPageProps = {}) {
+  return <MyTopicsList showAddModal={showAddModal} deleteTopicId={deleteTopicId} />;
 }

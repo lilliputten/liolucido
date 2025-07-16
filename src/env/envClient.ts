@@ -15,7 +15,7 @@ const processEnv = {
 const parsedEnv = envSchema.safeParse(processEnv);
 
 if (!parsedEnv.success) {
-  const error = new Error('Invalid environment variables');
+  const error = new Error('Invalid client environment variables');
   // eslint-disable-next-line no-console
   console.error(error.message, parsedEnv.error.flatten().fieldErrors, parsedEnv, processEnv);
   debugger; // eslint-disable-line no-debugger

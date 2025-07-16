@@ -1,6 +1,9 @@
-import { generateMetadata, MyTopicsPage } from '@/pages/MyTopicsPage/MyTopicsPage';
+import {
+  //  generateMetadata,
+  MyTopicsPage,
+} from '@/pages/MyTopicsPage/MyTopicsPage';
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
-export { generateMetadata };
+// export { generateMetadata };
 export default MyTopicsPage;

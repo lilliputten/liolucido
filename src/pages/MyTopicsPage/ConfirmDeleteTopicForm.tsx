@@ -12,13 +12,22 @@ export interface TConfirmDeleteTopicFormProps {
   handleConfirm: () => Promise<unknown>;
   handleClose?: () => void;
   className?: string;
-  forwardPending?: (isPending: boolean) => void;
+  isPending?: boolean;
 }
 
 export function ConfirmDeleteTopicForm(props: TConfirmDeleteTopicFormProps) {
-  const { name, className, handleConfirm, handleClose, forwardPending } = props;
-  const [isPending, setPending] = React.useState(false);
-  React.useEffect(() => forwardPending?.(isPending), [forwardPending, isPending]);
+  const { name, className, handleConfirm, handleClose, isPending } = props;
+
+  const onClose = (ev: React.MouseEvent) => {
+    if (handleClose) {
+      handleClose();
+    }
+    ev.preventDefault();
+  };
+
+  const Icon = isPending ? Icons.spinner : Icons.trash;
+  const buttonText = isPending ? 'Deleting' : 'Delete';
+
   return (
     <div
       className={cn(
@@ -31,18 +40,10 @@ export function ConfirmDeleteTopicForm(props: TConfirmDeleteTopicFormProps) {
       <div className="flex flex-col justify-between"></div>
       {/* Actions */}
       <div className="flex w-full gap-4">
-        <Button
-          type="submit"
-          variant="destructive"
-          className="gap-2"
-          onClick={() => {
-            setPending(true);
-            handleConfirm?.();
-          }}
-        >
-          <Icons.trash className="size-4" /> <span>Delete</span>
+        <Button type="submit" variant="destructive" className="gap-2" onClick={handleConfirm}>
+          <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
         </Button>
-        <Button variant="ghost" onClick={handleClose} className="gap-2">
+        <Button variant="ghost" onClick={onClose} className="gap-2">
           <Icons.close className="size-4" />
           <span>Cancel</span>
         </Button>

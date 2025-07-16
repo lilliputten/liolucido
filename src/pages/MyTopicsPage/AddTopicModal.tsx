@@ -1,27 +1,68 @@
-import React from 'react';
+'use client';
 
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
+import { useTopicsContext } from '@/contexts/TopicsContext';
+import { addNewTopic } from '@/features/topics/actions/addNewTopic';
+import { TNewTopic, TTopic } from '@/features/topics/types';
 
-import { AddTopicForm, TAddTopicFormProps } from './AddTopicForm';
+import { AddTopicForm } from './AddTopicForm';
 
-interface TAddTopicModalProps {
-  isVisible: boolean;
-  hideModal: () => void;
-  handleAddTopic: TAddTopicFormProps['handleAddTopic']; // (p: TAddTopicParams) => Promise<unknown>;
-}
-
-// TODO: To check if the topic with an entered name is existed
-export function AddTopicModal(props: TAddTopicModalProps) {
-  const { isVisible, hideModal, handleAddTopic } = props;
-  const [isPending, setPending] = React.useState(false);
+export function AddTopicModal(/* props: TAddTopicModalProps */) {
+  const router = useRouter();
+  const hideModal = React.useCallback(() => router.back(), [router]);
+  const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
+
+  const {
+    // TODO: To check if the topic with an entered name is existed
+    // topics,
+    setTopics,
+  } = useTopicsContext();
+
+  const handleAddTopic = React.useCallback(
+    (newTopic: TNewTopic) => {
+      return new Promise((resolve, reject) => {
+        return startUpdating(() => {
+          const promise = addNewTopic(newTopic)
+            .then((addedTopic) => {
+              // Update topics list
+              setTopics((topics) => topics.concat(addedTopic));
+              resolve(addedTopic);
+              return addedTopic;
+            })
+            .catch((error) => {
+              // eslint-disable-next-line no-console
+              console.error('[AddTopicModal:handleAddTopic:catch]', getErrorText(error), {
+                error,
+                newTopic,
+              });
+              debugger; // eslint-disable-line no-debugger
+              reject(error);
+              throw error;
+            });
+          toast.promise<TTopic>(promise, {
+            loading: 'Creating new topic...',
+            success: (topic) => `Successfully created new topic "${topic.name}"`,
+            error: 'Can not create new topic',
+          });
+        });
+      });
+    },
+    [setTopics],
+  );
+
   return (
     <Modal
-      isVisible={isVisible}
+      isVisible
       hideModal={hideModal}
       className={cn(
         isDev && '__AddTopicModal', // DEBUG
@@ -41,17 +82,12 @@ export function AddTopicModal(props: TAddTopicModalProps) {
           Add topic dialog
         </DialogDescription>
       </div>
-      <div
-        className={cn(
-          isDev && '__AddTopicModal_Body', // DEBUG
-          'flex flex-col px-8 py-4',
-        )}
-      >
+      <div className="flex flex-col px-8 py-4">
         <AddTopicForm
           handleAddTopic={handleAddTopic}
-          className={cn('__AddTopicModal__Form', 'p-8')}
-          forwardPending={setPending}
+          className="p-8"
           handleClose={hideModal}
+          isPending={isPending}
         />
       </div>
     </Modal>

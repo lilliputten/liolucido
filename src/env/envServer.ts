@@ -19,7 +19,7 @@ const envSchema = z.object({
 const parsedEnv = envSchema.safeParse(process.env);
 
 if (!parsedEnv.success) {
-  const error = new Error('Invalid environment variables');
+  const error = new Error('Invalid server environment variables');
   // eslint-disable-next-line no-console
   console.error(error.message, parsedEnv.error.flatten().fieldErrors, parsedEnv);
   debugger; // eslint-disable-line no-debugger

@@ -50,8 +50,7 @@ async function RootLayout(props: TRootLayoutProps) {
 
   setRequestLocale(locale);
 
-  // Providing all messages to the client
-  // side is the easiest way to get started
+  // Provide i18n translations
   const messages = await getMessages();
 
   return (

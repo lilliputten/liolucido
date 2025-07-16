@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Icons } from '@/components/shared/icons';
+import { isDev } from '@/constants';
 import { TNewTopic, TTopic } from '@/features/topics/types';
 
 import { maxNameLength, minNameLength } from './constants/inputFields';
@@ -22,7 +23,7 @@ export interface TAddTopicFormProps {
   handleAddTopic: (p: TAddTopicParams) => Promise<unknown>;
   handleClose?: () => void;
   className?: string;
-  forwardPending?: (isPending: boolean) => void;
+  isPending?: boolean;
 }
 
 export interface TFormData {
@@ -30,17 +31,7 @@ export interface TFormData {
 }
 
 export function AddTopicForm(props: TAddTopicFormProps) {
-  const {
-    // prettier-ignore
-    className,
-    handleAddTopic,
-    handleClose,
-    forwardPending,
-  } = props;
-
-  const [isPending, startTransition] = React.useTransition();
-
-  React.useEffect(() => forwardPending?.(isPending), [forwardPending, isPending]);
+  const { className, handleAddTopic, handleClose, isPending } = props;
 
   const formSchema = React.useMemo(
     () =>
@@ -59,8 +50,8 @@ export function AddTopicForm(props: TAddTopicFormProps) {
   // @see https://react-hook-form.com/docs/useform
   const form = useForm<TFormData>({
     // @see https://react-hook-form.com/docs/useform
-    // mode: 'onChange', // 'all', // Validation strategy before submitting behaviour.
-    mode: 'all', // Validation strategy before submitting behaviour.
+    mode: 'onChange', // 'all', // Validation strategy before submitting behaviour.
+    // mode: 'all', // Validation strategy before submitting behaviour.
     criteriaMode: 'all', // Display all validation errors or one at a time.
     resolver: zodResolver(formSchema),
     defaultValues, // Default values for the form.
@@ -88,38 +79,45 @@ export function AddTopicForm(props: TAddTopicFormProps) {
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
   const onSubmit = handleSubmit((formData) => {
-    startTransition(async () => {
-      const { name } = formData;
-      const newTopic: TNewTopic = { name };
-      return handleAddTopic(newTopic)
-        .then(() => {
-          reset();
-          if (handleClose) {
-            handleClose();
-          }
-        })
-        .catch((error) => {
-          const message = getErrorText(error) || 'An unknown error has occurred.';
-          // eslint-disable-next-line no-console
-          console.error('[AddTopicForm:onSubmit]', message, {
-            error,
-          });
-          debugger; // eslint-disable-line no-debugger
+    const { name } = formData;
+    const newTopic: TNewTopic = { name };
+    return handleAddTopic(newTopic)
+      .then(() => {
+        reset();
+        if (handleClose) {
+          handleClose();
+        }
+      })
+      .catch((error) => {
+        const message = getErrorText(error) || 'An unknown error has occurred.';
+        // eslint-disable-next-line no-console
+        console.error('[AddTopicForm:onSubmit]', message, {
+          error,
         });
-    });
+        debugger; // eslint-disable-line no-debugger
+      });
   });
 
+  const onClose = (ev: React.MouseEvent) => {
+    if (handleClose) {
+      handleClose();
+    }
+    ev.preventDefault();
+  };
+
   const nameKey = React.useId();
+
+  const Icon = isPending ? Icons.spinner : Icons.check;
+  const buttonText = isPending ? 'Adding' : 'Add';
 
   return (
     <Form {...form}>
       <form
         onSubmit={onSubmit}
         className={cn(
-          // prettier-ignore
-          className,
-          '__AddTopicForm',
+          isDev && '__AddTopicForm', // DEBUG
           'flex w-full flex-col gap-4',
+          className,
         )}
       >
         <FormField
@@ -153,17 +151,9 @@ export function AddTopicForm(props: TAddTopicFormProps) {
             disabled={!isSubmitEnabled}
             className="gap-2"
           >
-            {isPending ? (
-              <>
-                <Icons.spinner className="size-4 animate-spin" /> <span>Adding</span>
-              </>
-            ) : (
-              <>
-                <Icons.check className="size-4" /> <span>Add</span>
-              </>
-            )}
+            <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
           </Button>
-          <Button variant="ghost" onClick={handleClose} className="gap-2">
+          <Button variant="ghost" onClick={onClose} className="gap-2">
             <Icons.close className="size-4" />
             <span>Cancel</span>
           </Button>

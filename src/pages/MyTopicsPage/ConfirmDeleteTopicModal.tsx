@@ -1,28 +1,81 @@
-import React from 'react';
+'use client';
 
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { TTopic } from '@/features/topics/types';
+import { useTopicsContext } from '@/contexts/TopicsContext';
+import { deleteTopic } from '@/features/topics/actions/deleteTopic';
+import { TTopic, TTopicId } from '@/features/topics/types';
 
-import { ConfirmDeleteTopicForm, TConfirmDeleteTopicFormProps } from './ConfirmDeleteTopicForm';
+import { ConfirmDeleteTopicForm } from './ConfirmDeleteTopicForm';
 
 interface TConfirmDeleteTopicModalProps {
-  deletingTopic?: TTopic;
-  hideModal: () => void;
-  handleConfirm: TConfirmDeleteTopicFormProps['handleConfirm'];
+  topicId?: TTopicId;
 }
 
 export function ConfirmDeleteTopicModal(props: TConfirmDeleteTopicModalProps) {
-  const { deletingTopic, hideModal, handleConfirm } = props;
-  const isVisible = !!deletingTopic;
-  const [isPending, setPending] = React.useState(false);
+  const { topicId } = props;
+  const router = useRouter();
+  const hideModal = React.useCallback(() => router.back(), [router]);
+  const { topics, setTopics } = useTopicsContext();
+  if (!topicId) {
+    throw new Error('No topic id passed for deletion');
+  }
+  const deletingTopic: TTopic | undefined = React.useMemo(
+    () => topics.find(({ id }) => id === topicId),
+    [topicId, topics],
+  );
+  const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
+
+  const confirmDeleteTopic = React.useCallback(
+    () =>
+      new Promise((resolve, reject) => {
+        const name = deletingTopic?.name;
+        return startUpdating(() => {
+          if (!deletingTopic) {
+            reject(new Error('No topic to delete provided'));
+            return;
+          }
+          const promise = deleteTopic(deletingTopic)
+            .then(() => {
+              setTopics((topics) => topics.filter(({ id }) => id != deletingTopic.id));
+              resolve(deletingTopic);
+              hideModal();
+            })
+            .catch((error) => {
+              // eslint-disable-next-line no-console
+              console.error(
+                '[ConfirmDeleteTopicModal:confirmDeleteTopic:catch]',
+                getErrorText(error),
+                {
+                  error,
+                },
+              );
+              debugger; // eslint-disable-line no-debugger
+              reject(error);
+              throw error;
+            });
+          toast.promise(promise, {
+            loading: `Deleting topic "${name}"`,
+            success: `Successfully deleted topic "${name}"`,
+            error: `Can not delete topic "${name}"`,
+          });
+        });
+      }),
+    [deletingTopic, hideModal, setTopics],
+  );
+
   return (
     <Modal
-      isVisible={isVisible}
+      isVisible
       hideModal={hideModal}
       className={cn(
         isDev && '__ConfirmDeleteTopicModal', // DEBUG
@@ -42,21 +95,13 @@ export function ConfirmDeleteTopicModal(props: TConfirmDeleteTopicModalProps) {
           Delete topic dialog
         </DialogDescription>
       </div>
-      <div
-        className={cn(
-          isDev && '__ConfirmDeleteTopicModal_Body', // DEBUG
-          'flex flex-col px-8 py-4',
-        )}
-      >
+      <div className="flex flex-col px-8 py-4">
         <ConfirmDeleteTopicForm
           name={deletingTopic?.name || ''}
-          handleConfirm={handleConfirm}
-          className={cn(
-            isDev && '__ConfirmDeleteTopicModal__Form', // DEBUG
-            'p-8',
-          )}
-          forwardPending={setPending}
+          handleConfirm={confirmDeleteTopic}
+          className="p-8"
           handleClose={hideModal}
+          isPending={isPending}
         />
       </div>
     </Modal>
