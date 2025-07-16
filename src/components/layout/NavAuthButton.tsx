@@ -13,39 +13,34 @@ import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 
 import { NavUserAccount } from './NavUserAccount';
+import { NavUserBlock } from './NavUserBlock';
 
 interface TNavAuthButtonProps extends TPropsWithClassName {
   onPrimary?: boolean;
+  onSidebar?: boolean;
   isUser?: boolean;
 }
 
 export function NavUserAuthButton(props: TNavAuthButtonProps) {
-  const { onPrimary, isUser, className } = props;
+  const { onPrimary, onSidebar, isUser, className } = props;
   const { data: session, status } = useSession();
   const { setShowSignInModal } = useContext(ModalContext);
   const t = useTranslations('NavAuthButton');
-
-  const rootClassName = cn(
-    isDev && '__NavAuthButton', // DEBUG
-    className,
-    // isPending && 'transition-opacity [&:disabled]:opacity-30',
-  );
-
   const hasValidUser = !!isUser && !!session && status === 'authenticated';
-
   return (
     <div
       className={cn(
-        // prettier-ignore
-        rootClassName,
+        isDev && '__NavAuthButton', // DEBUG
         'flex',
         'items-center',
+        onSidebar && 'flex w-full justify-start gap-2 px-2',
+        className,
       )}
     >
-      {hasValidUser ? (
-        <>
-          <NavUserAccount onPrimary={onPrimary} />
-        </>
+      {hasValidUser && onSidebar ? (
+        <NavUserBlock onPrimary={onPrimary} onSidebar={onSidebar} />
+      ) : hasValidUser && !onSidebar ? (
+        <NavUserAccount onPrimary={onPrimary} onSidebar={onSidebar} />
       ) : status === 'loading' ? (
         <Skeleton className="h-9 w-28 rounded-full lg:flex" />
       ) : (

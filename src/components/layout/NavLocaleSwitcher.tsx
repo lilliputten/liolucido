@@ -19,10 +19,11 @@ import { TLocale } from '@/i18n/types';
 
 interface TNavLocaleSwitcherProps extends TPropsWithClassName {
   onPrimary?: boolean;
+  onSidebar?: boolean;
 }
 
 export function NavLocaleSwitcher(props: TNavLocaleSwitcherProps) {
-  const { onPrimary, className } = props;
+  const { onPrimary, onSidebar, className } = props;
   const t = useTranslations('NavLocaleSwitcher');
 
   // NOTE: This one doesn't change on real locale change
@@ -57,8 +58,9 @@ export function NavLocaleSwitcher(props: TNavLocaleSwitcherProps) {
           size="sm"
           className={cn(
             isDev && '__NavLocaleSwitcher', // DEBUG
-            className,
             isPending && 'transition-opacity [&:disabled]:opacity-30',
+            // onSidebar && 'flex justify-start gap-2 px-2',
+            className,
           )}
           title={t('label')}
           data-current-locale={locale}
@@ -70,7 +72,7 @@ export function NavLocaleSwitcher(props: TNavLocaleSwitcherProps) {
           <span className="sr-only">{t('label')}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align={onSidebar ? 'start' : 'end'}>
         {routing.locales.map((cur) => (
           <DropdownMenuItem
             //

@@ -17,6 +17,7 @@ import { isDev } from '@/constants';
 
 interface TNavModeToggleProps extends TPropsWithClassName {
   onPrimary?: boolean;
+  onSidebar?: boolean;
 }
 
 const themeIcons: Record<string, Icon> = {
@@ -26,10 +27,13 @@ const themeIcons: Record<string, Icon> = {
 };
 
 export function NavModeToggle(props: TNavModeToggleProps) {
-  const { onPrimary, className } = props;
+  const {
+    onPrimary,
+    //  onSidebar,
+    className,
+  } = props;
   const { theme: currentTheme, themes, setTheme } = useTheme();
   const t = useTranslations('NavModeToggle');
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild aria-label={t('label')}>
@@ -38,14 +42,23 @@ export function NavModeToggle(props: TNavModeToggleProps) {
           size="sm"
           className={cn(
             isDev && '__NavModeToggle', // DEBUG
+            'relative size-8 px-0',
+            // onSidebar && 'flex justify-start gap-2 px-2',
             className,
-            'size-8 px-0',
           )}
           title={t('label')}
         >
           <Icons.sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Icons.moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">{t('label')}</span>
+          <span
+            className={cn(
+              // DEBUG
+              // !onSidebar &&
+              'sr-only',
+            )}
+          >
+            {t('label')}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
