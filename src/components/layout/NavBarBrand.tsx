@@ -49,7 +49,7 @@ function BrandWrapper(props: TPropsWithChildrenAndClassName & NavBarBrandProps) 
 export function NavBarBrand(props: NavBarBrandProps) {
   return (
     <BrandWrapper {...props} className="h-12">
-      <Logo className="size-8" />
+      <Logo className="size-16" />
       <h1
         role="heading"
         data-testid="NavBarBrandTitle"
