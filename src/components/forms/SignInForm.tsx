@@ -173,7 +173,7 @@ export function SignInFormHeader(props: TSignInFormHeaderProps) {
   return (
     <>
       <a href={siteConfig.url}>
-        <Logo className="size-16" dark={dark} />
+        <Logo className="size-32" dark={dark} />
       </a>
       <h3
         className={cn(

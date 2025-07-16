@@ -2,6 +2,7 @@
 
 import { fixupPluginRules } from '@eslint/compat';
 import pluginJs from '@eslint/js';
+import nextPlugin from '@next/eslint-plugin-next';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import { dirname } from 'path';
@@ -11,7 +12,6 @@ import { readGitignoreFiles } from 'eslint-gitignore';
 import prettierPlugin from 'eslint-plugin-prettier';
 import pluginReact from 'eslint-plugin-react';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
-// import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import pluginYml from 'eslint-plugin-yml';
 import globals from 'globals';
 import * as tseslint from 'typescript-eslint';
@@ -64,8 +64,14 @@ export default [
         ...globals.node,
       },
     },
+    plugins: {
+      // @ts-expect-error: Check types for the plugin
+      '@next/next': fixupPluginRules(nextPlugin),
+    },
     rules: {
       ...pluginJs.configs.recommended.rules,
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
       ...defaultJsRules,
       ...commonJsRules,
     },
@@ -100,7 +106,6 @@ export default [
       },
     },
     rules: {
-      // ...defaultJsRules,
       ...pluginJs.configs.recommended.rules,
       ...pluginReact.configs.recommended.rules,
       ...commonJsRules,
