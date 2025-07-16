@@ -1,4 +1,7 @@
 {
+  "MyTopicsPage": {
+    "title": "Мои темы"
+  },
   "BotMenu": {
     "status": "Проверить статус",
     "start": "Начать",

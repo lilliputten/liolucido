@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTheme } from 'next-themes';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
@@ -10,17 +11,15 @@ interface TWaitingWrapperProps extends TPropsWithChildren {
 }
 
 export function WaitingWrapper(props: TWaitingWrapperProps) {
-  const {
-    // prettier-ignore
-    show,
-    theme: userTheme,
-    children,
-  } = props;
+  const { show, theme: userTheme, children } = props;
   const hidden = !show;
-  // NOTE: Theme
   const { resolvedTheme } = useTheme();
-  const theme = userTheme != undefined ? userTheme : resolvedTheme;
-  const isLight = theme !== 'dark';
+  // NOTE: Prevent nextjs hydration error
+  const [isLight, setIsLight] = React.useState<boolean | undefined>();
+  React.useEffect(() => {
+    const theme = userTheme != undefined ? userTheme : resolvedTheme;
+    setIsLight(theme !== 'dark');
+  }, [resolvedTheme, userTheme]);
   return (
     <div
       className={cn(
@@ -35,7 +34,7 @@ export function WaitingWrapper(props: TWaitingWrapperProps) {
         'justify-center',
         'transition',
         'duration-1000',
-        isLight ? 'bg-backgroundLight' : 'bg-backgroundDark',
+        isLight !== undefined && (isLight ? 'bg-backgroundLight' : 'bg-backgroundDark'),
         hidden && 'opacity-0',
         hidden && 'pointer-events-none',
       )}

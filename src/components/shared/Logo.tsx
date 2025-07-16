@@ -4,18 +4,15 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 
 interface TProps extends TPropsWithClassName {
   dark?: boolean;
-  // size?: TLogoSize;
 }
 
 const logoSize = 36;
 
-const logoWhiteSrc = '/static/logo/LogoWhite-min.svg';
-const logoBlueSrc = '/static/logo/LogoBlue-min.svg';
+const logoSrc = '/static/logo/Logo.svg';
 
 export function Logo(props: TProps) {
-  const { className, dark } = props;
-  // Use memo for `src`?
-  const src = dark ? logoBlueSrc : logoWhiteSrc;
+  const { className } = props;
+  const src = /* dark ? logoBlueSrc : */ logoSrc;
   return (
     <Image
       // prettier-ignore

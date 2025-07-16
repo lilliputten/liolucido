@@ -9,7 +9,7 @@ generator client {
 
 // provider = "sqlite" | "postgresql", see 'prisma-switch.mjs'
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -43,10 +43,10 @@ model Account {
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
+  sessionToken String   @unique @map("session_token")
   expires      DateTime
 
-  userId String
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -67,6 +67,9 @@ model User {
 
   topics Topic[] // Owned topics
 
+  UserTopic    UserTopic[]
+  UserQuestion UserQuestion[]
+
   @@map("users")
 }
 
@@ -85,21 +88,26 @@ model TelegramSession {
   key   String @id @unique
   value String // Session data in json string
 
-  @@map("telegram_sessions")
+  @@map("telegram_session")
 }
 
-// Applied data scope
+// Applied data scopes
 
 model Topic {
   // Unique id
   id Int @id @default(autoincrement())
 
-  isCorrect   Boolean @default(false) @map("is_correct")
-  isGenerated Boolean @default(false) @map("is_generated")
+  name     String
 
-  // Custom text
-  name String
+  isCorrect   Boolean? @map("is_correct")
+  isGenerated Boolean? @map("is_generated")
 
+  keywords String?
+  language String?
+
+  topicsCountRandom Boolean? @map("topics_count_random")
+  topicsCountMin    Int?     @map("topics_count_min")
+  topicsCountMax    Int?     @map("topics_count_max")
   topicsCountRandom Boolean? @map("topics_count_random")
   topicsCountMin    Int?     @map("topics_count_min")
   topicsCountMax    Int?     @map("topics_count_max")
@@ -107,10 +115,12 @@ model Topic {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  userId String
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   questions Question[] // Questions in this topic
+
+  UserTopic UserTopic[]
 
   @@index([userId])
   @@map("topics")
@@ -119,10 +129,6 @@ model Topic {
 model Question {
   // Unique id
   id Int @id @default(autoincrement())
-
-  // // Created by user (optional)
-  // userId String?
-  // user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Custom text
   text String
@@ -138,6 +144,8 @@ model Question {
   topic   Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   answers Answer[] // Answers for this question
+
+  UserQuestion UserQuestion[]
 
   @@index([topicId])
   @@map("questions")
@@ -165,4 +173,40 @@ model Answer {
 
   @@index([questionId])
   @@map("answers")
+}
+
+// Relations
+
+model UserTopic {
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  topicId Int   @map("topic_id")
+  topic   Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  favorite Boolean @default(false)
+  passed   Boolean @default(false)
+
+  @@id([userId, topicId])
+  @@map("user_topics")
+}
+
+model UserQuestion {
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId Int      @map("question_id")
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  answered Boolean @default(false)
+  repeat   Boolean @default(false)
+
+  @@id([userId, questionId])
+  @@map("user_questions")
 }

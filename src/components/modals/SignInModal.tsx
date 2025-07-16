@@ -25,8 +25,8 @@ function SignInModal(props: TSignInModalProps) {
 
   return (
     <Modal
-      showModal={showSignInModal}
-      setShowModal={setShowSignInModal}
+      isVisible={showSignInModal}
+      toggleModal={setShowSignInModal}
       className={cn(
         // prettier-ignore
         isDev && '__SignInModal',

@@ -20,13 +20,13 @@ export function WelcomeScreen(props: TPropsWithClassName) {
       className={cn(
         isDev && '__WelcomeScreen', // DEBUG
         className,
-        'flex flex-1 flex-col md:flex-row-reverse',
+        'flex flex-1 flex-col lg:flex-row',
         'gap-8',
         'items-stretch',
         'justify-stretch',
-        'md:layout-follow',
         'overflow-auto',
-        'md:overflow-hidden',
+        'lg:layout-follow',
+        'lg:overflow-hidden',
       )}
     >
       <UseScrollableLayout type="clippable" />
@@ -36,7 +36,7 @@ export function WelcomeScreen(props: TPropsWithClassName) {
           'flex-1',
           'flex flex-col',
           'bg-primary-500/20',
-          'md:overflow-auto',
+          'lg:overflow-auto',
         )}
       >
         <WelcomeVisualBlock />
@@ -46,7 +46,7 @@ export function WelcomeScreen(props: TPropsWithClassName) {
           isDev && '__WelcomeScreen:SignIn', // DEBUG
           'flex-1',
           'flex flex-col',
-          'md:overflow-auto',
+          'lg:overflow-auto',
         )}
       >
         <SignInBlock />

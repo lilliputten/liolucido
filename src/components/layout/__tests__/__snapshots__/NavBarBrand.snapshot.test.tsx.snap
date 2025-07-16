@@ -2,9 +2,8 @@
 
 exports[`NavBarBrand snapshot 1`] = `
 <div>
-  <a
-    class="h-12 flex items-center space-x-1.5 gap-2 transition-all mr-10 select-none hover:opacity-80"
-    href="/welcome"
+  <div
+    class="h-12 flex items-center space-x-1.5 gap-2 transition-all mr-10 select-none"
   >
     <img
       alt="Logo"
@@ -24,6 +23,6 @@ exports[`NavBarBrand snapshot 1`] = `
     >
       TrainWizzz!
     </h1>
-  </a>
+  </div>
 </div>
 `;

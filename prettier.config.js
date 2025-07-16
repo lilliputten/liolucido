@@ -39,6 +39,6 @@ module.exports = {
   plugins: [
     // Organize imports, @see https://www.npmjs.com/package/@ianvs/prettier-plugin-sort-imports#options
     '@ianvs/prettier-plugin-sort-imports',
-    // 'prettier-plugin-tailwindcss',
+    'prettier-plugin-tailwindcss',
   ],
 };

@@ -8,34 +8,44 @@ import { isDev } from '@/constants';
 
 // @see https://www.radix-ui.com/primitives/docs/components/scroll-area
 
-type ExtraProps = { areaClassName?: string };
-type RootComponentType = typeof ScrollAreaPrimitive.Root; // & ExtraProps;
+type ExtraProps = { viewportClassName?: string };
+type ComponentType = React.ForwardRefExoticComponent<
+  ScrollAreaPrimitive.ScrollAreaProps & React.RefAttributes<HTMLDivElement> // & ExtraProps
+>;
 
 const ScrollArea = React.forwardRef<
-  React.ElementRef<RootComponentType & ExtraProps>,
-  React.ComponentPropsWithoutRef<RootComponentType & ExtraProps>
->(({ className, children, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn(
-      isDev && '__ScrollArea:Root', // DEBUG
-      'relative overflow-hidden',
-      className,
-    )}
-    {...props}
+  React.ElementRef<ComponentType>,
+  Omit<
+    ScrollAreaPrimitive.ScrollAreaProps & React.RefAttributes<HTMLDivElement> & ExtraProps,
+    'ref'
   >
-    <ScrollAreaPrimitive.Viewport
+  // React.ComponentPropsWithoutRef<RootComponentType>
+>((props, ref) => {
+  const { className, viewportClassName, children, ...rest } = props;
+  return (
+    <ScrollAreaPrimitive.Root
+      ref={ref}
       className={cn(
-        isDev && '__ScrollArea:Viewport', // DEBUG
-        'size-full rounded-[inherit]',
+        isDev && '__ScrollArea_Root', // DEBUG
+        'relative overflow-hidden',
+        className,
       )}
+      {...rest}
     >
-      {children}
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollBar />
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
-));
+      <ScrollAreaPrimitive.Viewport
+        className={cn(
+          isDev && '__ScrollArea_Viewport', // DEBUG
+          viewportClassName,
+          'size-full rounded-[inherit]',
+        )}
+      >
+        {children}
+      </ScrollAreaPrimitive.Viewport>
+      <ScrollBar />
+      <ScrollAreaPrimitive.Corner />
+    </ScrollAreaPrimitive.Root>
+  );
+});
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
 
 const ScrollBar = React.forwardRef<

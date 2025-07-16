@@ -107,18 +107,10 @@
       "args": ["build"]
     },
     {
-      "name": "Node: webpack",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
-      "console": "integratedTerminal",
-      "args": ["build"]
-    },
-    {
       "name": "Jest single test",
       "type": "node-terminal",
       "request": "launch",
-      "command": "pnpm exec jest --no-watch --testTimeout=60000 NavBarBrand.test"
+      "command": "pnpm exec jest --no-watch --testTimeout=60000 userAndTopicRelation.test"
     }
   ]
 }

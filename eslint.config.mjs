@@ -2,6 +2,7 @@
 
 import { fixupPluginRules } from '@eslint/compat';
 import pluginJs from '@eslint/js';
+import nextPlugin from '@next/eslint-plugin-next';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import { dirname } from 'path';
@@ -11,7 +12,6 @@ import { readGitignoreFiles } from 'eslint-gitignore';
 import prettierPlugin from 'eslint-plugin-prettier';
 import pluginReact from 'eslint-plugin-react';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
-import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import pluginYml from 'eslint-plugin-yml';
 import globals from 'globals';
 import * as tseslint from 'typescript-eslint';
@@ -20,11 +20,13 @@ import yamlParser from 'yaml-eslint-parser';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const defaultJsRules = {
-  ...pluginJs.configs.recommended.rules,
-  semi: ['warn', 'always'],
+const commonJsRules = {
   'no-console': 'warn',
   'no-debugger': 'warn',
+};
+
+const defaultJsRules = {
+  semi: ['warn', 'always'],
   'no-extra-semi': 'warn',
   'no-redeclare': 'warn',
   'no-undef': 'error',
@@ -62,23 +64,32 @@ export default [
         ...globals.node,
       },
     },
+    plugins: {
+      // @ts-expect-error: Check types for the plugin
+      '@next/next': fixupPluginRules(nextPlugin),
+    },
     rules: {
+      ...pluginJs.configs.recommended.rules,
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
       ...defaultJsRules,
+      ...commonJsRules,
     },
   },
 
-  // Tailwind CSS configuration
+  // Source files JS configuration
   {
     files: ['src/**/*.{js,jsx,ts,tsx}'],
     plugins: {
-      tailwindcss: tailwindcssPlugin,
+      // tailwindcss: tailwindcssPlugin,
       'react-hooks': fixupPluginRules(pluginReactHooks),
     },
     rules: {
-      ...defaultJsRules,
-      ...tailwindcssPlugin.configs.recommended.rules,
-      'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
+      // ...defaultJsRules,
+      // ...tailwindcssPlugin.configs.recommended.rules,
+      // 'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
       ...pluginReactHooks.configs.recommended.rules,
+      ...commonJsRules,
     },
   },
 
@@ -95,9 +106,9 @@ export default [
       },
     },
     rules: {
-      ...defaultJsRules,
       ...pluginJs.configs.recommended.rules,
       ...pluginReact.configs.recommended.rules,
+      ...commonJsRules,
       'react/react-in-jsx-scope': 'off',
     },
   },
@@ -124,15 +135,16 @@ export default [
     rules: {
       // NOTE: The order is important
       ...pluginJs.configs.recommended.rules,
-      ...defaultJsRules,
+      // ...defaultJsRules,
       ...tsPlugin.configs.recommended.rules,
+      ...commonJsRules,
+      'no-undef': 'off', // Disable for TypeScript files - TypeScript handles this
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'no-constant-binary-expression': 'off',
-      'no-undef': 'off', // Disable for TypeScript files - TypeScript handles this
     },
   },
 
@@ -150,7 +162,7 @@ export default [
       },
     },
     rules: {
-      // ...defaultJsRules,
+      ...commonJsRules,
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
@@ -164,7 +176,7 @@ export default [
       },
     },
     rules: {
-      // ...defaultJsRules,
+      ...commonJsRules,
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
@@ -173,7 +185,7 @@ export default [
   {
     files: ['src/**/*.{js,ts}'],
     rules: {
-      // ...defaultJsRules,
+      ...commonJsRules,
       'no-unused-vars': 'off',
     },
   },

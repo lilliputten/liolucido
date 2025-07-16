@@ -188,6 +188,16 @@
     @apply ml-[-50px] mt-[-4px];
     content: counter(step);
   }
+
+  .error-gradient-background {
+    background: repeating-linear-gradient(
+      -30deg,
+      rgba(var(--destructiveColorRGB) / 100%) 0px,
+      rgba(var(--destructiveColorRGB) / 100%) 6px,
+      rgba(var(--destructiveColorRGB) / 90%) 6px,
+      rgba(var(--destructiveColorRGB) / 90%) 12px
+    );
+  }
 }
 
 .text-gradient_brand {

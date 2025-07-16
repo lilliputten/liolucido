@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { cn, constructMetadata } from '@/lib/utils';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { WelcomeScreen } from '@/components/screens/WelcomeScreen';
 import { isDev } from '@/constants';
 import { TAwaitedLocaleProps } from '@/i18n/types';
@@ -23,10 +24,22 @@ export async function WelcomePage({ params }: TWelcomePageProps) {
   setRequestLocale(locale);
 
   return (
-    <WelcomeScreen
+    <PageWrapper
       className={cn(
         isDev && '__WelcomePage', // DEBUG
       )}
-    />
+      innerClassName={cn(
+        isDev && '__WelcomePage_Inner', // DEBUG
+        'w-full',
+      )}
+      scrollable
+      // limitWidth
+    >
+      <WelcomeScreen
+        className={cn(
+          isDev && '__WelcomePage_WelcomeScreen', // DEBUG
+        )}
+      />
+    </PageWrapper>
   );
 }

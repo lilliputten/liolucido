@@ -4,29 +4,23 @@ import { usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
 
 import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
+import { infoRoute, welcomeRoute } from '@/config/routesConfig';
 import { siteConfig } from '@/config/site';
 import { getAllRouteSynonyms } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/shared/Logo';
 import { isDev } from '@/constants';
-import { infoRoute, welcomeRoute } from '@/constants/routes';
 import { Link } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
 interface NavBarBrandProps {
   isUser: boolean;
-  isUserRequired: boolean;
 }
 
 function BrandWrapper(props: TPropsWithChildrenAndClassName & NavBarBrandProps) {
-  const {
-    isUser,
-    // isUserRequired,
-    children,
-    className: parentClassName,
-  } = props;
+  const { isUser, children, className: parentClassName } = props;
   const locale = useLocale() as TLocale;
-  const pathname = decodeURI(usePathname());
+  const pathname = decodeURI(usePathname() || '');
   const rootRoute = isUser ? infoRoute : welcomeRoute;
   const rootRoutesList = getAllRouteSynonyms(rootRoute, locale);
   const isRoot = !pathname || rootRoutesList.includes(pathname);
@@ -55,7 +49,7 @@ function BrandWrapper(props: TPropsWithChildrenAndClassName & NavBarBrandProps) 
 export function NavBarBrand(props: NavBarBrandProps) {
   return (
     <BrandWrapper {...props} className="h-12">
-      <Logo className="size-8" />
+      <Logo className="size-16" />
       <h1
         role="heading"
         data-testid="NavBarBrandTitle"

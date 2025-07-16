@@ -16,7 +16,6 @@ const secondaryColorSpread = getColorSpread('secondary', secondaryColor);
 export default {
   darkMode: ['class'],
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/features/**/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
@@ -73,8 +72,8 @@ export default {
         default: ['var(--font-default)', ...fontFamily.sans],
         heading: ['var(--font-heading)', ...fontFamily.sans],
         mono: ['var(--font-mono)', ...fontFamily.mono],
-        // sans: ['var(--font-sans)', ...fontFamily.sans],
-        // urban: ['var(--font-urban)', ...fontFamily.sans],
+        // sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+        // urban: ['var(--font-urban)', ...defaultTheme.fontFamily.sans],
       },
       keyframes: {
         'accordion-down': {

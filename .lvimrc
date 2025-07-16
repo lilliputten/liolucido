@@ -5,6 +5,8 @@
 " See Plugins.vim, CtrlP section
 let g:ctrlp_custom_ignore['dir'] = substitute(g:ctrlp_custom_ignore['dir'], ')\$', "|publish|build|.next)$", "g")
 
+set shellslash " Use forward slashes
+
 " Disable tsserver diagnostics for TypeScript files
 let g:coc_user_config = {
   \ 'tsserver.enable': v:true,

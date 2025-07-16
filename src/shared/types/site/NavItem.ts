@@ -1,5 +1,6 @@
+import { TUserRole } from '@/shared/types/db/TUserRole';
+import { TRoutePath } from '@/config/routesConfig';
 import { Icons } from '@/components/shared/icons';
-import { TRoutePath } from '@/i18n/routing';
 
 export type NavItem = {
   titleId: string; // Id for i18n
@@ -8,8 +9,19 @@ export type NavItem = {
   disabled?: boolean;
   external?: boolean;
   userRequiredOnly?: boolean;
-  // authorizedOnly?: UserRole;
+  authorizedOnly?: TUserRole;
   icon?: keyof typeof Icons;
 };
 
 export type MainNavItem = NavItem;
+
+export type MarketingConfig = {
+  mainNav: MainNavItem[];
+};
+
+export type SidebarNavItem = {
+  titleId: string;
+  items: NavItem[];
+  authorizedOnly?: TUserRole;
+  icon?: keyof typeof Icons;
+};

@@ -9,7 +9,7 @@ export const siteConfig: SiteConfig = {
   description: 'NextJS application for memorizing answers to questions',
   versionInfo: appInfoModule.versionInfo,
   url: siteUrl,
-  ogImage: `/static/opengraph-image-new.jpg`,
+  ogImage: `/static/opengraph-image.jpg`,
   links: {
     website: siteUrl, // 'https://team-tree-app.vercel.app/',
     github: 'https://github.com/lilliputten/team-tree-app',

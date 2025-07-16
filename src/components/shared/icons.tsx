@@ -206,3 +206,5 @@ export const Icons = {
   warning: AlertTriangle,
   yandex,
 };
+
+export type TIconsKey = keyof typeof Icons;
