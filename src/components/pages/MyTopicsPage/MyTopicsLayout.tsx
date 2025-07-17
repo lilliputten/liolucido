@@ -5,7 +5,7 @@ import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { TopicsContextProvider } from '@/contexts/TopicsContext';
-import { getAllTopics } from '@/features/topics/actions/getAllTopics';
+import { getAllUsersTopics } from '@/features/topics/actions/getAllUsersTopics';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
@@ -50,7 +50,7 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
   // Enable static rendering
   setRequestLocale(locale);
 
-  const topics: TTopic[] | undefined = await getAllTopics();
+  const topics: TTopic[] | undefined = await getAllUsersTopics();
 
   return (
     <TopicsContextProvider initialTopics={topics}>

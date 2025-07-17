@@ -117,7 +117,6 @@ function TopicTableRow(props: TTopicTableRowProps) {
             onClick={() => console.log('Edit topic')}
             aria-label="Edit"
             title="Edit"
-            disabled
           >
             <Icons.edit className="size-4" />
           </Button>

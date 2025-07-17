@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { myTopicsRoute } from '@/config/routesConfig';
-import { getTopic } from '@/features/topics/actions';
+import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
 import { MyTopicsList } from './MyTopicsList';
@@ -18,18 +18,18 @@ interface TTopicsListProps {
 export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
   const { showAddModal, deleteTopicId } = props;
+  const { topics } = useTopicsContext();
 
   const openDeleteTopicModal = React.useCallback(
     (topicId: TTopicId) => {
-      getTopic(topicId).then((topic) => {
-        if (!topic) {
-          toast.error('The requested topic does not exists.');
-        } else {
-          router.push(`${myTopicsRoute}/delete?id=${topicId}`);
-        }
-      });
+      const hasTopic = topics.find(({ id }) => id === topicId);
+      if (!hasTopic) {
+        toast.error('The requested topic does not exist.');
+      } else {
+        router.push(`${myTopicsRoute}/delete?id=${topicId}`);
+      }
     },
-    [router],
+    [router, topics],
   );
 
   const openAddTopicModal = React.useCallback(() => {
