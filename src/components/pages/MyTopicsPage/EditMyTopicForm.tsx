@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext';
@@ -22,13 +23,11 @@ import { maxNameLength, minNameLength } from './constants/inputFields';
 
 interface TEditMyTopicFormProps {
   topic: TTopic;
-  // isPending?: boolean;
   className?: string;
   onCancel?: () => void;
-  // onSave: (editedTopic: TTopic) => Promise<unknown>;
 }
 
-type TFormData = Pick<TTopic, 'name'>;
+type TFormData = Pick<TTopic, 'name' | 'isCorrect'>;
 
 interface TChildProps /* extends Omit<TEditMyTopicFormProps, 'className' | 'topic'> */ {
   isSubmitEnabled?: boolean;
@@ -38,28 +37,13 @@ interface TChildProps /* extends Omit<TEditMyTopicFormProps, 'className' | 'topi
 }
 
 function FormActions(props: TChildProps) {
-  const {
-    ///
-    isSubmitEnabled,
-    isPending,
-    onCancel,
-    form,
-  } = props;
+  const { isSubmitEnabled, isPending, onCancel, form } = props;
   const {
     // @see https://react-hook-form.com/docs/useform
     formState, // FormState<TFieldValues>;
-    // handleSubmit, // UseFormHandleSubmit<TFieldValues, TTransformedValues>;
-    // register, // UseFormRegister<TFieldValues>;
     reset, // UseFormReset<TFieldValues>;
-    // setFocus,
-    // getValues,
   } = form;
-  const {
-    // @see https://react-hook-form.com/docs/useform/formstate
-    isDirty, // boolean;
-    // errors, // FieldErrors<TFieldValues>;
-    // isValid, // boolean;
-  } = formState;
+  const { isDirty } = formState;
   const Icon = isPending ? Icons.spinner : Icons.check;
   const buttonText = isPending ? 'Saving' : 'Save';
   return (
@@ -70,6 +54,12 @@ function FormActions(props: TChildProps) {
           <span>Back to the list</span>
         </Button>
       )}
+      {isDirty && (
+        <Button variant="ghost" onClick={() => reset()} className="gap-2" disabled={!isDirty}>
+          <Icons.close className="size-4" />
+          <span>Reset changes</span>
+        </Button>
+      )}
       <Button
         type="submit"
         variant={isSubmitEnabled ? 'success' : 'disable'}
@@ -78,36 +68,26 @@ function FormActions(props: TChildProps) {
       >
         <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
       </Button>
-      {isDirty && (
-        <Button variant="ghost" onClick={() => reset()} className="gap-2" disabled={!isDirty}>
-          <Icons.close className="size-4" />
-          <span>Reset changes</span>
-        </Button>
-      )}
     </div>
   );
 }
 
 function FormFields(props: TChildProps) {
   const { form } = props;
-  const {
-    // @see https://react-hook-form.com/docs/useform
-    // formState, // FormState<TFieldValues>;
-    // handleSubmit, // UseFormHandleSubmit<TFieldValues, TTransformedValues>;
-    // register, // UseFormRegister<TFieldValues>;
-    // reset, // UseFormReset<TFieldValues>;
-    setFocus,
-    // getValues,
-  } = form;
-  // Focus the first field (should it be used with a languages list?)
-  React.useEffect(() => setFocus('name'), [setFocus]);
+  // const {
+  //   // @see https://react-hook-form.com/docs/useform
+  //   setFocus,
+  // } = form;
+  // // Focus the first field (should it be used with a languages list?)
+  // React.useEffect(() => setFocus('name'), [setFocus]);
   // const {
   //   // @see https://react-hook-form.com/docs/useform/formstate
   //   isDirty, // boolean;
-  //   // errors, // FieldErrors<TFieldValues>;
+  //   errors, // FieldErrors<TFieldValues>;
   //   isValid, // boolean;
   // } = formState;
   const nameKey = React.useId();
+  const isCorrectKey = React.useId();
   return (
     <>
       <FormField
@@ -115,18 +95,22 @@ function FormFields(props: TChildProps) {
         control={form.control}
         render={({ field }) => (
           <FormItem className="flex w-full flex-col gap-4">
-            <Label className="m-0" htmlFor={nameKey}>
-              Topic Name
-            </Label>
+            <Label htmlFor={nameKey}>Topic Name</Label>
             <FormControl>
-              <Input
-                id={nameKey}
-                type="text"
-                className="flex-1"
-                placeholder="Name"
-                {...field}
-                onChange={(ev) => field.onChange(ev)}
-              />
+              <Input id={nameKey} type="text" className="flex-1" placeholder="Name" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        name="isCorrect"
+        control={form.control}
+        render={({ field }) => (
+          <FormItem className="flex w-full flex-col gap-4">
+            <Label htmlFor={isCorrectKey}>Is the topic correct?</Label>
+            <FormControl>
+              <Switch id={isCorrectKey} checked={!!field.value} onCheckedChange={field.onChange} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -145,15 +129,18 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
     () =>
       z.object({
         name: z.string().min(minNameLength).max(maxNameLength),
+        isCorrect: z.boolean(),
       }),
     [],
   );
 
-  const defaultValues: TFormData = React.useMemo(() => {
-    return {
+  const defaultValues: TFormData = React.useMemo(
+    () => ({
       name: topic.name,
-    };
-  }, [topic]);
+      isCorrect: topic.isCorrect || false,
+    }),
+    [topic],
+  );
 
   // @see https://react-hook-form.com/docs/useform
   const form = useForm<TFormData>({
@@ -169,28 +156,29 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
     // @see https://react-hook-form.com/docs/useform
     formState, // FormState<TFieldValues>;
     handleSubmit, // UseFormHandleSubmit<TFieldValues, TTransformedValues>;
-    // register, // UseFormRegister<TFieldValues>;
     reset, // UseFormReset<TFieldValues>;
-    // setFocus,
     getValues,
+    // register, // UseFormRegister<TFieldValues>;
+    // setFocus,
   } = form;
   const {
     // @see https://react-hook-form.com/docs/useform/formstate
     isDirty, // boolean;
-    // errors, // FieldErrors<TFieldValues>;
     isValid, // boolean;
+    // errors, // FieldErrors<TFieldValues>;
   } = formState;
 
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
   const onSubmit = handleSubmit((formData) => {
     startTransition(() => {
-      const { name } = formData;
-      const editedTopic: TTopic = { ...topic, name };
+      const { name, isCorrect } = formData;
+      const editedTopic: TTopic = { ...topic, name, isCorrect };
       console.log('[EditMyTopicForm:onSubmit] start', {
         formData,
         editedTopic,
       });
+      debugger;
       const savePromise = updateTopic(editedTopic); // new Promise((resolve, reject) => setTimeout(resolve, 1000));
       toast.promise<unknown>(savePromise, {
         loading: 'Saving the topic data...',
