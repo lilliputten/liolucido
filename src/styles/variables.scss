@@ -1,11 +1,13 @@
 // Colors...
 
-$primaryColor: #818; // #b22;
+$primaryColor: #818;
 $primaryForegroundColor: #fff;
 $secondaryColor: #fb1;
 $secondaryForegroundColor: #000;
-$appDestructiveColor: #f55;
+$appDestructiveColor: #c00;
 $appDestructiveForegroundColor: #fff;
+$appSuccessColor: #0d0;
+$appSuccessForegroundColor: #fff;
 
 // Themed colors (light)
 
@@ -22,6 +24,8 @@ $accentForegroundLightColor: #171717;
 $destructiveLightColor: #ef4444;
 $destructiveForegroundLightColor: $accentLightColor; // #fafafa;
 $errorLightColor: $destructiveLightColor; // #fafafa;
+// $successLightColor: #00ff00;
+// $successForegroundLightColor: $accentLightColor; // #fafafa;
 $borderLightColor: #e5e5e5;
 $inputLightColor: #e5e5e5;
 $ringLightColor: #0a0a0a;
@@ -41,6 +45,8 @@ $accentForegroundDarkColor: #fafafa;
 $destructiveDarkColor: #7f1d1d;
 $destructiveForegroundDarkColor: #fafafa;
 $errorDarkColor: $destructiveDarkColor;
+// $successDarkColor: #00cc00;
+// $successForegroundDarkColor: #fafafa;
 $borderDarkColor: #262626;
 $inputDarkColor: #262626;
 $ringDarkColor: #d4d4d4;

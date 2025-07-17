@@ -3,20 +3,20 @@
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
-import { TNewTopic, TTopic } from '@/features/topics/types';
+import { TTopic } from '@/features/topics/types';
 
-export async function addNewTopic(newTopic: TNewTopic) {
+export async function updateTopic(topic: TTopic) {
   const user = await getCurrentUser();
   const userId = user?.id;
   try {
     if (isDev) {
       // DEBUG: Emulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
     if (!userId) {
       throw new Error('Got undefined user');
     }
-    if (!newTopic.name) {
+    if (!topic.name) {
       throw new Error('Not specified topic name');
     }
     /* NOTE: Ensure if the user exists (should be checked on the page load)
@@ -25,14 +25,16 @@ export async function addNewTopic(newTopic: TNewTopic) {
      *   throw new Error('The specified user does not exist.');
      * }
      */
-    const data = { ...newTopic, userId };
-    const addedTopic = await prisma.topic.create({
+    const data = { ...topic, userId };
+    const updatedTopic = await prisma.topic.update({
+      where: { id: topic.id },
       data,
     });
-    return addedTopic as TTopic;
+
+    return updatedTopic as TTopic;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[addNewTopic] catch', {
+    console.error('[updateTopic] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger

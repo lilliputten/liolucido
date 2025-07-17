@@ -42,6 +42,10 @@ export default {
           DEFAULT: 'var(--appDestructiveColor)',
           foreground: 'var(--appDestructiveForegroundColor)',
         },
+        success: {
+          DEFAULT: 'var(--appSuccessColor)',
+          foreground: 'var(--appSuccessForegroundColor)',
+        },
         error: {
           // DEFAULT: 'var(--backgroundColor)',
           DEFAULT: 'var(--errorColor)',

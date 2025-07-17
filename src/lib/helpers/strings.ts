@@ -8,10 +8,9 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
   }
   // Error object
   if (err instanceof Error) {
-    // return String(err);
     return [
       // prettier-ignore
-      !opts.omitErrorName && err.name,
+      !opts.omitErrorName && err.name !== 'Error' ? err.name : '',
       err.message,
     ]
       .filter(Boolean)

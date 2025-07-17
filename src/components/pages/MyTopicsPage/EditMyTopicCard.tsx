@@ -12,22 +12,23 @@ import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
+import { EditMyTopicForm } from './EditMyTopicForm';
+
 interface TEditMyTopicCardProps extends TPropsWithClassName {
   topicId: TTopicId;
 }
-type TChildProps = Omit<TEditMyTopicCardProps, 'className'>;
+type TChildProps = /* Omit<TEditMyTopicCardProps, 'className'> & */ { goBack: () => void };
 
-function Title() {
-  const router = useRouter();
+function Title({ goBack }: TChildProps) {
   return (
-    <div className="__EditMyTopicCard_Title grid grid-cols-[2em_1fr] gap-2">
+    <div className="grid grid-cols-[2em_1fr] gap-2">
       <Button
         variant="ghost"
         size="icon"
         className="size-9 shrink-0 hover:opacity-80"
         aria-label="Back to the topics list"
         title="Back to the topics list"
-        onClick={() => router.back()}
+        onClick={goBack}
       >
         <Icons.arrowLeft className="size-4" />
       </Button>
@@ -41,7 +42,7 @@ function Title() {
   );
 }
 
-function Header(_props: TChildProps) {
+function Header({ goBack }: TChildProps) {
   return (
     <CardHeader
       className={cn(
@@ -49,7 +50,7 @@ function Header(_props: TChildProps) {
         'flex flex-row items-center',
       )}
     >
-      <Title />
+      <Title goBack={goBack} />
       {/* XXX: See a toolbar example in `MyTopicsListCard`
       <Toolbar {...props} />
       */}
@@ -57,30 +58,19 @@ function Header(_props: TChildProps) {
   );
 }
 
-interface TEditTopicFormProps {
-  topic: TTopic;
-}
-function EditTopicForm(props: TEditTopicFormProps) {
-  const { topic } = props;
-  return (
-    <div>
-      {/* TODO */}
-      <p>Topic: {topic.id}</p>
-      <pre>{JSON.stringify(topic, null, 2)}</pre>
-    </div>
-  );
-}
-
 export function EditMyTopicCard(props: TEditMyTopicCardProps) {
   const { className, topicId } = props;
+  const router = useRouter();
   const { topics } = useTopicsContext();
-  const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
-  );
+  const topic: TTopic | undefined = React.useMemo(() => {
+    const topic = topics.find(({ id }) => id === topicId);
+    console.log('[EditMyTopicCard:Memo:topic]', topicId, topic);
+    return topic;
+  }, [topics, topicId]);
   if (!topicId || !topic) {
-    throw new Error('No such topic exists.');
+    throw new Error('No such topic exists');
   }
+  const goBack = React.useCallback(() => router.back(), [router]);
   return (
     <Card
       className={cn(
@@ -90,14 +80,14 @@ export function EditMyTopicCard(props: TEditMyTopicCardProps) {
         className,
       )}
     >
-      <Header {...props} />
+      <Header goBack={goBack} />
       <CardContent
         className={cn(
           isDev && '__EditMyTopicCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden',
         )}
       >
-        <EditTopicForm topic={topic} />
+        <EditMyTopicForm topic={topic} onCancel={goBack} />
       </CardContent>
     </Card>
   );

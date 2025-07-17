@@ -44,6 +44,11 @@
     --appDestructiveForegroundColor: #{$appDestructiveForegroundColor};
     --appDestructiveForegroundColorRGB: #{rgbComponents($appDestructiveForegroundColor)};
 
+    --appSuccessColor: #{$appSuccessColor};
+    --appSuccessColorRGB: #{rgbComponents($appSuccessColor)};
+    --appSuccessForegroundColor: #{$appSuccessForegroundColor};
+    --appSuccessForegroundColorRGB: #{rgbComponents($appSuccessForegroundColor)};
+
     // Dimensions
 
     --borderRadiusSize: 0.5rem;
@@ -252,5 +257,15 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+// Animate sonner toast spinner
+.sonner-loading-wrapper {
+  animation: rotating-spin 4s linear infinite;
+}
+@keyframes rotating-spin {
+  100% {
+    transform: rotate(360deg);
   }
 }
