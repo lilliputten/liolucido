@@ -2,6 +2,7 @@
 
 import {
   AlertTriangle,
+  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   BookOpen,
@@ -160,6 +161,7 @@ const telegram = ({ ...props }: IconProps) => (
 
 export const Icons = {
   add: Plus,
+  arrowLeft: ArrowLeft,
   arrowRight: ArrowRight,
   arrowUpRight: ArrowUpRight,
   billing: CreditCard,

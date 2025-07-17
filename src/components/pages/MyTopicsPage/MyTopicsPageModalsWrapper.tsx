@@ -8,23 +8,29 @@ import { myTopicsRoute } from '@/config/routesConfig';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
-import { MyTopicsList } from './MyTopicsList';
+import { MyTopicsListWrapper } from './MyTopicsListWrapper';
 
 interface TTopicsListProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
+  editTopicId?: TTopicId;
 }
 
 export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
-  const { showAddModal, deleteTopicId } = props;
+  const { showAddModal, deleteTopicId, editTopicId } = props;
   const { topics } = useTopicsContext();
+
+  const openAddTopicModal = React.useCallback(() => {
+    router.push(myTopicsRoute + '/add');
+  }, [router]);
 
   const openDeleteTopicModal = React.useCallback(
     (topicId: TTopicId) => {
       const hasTopic = topics.find(({ id }) => id === topicId);
       if (!hasTopic) {
         toast.error('The requested topic does not exist.');
+        router.replace(myTopicsRoute);
       } else {
         router.push(`${myTopicsRoute}/delete?id=${topicId}`);
       }
@@ -32,9 +38,18 @@ export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
     [router, topics],
   );
 
-  const openAddTopicModal = React.useCallback(() => {
-    router.push(myTopicsRoute + '/add');
-  }, [router]);
+  const openEditTopicModal = React.useCallback(
+    (topicId: TTopicId) => {
+      const hasTopic = topics.find(({ id }) => id === topicId);
+      if (!hasTopic) {
+        toast.error('The requested topic does not exist.');
+        router.replace(myTopicsRoute);
+      } else {
+        router.push(`${myTopicsRoute}/edit?id=${topicId}`);
+      }
+    },
+    [router, topics],
+  );
 
   React.useEffect(() => {
     if (showAddModal) {
@@ -48,10 +63,17 @@ export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
     }
   }, [deleteTopicId, openDeleteTopicModal]);
 
+  React.useEffect(() => {
+    if (editTopicId) {
+      openEditTopicModal(editTopicId);
+    }
+  }, [editTopicId, openEditTopicModal]);
+
   return (
-    <MyTopicsList
+    <MyTopicsListWrapper
       openAddTopicModal={openAddTopicModal}
       openDeleteTopicModal={openDeleteTopicModal}
+      openEditTopicModal={openEditTopicModal}
     />
   );
 }

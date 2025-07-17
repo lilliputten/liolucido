@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 import { ErrorLike } from '@/shared/types/errors';
 import { getErrorText } from '@/lib/helpers/strings';
@@ -21,6 +22,7 @@ interface TErrorProps {
 
 export function PageError(props: TErrorProps) {
   const { error, reset, className, title = 'Something went wrong!' } = props;
+  const router = useRouter();
   const errText = getErrorText(error);
   React.useEffect(() => {
     const errText = getErrorText(error);
@@ -47,6 +49,14 @@ export function PageError(props: TErrorProps) {
       </ErrorPlaceHolder.Description>
       {!!reset && (
         <div className="flex w-full justify-center gap-4">
+          <Button onClick={() => router.back()}>
+            <Icons.arrowLeft className="mr-2 size-4" />
+            <span>Go back</span>
+          </Button>
+          <Button onClick={() => router.push('/')}>
+            <Icons.home className="mr-2 size-4" />
+            Go home
+          </Button>
           <Button onClick={reset}>
             <Icons.refresh className="mr-2 size-4" />
             <span>Try again</span>

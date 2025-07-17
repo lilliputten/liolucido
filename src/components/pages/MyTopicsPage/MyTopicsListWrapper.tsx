@@ -7,16 +7,17 @@ import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
-import { MyTopicsListTable } from './MyTopicsListTable';
+import { MyTopicsListCard } from './MyTopicsListCard';
 import { PageEmpty } from './PageEmpty';
 
 interface TTopicsListProps {
-  openDeleteTopicModal: (topicId: TTopicId) => void;
   openAddTopicModal: () => void;
+  openDeleteTopicModal: (topicId: TTopicId) => void;
+  openEditTopicModal: (topicId: TTopicId) => void;
 }
 
-export function MyTopicsList(props: TTopicsListProps) {
-  const { openDeleteTopicModal, openAddTopicModal } = props;
+export function MyTopicsListWrapper(props: TTopicsListProps) {
+  const { openAddTopicModal, openDeleteTopicModal, openEditTopicModal } = props;
   const { topics } = useTopicsContext();
 
   const hasTopics = !!topics.length;
@@ -24,26 +25,22 @@ export function MyTopicsList(props: TTopicsListProps) {
   return (
     <div
       className={cn(
-        '__TopicsList',
-        'relative',
-        'transition-opacity',
-        'flex-1',
-        // tailwindClippingLayout({ vertical: true }),
+        isDev && '__MyTopicsListWrapper', // DEBUG
+        // 'transition-opacity',
+        'relative flex flex-1 flex-col overflow-hidden',
       )}
     >
       {hasTopics ? (
-        <>
-          <MyTopicsListTable
-            className={cn(
-              isDev && '__MyTopicsList_Table', // DEBUG
-              'flex-1',
-              // tailwindClippingLayout({ vertical: true }),
-            )}
-            topics={topics}
-            handleDeleteTopic={openDeleteTopicModal}
-            handleAddTopic={openAddTopicModal}
-          />
-        </>
+        <MyTopicsListCard
+          className={cn(
+            isDev && '__MyTopicsListWrapper_Card', // DEBUG
+            'relative flex flex-1 flex-col overflow-hidden',
+          )}
+          topics={topics}
+          handleDeleteTopic={openDeleteTopicModal}
+          handleEditTopic={openEditTopicModal}
+          handleAddTopic={openAddTopicModal}
+        />
       ) : (
         <PageEmpty
           className="size-full flex-1"
