@@ -8,20 +8,70 @@ import { isDev } from '@/constants';
 
 // @see https://www.radix-ui.com/primitives/docs/components/scroll-area
 
-type ExtraProps = { viewportClassName?: string };
+interface ScrollAreaExtraProps {
+  viewportClassName?: string;
+  saveScrollKey?: string;
+  saveScrollHash?: string;
+}
 type ComponentType = React.ForwardRefExoticComponent<
-  ScrollAreaPrimitive.ScrollAreaProps & React.RefAttributes<HTMLDivElement> // & ExtraProps
+  ScrollAreaPrimitive.ScrollAreaProps & React.RefAttributes<HTMLDivElement>
 >;
+
+/* Data pack delimiter */
+const packDelim = ';';
+/** Regex to remove empty final chunks */
+const finalDelimsReg = new RegExp(`${packDelim}+$`);
 
 const ScrollArea = React.forwardRef<
   React.ElementRef<ComponentType>,
   Omit<
-    ScrollAreaPrimitive.ScrollAreaProps & React.RefAttributes<HTMLDivElement> & ExtraProps,
+    ScrollAreaPrimitive.ScrollAreaProps &
+      React.RefAttributes<HTMLDivElement> &
+      ScrollAreaExtraProps,
     'ref'
   >
-  // React.ComponentPropsWithoutRef<RootComponentType>
 >((props, ref) => {
-  const { className, viewportClassName, children, ...rest } = props;
+  const { className, viewportClassName, children, saveScrollKey, saveScrollHash, ...rest } = props;
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  /**
+   * Save scroll positions if `saveScrollKey` and `saveScrollHash` are provided:
+   * - `saveScrollKey` used to override values for each instance of `ScrollArea`.
+   * - `saveScrollHash` used to override the instance's scroll data if conditions or state have changed.
+   * Data save in a packed form: `{saveScrollHash};{scrollTop};{scrollLeft}` (the delimiter is defined above,
+   * in the `packDelim` constant, now is semicolon, ";").
+   */
+  React.useEffect(() => {
+    const node = scrollRef.current;
+    if (node && saveScrollKey) {
+      if (!saveScrollHash || saveScrollHash.includes(packDelim)) {
+        throw new Error(`saveScrollHash should be non-empty string without "${packDelim}" symbols`);
+      }
+      const savedData = localStorage.getItem(saveScrollKey);
+      // Restore scroll if data has been saved and saved hash value correspond current hash.
+      if (savedData) {
+        const unpacked = savedData.split(packDelim);
+        const hash = unpacked.shift();
+        if (hash === saveScrollHash) {
+          const [scrollTop = 0, scrollLeft = 0] = unpacked.map((v) => Number(v) || 0);
+          node.scrollTop = scrollTop;
+          node.scrollLeft = scrollLeft;
+        }
+      }
+      const handleScroll = () => {
+        const { scrollTop, scrollLeft } = node;
+        // Save scroll position to restore later.
+        const packed = [saveScrollHash, scrollTop, scrollLeft]
+          .map((v) => (v ? String(v) : ''))
+          .join(packDelim)
+          .replace(finalDelimsReg, '');
+        localStorage.setItem(saveScrollKey, packed);
+      };
+      node.addEventListener('scroll', handleScroll);
+      return () => {
+        node.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [scrollRef, saveScrollKey, saveScrollHash]);
   return (
     <ScrollAreaPrimitive.Root
       ref={ref}
@@ -33,6 +83,7 @@ const ScrollArea = React.forwardRef<
       {...rest}
     >
       <ScrollAreaPrimitive.Viewport
+        ref={scrollRef}
         className={cn(
           isDev && '__ScrollArea_Viewport', // DEBUG
           viewportClassName,

@@ -23,6 +23,10 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
   return String(err);
 }
 
+export function getRandomHashString(len: number = 4) {
+  return (Math.random() + 1).toString(36).substring(11 - len);
+}
+
 /** quoteHtmlAttr -- quote all invalid characters for html */
 export function quoteHtmlAttr(str: string, preserveCR?: boolean) {
   const crValue = preserveCR ? '&#13;' : '\n';

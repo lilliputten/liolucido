@@ -21,7 +21,12 @@ type TChildProps = /* Omit<TEditMyTopicCardProps, 'className'> & */ { goBack: ()
 
 function Title({ goBack }: TChildProps) {
   return (
-    <div className="grid grid-cols-[2em_1fr] gap-2">
+    <div
+      className={cn(
+        isDev && '__EditMyTopicCard_Toolbar', // DEBUG
+        'grid flex-1 grid-cols-[2em_1fr] gap-2',
+      )}
+    >
       <Button
         variant="ghost"
         size="icon"
@@ -47,7 +52,7 @@ function Header({ goBack }: TChildProps) {
     <CardHeader
       className={cn(
         isDev && '__EditMyTopicCard_Header', // DEBUG
-        'flex flex-row items-center',
+        'flex flex-row flex-wrap items-center',
       )}
     >
       <Title goBack={goBack} />
@@ -62,11 +67,10 @@ export function EditMyTopicCard(props: TEditMyTopicCardProps) {
   const { className, topicId } = props;
   const router = useRouter();
   const { topics } = useTopicsContext();
-  const topic: TTopic | undefined = React.useMemo(() => {
-    const topic = topics.find(({ id }) => id === topicId);
-    console.log('[EditMyTopicCard:Memo:topic]', topicId, topic);
-    return topic;
-  }, [topics, topicId]);
+  const topic: TTopic | undefined = React.useMemo(
+    () => topics.find(({ id }) => id === topicId),
+    [topics, topicId],
+  );
   if (!topicId || !topic) {
     throw new Error('No such topic exists');
   }

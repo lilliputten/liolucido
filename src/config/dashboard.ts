@@ -5,9 +5,11 @@ import {
   adminRoute,
   chartsRoute,
   dashboardRoute,
+  dataRoute,
   myTopicsRoute,
   rootRoute,
   settingsRoute,
+  welcomeRoute,
 } from './routesConfig';
 
 export const sidebarLinks: SidebarNavItem[] = [
@@ -23,6 +25,8 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     titleId: 'Application',
     items: [
+      { href: dataRoute, icon: 'lineChart', titleId: 'Data' },
+      { href: welcomeRoute, icon: 'lineChart', titleId: 'Welcome' },
       {
         href: adminRoute,
         icon: 'laptop',

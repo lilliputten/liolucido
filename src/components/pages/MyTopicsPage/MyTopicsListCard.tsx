@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,9 +15,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { DemoList } from '@/components/debug/DemoList';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TTopic, TTopicId } from '@/features/topics/types';
+
+const saveScrollHash = getRandomHashString();
 
 interface TMyTopicsListCardProps extends TPropsWithClassName {
   topics: TTopic[];
@@ -28,7 +32,12 @@ type TChildProps = Omit<TMyTopicsListCardProps, 'className'>;
 
 function Title() {
   return (
-    <div className="__MyTopicsListCard_Title grid gap-2">
+    <div
+      className={cn(
+        isDev && '__MyTopicsListCard_Title', // DEBUG
+        'grid flex-1 gap-2',
+      )}
+    >
       <CardTitle>Current topics</CardTitle>
       <CardDescription className="text-balance">
         Topics you have added to the profile.
@@ -43,7 +52,7 @@ function Toolbar(props: TChildProps) {
     <div
       className={cn(
         isDev && '__MyTopicsListCard_Toolbar', // DEBUG
-        'ml-auto flex shrink-0 flex-wrap gap-2',
+        '__ml-auto __shrink-0 flex flex-wrap gap-2',
       )}
     >
       <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
@@ -67,7 +76,7 @@ function Header(props: TChildProps) {
     <CardHeader
       className={cn(
         isDev && '__MyTopicsListCard_Header', // DEBUG
-        'flex flex-row items-center',
+        'flex flex-row flex-wrap items-center',
       )}
     >
       <Title />
@@ -80,9 +89,13 @@ function TopicTableHeader() {
   return (
     <TableHeader>
       <TableRow>
-        <TableHead>Topic Name</TableHead>
-        <TableHead>Language</TableHead>
-        <TableHead>Keywords</TableHead>
+        <TableHead id="name">Topic Name</TableHead>
+        <TableHead id="language" className="max-sm:hidden">
+          Language
+        </TableHead>
+        <TableHead id="keywords" className="max-sm:hidden">
+          Keywords
+        </TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -104,10 +117,10 @@ function TopicTableRow(props: TTopicTableRowProps) {
       <TableCell>
         <div className="text-lg font-medium">{name}</div>
       </TableCell>
-      <TableCell>
+      <TableCell id="name" className="max-sm:hidden">
         <div>{language}</div>
       </TableCell>
-      <TableCell>
+      <TableCell id="keywords" className="max-sm:hidden">
         <div>{keywords}</div>
       </TableCell>
       <TableCell className="text-right">
@@ -156,7 +169,7 @@ export function MyTopicsListCard(props: TMyTopicsListCardProps) {
           'relative flex flex-1 flex-col overflow-hidden',
         )}
       >
-        <ScrollArea>
+        <ScrollArea saveScrollKey="MyTopicsListCard" saveScrollHash={saveScrollHash}>
           <Table>
             <TopicTableHeader />
             <TableBody>

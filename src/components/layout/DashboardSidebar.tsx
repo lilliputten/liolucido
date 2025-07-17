@@ -8,6 +8,7 @@ import { PanelLeftClose, PanelRightClose } from 'lucide-react';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
 import { SidebarNavItem } from '@/shared/types/site/NavItem';
+import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Badge } from '@/components/ui/badge';
@@ -35,27 +36,28 @@ interface TMobileSheetProps {
   setOpen: (p: boolean) => void;
 }
 
+const saveScrollHash = getRandomHashString();
+
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
 
-  // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
-  //
-  // const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
-  //   if (typeof window !== "undefined") {
-  //     const saved = window.localStorage.getItem("sidebarExpanded");
-  //     return saved !== null ? JSON.parse(saved) : true;
-  //   }
-  //   return true;
-  // });
-
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     window.localStorage.setItem(
-  //       "sidebarExpanded",
-  //       JSON.stringify(isSidebarExpanded),
-  //     );
-  //   }
-  // }, [isSidebarExpanded]);
+  /* // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
+   * const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
+   *   if (typeof window !== "undefined") {
+   *     const saved = window.localStorage.getItem("sidebarExpanded");
+   *     return saved !== null ? JSON.parse(saved) : true;
+   *   }
+   *   return true;
+   * });
+   * useEffect(() => {
+   *   if (typeof window !== "undefined") {
+   *     window.localStorage.setItem(
+   *       "sidebarExpanded",
+   *       JSON.stringify(isSidebarExpanded),
+   *     );
+   *   }
+   * }, [isSidebarExpanded]);
+   */
 
   const { isTablet } = useMediaQuery();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isTablet);
@@ -74,13 +76,11 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
         className={cn(
           isDev && '__DashboardSidebar', // DEBUG
           'bg-primary/10',
-          // 'bg-[var(--primaryColor)]/50',
-          // 'sticky top-0 h-full',
-          // NOTE: Set sidebar atop the main content (ensure that this z-index is enough)
-          // 'z-10',
         )}
       >
         <ScrollArea
+          saveScrollKey="DashboardSidebar"
+          saveScrollHash={saveScrollHash}
           className={cn(
             isDev && '__DashboardSidebar_Scroll', // DEBUG
             'h-full overflow-y-auto border-r',
@@ -298,13 +298,6 @@ export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetPr
     >
       <nav className="flex flex-1 flex-col gap-y-8 p-6 text-lg font-medium">
         <NavBarBrand isUser={isUser} />
-
-        {/*
-        <Link href="#" className="flex items-center gap-2 text-lg font-semibold">
-          <Icons.logo className="size-6" />
-          <span className="text-xl font-bold">{siteConfig.name}</span>
-        </Link>
-        */}
 
         {<ProjectSwitcher large />}
 

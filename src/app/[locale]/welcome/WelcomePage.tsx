@@ -25,6 +25,7 @@ export async function WelcomePage({ params }: TWelcomePageProps) {
 
   return (
     <PageWrapper
+      id="WelcomePage"
       className={cn(
         isDev && '__WelcomePage', // DEBUG
       )}
