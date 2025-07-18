@@ -4,7 +4,6 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
-import { SelectLanguageContextProvider } from '@/contexts/SelectLanguageContext';
 import { TopicsContextProvider } from '@/contexts/TopicsContext';
 import { getAllUsersTopics } from '@/features/topics/actions/getAllUsersTopics';
 import { TTopic } from '@/features/topics/types';
@@ -55,14 +54,12 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
 
   return (
     <TopicsContextProvider initialTopics={topics}>
-      <SelectLanguageContextProvider>
-        <MyTopicsPageWrapper>
-          <PageHeader />
-          {children}
-          {addTopicModal}
-          {deleteTopicModal}
-        </MyTopicsPageWrapper>
-      </SelectLanguageContextProvider>
+      <MyTopicsPageWrapper>
+        <PageHeader />
+        {children}
+        {addTopicModal}
+        {deleteTopicModal}
+      </MyTopicsPageWrapper>
     </TopicsContextProvider>
   );
 }

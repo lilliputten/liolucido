@@ -2,17 +2,17 @@
 
 import React from 'react';
 
+import { TSelectLanguageData } from '@/lib/types/language';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Icons } from '@/components/shared/icons';
-import { TSelectLanguageContext } from '@/contexts/SelectLanguageContext';
 
-interface SelectLanguageFormProps extends TSelectLanguageContext {
+interface SelectLanguageFormProps extends TSelectLanguageData {
   className?: string;
-  handleConfirm: (data: TSelectLanguageContext) => void;
+  handleConfirm: (data: TSelectLanguageData) => void;
   handleClose: () => void;
   isPending?: boolean;
 }
@@ -65,7 +65,6 @@ export function SelectLanguageForm(props: SelectLanguageFormProps) {
       langCode: finalLangCode,
       langName: finalLangName,
       langCustom: isCustom,
-      hasSelected: true,
     });
   };
 

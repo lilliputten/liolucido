@@ -37,7 +37,9 @@ type TFormData = Pick<
   | 'name' // string
   | 'isPublic' // boolean
   | 'keywords' // string
-  | 'langCode' // string
+  | 'langCode' // string (TLanguageId)
+  | 'langName' // string
+  | 'langCustom' // boolean
   | 'answersCountRandom' // boolean
   | 'answersCountMin' // number
   | 'answersCountMax' // number
@@ -108,12 +110,12 @@ function FormFields(props: TChildProps) {
   // Select language
   const selectLanguage = (ev: React.MouseEvent) => {
     ev.preventDefault();
-    const [langCode] = watch(['langCode']);
-    console.log('Select language', {
-      langCode,
-    });
-    debugger;
-    router.push(`${myTopicsRoute}/edit/${topic.id}/select-language?langCode=${langCode}`);
+    const [langCode, langName, langCustom] = watch(['langCode', 'langName', 'langCustom']);
+    const params = new URLSearchParams();
+    if (langCode) params.append('langCode', langCode);
+    if (langName) params.append('langName', langName);
+    if (langCustom) params.append('langCustom', String(langCustom));
+    router.push(`${myTopicsRoute}/edit/${topic.id}/select-language?${params.toString()}`);
   };
   // Create unique keys for labels
   const nameKey = React.useId();
@@ -128,6 +130,8 @@ function FormFields(props: TChildProps) {
     'isPublic',
     'keywords',
     'langCode',
+    'langName',
+    'langCustom',
     'answersCountRandom',
     'answersCountMin',
     'answersCountMax',
@@ -288,6 +292,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
   React.useEffect(() => {
     const handleLanguageSelected = (event: CustomEvent) => {
       const { langCode, topicId } = event.detail;
+      // TODO: Add and pass all other lang* params
       console.log('[EditMyTopicForm:handleLanguageSelected]', {
         langCode,
         topicId,
@@ -321,6 +326,8 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
           isPublic: z.boolean(),
           keywords: z.string().optional(),
           langCode: z.string().optional(),
+          langName: z.string().optional(),
+          langCustom: z.boolean().optional(),
           answersCountRandom: z.boolean().optional(),
           answersCountMin: z.union([z.string().optional(), z.number()]),
           answersCountMax: z.union([z.string().optional(), z.number()]), // z.union([z.string().optional(), z.number()]),
@@ -367,6 +374,8 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
       isPublic: topic.isPublic || false,
       keywords: topic.keywords || '',
       langCode: topic.langCode || '',
+      langName: topic.langName || '',
+      langCustom: topic.langCustom || false,
       answersCountRandom: topic.answersCountRandom || false,
       answersCountMin: topic.answersCountMin || undefined,
       answersCountMax: topic.answersCountMax || undefined,
@@ -407,6 +416,8 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
       isPublic,
       keywords,
       langCode,
+      langName,
+      langCustom,
       answersCountRandom,
       answersCountMin,
       answersCountMax,
@@ -417,6 +428,8 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
       isPublic,
       keywords,
       langCode,
+      langName,
+      langCustom,
       answersCountRandom,
       answersCountMin,
       answersCountMax,

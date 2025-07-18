@@ -12,7 +12,6 @@ interface SelectLanguageModalPageProps {
     langCode?: string;
     langName?: string;
     langCustom?: string;
-    hasSelected?: string;
   }>;
 }
 
@@ -25,14 +24,13 @@ export default function SelectLanguageModalPage({
   const resolvedSearchParams = React.use(searchParams);
 
   const { topicId } = resolvedParams;
-  const { langCode, langName, langCustom, hasSelected } = resolvedSearchParams;
+  const { langCode, langName, langCustom } = resolvedSearchParams;
 
   return (
     <SelectLanguageModal
       langCode={langCode}
       langName={langName}
       langCustom={langCustom === 'true'}
-      hasSelected={hasSelected === 'true'}
       topicId={parseInt(topicId)}
     />
   );

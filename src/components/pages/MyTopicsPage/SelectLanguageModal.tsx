@@ -3,29 +3,29 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
+import { TSelectLanguageData } from '@/lib/types/language';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { TSelectLanguageContext } from '@/contexts/SelectLanguageContext';
 import { TTopicId } from '@/features/topics/types';
 
 import { SelectLanguageForm } from './SelectLanguageForm';
 
-interface TSelectLanguageModalProps extends TSelectLanguageContext {
+interface TSelectLanguageModalProps extends TSelectLanguageData {
   topicId: TTopicId;
 }
 
 export function SelectLanguageModal(props: TSelectLanguageModalProps) {
-  const { langCode, langName, langCustom, hasSelected, topicId } = props;
+  const { langCode, langName, langCustom, topicId } = props;
   const router = useRouter();
   const hideModal = React.useCallback(() => router.back(), [router]);
   const [isPending, startTransition] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
   const handleConfirm = React.useCallback(
-    (selectedLanguage: TSelectLanguageContext) => {
+    (selectedLanguage: TSelectLanguageData) => {
       // TODO: Remove transition
       startTransition(() => {
         // Dispatch a custom event with the selected language data
@@ -80,7 +80,6 @@ export function SelectLanguageModal(props: TSelectLanguageModalProps) {
           langCode={langCode}
           langName={langName}
           langCustom={langCustom}
-          hasSelected={hasSelected}
         />
       </div>
     </Modal>

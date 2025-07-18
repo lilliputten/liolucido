@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { myTopicsRoute } from '@/config/routesConfig';
-import { TSelectLanguageContext } from '@/contexts/SelectLanguageContext';
+import { TSelectLanguageData } from '@/lib/types/language';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
@@ -15,7 +15,7 @@ interface TTopicsListProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
   editTopicId?: TTopicId;
-  selectLanguageData?: TSelectLanguageContext;
+  selectLanguageData?: TSelectLanguageData;
 }
 
 export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
@@ -73,14 +73,12 @@ export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
 
   // Select Language Modal
   const openSelectLanguageModal = React.useCallback(
-    (selectLanguageData: TSelectLanguageContext, topicId: TTopicId) => {
-      const { langCode, langName, langCustom, hasSelected } = selectLanguageData;
+    (selectLanguageData: TSelectLanguageData, topicId: TTopicId) => {
+      const { langCode, langName, langCustom } = selectLanguageData;
       const params = new URLSearchParams();
       if (langCode) params.append('langCode', langCode);
       if (langName) params.append('langName', langName);
-      if (langCustom !== undefined) params.append('langCustom', String(langCustom));
-      if (hasSelected !== undefined) params.append('hasSelected', String(hasSelected));
-
+      if (langCustom) params.append('langCustom', String(langCustom));
       router.push(`${myTopicsRoute}/edit/${topicId}/select-language?${params.toString()}`);
     },
     [router],
