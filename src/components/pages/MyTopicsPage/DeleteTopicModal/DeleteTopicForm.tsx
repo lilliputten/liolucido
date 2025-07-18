@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 
-export interface TConfirmDeleteTopicFormProps {
+export interface TDeleteTopicFormProps {
   name: string;
   handleConfirm: () => Promise<unknown>;
   handleClose?: () => void;
@@ -15,7 +15,7 @@ export interface TConfirmDeleteTopicFormProps {
   isPending?: boolean;
 }
 
-export function ConfirmDeleteTopicForm(props: TConfirmDeleteTopicFormProps) {
+export function DeleteTopicForm(props: TDeleteTopicFormProps) {
   const { name, className, handleConfirm, handleClose, isPending } = props;
 
   const onClose = (ev: React.MouseEvent) => {
@@ -31,7 +31,7 @@ export function ConfirmDeleteTopicForm(props: TConfirmDeleteTopicFormProps) {
   return (
     <div
       className={cn(
-        isDev && '__ConfirmDeleteTopicForm', // DEBUG
+        isDev && '__DeleteTopicForm', // DEBUG
         'flex w-full flex-col gap-4',
         className,
       )}
