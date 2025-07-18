@@ -24,7 +24,10 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
 }
 
 export function getRandomHashString(len: number = 4) {
-  return (Math.random() + 1).toString(36).substring(11 - len);
+  const randVal = Math.random();
+  const hash = (randVal + 1).toString(36).substring(2, 2 + len);
+  // console.log('getRandomHashString:', randVal, '->', hash);
+  return hash;
 }
 
 /** quoteHtmlAttr -- quote all invalid characters for html */

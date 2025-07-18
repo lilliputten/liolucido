@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { myTopicsRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -35,13 +37,14 @@ type TFormData = Pick<
   | 'name' // string
   | 'isPublic' // boolean
   | 'keywords' // string
-  | 'language' // string
+  | 'langCode' // string
   | 'answersCountRandom' // boolean
   | 'answersCountMin' // number
   | 'answersCountMax' // number
 >;
 
 interface TChildProps {
+  topic: TTopic;
   isSubmitEnabled?: boolean;
   isPending?: boolean;
   onCancel?: (ev: React.MouseEvent) => void;
@@ -93,7 +96,8 @@ function FormActions(props: TChildProps) {
 }
 
 function FormFields(props: TChildProps) {
-  const { className, form } = props;
+  const router = useRouter();
+  const { className, topic, form } = props;
   const {
     // @see https://react-hook-form.com/docs/useform
     setFocus,
@@ -101,11 +105,21 @@ function FormFields(props: TChildProps) {
   } = form;
   // Focus the first field (should it be used with a languages list?)
   React.useEffect(() => setFocus('name'), [setFocus]);
+  // Select language
+  const selectLanguage = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    const [langCode] = watch(['langCode']);
+    console.log('Select language', {
+      langCode,
+    });
+    debugger;
+    router.push(`${myTopicsRoute}/edit/${topic.id}/select-language?langCode=${langCode}`);
+  };
   // Create unique keys for labels
   const nameKey = React.useId();
   const isPublicKey = React.useId();
   const keywordsKey = React.useId();
-  const languageKey = React.useId();
+  const langCodeKey = React.useId();
   const answersCountRandomKey = React.useId();
   const answersCountMinKey = React.useId();
   const answersCountMaxKey = React.useId();
@@ -113,7 +127,7 @@ function FormFields(props: TChildProps) {
     'name',
     'isPublic',
     'keywords',
-    'language',
+    'langCode',
     'answersCountRandom',
     'answersCountMin',
     'answersCountMax',
@@ -168,14 +182,26 @@ function FormFields(props: TChildProps) {
             </FormItem>
           )}
         />
+        <div
+          className={cn(
+            isDev && '__EditMyTopicForm_SelectLanguage', // DEBUG
+            'flex items-center',
+          )}
+        >
+          <span className="flex-1">Language: {watch('langCode') || '(none)'}</span>
+          <Button onClick={selectLanguage} className="gap-2">
+            <Icons.languages className="size-4" />
+            <span>Select</span>
+          </Button>
+        </div>
         <FormField
-          name="language"
+          name="langCode"
           control={form.control}
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-4">
-              <Label htmlFor={languageKey}>Language code</Label>
+              <Label htmlFor={langCodeKey}>Language code</Label>
               <FormControl>
-                <Input id={languageKey} type="text" placeholder="Language code" {...field} />
+                <Input id={langCodeKey} type="text" placeholder="Language code" {...field} />
               </FormControl>
               <FormHint>An optional language code (eg, "en", "ru", etc) for the topic.</FormHint>
               <FormMessage />
@@ -256,6 +282,36 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
   const { topic, className, onCancel } = props;
   const { setTopics } = useTopicsContext();
   const [isPending, startTransition] = React.useTransition();
+  const formRef = React.useRef<UseFormReturn<TFormData>>();
+
+  // Listen for the language-selected custom event
+  React.useEffect(() => {
+    const handleLanguageSelected = (event: CustomEvent) => {
+      const { langCode, topicId } = event.detail;
+      console.log('[EditMyTopicForm:handleLanguageSelected]', {
+        langCode,
+        topicId,
+      });
+      debugger;
+
+      // Make sure the event is for this topic
+      if (topicId === topic.id && formRef.current) {
+        // Update the form field
+        formRef.current.setValue('langCode', langCode, {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('language-selected', handleLanguageSelected as EventListener);
+
+    // Clean up
+    return () => {
+      window.removeEventListener('language-selected', handleLanguageSelected as EventListener);
+    };
+  }, [topic.id]);
 
   const formSchema = React.useMemo(
     () =>
@@ -264,7 +320,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
           name: z.string().min(minNameLength).max(maxNameLength),
           isPublic: z.boolean(),
           keywords: z.string().optional(),
-          language: z.string().optional(),
+          langCode: z.string().optional(),
           answersCountRandom: z.boolean().optional(),
           answersCountMin: z.union([z.string().optional(), z.number()]),
           answersCountMax: z.union([z.string().optional(), z.number()]), // z.union([z.string().optional(), z.number()]),
@@ -310,7 +366,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
       name: topic.name || '',
       isPublic: topic.isPublic || false,
       keywords: topic.keywords || '',
-      language: topic.language || '',
+      langCode: topic.langCode || '',
       answersCountRandom: topic.answersCountRandom || false,
       answersCountMin: topic.answersCountMin || undefined,
       answersCountMax: topic.answersCountMax || undefined,
@@ -326,6 +382,9 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues, // Default values for the form.
   });
+
+  // Store form reference for the event listener
+  formRef.current = form;
 
   const {
     // @see https://react-hook-form.com/docs/useform
@@ -347,7 +406,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
       name,
       isPublic,
       keywords,
-      language,
+      langCode,
       answersCountRandom,
       answersCountMin,
       answersCountMax,
@@ -357,7 +416,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
       name,
       isPublic,
       keywords,
-      language,
+      langCode,
       answersCountRandom,
       answersCountMin,
       answersCountMax,
@@ -434,6 +493,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
         )}
         <ScrollArea>
           <FormFields
+            topic={topic}
             form={form}
             isSubmitEnabled={isSubmitEnabled}
             isPending={isPending}
@@ -441,6 +501,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
           />
         </ScrollArea>
         <FormActions
+          topic={topic}
           form={form}
           isSubmitEnabled={isSubmitEnabled}
           isPending={isPending}

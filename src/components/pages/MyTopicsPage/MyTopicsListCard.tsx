@@ -108,7 +108,7 @@ interface TTopicTableRowProps {
 
 function TopicTableRow(props: TTopicTableRowProps) {
   const { topic, handleDeleteTopic, handleEditTopic } = props;
-  const { id, name, language, keywords } = topic;
+  const { id, name, langCode, keywords } = topic;
 
   // const keywordsContent = keywords?.map(({ id, name }) => <span key={id}>{name}</span>);
   return (
@@ -117,7 +117,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
         <div className="text-lg font-medium">{name}</div>
       </TableCell>
       <TableCell id="name" className="max-sm:hidden">
-        <div>{language}</div>
+        <div>{langCode}</div>
       </TableCell>
       <TableCell id="keywords" className="max-sm:hidden">
         <div>{keywords}</div>

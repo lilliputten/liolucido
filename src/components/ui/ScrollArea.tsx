@@ -21,6 +21,8 @@ type ComponentType = React.ForwardRefExoticComponent<
 const packDelim = ';';
 /** Regex to remove empty final chunks */
 const finalDelimsReg = new RegExp(`${packDelim}+$`);
+/** Local storage key prefix */
+const saveScrollKeyPrefix = 'ScrollArea-';
 
 const ScrollArea = React.forwardRef<
   React.ElementRef<ComponentType>,
@@ -46,25 +48,43 @@ const ScrollArea = React.forwardRef<
       if (!saveScrollHash || saveScrollHash.includes(packDelim)) {
         throw new Error(`saveScrollHash should be non-empty string without "${packDelim}" symbols`);
       }
-      const savedData = localStorage.getItem(saveScrollKey);
+      const savedData = localStorage.getItem(saveScrollKeyPrefix + saveScrollKey);
       // Restore scroll if data has been saved and saved hash value correspond current hash.
       if (savedData) {
         const unpacked = savedData.split(packDelim);
         const hash = unpacked.shift();
         if (hash === saveScrollHash) {
           const [scrollTop = 0, scrollLeft = 0] = unpacked.map((v) => Number(v) || 0);
+          /* console.log('[ScrollArea] Restore scroll', {
+           *   scrollTop,
+           *   scrollLeft,
+           *   saveScrollKey,
+           *   saveScrollHash,
+           * });
+           */
           node.scrollTop = scrollTop;
           node.scrollLeft = scrollLeft;
         }
       }
       const handleScroll = () => {
         const { scrollTop, scrollLeft } = node;
-        // Save scroll position to restore later.
-        const packed = [saveScrollHash, scrollTop, scrollLeft]
-          .map((v) => (v ? String(v) : ''))
-          .join(packDelim)
-          .replace(finalDelimsReg, '');
-        localStorage.setItem(saveScrollKey, packed);
+        if (!scrollTop && !scrollLeft) {
+          localStorage.removeItem(saveScrollKeyPrefix + saveScrollKey);
+        } else {
+          // Save scroll position to restore later.
+          const packed = [saveScrollHash, scrollTop, scrollLeft]
+            .map((v) => (v ? String(v) : ''))
+            .join(packDelim)
+            .replace(finalDelimsReg, '');
+          localStorage.setItem(saveScrollKeyPrefix + saveScrollKey, packed);
+        }
+        /* console.log('[ScrollArea] Save scroll', {
+         *   scrollTop,
+         *   scrollLeft,
+         *   saveScrollKey,
+         *   saveScrollHash,
+         * });
+         */
       };
       node.addEventListener('scroll', handleScroll);
       return () => {

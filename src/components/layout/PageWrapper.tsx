@@ -1,3 +1,6 @@
+// Using client side in order to regenerate save scroll hash on each app open
+'use client';
+
 import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
@@ -49,7 +52,7 @@ export function PageWrapper(props: TPageWrapperProps) {
   if (scrollable) {
     content = (
       <ScrollArea
-        saveScrollKey={id && `Scroll-${id}`}
+        saveScrollKey={id}
         saveScrollHash={saveScrollHash}
         className={cn(
           isDev && '__PageWrapper_Scroll', // DEBUG

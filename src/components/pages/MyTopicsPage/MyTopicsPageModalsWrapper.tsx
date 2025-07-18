@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { myTopicsRoute } from '@/config/routesConfig';
+import { TSelectLanguageContext } from '@/contexts/SelectLanguageContext';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
@@ -14,17 +15,25 @@ interface TTopicsListProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
   editTopicId?: TTopicId;
+  selectLanguageData?: TSelectLanguageContext;
 }
 
 export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
-  const { showAddModal, deleteTopicId, editTopicId } = props;
+  const { showAddModal, deleteTopicId, editTopicId, selectLanguageData } = props;
   const { topics } = useTopicsContext();
 
+  // Add Topic Modal
   const openAddTopicModal = React.useCallback(() => {
     router.push(myTopicsRoute + '/add');
   }, [router]);
+  React.useEffect(() => {
+    if (showAddModal) {
+      openAddTopicModal();
+    }
+  }, [showAddModal, openAddTopicModal]);
 
+  // Delete Topic Modal
   const openDeleteTopicModal = React.useCallback(
     (topicId: TTopicId) => {
       const hasTopic = topics.find(({ id }) => id === topicId);
@@ -37,7 +46,13 @@ export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
     },
     [router, topics],
   );
+  React.useEffect(() => {
+    if (deleteTopicId) {
+      openDeleteTopicModal(deleteTopicId);
+    }
+  }, [deleteTopicId, openDeleteTopicModal]);
 
+  // Edit Topic Page
   const openEditTopicModal = React.useCallback(
     (topicId: TTopicId) => {
       const hasTopic = topics.find(({ id }) => id === topicId);
@@ -45,29 +60,36 @@ export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
         toast.error('The requested topic does not exist.');
         router.replace(myTopicsRoute);
       } else {
-        router.push(`${myTopicsRoute}/edit?id=${topicId}`);
+        router.push(`${myTopicsRoute}/edit/${topicId}`);
       }
     },
     [router, topics],
   );
-
-  React.useEffect(() => {
-    if (showAddModal) {
-      openAddTopicModal();
-    }
-  }, [showAddModal, openAddTopicModal]);
-
-  React.useEffect(() => {
-    if (deleteTopicId) {
-      openDeleteTopicModal(deleteTopicId);
-    }
-  }, [deleteTopicId, openDeleteTopicModal]);
-
   React.useEffect(() => {
     if (editTopicId) {
       openEditTopicModal(editTopicId);
     }
   }, [editTopicId, openEditTopicModal]);
+
+  // Select Language Modal
+  const openSelectLanguageModal = React.useCallback(
+    (selectLanguageData: TSelectLanguageContext, topicId: TTopicId) => {
+      const { langCode, langName, langCustom, hasSelected } = selectLanguageData;
+      const params = new URLSearchParams();
+      if (langCode) params.append('langCode', langCode);
+      if (langName) params.append('langName', langName);
+      if (langCustom !== undefined) params.append('langCustom', String(langCustom));
+      if (hasSelected !== undefined) params.append('hasSelected', String(hasSelected));
+
+      router.push(`${myTopicsRoute}/edit/${topicId}/select-language?${params.toString()}`);
+    },
+    [router],
+  );
+  React.useEffect(() => {
+    if (selectLanguageData && editTopicId) {
+      openSelectLanguageModal(selectLanguageData, editTopicId);
+    }
+  }, [selectLanguageData, editTopicId, openSelectLanguageModal]);
 
   return (
     <MyTopicsListWrapper

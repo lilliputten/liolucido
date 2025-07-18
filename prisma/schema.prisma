@@ -105,8 +105,11 @@ model Topic {
 
   // An optional list of keywords separated by commas.
   keywords String?
-  // An optional language code (eg, "en", "ru", etc) for the topic.
-  language String?
+
+  // An optional language code and name for the topic.
+  langCode String? // Language code (eg, "en", "ru", etc, or custom)
+  langName String? // Language name
+  langCustom String? // Is the language a custom one?
 
   // Allow to generate random number of answers for questions (if it's not overidden in the question settings).
   answersCountRandom Boolean? @map("answers_count_random")
