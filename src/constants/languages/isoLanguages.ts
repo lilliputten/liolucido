@@ -1,4 +1,4 @@
-import { TLanguage } from '@/lib/types/language';
+import { TLanguage } from '@/shared/types/language';
 
 import jsonLanguages from './ISO-639-1-language.json';
 

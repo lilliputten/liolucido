@@ -1,4 +1,4 @@
-import { TLanguage } from '@/lib/types/language';
+import { TLanguage } from '@/shared/types/language';
 
 import { isoLanguages } from './isoLanguages';
 

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { TSelectLanguageData } from '@/lib/types/language';
+import { TSelectTopicLanguageData } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -13,7 +13,7 @@ import { TTopicId } from '@/features/topics/types';
 
 import { SelectLanguageForm } from './SelectLanguageForm';
 
-interface TSelectLanguageModalProps extends TSelectLanguageData {
+interface TSelectLanguageModalProps extends TSelectTopicLanguageData {
   topicId: TTopicId;
 }
 
@@ -25,7 +25,7 @@ export function SelectLanguageModal(props: TSelectLanguageModalProps) {
   const { isMobile } = useMediaQuery();
 
   const handleConfirm = React.useCallback(
-    (selectedLanguage: TSelectLanguageData) => {
+    (selectedLanguage: TSelectTopicLanguageData) => {
       // TODO: Remove transition
       startTransition(() => {
         // Dispatch a custom event with the selected language data

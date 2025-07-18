@@ -1,4 +1,4 @@
-import { TSelectLanguageData } from '@/lib/types/language';
+import { TSelectTopicLanguageData } from '@/shared/types/language';
 import { TTopicId } from '@/features/topics/types';
 
 import { MyTopicsPageModalsWrapper } from './MyTopicsPageModalsWrapper';
@@ -7,7 +7,7 @@ interface MyTopicsPageProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
   editTopicId?: TTopicId;
-  selectLanguageData?: TSelectLanguageData;
+  selectLanguageData?: TSelectTopicLanguageData;
 }
 
 export async function MyTopicsPage(props: MyTopicsPageProps = {}) {
