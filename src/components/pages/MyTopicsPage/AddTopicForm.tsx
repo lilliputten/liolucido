@@ -62,7 +62,7 @@ export function AddTopicForm(props: TAddTopicFormProps) {
     formState, // FormState<TFieldValues>;
     handleSubmit, // UseFormHandleSubmit<TFieldValues, TTransformedValues>;
     // register, // UseFormRegister<TFieldValues>;
-    reset, // UseFormReset<TFieldValues>;
+    // reset, // UseFormReset<TFieldValues>;
     setFocus,
   } = form;
 
@@ -83,10 +83,10 @@ export function AddTopicForm(props: TAddTopicFormProps) {
     const newTopic: TNewTopic = { name };
     return handleAddTopic(newTopic)
       .then(() => {
-        reset();
-        if (handleClose) {
-          handleClose();
-        }
+        // reset();
+        // if (handleClose) {
+        //   handleClose();
+        // }
       })
       .catch((error) => {
         const message = getErrorText(error) || 'An unknown error has occurred.';

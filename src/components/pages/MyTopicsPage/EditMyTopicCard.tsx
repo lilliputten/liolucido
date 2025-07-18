@@ -56,7 +56,7 @@ function Header({ goBack }: TChildProps) {
       )}
     >
       <Title goBack={goBack} />
-      {/* XXX: See a toolbar example in `MyTopicsListCard`
+      {/* XXX: See for a toolbar example in `MyTopicsListCard`
       <Toolbar {...props} />
       */}
     </CardHeader>
@@ -88,9 +88,13 @@ export function EditMyTopicCard(props: TEditMyTopicCardProps) {
       <CardContent
         className={cn(
           isDev && '__EditMyTopicCard_Content', // DEBUG
-          'relative flex flex-1 flex-col overflow-hidden',
+          'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
+        {/*
+        <ScrollArea viewportClassName="px-6">
+        </ScrollArea>
+        */}
         <EditMyTopicForm topic={topic} onCancel={goBack} />
       </CardContent>
     </Card>

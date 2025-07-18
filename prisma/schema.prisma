@@ -97,17 +97,21 @@ model Topic {
   // Unique id
   id Int @id @default(autoincrement())
 
+  // A topic name. It's good if it's a unique value.
   name String
 
-  isCorrect   Boolean? @map("is_correct")
-  isGenerated Boolean? @map("is_generated")
+  // If the topic is public it's available for all the users, not only for you.
+  isPublic Boolean? @map("is_public")
 
+  // An optional list of keywords separated by commas.
   keywords String?
+  // An optional language code (eg, "en", "ru", etc) for the topic.
   language String?
 
-  topicsCountRandom Boolean? @map("topics_count_random")
-  topicsCountMin    Int?     @map("topics_count_min")
-  topicsCountMax    Int?     @map("topics_count_max")
+  // Allow to generate random number of answers for questions (if it's not overidden in the question settings).
+  answersCountRandom Boolean? @map("answers_count_random")
+  answersCountMin    Int?     @map("answers_count_min")
+  answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
@@ -158,9 +162,9 @@ model Answer {
   // Custom text
   text String
 
-  answersCountRandom Boolean? @map("answers_count_random")
-  answersCountMin    Int?     @map("answers_count_min")
-  answersCountMax    Int?     @map("answers_count_max")
+  // answersCountRandom Boolean? @map("answers_count_random")
+  // answersCountMin    Int?     @map("answers_count_min")
+  // answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")

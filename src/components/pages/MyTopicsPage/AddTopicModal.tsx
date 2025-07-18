@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { myTopicsRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -17,8 +18,12 @@ import { TNewTopic, TTopic } from '@/features/topics/types';
 import { AddTopicForm } from './AddTopicForm';
 
 export function AddTopicModal(/* props: TAddTopicModalProps */) {
+  const [isVisible, setVisible] = React.useState(true);
   const router = useRouter();
-  const hideModal = React.useCallback(() => router.back(), [router]);
+  const hideModal = React.useCallback(() => {
+    setVisible(false);
+    router.back();
+  }, [router]);
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
@@ -37,6 +42,9 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
               // Update topics list
               setTopics((topics) => topics.concat(addedTopic));
               resolve(addedTopic);
+              // NOTE: Close or go to the edit page
+              setVisible(false);
+              router.replace(`${myTopicsRoute}/edit?id=${addedTopic.id}`);
               return addedTopic;
             })
             .catch((error) => {
@@ -57,12 +65,12 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
         });
       });
     },
-    [setTopics],
+    [setTopics, router],
   );
 
   return (
     <Modal
-      isVisible
+      isVisible={isVisible}
       hideModal={hideModal}
       className={cn(
         isDev && '__AddTopicModal', // DEBUG

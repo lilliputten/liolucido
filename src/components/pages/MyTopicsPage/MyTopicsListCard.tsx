@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DemoList } from '@/components/debug/DemoList';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -166,10 +165,14 @@ export function MyTopicsListCard(props: TMyTopicsListCardProps) {
       <CardContent
         className={cn(
           isDev && '__MyTopicsListCard_Content', // DEBUG
-          'relative flex flex-1 flex-col overflow-hidden',
+          'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ScrollArea saveScrollKey="MyTopicsListCard" saveScrollHash={saveScrollHash}>
+        <ScrollArea
+          saveScrollKey="MyTopicsListCard"
+          saveScrollHash={saveScrollHash}
+          viewportClassName="px-6"
+        >
           <Table>
             <TopicTableHeader />
             <TableBody>

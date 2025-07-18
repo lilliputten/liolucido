@@ -56,6 +56,11 @@ export function PageWrapper(props: TPageWrapperProps) {
           'flex flex-col items-center',
           'layout-scrollable',
         )}
+        viewportClassName={cn(
+          isDev && '__PageWrapper_Viewport', // DEBUG
+          'flex-1 flex flex-col',
+          '[&>div]:!flex [&>div]:flex-1',
+        )}
       >
         {content}
       </ScrollArea>
