@@ -75,7 +75,7 @@ function Header(props: TChildProps) {
     <CardHeader
       className={cn(
         isDev && '__MyTopicsListCard_Header', // DEBUG
-        'flex flex-row flex-wrap items-center',
+        'flex flex-row flex-wrap items-start',
       )}
     >
       <Title />
@@ -102,22 +102,21 @@ function TopicTableHeader() {
 
 interface TTopicTableRowProps {
   topic: TTopic;
-  handleDeleteTopic: TMyTopicsListCardProps['handleDeleteTopic']; // (topicId: TTopicId) => void;
-  handleEditTopic: TMyTopicsListCardProps['handleEditTopic']; // (topicId: TTopicId) => void;
+  handleDeleteTopic: TMyTopicsListCardProps['handleDeleteTopic'];
+  handleEditTopic: TMyTopicsListCardProps['handleEditTopic'];
 }
 
 function TopicTableRow(props: TTopicTableRowProps) {
   const { topic, handleDeleteTopic, handleEditTopic } = props;
-  const { id, name, langCode, keywords } = topic;
+  const { id, name, langCode, langName, keywords } = topic;
 
-  // const keywordsContent = keywords?.map(({ id, name }) => <span key={id}>{name}</span>);
   return (
     <TableRow data-topic-id={id}>
       <TableCell>
         <div className="text-lg font-medium">{name}</div>
       </TableCell>
       <TableCell id="name" className="max-sm:hidden">
-        <div>{langCode}</div>
+        <div>{[langName, langCode && `(${langCode})`].filter(Boolean).join(' ')}</div>
       </TableCell>
       <TableCell id="keywords" className="max-sm:hidden">
         <div>{keywords}</div>
@@ -184,9 +183,6 @@ export function MyTopicsListCard(props: TMyTopicsListCardProps) {
                   handleEditTopic={handleEditTopic}
                 />
               ))}
-              {/* // DEMO: Check scroll support
-              <DemoList count={50} />
-              */}
             </TableBody>
           </Table>
         </ScrollArea>

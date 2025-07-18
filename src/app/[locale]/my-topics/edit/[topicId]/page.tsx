@@ -1,4 +1,4 @@
-import { EditMyTopicCard } from '@/components/pages/MyTopicsPage/EditMyTopicCard';
+import { EditMyTopicCard } from '@/components/pages/MyTopicsPage/EditMyTopic';
 import { PageError } from '@/components/shared/PageError';
 import { TTopicId } from '@/features/topics/types';
 

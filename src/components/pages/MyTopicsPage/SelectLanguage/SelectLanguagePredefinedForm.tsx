@@ -20,14 +20,13 @@ import {
 import { Icons } from '@/components/shared/icons';
 import { predefinedLanguages } from '@/constants/languages';
 
-import { maxIdLength, minIdLength } from '../constants/inputFields';
+import { minIdLength } from '../constants/inputFields';
 
 interface TFormData {
   id?: TLanguageId;
 }
 
 interface TProps {
-  // languages: TLanguage[];
   selectLanguage: (language: TSelectLanguageData) => void; //Promise<TSelectTopicLanguageData[]>;
   className?: string;
   langCode?: TLanguageId;
@@ -51,8 +50,6 @@ export const SelectLanguagePredefinedForm: React.FC<TProps> = (props) => {
     }),
     [langCode],
   );
-
-  console.log('defaultValues', defaultValues)
 
   const form = useForm<TFormData>({
     // @see https://react-hook-form.com/docs/useform
@@ -123,11 +120,6 @@ export const SelectLanguagePredefinedForm: React.FC<TProps> = (props) => {
             >
               <SelectTrigger className="SelectTrigger flex-1" aria-label="Language">
                 <SelectValue placeholder="Select a language…" />
-                {/*
-                  <SelectIcon className="SelectIcon">
-                    <Icons.chevronDown className="mr-2 size-4" />
-                  </SelectIcon>
-                  */}
               </SelectTrigger>
               <SelectContent className="SelectContent">
                 {languagesList.map(({ id, name }) => (
