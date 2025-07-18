@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { TSelectTopicLanguageData } from '@/shared/types/language';
+import { TSelectLanguageData } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,9 +10,9 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Icons } from '@/components/shared/icons';
 
-interface SelectLanguageFormProps extends TSelectTopicLanguageData {
+interface SelectLanguageFormProps extends TSelectLanguageData {
   className?: string;
-  handleConfirm: (data: TSelectTopicLanguageData) => void;
+  handleConfirm: (data: TSelectLanguageData) => void;
   handleClose: () => void;
   isPending?: boolean;
 }

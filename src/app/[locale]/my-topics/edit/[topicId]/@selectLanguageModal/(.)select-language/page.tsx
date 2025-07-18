@@ -2,7 +2,8 @@
 
 import React from 'react';
 
-import { SelectLanguageModal } from '@/components/pages/MyTopicsPage/SelectLanguageModal';
+import { SelectLanguageModal } from '@/components/pages/MyTopicsPage/SelectLanguage';
+import { useTopicsContext } from '@/contexts/TopicsContext';
 
 interface SelectLanguageModalPageProps {
   params: Promise<{
@@ -19,19 +20,20 @@ export default function SelectLanguageModalPage({
   params,
   searchParams,
 }: SelectLanguageModalPageProps) {
-  // Unwrap the promises using React.use()
-  const resolvedParams = React.use(params);
-  const resolvedSearchParams = React.use(searchParams);
-
-  const { topicId } = resolvedParams;
-  const { langCode, langName, langCustom } = resolvedSearchParams;
-
+  const { langCode, langName, langCustom } = React.use(searchParams);
+  const { topicId: tipicIdRaw } = React.use(params);
+  const topicId = parseInt(tipicIdRaw);
+  const { topics } = useTopicsContext();
+  const topic = topics.find((topic) => topic.id === topicId);
+  if (!topic) {
+    throw new Error('No such topic exists');
+  }
   return (
     <SelectLanguageModal
       langCode={langCode}
       langName={langName}
       langCustom={langCustom === 'true'}
-      topicId={parseInt(topicId)}
+      topicId={topicId}
     />
   );
 }
