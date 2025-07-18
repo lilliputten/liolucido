@@ -26,7 +26,6 @@ export function MyTopicsListWrapper(props: TTopicsListProps) {
     <div
       className={cn(
         isDev && '__MyTopicsListWrapper', // DEBUG
-        // 'transition-opacity',
         'relative flex flex-1 flex-col overflow-hidden',
       )}
     >
@@ -50,11 +49,6 @@ export function MyTopicsListWrapper(props: TTopicsListProps) {
           description="You dont have any topics yet. Add any topic to your profile."
         />
       )}
-      {/*
-      <WaitingWrapper show={isUpdating}>
-        <ContentSkeleton />
-      </WaitingWrapper>
-      */}
     </div>
   );
 }
