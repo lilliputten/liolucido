@@ -40,10 +40,9 @@ export async function AllTopicsLayout(props: TAllTopicsLayoutProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'AllTopicsPage' });
 
-  // NOTE: Checking NEXT_PUBLIC_USER_REQUIRED or existed user session
   const user = await getCurrentUser();
   const userId = user?.id;
-  // TODO: Check also if the user really exists in the database>
+  // Check also if the user really exists in the database>
   const isValidUser = !!userId && (await checkIfUserExists(userId));
   if (!isValidUser) {
     redirect(welcomeRoute);

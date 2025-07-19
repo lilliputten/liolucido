@@ -40,7 +40,6 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'MyTopicsPage' });
 
-  // NOTE: Checking NEXT_PUBLIC_USER_REQUIRED or existed user session
   const user = await getCurrentUser();
   const userId = user?.id;
   // TODO: Check also if the user really exists in the database>
