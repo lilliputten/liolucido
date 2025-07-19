@@ -1,4 +1,4 @@
-import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage/DeleteTopicModal';
+import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage';
 import { TTopicId } from '@/features/topics/types';
 
 interface DeleteTopicModalPageProps {

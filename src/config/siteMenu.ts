@@ -10,7 +10,7 @@ export const siteMenu: SiteMenu = {
   // TODO: See `src/config/dashboard.ts`
   mainNav: [
     {
-      titleId: 'ManageTopics',
+      titleId: 'MyTopics',
       href: myTopicsRoute,
       userRequiredOnly: true,
     },

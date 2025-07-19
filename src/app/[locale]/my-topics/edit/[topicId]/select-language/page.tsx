@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { SelectTopicLanguageModal } from '@/components/pages/ManageTopicsPage/SelectTopicLanguageModal';
+import { SelectTopicLanguageModal } from '@/components/pages/ManageTopicsPage';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 
 interface SelectLanguagePageProps {

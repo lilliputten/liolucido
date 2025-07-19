@@ -17,7 +17,7 @@ export default function Error({
   React.useEffect(() => {
     // Log the error to an error reporting service
     // eslint-disable-next-line no-console
-    console.error('[src/app/[locale]/my-topics/error]', error);
+    console.error('[/my-topics/error]', error);
     // debugger; // eslint-disable-line no-debugger
   }, [error]);
 
