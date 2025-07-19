@@ -3,6 +3,7 @@ import { SidebarNavItem } from '@/shared/types/site/NavItem';
 
 import {
   adminRoute,
+  allTopicsRoute,
   chartsRoute,
   dashboardRoute,
   dataRoute,
@@ -12,21 +13,29 @@ import {
   welcomeRoute,
 } from './routesConfig';
 
+// TODO: Allow to show generative data (like a topics count) in the sideboard titles (as badges?)
+
 export const sidebarLinks: SidebarNavItem[] = [
   {
-    titleId: 'Your Data',
-    authorizedOnly: UserRoles.USER,
+    titleId: 'My Data',
+    authorizedOnly: true,
     items: [
-      // Other links?
-      { href: myTopicsRoute, icon: 'lineChart', titleId: 'My Topics' },
+      { href: myTopicsRoute, icon: 'Library', titleId: 'My Topics' },
+      {
+        href: allTopicsRoute,
+        icon: 'SquareLibrary',
+        titleId: 'All Topics',
+        authorizedOnly: UserRoles.ADMIN,
+      },
+      // Add other data links?
     ],
   },
-  // All available topics list
   {
     titleId: 'Application',
     items: [
-      { href: dataRoute, icon: 'lineChart', titleId: 'Data' },
-      { href: welcomeRoute, icon: 'lineChart', titleId: 'Welcome' },
+      { href: dataRoute, icon: 'Library', titleId: 'Available Topics' },
+      { href: dataRoute, icon: 'Braces', titleId: 'Data' },
+      { href: welcomeRoute, icon: 'Hand', titleId: 'Welcome' },
       {
         href: adminRoute,
         icon: 'laptop',

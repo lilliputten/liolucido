@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
+import { NavItemBase } from '@/shared/types/site/NavItem';
 import { sidebarLinks } from '@/config/dashboard';
 import { cn } from '@/lib/utils';
 import { NavBar } from '@/components/layout/NavBar';
@@ -16,20 +17,29 @@ interface TGenericLayoutContentProps extends TPropsWithChildren {
   user?: TExtendedUser;
 }
 
+function checkIfLinkIsAllowedForUser(user: TExtendedUser | undefined, navItem: NavItemBase) {
+  const { authorizedOnly } = navItem;
+  if (!authorizedOnly) {
+    return true;
+  }
+  if (authorizedOnly === true && !!user?.id) {
+    return true;
+  }
+  return authorizedOnly === user?.role;
+}
+
 export function GenericLayoutContent(props: TGenericLayoutContentProps) {
   const { children, user } = props;
   const isUser = !!user;
 
   const [open, setOpen] = React.useState(false);
 
-  const filteredLinks = sidebarLinks
-    .filter(({ authorizedOnly }) => !authorizedOnly || authorizedOnly === user?.role)
-    .map((section) => ({
-      ...section,
-      items: section.items.filter(
-        ({ authorizedOnly }) => !authorizedOnly || authorizedOnly === user?.role,
-      ),
-    }));
+  const checkNavItem = checkIfLinkIsAllowedForUser.bind(undefined, user);
+
+  const filteredLinks = sidebarLinks.filter(checkNavItem).map((section) => ({
+    ...section,
+    items: section.items.filter(checkNavItem),
+  }));
 
   return (
     <div

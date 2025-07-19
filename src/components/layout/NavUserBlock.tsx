@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { Icons } from '@/components/shared/icons';
 import { UserAvatar } from '@/components/shared/user-avatar';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';
@@ -72,7 +73,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
   const Wrapper = onSidebar ? SidebarWrapper : DropdownMenuContent;
   const MenuItem = onSidebar ? SidebarMenuItem : DropdownMenuItem;
 
-  // const isAdmin = user.role === 'ADMIN';
+  const isAdmin = user.role === 'ADMIN';
 
   return (
     <Wrapper
@@ -93,17 +94,22 @@ export function NavUserBlock(props: TNavUserBlockProps) {
           <UserAvatar
             user={{ name: user.name || null, image: user.image || null }}
             className={cn(
-              isDev && '__NavUserAccount:UserAvatar', // DEBUG
+              isDev && '__NavUserBlock_UserAvatar', // DEBUG
               className,
-              'rounded-full',
-              'bg-primary-300/25',
-              'size-8',
+              'size-8 rounded-full bg-primary-300/25',
+              isAdmin && 'border-2 border-solid border-lime-400',
               onSidebar && 'flex',
             )}
           />
         )}
         <div className="flex flex-col space-y-1 leading-none">
-          {user.name && <p className="font-medium">{user.name}</p>}
+          <p
+            className="flex items-center gap-2 font-medium"
+            title={isAdmin ? 'Is Administrator' : undefined}
+          >
+            {user.name || 'anonymous'}
+            {isAdmin && <Icons.ShieldAlert className="size-4 opacity-50" />}
+          </p>
           {user.email && (
             <p className="w-[200px] truncate text-sm text-muted-foreground">{user.email}</p>
           )}

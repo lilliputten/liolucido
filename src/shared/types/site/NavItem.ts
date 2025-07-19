@@ -2,16 +2,18 @@ import { TUserRole } from '@/shared/types/db/TUserRole';
 import { TRoutePath } from '@/config/routesConfig';
 import { Icons } from '@/components/shared/icons';
 
-export type NavItem = {
+export interface NavItemBase {
   titleId: string; // Id for i18n
+  authorizedOnly?: TUserRole | boolean;
+  icon?: keyof typeof Icons;
+}
+export interface NavItem extends NavItemBase {
   href: TRoutePath;
   badge?: number;
   disabled?: boolean;
   external?: boolean;
   userRequiredOnly?: boolean;
-  authorizedOnly?: TUserRole;
-  icon?: keyof typeof Icons;
-};
+}
 
 export type MainNavItem = NavItem;
 
@@ -19,9 +21,6 @@ export type MarketingConfig = {
   mainNav: MainNavItem[];
 };
 
-export type SidebarNavItem = {
-  titleId: string;
+export interface SidebarNavItem extends NavItemBase {
   items: NavItem[];
-  authorizedOnly?: TUserRole;
-  icon?: keyof typeof Icons;
-};
+}

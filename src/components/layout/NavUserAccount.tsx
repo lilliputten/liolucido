@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Icons } from '@/components/shared/icons';
 import { UserAvatar } from '@/components/shared/user-avatar';
 import { isDev } from '@/constants';
 
@@ -28,13 +29,13 @@ export function NavUserAccount(props: TNavUserAccountProps) {
     return <div className="size-8 animate-pulse rounded-full border bg-muted" />;
   }
 
-  // const isAdmin = user.role === 'ADMIN';
+  const isAdmin = user.role === 'ADMIN';
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          isDev && '__NavUserAccount:DropdownMenuTrigger', // DEBUG
+          isDev && '__NavUserAccount_DropdownMenuTrigger', // DEBUG
           className,
           'rounded-full',
           'transition-all',
@@ -46,17 +47,22 @@ export function NavUserAccount(props: TNavUserAccountProps) {
         <UserAvatar
           user={{ name: user.name || null, image: user.image || null }}
           className={cn(
-            isDev && '__NavUserAccount:UserAvatar', // DEBUG
+            isDev && '__NavUserAccount_UserAvatar', // DEBUG
             className,
-            'rounded-full',
-            'bg-primary-300/25',
-            'size-8',
+            'size-8 rounded-full bg-primary-300/25',
+            isAdmin && 'border-2 border-solid border-lime-400',
             onSidebar && 'flex',
           )}
         />
         {onSidebar && (
           <span className="flex items-center gap-2">
-            {user.name && <span>{user.name}</span>}
+            <span
+              className="flex gap-2 font-medium"
+              title={isAdmin ? 'Is Administrator' : undefined}
+            >
+              {user.name || 'anonymous'}
+              {isAdmin && <Icons.ShieldAlert className="size-4 opacity-50" />}
+            </span>
             {user.email && <span className="truncate text-muted-foreground">{user.email}</span>}
           </span>
         )}
