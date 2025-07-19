@@ -1,0 +1,1 @@
+- Issue #4: Created and connected google and yandex oauth applications.
