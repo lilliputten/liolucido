@@ -25,12 +25,13 @@ export async function WelcomePage({ params }: TWelcomePageProps) {
 
   return (
     <PageWrapper
+      id="WelcomePage"
       className={cn(
         isDev && '__WelcomePage', // DEBUG
       )}
       innerClassName={cn(
         isDev && '__WelcomePage_Inner', // DEBUG
-        'w-full',
+        'w-full h-full',
       )}
       scrollable
       // limitWidth

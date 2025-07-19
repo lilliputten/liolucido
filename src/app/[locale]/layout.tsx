@@ -96,6 +96,7 @@ async function RootLayout(props: TRootLayoutProps) {
                   expand
                   richColors
                   closeButton
+                  // theme="dark"
                   // invert?: boolean;
                   // theme?: 'light' | 'dark' | 'system';
                   // position?: Position;

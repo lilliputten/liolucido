@@ -8,10 +8,9 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
   }
   // Error object
   if (err instanceof Error) {
-    // return String(err);
     return [
       // prettier-ignore
-      !opts.omitErrorName && err.name,
+      !opts.omitErrorName && err.name !== 'Error' ? err.name : '',
       err.message,
     ]
       .filter(Boolean)
@@ -22,6 +21,13 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
     return String((err as { digest: string }).digest);
   }
   return String(err);
+}
+
+export function getRandomHashString(len: number = 4) {
+  const randVal = Math.random();
+  const hash = (randVal + 1).toString(36).substring(2, 2 + len);
+  // console.log('getRandomHashString:', randVal, '->', hash);
+  return hash;
 }
 
 /** quoteHtmlAttr -- quote all invalid characters for html */

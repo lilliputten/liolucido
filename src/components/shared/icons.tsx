@@ -2,6 +2,7 @@
 
 import {
   AlertTriangle,
+  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   BookOpen,
@@ -19,6 +20,7 @@ import {
   HelpCircle,
   Home,
   Image,
+  Languages,
   Laptop,
   LayoutPanelLeft,
   LineChart,
@@ -160,6 +162,7 @@ const telegram = ({ ...props }: IconProps) => (
 
 export const Icons = {
   add: Plus,
+  arrowLeft: ArrowLeft,
   arrowRight: ArrowRight,
   arrowUpRight: ArrowUpRight,
   billing: CreditCard,
@@ -179,6 +182,7 @@ export const Icons = {
   google,
   help: HelpCircle,
   home: Home,
+  languages: Languages,
   laptop: Laptop,
   lineChart: LineChart,
   logo: Puzzle,

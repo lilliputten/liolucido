@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 import { ErrorLike } from '@/shared/types/errors';
 import { getErrorText } from '@/lib/helpers/strings';
@@ -8,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ErrorPlaceHolder } from '@/components/shared/ErrorPlaceHolder';
 import { Icons } from '@/components/shared/icons';
+import { isDev } from '@/constants';
 
 interface TErrorProps {
   title?: string;
@@ -20,7 +22,8 @@ interface TErrorProps {
 // otherwise you'll get an 'Only plain objects... can be passed...' error.
 
 export function PageError(props: TErrorProps) {
-  const { error, reset, className, title = 'Something went wrong!' } = props;
+  const { error, reset, className, title } = props;
+  const router = useRouter();
   const errText = getErrorText(error);
   React.useEffect(() => {
     const errText = getErrorText(error);
@@ -32,23 +35,38 @@ export function PageError(props: TErrorProps) {
   }, [error]);
 
   return (
-    <ErrorPlaceHolder className={cn(className, '__PageError')}>
+    <ErrorPlaceHolder
+      className={cn(
+        className,
+        isDev && '__PageError', // DEBUG
+      )}
+    >
       <ErrorPlaceHolder.Icon
         name="warning"
         // NOTE: Center warning triangle vertically
-        className="-mt-1"
+        // className="-mt-1"
       />
-      <ErrorPlaceHolder.Title>{title}</ErrorPlaceHolder.Title>
-      <ErrorPlaceHolder.Description>
-        {/* // To show only general message for the users?
-        See error log for details.
-        */}
-        {errText}
-      </ErrorPlaceHolder.Description>
+      <ErrorPlaceHolder.Title>{title || errText}</ErrorPlaceHolder.Title>
+      {title && errText && (
+        <ErrorPlaceHolder.Description>
+          {/* // To show only general message for the users?
+          See error log for details.
+          */}
+          {errText}
+        </ErrorPlaceHolder.Description>
+      )}
       {!!reset && (
-        <div className="flex w-full justify-center gap-4">
-          <Button onClick={reset}>
-            <Icons.refresh className="mr-2 size-4" />
+        <div className="mt-2 flex w-full justify-center gap-4">
+          <Button onClick={() => router.back()} className="flex gap-2">
+            <Icons.arrowLeft className="size-4" />
+            <span>Go back</span>
+          </Button>
+          <Button onClick={() => router.push('/')} className="flex gap-2">
+            <Icons.home className="size-4" />
+            Go home
+          </Button>
+          <Button onClick={reset} className="flex gap-2">
+            <Icons.refresh className="size-4" />
             <span>Try again</span>
           </Button>
         </div>

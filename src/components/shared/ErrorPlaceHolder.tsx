@@ -5,7 +5,12 @@ import { Icons } from '@/components/shared/icons';
 
 type ErrorPlaceHolderProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function ErrorPlaceHolder({ className, children, ...props }: ErrorPlaceHolderProps) {
+export function ErrorPlaceHolder({
+  className,
+  containerClassName,
+  children,
+  ...props
+}: ErrorPlaceHolderProps & { containerClassName?: string }) {
   return (
     <div
       className={cn(
@@ -14,7 +19,14 @@ export function ErrorPlaceHolder({ className, children, ...props }: ErrorPlaceHo
       )}
       {...props}
     >
-      <div className="flex max-w-[420px] flex-col items-center text-center">{children}</div>
+      <div
+        className={cn(
+          'flex max-w-[420px] flex-col items-center gap-6 text-center',
+          containerClassName,
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -30,16 +42,13 @@ ErrorPlaceHolder.Icon = function ErrorPlaceHolderIcon({
   ...props
 }: ErrorPlaceHolderIconProps) {
   const Icon = Icons[name];
-
-  if (!Icon) {
-    return null;
+  if (Icon) {
+    return (
+      <div className="error-gradient-background flex size-20 items-center justify-center rounded-full text-white">
+        <Icon className={cn('size-10', className)} {...props} />
+      </div>
+    );
   }
-
-  return (
-    <div className="error-gradient-background flex size-20 items-center justify-center rounded-full text-white">
-      <Icon className={cn('size-10', className)} {...props} />
-    </div>
-  );
 };
 
 type ErrorPlaceHolderTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
@@ -48,7 +57,7 @@ ErrorPlaceHolder.Title = function ErrorPlaceHolderTitle({
   className,
   ...props
 }: ErrorPlaceHolderTitleProps) {
-  return <h3 className={cn('mt-5 font-heading text-2xl font-bold', className)} {...props} />;
+  return <h3 className={cn('mt-2 font-heading text-2xl font-bold', className)} {...props} />;
 };
 
 type ErrorPlaceHolderDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>;

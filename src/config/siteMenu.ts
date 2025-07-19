@@ -1,19 +1,27 @@
 import { MainNavItem } from '@/shared/types/site/NavItem';
 
+import { dataRoute, myTopicsRoute, welcomeRoute } from './routesConfig';
+
 export type SiteMenu = {
   mainNav: MainNavItem[];
 };
 
 export const siteMenu: SiteMenu = {
+  // TODO: See `src/config/dashboard.ts`
   mainNav: [
     {
-      titleId: 'dataEditor',
-      href: '/data',
+      titleId: 'MyTopics',
+      href: myTopicsRoute,
       userRequiredOnly: true,
     },
     {
-      titleId: 'info',
-      href: '/info',
+      titleId: 'Data',
+      href: dataRoute,
+      // userRequiredOnly: true,
+    },
+    {
+      titleId: 'Welcome',
+      href: welcomeRoute,
     },
   ],
 };

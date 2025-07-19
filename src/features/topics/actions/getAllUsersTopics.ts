@@ -6,7 +6,7 @@ import { isDev } from '@/constants';
 
 import { TTopic } from '../types';
 
-export async function getAllTopics() {
+export async function getAllUsersTopics() {
   try {
     if (isDev) {
       // DEBUG: Emulate network delay
@@ -26,7 +26,7 @@ export async function getAllTopics() {
     return undefined;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[getAllTopics] catch', {
+    console.error('[getAllUsersTopics] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger

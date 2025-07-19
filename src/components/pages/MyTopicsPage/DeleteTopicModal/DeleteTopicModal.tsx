@@ -14,13 +14,13 @@ import { useTopicsContext } from '@/contexts/TopicsContext';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
-import { ConfirmDeleteTopicForm } from './ConfirmDeleteTopicForm';
+import { DeleteTopicForm } from './DeleteTopicForm';
 
-interface TConfirmDeleteTopicModalProps {
+interface TDeleteTopicModalProps {
   topicId?: TTopicId;
 }
 
-export function ConfirmDeleteTopicModal(props: TConfirmDeleteTopicModalProps) {
+export function DeleteTopicModal(props: TDeleteTopicModalProps) {
   const { topicId } = props;
   const router = useRouter();
   const hideModal = React.useCallback(() => router.back(), [router]);
@@ -52,13 +52,9 @@ export function ConfirmDeleteTopicModal(props: TConfirmDeleteTopicModalProps) {
             })
             .catch((error) => {
               // eslint-disable-next-line no-console
-              console.error(
-                '[ConfirmDeleteTopicModal:confirmDeleteTopic:catch]',
-                getErrorText(error),
-                {
-                  error,
-                },
-              );
+              console.error('[DeleteTopicModal:confirmDeleteTopic:catch]', getErrorText(error), {
+                error,
+              });
               debugger; // eslint-disable-line no-debugger
               reject(error);
               throw error;
@@ -78,14 +74,14 @@ export function ConfirmDeleteTopicModal(props: TConfirmDeleteTopicModalProps) {
       isVisible
       hideModal={hideModal}
       className={cn(
-        isDev && '__ConfirmDeleteTopicModal', // DEBUG
+        isDev && '__DeleteTopicModal', // DEBUG
         'gap-0',
         isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div
         className={cn(
-          isDev && '__ConfirmDeleteTopicModal_Header', // DEBUG
+          isDev && '__DeleteTopicModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
           'flex flex-col border-b bg-accent px-8 py-4',
         )}
@@ -96,7 +92,7 @@ export function ConfirmDeleteTopicModal(props: TConfirmDeleteTopicModalProps) {
         </DialogDescription>
       </div>
       <div className="flex flex-col px-8 py-4">
-        <ConfirmDeleteTopicForm
+        <DeleteTopicForm
           name={deletingTopic?.name || ''}
           handleConfirm={confirmDeleteTopic}
           className="p-8"

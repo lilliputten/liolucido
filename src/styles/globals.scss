@@ -44,6 +44,11 @@
     --appDestructiveForegroundColor: #{$appDestructiveForegroundColor};
     --appDestructiveForegroundColorRGB: #{rgbComponents($appDestructiveForegroundColor)};
 
+    --appSuccessColor: #{$appSuccessColor};
+    --appSuccessColorRGB: #{rgbComponents($appSuccessColor)};
+    --appSuccessForegroundColor: #{$appSuccessForegroundColor};
+    --appSuccessForegroundColorRGB: #{rgbComponents($appSuccessForegroundColor)};
+
     // Dimensions
 
     --borderRadiusSize: 0.5rem;
@@ -163,9 +168,7 @@
     --ringColor: #{$ringDarkColor};
     --ringColorRGB: #{rgbComponents($ringDarkColor)};
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -175,6 +178,11 @@
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
+  }
+
+  code,
+  pre {
+    font-size: 0.75rem;
   }
 }
 
@@ -249,5 +257,15 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+// Animate sonner toast spinner
+.sonner-loading-wrapper {
+  animation: rotating-spin 4s linear infinite;
+}
+@keyframes rotating-spin {
+  100% {
+    transform: rotate(360deg);
   }
 }

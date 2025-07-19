@@ -67,8 +67,10 @@
     "Log out": "Log out"
   },
   "SiteMenu": {
-    "dataEditor": "Data",
-    "info": "Information"
+    "MyTopics": "My Topics",
+    "Welcome": "Welcome",
+    "Data": "Data",
+    "Info": "Information"
   },
   "SignInForm": {
     "sign-in": "Sign In",

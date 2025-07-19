@@ -1,19 +1,15 @@
 import { MetadataRoute } from 'next';
 
+import { pathnames } from '@/config/routesConfig';
 import { siteConfig } from '@/config/site';
 import { getPathname, routing } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    // prettier-ignore
-    getRouteEntry('/'),
-    getRouteEntry('/welcome'),
-    getRouteEntry('/info'),
-  ];
-}
-
 type Href = Parameters<typeof getPathname>[0]['href'];
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return Object.values(pathnames).map((path) => getRouteEntry(path as Href));
+}
 
 function getRouteEntry(href: Href) {
   return {

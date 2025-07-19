@@ -6,7 +6,7 @@ import { signIn, SignInAuthorizationParams, SignInOptions } from 'next-auth/reac
 import { useLocale, useTranslations } from 'next-intl';
 
 import { envClient } from '@/env/envClient';
-import { dataRoute } from '@/config/routesConfig';
+import { myTopicsRoute } from '@/config/routesConfig';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -61,7 +61,7 @@ function OAuthSignInButton(props: OAuthSignInButtonProps) {
          * redirectTo?: string
          * redirect?: Redirect (boolean)
          */
-        redirectTo: dataRoute,
+        redirectTo: myTopicsRoute,
       };
       const params = data ? (data as unknown as SignInAuthorizationParams) : undefined;
       /* console.log('[SignInForm:onSignIn]', provider, {

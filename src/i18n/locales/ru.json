@@ -66,8 +66,10 @@
     "Log out": "Выйти"
   },
   "SiteMenu": {
-    "dataEditor": "Данные",
-    "info": "Информация"
+    "MyTopics": "Мои разделы",
+    "Welcome": "Добро пожаловать",
+    "Data": "Данные",
+    "Info": "Информация"
   },
   "SignInForm": {
     "sign-in": "Войти",

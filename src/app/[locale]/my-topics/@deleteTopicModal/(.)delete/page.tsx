@@ -1,4 +1,4 @@
-import { ConfirmDeleteTopicModal } from '@/components/pages/MyTopicsPage/ConfirmDeleteTopicModal';
+import { DeleteTopicModal } from '@/components/pages/MyTopicsPage/DeleteTopicModal';
 import { TTopicId } from '@/features/topics/types';
 
 interface DeleteTopicModalPageProps {
@@ -9,6 +9,6 @@ export default async function DeleteTopicModalPage({ searchParams }: DeleteTopic
   const { id } = await searchParams;
   const topicId = id ? (parseInt(id) as TTopicId) : undefined;
   if (topicId) {
-    return <ConfirmDeleteTopicModal topicId={topicId} />;
+    return <DeleteTopicModal topicId={topicId} />;
   }
 }

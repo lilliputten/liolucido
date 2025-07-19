@@ -1,12 +1,18 @@
-import { ScrollArea } from '@radix-ui/react-scroll-area';
+// Using client side in order to regenerate save scroll hash on each app open
+'use client';
 
 import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
+import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MaxWidthWrapper } from '@/components/shared/MaxWidthWrapper';
 import { TLayoutType, UseScrollableLayout } from '@/components/shared/ScrollableLayout';
 import { isDev } from '@/constants';
 
+const saveScrollHash = getRandomHashString();
+
 interface TPageWrapperProps extends TPropsWithChildrenAndClassName {
+  id?: string;
   innerClassName?: string;
   scrollable?: boolean;
   limitWidth?: boolean;
@@ -17,6 +23,7 @@ interface TPageWrapperProps extends TPropsWithChildrenAndClassName {
 
 export function PageWrapper(props: TPageWrapperProps) {
   const {
+    id,
     className,
     children,
     scrollable,
@@ -45,10 +52,17 @@ export function PageWrapper(props: TPageWrapperProps) {
   if (scrollable) {
     content = (
       <ScrollArea
+        saveScrollKey={id}
+        saveScrollHash={saveScrollHash}
         className={cn(
           isDev && '__PageWrapper_Scroll', // DEBUG
           'flex flex-col items-center',
           'layout-scrollable',
+        )}
+        viewportClassName={cn(
+          isDev && '__PageWrapper_Viewport', // DEBUG
+          'flex-1 flex flex-col',
+          '[&>div]:!flex [&>div]:flex-1',
         )}
       >
         {content}
@@ -76,6 +90,7 @@ export function PageWrapper(props: TPageWrapperProps) {
       className={cn(
         isDev && '__PageWrapper', // DEBUG
         'flex flex-1 flex-col items-center',
+        'overflow-hidden',
         padded && 'mx-4', // commonXMarginTwStyle,
         vPadded && 'my-4', // commonYMarginTwStyle,
         className,

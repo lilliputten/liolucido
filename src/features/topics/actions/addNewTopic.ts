@@ -13,14 +13,11 @@ export async function addNewTopic(newTopic: TNewTopic) {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    /* // DEMO: Throw an error
-     * throw new Error('Test error');
-     */
     if (!userId) {
-      throw new Error('Got undefined user.');
+      throw new Error('Got undefined user');
     }
     if (!newTopic.name) {
-      throw new Error('Not specified topic name.');
+      throw new Error('Not specified topic name');
     }
     /* NOTE: Ensure if the user exists (should be checked on the page load)
      * const isUserExists = await checkIfUserExists(userId);

@@ -13,7 +13,7 @@ export function TailwindIndicator() {
         'fixed',
         'bottom-4',
         'right-4',
-        'z-50',
+        'z-[99]',
         'flex',
         'size-6',
         'items-center',

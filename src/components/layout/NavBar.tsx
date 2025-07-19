@@ -130,11 +130,7 @@ export function NavBar(props: NavBarProps) {
         <button
           onClick={() => setOpen(!open)}
           className={cn(
-            isDev && '__NavMobile', // DEBUG
-            // 'fixed',
-            // 'right-3',
-            // 'top-3.5',
-            // 'z-50',
+            isDev && '__NavBar_MobilePanelToggler', // DEBUG
             'rounded-full',
             'p-2',
             commonXMarginTwStyle,

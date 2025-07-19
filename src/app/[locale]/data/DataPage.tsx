@@ -41,6 +41,7 @@ export async function DataPage({ params }: TDataPageProps) {
 
   return (
     <PageWrapper
+      id="DataPage"
       className={cn(
         isDev && '__DataPage', // DEBUG
       )}

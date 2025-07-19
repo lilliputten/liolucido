@@ -110,6 +110,7 @@ export default [
       ...pluginReact.configs.recommended.rules,
       ...commonJsRules,
       'react/react-in-jsx-scope': 'off',
+      'react/no-unescaped-entities': 'off',
     },
   },
 

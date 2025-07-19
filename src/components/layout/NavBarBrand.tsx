@@ -14,7 +14,7 @@ import { Link } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
 interface NavBarBrandProps {
-  isUser: boolean;
+  isUser?: boolean;
 }
 
 function BrandWrapper(props: TPropsWithChildrenAndClassName & NavBarBrandProps) {

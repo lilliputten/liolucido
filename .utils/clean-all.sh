@@ -1,6 +1,6 @@
 #!/bin/sh
 # @desc Clean all temp files
-# @changed 2025.06.08, 03:19
+# @changed 2025.07.17, 13:45
 
 scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 rootPath=`dirname "$scriptsPath"`
@@ -13,9 +13,9 @@ test -f "$scriptsPath/config-local.sh" && . "$scriptsPath/config-local.sh"
 echo "Clearing the root folder..."
 $RMCMD -Rf \
   build \
+  .next \
+  .swc \
   node_modules/.cache \
-  client/node_modules/.cache \
-  server/node_modules/.cache \
   local.log* \
   *.log \
   log-* \
@@ -34,10 +34,12 @@ $FINDCMD . \
   -not \( -name '*UNUSED' -prune \) \
   -not \( -name 'publish*' -prune \) \
   -not \( -name 'node_modules' -prune \) \
+  -not \( -name '__tests__' -prune \) \
+  -not \( -name '__snapshots__' -prune \) \
   \
   \( \
-    -name '*_' \
-    -o -name '*~' \
+    -name '*~' \
+    -o -name '*_' \
     -o -name '*.py[co]' \
     -o -name '.*sw[op]' \
     -o -name '*.bak' \

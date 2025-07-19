@@ -40,12 +40,8 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
         'layout-follow',
       )}
     >
-      {/*
-      <DashboardSidebar links={filteredLinks} />
-      <NavMobile isUser={isUser} />
-      */}
       <MobileSheetWrapper open={open} setOpen={setOpen}>
-        <MobileSheetSidebar links={filteredLinks} open={open} setOpen={setOpen} />
+        <MobileSheetSidebar isUser={isUser} links={filteredLinks} open={open} setOpen={setOpen} />
       </MobileSheetWrapper>
       <NavBar isUser={isUser} open={open} setOpen={setOpen} />
       <div
@@ -55,9 +51,6 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
           'layout-follow',
         )}
       >
-        {/*
-        <NavMobile isUser={isUser} />
-        */}
         <DashboardSidebar links={filteredLinks} />
         {children}
       </div>

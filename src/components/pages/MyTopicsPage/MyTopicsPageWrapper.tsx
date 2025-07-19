@@ -17,6 +17,7 @@ export function MyTopicsPageWrapper(props: TProps) {
   } = props;
   return (
     <PageWrapper
+      id="MyTopicsPageWrapper"
       className={cn(
         isDev && '__MyTopicsPageWrapper', // DEBUG
         className,
