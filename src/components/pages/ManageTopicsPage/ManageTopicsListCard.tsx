@@ -21,19 +21,19 @@ import { TTopic, TTopicId } from '@/features/topics/types';
 
 const saveScrollHash = getRandomHashString();
 
-interface TMyTopicsListCardProps extends TPropsWithClassName {
+interface TManageTopicsListCardProps extends TPropsWithClassName {
   topics: TTopic[];
   handleDeleteTopic: (topicId: TTopicId) => void;
   handleEditTopic: (topicId: TTopicId) => void;
   handleAddTopic: () => void;
 }
-type TChildProps = Omit<TMyTopicsListCardProps, 'className'>;
+type TChildProps = Omit<TManageTopicsListCardProps, 'className'>;
 
 function Title() {
   return (
     <div
       className={cn(
-        isDev && '__MyTopicsListCard_Title', // DEBUG
+        isDev && '__ManageTopicsListCard_Title', // DEBUG
         'grid flex-1 gap-2',
       )}
     >
@@ -50,7 +50,7 @@ function Toolbar(props: TChildProps) {
   return (
     <div
       className={cn(
-        isDev && '__MyTopicsListCard_Toolbar', // DEBUG
+        isDev && '__ManageTopicsListCard_Toolbar', // DEBUG
         '__ml-auto __shrink-0 flex flex-wrap gap-2',
       )}
     >
@@ -74,7 +74,7 @@ function Header(props: TChildProps) {
   return (
     <CardHeader
       className={cn(
-        isDev && '__MyTopicsListCard_Header', // DEBUG
+        isDev && '__ManageTopicsListCard_Header', // DEBUG
         'flex flex-row flex-wrap items-start',
       )}
     >
@@ -102,8 +102,8 @@ function TopicTableHeader() {
 
 interface TTopicTableRowProps {
   topic: TTopic;
-  handleDeleteTopic: TMyTopicsListCardProps['handleDeleteTopic'];
-  handleEditTopic: TMyTopicsListCardProps['handleEditTopic'];
+  handleDeleteTopic: TManageTopicsListCardProps['handleDeleteTopic'];
+  handleEditTopic: TManageTopicsListCardProps['handleEditTopic'];
 }
 
 function TopicTableRow(props: TTopicTableRowProps) {
@@ -149,12 +149,12 @@ function TopicTableRow(props: TTopicTableRowProps) {
   );
 }
 
-export function MyTopicsListCard(props: TMyTopicsListCardProps) {
+export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
   const { className, topics, handleDeleteTopic, handleEditTopic } = props;
   return (
     <Card
       className={cn(
-        isDev && '__MyTopicsListCard', // DEBUG
+        isDev && '__ManageTopicsListCard', // DEBUG
         'xl:col-span-2',
         'relative flex flex-1 flex-col overflow-hidden',
         className,
@@ -163,12 +163,12 @@ export function MyTopicsListCard(props: TMyTopicsListCardProps) {
       <Header {...props} />
       <CardContent
         className={cn(
-          isDev && '__MyTopicsListCard_Content', // DEBUG
+          isDev && '__ManageTopicsListCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
         <ScrollArea
-          saveScrollKey="MyTopicsListCard"
+          saveScrollKey="ManageTopicsListCard"
           saveScrollHash={saveScrollHash}
           viewportClassName="px-6"
         >

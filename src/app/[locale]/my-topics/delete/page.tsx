@@ -1,4 +1,4 @@
-import { MyTopicsPage } from '@/components/pages/MyTopicsPage/MyTopicsPage';
+import { ManageTopicsPage } from '@/components/pages/ManageTopicsPage/ManageTopicsPage';
 import { TTopicId } from '@/features/topics/types';
 
 interface DeleteTopicPageProps {
@@ -9,5 +9,5 @@ export default async function DeleteTopicPage({ searchParams }: DeleteTopicPageP
   const { id } = await searchParams;
   const topicId = id ? (parseInt(id) as TTopicId) : undefined;
 
-  return <MyTopicsPage deleteTopicId={topicId} />;
+  return <ManageTopicsPage deleteTopicId={topicId} />;
 }

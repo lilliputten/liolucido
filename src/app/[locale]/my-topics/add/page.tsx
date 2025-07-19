@@ -1,5 +1,5 @@
-import { MyTopicsPage } from '@/components/pages/MyTopicsPage/MyTopicsPage';
+import { ManageTopicsPage } from '@/components/pages/ManageTopicsPage/ManageTopicsPage';
 
 export default function AddTopicPage() {
-  return <MyTopicsPage showAddModal={true} />;
+  return <ManageTopicsPage showAddModal={true} />;
 }

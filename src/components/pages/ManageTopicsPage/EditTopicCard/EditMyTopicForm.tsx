@@ -17,7 +17,7 @@ import { useTopicsContext } from '@/contexts/TopicsContext';
 import { updateTopic } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
 
-import { maxNameLength, minNameLength } from '../constants/inputFields';
+import { maxNameLength, minNameLength } from '../constants';
 import { EditMyTopicFormActions } from './EditMyTopicFormActions';
 import { EditMyTopicFormFields } from './EditMyTopicFormFields';
 import { TFormData } from './types';

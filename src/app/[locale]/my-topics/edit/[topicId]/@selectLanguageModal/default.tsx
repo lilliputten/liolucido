@@ -1,3 +1,3 @@
-export default function DefaultSelectLanguageModal() {
+export default function DefaultSelectTopicLanguageModal() {
   return null;
 }

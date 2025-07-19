@@ -1,4 +1,4 @@
-import { generateMetadata, MyTopicsLayout } from '@/components/pages/MyTopicsPage/MyTopicsLayout';
+import { generateMetadata, MyTopicsLayout } from '@/components/pages/MyTopicsLayout';
 
 export { generateMetadata };
 export default MyTopicsLayout;

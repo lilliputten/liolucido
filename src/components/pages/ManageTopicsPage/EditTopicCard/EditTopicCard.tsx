@@ -14,10 +14,10 @@ import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { EditMyTopicForm } from './EditMyTopicForm';
 
-interface TEditMyTopicCardProps extends TPropsWithClassName {
+interface TEditTopicCardProps extends TPropsWithClassName {
   topicId: TTopicId;
 }
-type TChildProps = /* Omit<TEditMyTopicCardProps, 'className'> & */ {
+type TChildProps = /* Omit<TEditTopicCardProps, 'className'> & */ {
   goBack: () => void;
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
 };
@@ -26,7 +26,7 @@ function Title({ goBack }: Pick<TChildProps, 'goBack'>) {
   return (
     <div
       className={cn(
-        isDev && '__EditMyTopicCard_Title', // DEBUG
+        isDev && '__EditTopicCard_Title', // DEBUG
         'grid flex-1 grid-cols-[2em_1fr] items-center gap-2',
       )}
     >
@@ -57,7 +57,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
     <div
       ref={toolbarPortalRef}
       className={cn(
-        isDev && '__MyTopicsListCard_Toolbar', // DEBUG
+        isDev && '__ManageTopicsListCard_Toolbar', // DEBUG
         '__ml-auto __shrink-0 flex flex-wrap gap-2',
       )}
     >
@@ -78,7 +78,7 @@ function Header(props: TChildProps) {
   return (
     <CardHeader
       className={cn(
-        isDev && '__EditMyTopicCard_Header', // DEBUG
+        isDev && '__EditTopicCard_Header', // DEBUG
         'item-start flex flex-row flex-wrap',
       )}
     >
@@ -88,7 +88,7 @@ function Header(props: TChildProps) {
   );
 }
 
-export function EditMyTopicCard(props: TEditMyTopicCardProps) {
+export function EditTopicCard(props: TEditTopicCardProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -104,7 +104,7 @@ export function EditMyTopicCard(props: TEditMyTopicCardProps) {
   return (
     <Card
       className={cn(
-        isDev && '__EditMyTopicCard', // DEBUG
+        isDev && '__EditTopicCard', // DEBUG
         'xl:col-span-2',
         'relative flex flex-1 flex-col overflow-hidden',
         className,
@@ -113,7 +113,7 @@ export function EditMyTopicCard(props: TEditMyTopicCardProps) {
       <Header goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
       <CardContent
         className={cn(
-          isDev && '__EditMyTopicCard_Content', // DEBUG
+          isDev && '__EditTopicCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >

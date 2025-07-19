@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { SelectLanguageModal } from '@/components/pages/MyTopicsPage/SelectLanguageModal';
+import { SelectTopicLanguageModal } from '@/components/pages/ManageTopicsPage/SelectTopicLanguageModal';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 
 interface SelectLanguagePageProps {
@@ -26,7 +26,7 @@ export default function SelectLanguagePage({ params, searchParams }: SelectLangu
     throw new Error('No such topic exists');
   }
   return (
-    <SelectLanguageModal
+    <SelectTopicLanguageModal
       langCode={langCode}
       langName={langName}
       langCustom={langCustom === 'true'}

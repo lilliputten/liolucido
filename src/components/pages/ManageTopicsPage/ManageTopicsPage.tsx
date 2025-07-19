@@ -1,17 +1,17 @@
 import { TTopicId } from '@/features/topics/types';
 
-import { MyTopicsPageModalsWrapper } from './MyTopicsPageModalsWrapper';
+import { ManageTopicsPageModalsWrapper } from './ManageTopicsPageModalsWrapper';
 
-interface MyTopicsPageProps {
+interface ManageTopicsPageProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
   editTopicId?: TTopicId;
 }
 
-export async function MyTopicsPage(props: MyTopicsPageProps = {}) {
+export async function ManageTopicsPage(props: ManageTopicsPageProps = {}) {
   const { showAddModal, deleteTopicId, editTopicId } = props;
   return (
-    <MyTopicsPageModalsWrapper
+    <ManageTopicsPageModalsWrapper
       showAddModal={showAddModal}
       deleteTopicId={deleteTopicId}
       editTopicId={editTopicId}

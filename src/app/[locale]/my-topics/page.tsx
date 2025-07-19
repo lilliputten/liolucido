@@ -1,5 +1,5 @@
-import { MyTopicsPage } from '@/components/pages/MyTopicsPage/MyTopicsPage';
+import { ManageTopicsPage } from '@/components/pages/ManageTopicsPage/ManageTopicsPage';
 
 // export const dynamic = 'force-dynamic';
 
-export default MyTopicsPage;
+export default ManageTopicsPage;

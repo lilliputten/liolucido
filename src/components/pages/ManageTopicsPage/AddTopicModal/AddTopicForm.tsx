@@ -15,7 +15,7 @@ import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TNewTopic, TTopic } from '@/features/topics/types';
 
-import { maxNameLength, minNameLength } from '../constants/inputFields';
+import { maxNameLength, minNameLength } from '../constants';
 
 export type TAddTopicParams = TNewTopic;
 

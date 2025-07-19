@@ -8,7 +8,7 @@ import { myTopicsRoute } from '@/config/routesConfig';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
-import { MyTopicsListWrapper } from './MyTopicsListWrapper';
+import { ManageTopicsListWrapper } from './ManageTopicsListWrapper';
 
 interface TTopicsListProps {
   showAddModal?: boolean;
@@ -16,7 +16,7 @@ interface TTopicsListProps {
   editTopicId?: TTopicId;
 }
 
-export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
+export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
   const { showAddModal, deleteTopicId, editTopicId } = props;
   const { topics } = useTopicsContext();
@@ -70,7 +70,7 @@ export function MyTopicsPageModalsWrapper(props: TTopicsListProps) {
   }, [editTopicId, openEditTopicModal]);
 
   return (
-    <MyTopicsListWrapper
+    <ManageTopicsListWrapper
       openAddTopicModal={openAddTopicModal}
       openDeleteTopicModal={openDeleteTopicModal}
       openEditTopicModal={openEditTopicModal}

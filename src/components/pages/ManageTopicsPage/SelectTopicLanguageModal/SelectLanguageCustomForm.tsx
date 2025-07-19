@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Icons } from '@/components/shared/icons';
 
-import { maxIdLength, maxNameLength, minIdLength, minNameLength } from '../constants/inputFields';
+import { maxIdLength, maxNameLength, minIdLength, minNameLength } from '../constants';
 
 type TFormData = TLanguage;
 

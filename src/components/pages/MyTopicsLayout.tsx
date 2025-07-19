@@ -4,14 +4,17 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
-import { TopicsContextProvider } from '@/contexts/TopicsContext';
+import { TopicsContextProvider, TopicsManageType } from '@/contexts/TopicsContext';
 import { getAllUsersTopics } from '@/features/topics/actions/getAllUsersTopics';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
-import { MyTopicsPageWrapper } from './MyTopicsPageWrapper';
-import { PageHeader } from './PageHeader';
+import { ManageTopicsPageWrapper } from './ManageTopicsPage';
+import { PageHeader } from './shared';
+
+const namespace = 'MyTopicsPage';
+const manageType = TopicsManageType.myTopics;
 
 type TMyTopicsLayoutProps = TAwaitedLocaleProps & {
   children: React.ReactNode;
@@ -21,11 +24,11 @@ type TMyTopicsLayoutProps = TAwaitedLocaleProps & {
 
 export async function generateMetadata({ params }: TAwaitedLocaleProps) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'MyTopicsPage' });
-  const title = t('title');
+  const t = await getTranslations({ locale, namespace });
   return constructMetadata({
-    title,
     locale,
+    title: t('title'),
+    description: t('description'),
   });
 }
 
@@ -37,6 +40,7 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
     params,
   } = props;
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace });
 
   // NOTE: Checking NEXT_PUBLIC_USER_REQUIRED or existed user session
   const user = await getCurrentUser();
@@ -53,13 +57,13 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
   const topics: TTopic[] | undefined = await getAllUsersTopics();
 
   return (
-    <TopicsContextProvider initialTopics={topics}>
-      <MyTopicsPageWrapper>
-        <PageHeader />
+    <TopicsContextProvider topics={topics} namespace={namespace} manageType={manageType}>
+      <ManageTopicsPageWrapper>
+        <PageHeader heading={t('title')} text={t('description')} />
         {children}
         {addTopicModal}
         {deleteTopicModal}
-      </MyTopicsPageWrapper>
+      </ManageTopicsPageWrapper>
     </TopicsContextProvider>
   );
 }

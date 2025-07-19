@@ -1,4 +1,4 @@
-import { EditMyTopicCard } from '@/components/pages/MyTopicsPage/EditMyTopicCard';
+import { EditTopicCard } from '@/components/pages/ManageTopicsPage/EditTopicCard';
 import { PageError } from '@/components/shared/PageError';
 import { TTopicId } from '@/features/topics/types';
 
@@ -16,5 +16,5 @@ export default async function EditMyTopicPage({ params }: EditMyTopicPageProps) 
     return <PageError error={'Invalid topic ID.'} />;
   }
 
-  return <EditMyTopicCard topicId={topicId} />;
+  return <EditTopicCard topicId={topicId} />;
 }

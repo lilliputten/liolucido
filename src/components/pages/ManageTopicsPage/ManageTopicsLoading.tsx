@@ -1,5 +1,5 @@
 import { ContentSkeleton } from './ContentSkeleton';
 
-export function MyTopicsLoading() {
+export function ManageTopicsLoading() {
   return <ContentSkeleton />;
 }

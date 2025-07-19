@@ -19,11 +19,11 @@ import { TTopicId } from '@/features/topics/types';
 import { SelectLanguageCustomForm } from './SelectLanguageCustomForm';
 import { SelectLanguagePredefinedForm } from './SelectLanguagePredefinedForm';
 
-interface TSelectLanguageModalProps extends TSelectLanguageData {
+interface TSelectTopicLanguageModalProps extends TSelectLanguageData {
   topicId: TTopicId;
 }
 
-export function SelectLanguageModal(props: TSelectLanguageModalProps) {
+export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) {
   const { langCode, langName, langCustom, topicId } = props;
   const router = useRouter();
   const hideModal = React.useCallback(() => router.back(), [router]);
@@ -53,14 +53,14 @@ export function SelectLanguageModal(props: TSelectLanguageModalProps) {
       isVisible
       hideModal={hideModal}
       className={cn(
-        isDev && '__SelectLanguageModal', // DEBUG
+        isDev && '__SelectTopicLanguageModal', // DEBUG
         'gap-0',
         isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div
         className={cn(
-          isDev && '__SelectLanguageModal_Header', // DEBUG
+          isDev && '__SelectTopicLanguageModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
           'flex flex-col border-b bg-accent px-8 py-4',
         )}
@@ -73,12 +73,12 @@ export function SelectLanguageModal(props: TSelectLanguageModalProps) {
       <div className="flex flex-col px-8 py-4">
         <Tabs
           className={cn(
-            isDev && '__SelectLanguageModal_Tabs', // DEBUG
+            isDev && '__SelectTopicLanguageModal_Tabs', // DEBUG
             'mt-4',
           )}
           defaultValue={langCustom ? 'Custom' : 'Predefined'}
         >
-          <TabsList className={cn('__SelectLanguageModal_TabsList')}>
+          <TabsList className={cn('__SelectTopicLanguageModal_TabsList')}>
             <TabsTrigger className="TabsTrigger" value="Predefined">
               Predefined
             </TabsTrigger>

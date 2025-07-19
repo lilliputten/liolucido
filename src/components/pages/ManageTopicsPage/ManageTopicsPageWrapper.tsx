@@ -8,7 +8,7 @@ interface TProps extends TPropsWithChildrenAndClassName {
   inError?: boolean;
 }
 
-export function MyTopicsPageWrapper(props: TProps) {
+export function ManageTopicsPageWrapper(props: TProps) {
   const {
     className,
     children,
@@ -17,13 +17,13 @@ export function MyTopicsPageWrapper(props: TProps) {
   } = props;
   return (
     <PageWrapper
-      id="MyTopicsPageWrapper"
+      id="ManageTopicsPageWrapper"
       className={cn(
-        isDev && '__MyTopicsPageWrapper', // DEBUG
+        isDev && '__ManageTopicsPageWrapper', // DEBUG
         className,
       )}
       innerClassName={cn(
-        isDev && '__MyTopicsPageWrapper_Inner', // DEBUG
+        isDev && '__ManageTopicsPageWrapper_Inner', // DEBUG
         'w-full rounded-lg gap-4',
         // !inError && 'border border-solid border-gray-500/30',
       )}

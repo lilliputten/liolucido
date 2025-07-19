@@ -7,8 +7,8 @@ import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
-import { MyTopicsListCard } from './MyTopicsListCard';
-import { PageEmpty } from './PageEmpty';
+import { PageEmpty } from '../shared';
+import { ManageTopicsListCard } from './ManageTopicsListCard';
 
 interface TTopicsListProps {
   openAddTopicModal: () => void;
@@ -16,7 +16,7 @@ interface TTopicsListProps {
   openEditTopicModal: (topicId: TTopicId) => void;
 }
 
-export function MyTopicsListWrapper(props: TTopicsListProps) {
+export function ManageTopicsListWrapper(props: TTopicsListProps) {
   const { openAddTopicModal, openDeleteTopicModal, openEditTopicModal } = props;
   const { topics } = useTopicsContext();
 
@@ -25,14 +25,14 @@ export function MyTopicsListWrapper(props: TTopicsListProps) {
   return (
     <div
       className={cn(
-        isDev && '__MyTopicsListWrapper', // DEBUG
+        isDev && '__ManageTopicsListWrapper', // DEBUG
         'relative flex flex-1 flex-col overflow-hidden',
       )}
     >
       {hasTopics ? (
-        <MyTopicsListCard
+        <ManageTopicsListCard
           className={cn(
-            isDev && '__MyTopicsListWrapper_Card', // DEBUG
+            isDev && '__ManageTopicsListWrapper_Card', // DEBUG
             'relative flex flex-1 flex-col overflow-hidden',
           )}
           topics={topics}

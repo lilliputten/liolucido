@@ -20,7 +20,7 @@ import {
 import { Icons } from '@/components/shared/icons';
 import { predefinedLanguages } from '@/constants/languages';
 
-import { minIdLength } from '../constants/inputFields';
+import { minIdLength } from '../constants';
 
 interface TFormData {
   id?: TLanguageId;
