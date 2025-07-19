@@ -4,7 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { myTopicsRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -27,11 +26,7 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
-  const {
-    // TODO: To check if the topic with an entered name is existed
-    // topics,
-    setTopics,
-  } = useTopicsContext();
+  const topicsContext = useTopicsContext();
 
   const handleAddTopic = React.useCallback(
     (newTopic: TNewTopic) => {
@@ -40,11 +35,11 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
           const promise = addNewTopic(newTopic)
             .then((addedTopic) => {
               // Update topics list
-              setTopics((topics) => topics.concat(addedTopic));
+              topicsContext.setTopics((topics) => topics.concat(addedTopic));
               resolve(addedTopic);
               // NOTE: Close or go to the edit page
               setVisible(false);
-              router.replace(`${myTopicsRoute}/edit/${addedTopic.id}`);
+              router.replace(`${topicsContext.routePath}/edit/${addedTopic.id}`);
               return addedTopic;
             })
             .catch((error) => {
@@ -65,7 +60,7 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
         });
       });
     },
-    [setTopics, router],
+    [topicsContext, router],
   );
 
   return (

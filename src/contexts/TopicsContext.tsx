@@ -2,52 +2,46 @@
 
 import React from 'react';
 
+import { TRoutePath } from '@/config/routesConfig';
 import { TTopic } from '@/features/topics/types';
 
-const defaultNamespace = 'ManageTopicsPage';
+import {
+  defaultTopicsManageType,
+  defaultTopicsNamespace,
+  TopicsContextData,
+  topicsRoutes,
+  TTopicsManageType,
+} from './TopicsContextConstants';
 
-export enum TopicsManageType {
-  myTopics,
-  allTopics,
-}
-
-interface TopicsContextValue {
-  topics: TTopic[];
-  setTopics: React.Dispatch<React.SetStateAction<TTopic[]>>;
-  /** Translation namespace, for `useTranslations` or `getTranslations`, default is "ManageTopicsPage" */
-  namespace: string;
-  /** Topics type: only user's topics or all topics (for admin) */
-  manageType: TopicsManageType;
-}
-
-const TopicsContext = React.createContext<TopicsContextValue | undefined>(undefined);
+const TopicsContext = React.createContext<TopicsContextData | undefined>(undefined);
 
 interface TopicsContextProviderProps {
   children: React.ReactNode;
   topics?: TTopic[];
+  manageType?: TTopicsManageType;
   namespace?: string;
-  manageType?: TopicsManageType;
 }
 
 export function TopicsContextProvider({
   children,
   topics: initialTopics = [],
-  namespace = defaultNamespace,
-  manageType = TopicsManageType.myTopics,
+  manageType = defaultTopicsManageType,
+  namespace = defaultTopicsNamespace,
 }: TopicsContextProviderProps) {
   const [topics, setTopics] = React.useState<TTopic[]>(initialTopics);
 
-  const value = React.useMemo(
+  const topicsContext = React.useMemo(
     () => ({
       topics,
       setTopics,
       namespace,
       manageType,
+      routePath: topicsRoutes[manageType] as TRoutePath,
     }),
     [topics, namespace, manageType],
   );
 
-  return <TopicsContext.Provider value={value}>{children}</TopicsContext.Provider>;
+  return <TopicsContext.Provider value={topicsContext}>{children}</TopicsContext.Provider>;
 }
 
 export function useTopicsContext() {

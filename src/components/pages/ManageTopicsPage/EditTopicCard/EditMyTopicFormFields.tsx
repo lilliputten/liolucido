@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { UseFormReturn } from 'react-hook-form';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
-import { myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -14,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopic } from '@/features/topics/types';
 
 import { TFormData } from './types';
@@ -41,16 +41,22 @@ function FormSection({ children }: TPropsWithChildren) {
 export function EditMyTopicFormFields(props: TEditMyTopicFormFieldsProps) {
   const router = useRouter();
   const { className, topic, form } = props;
+  const topicsContext = useTopicsContext();
   // Select language
-  const selectLanguage = (ev: React.MouseEvent) => {
-    ev.preventDefault();
-    const [langCode, langName, langCustom] = form.watch(['langCode', 'langName', 'langCustom']);
-    const params = new URLSearchParams();
-    if (langCode) params.append('langCode', langCode);
-    if (langName) params.append('langName', langName);
-    if (langCustom) params.append('langCustom', String(langCustom));
-    router.push(`${myTopicsRoute}/edit/${topic.id}/select-language?${params.toString()}`);
-  };
+  const selectLanguage = React.useCallback(
+    (ev: React.MouseEvent) => {
+      ev.preventDefault();
+      const [langCode, langName, langCustom] = form.watch(['langCode', 'langName', 'langCustom']);
+      const params = new URLSearchParams();
+      if (langCode) params.append('langCode', langCode);
+      if (langName) params.append('langName', langName);
+      if (langCustom) params.append('langCustom', String(langCustom));
+      router.push(
+        `${topicsContext.routePath}/edit/${topic.id}/select-language?${params.toString()}`,
+      );
+    },
+    [form, router, topic, topicsContext],
+  );
   // Create unique keys for labels
   const nameKey = React.useId();
   const isPublicKey = React.useId();

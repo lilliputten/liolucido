@@ -150,7 +150,6 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
         answersCountMin: formData.answersCountMin,
         answersCountMax: formData.answersCountMax,
       };
-
       startTransition(() => {
         const savePromise = updateTopic(editedTopic);
         toast.promise<unknown>(savePromise, {
@@ -160,9 +159,9 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
         });
         return savePromise
           .then((updatedTopic) => {
-            setTopics((topics) =>
-              topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic)),
-            );
+            setTopics((topics) => {
+              return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
+            });
             form.reset(form.getValues());
           })
           .catch((error) => {

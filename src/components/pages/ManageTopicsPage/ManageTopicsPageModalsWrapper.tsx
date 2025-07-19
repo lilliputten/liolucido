@@ -4,7 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { myTopicsRoute } from '@/config/routesConfig';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
@@ -19,30 +18,30 @@ interface TTopicsListProps {
 export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
   const { showAddModal, deleteTopicId, editTopicId } = props;
-  const { topics } = useTopicsContext();
+  const topicsContext = useTopicsContext();
 
   // Add Topic Modal
   const openAddTopicModal = React.useCallback(() => {
-    router.push(myTopicsRoute + '/add');
-  }, [router]);
+    router.push(topicsContext.routePath + '/add');
+  }, [router, topicsContext]);
   React.useEffect(() => {
     if (showAddModal) {
       openAddTopicModal();
     }
-  }, [showAddModal, openAddTopicModal]);
+  }, [showAddModal, openAddTopicModal, topicsContext]);
 
   // Delete Topic Modal
   const openDeleteTopicModal = React.useCallback(
     (topicId: TTopicId) => {
-      const hasTopic = topics.find(({ id }) => id === topicId);
+      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
       if (!hasTopic) {
         toast.error('The requested topic does not exist.');
-        router.replace(myTopicsRoute);
+        router.replace(topicsContext.routePath);
       } else {
-        router.push(`${myTopicsRoute}/delete?id=${topicId}`);
+        router.push(`${topicsContext.routePath}/delete?id=${topicId}`);
       }
     },
-    [router, topics],
+    [router, topicsContext],
   );
   React.useEffect(() => {
     if (deleteTopicId) {
@@ -53,15 +52,15 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   // Edit Topic Page
   const openEditTopicModal = React.useCallback(
     (topicId: TTopicId) => {
-      const hasTopic = topics.find(({ id }) => id === topicId);
+      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
       if (!hasTopic) {
         toast.error('The requested topic does not exist.');
-        router.replace(myTopicsRoute);
+        router.replace(topicsContext.routePath);
       } else {
-        router.push(`${myTopicsRoute}/edit/${topicId}`);
+        router.push(`${topicsContext.routePath}/edit/${topicId}`);
       }
     },
-    [router, topics],
+    [router, topicsContext],
   );
   React.useEffect(() => {
     if (editTopicId) {

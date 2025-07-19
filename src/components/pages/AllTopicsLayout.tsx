@@ -4,7 +4,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
-import { TopicsContextProvider, TopicsManageType } from '@/contexts/TopicsContext';
+import { TopicsContextProvider } from '@/contexts/TopicsContext';
+import { TopicsManageTypes } from '@/contexts/TopicsContextConstants';
 import { getAllUsersTopics } from '@/features/topics/actions/getAllUsersTopics';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
@@ -57,7 +58,7 @@ export async function AllTopicsLayout(props: TAllTopicsLayoutProps) {
     <TopicsContextProvider
       topics={topics}
       namespace={'AllTopicsPage'}
-      manageType={TopicsManageType.allTopics}
+      manageType={TopicsManageTypes.ALL_TOPICS}
     >
       <ManageTopicsPageWrapper>
         <PageHeader heading={t('title')} text={t('description')} />
