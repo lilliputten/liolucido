@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { TLanguageId, TSelectLanguageData } from '@/shared/types/language';
+import { TLanguageId } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { Icons } from '@/components/shared/icons';
 import { predefinedLanguages } from '@/constants/languages';
+import { TTopicLanguageData } from '@/features/topics/types';
 
 import { minIdLength } from '../constants';
 
@@ -27,7 +28,7 @@ interface TFormData {
 }
 
 interface TProps {
-  selectLanguage: (language: TSelectLanguageData) => void; //Promise<TSelectTopicLanguageData[]>;
+  selectLanguage: (language: TTopicLanguageData) => void; //Promise<TSelectTopicLanguageData[]>;
   className?: string;
   langCode?: TLanguageId;
   langName?: string;
@@ -90,7 +91,7 @@ export const SelectLanguagePredefinedForm: React.FC<TProps> = (props) => {
       toast.error(`Cannot find a language for the id: "${languageId}"`);
       return;
     }
-    const topicLang: TSelectLanguageData = {
+    const topicLang: TTopicLanguageData = {
       langCode: language.id,
       langName: language.name,
       langCustom: false,

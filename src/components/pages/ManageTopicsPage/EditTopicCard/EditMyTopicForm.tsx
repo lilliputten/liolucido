@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { selectTopicEventName, TSelectTopicLanguageData } from '@/shared/types/language';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
@@ -16,6 +15,10 @@ import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { updateTopic } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
+import {
+  selectTopicEventName,
+  TSelectTopicLanguageData,
+} from '@/features/topics/types/TSelectTopicLanguageData';
 
 import { maxNameLength, minNameLength } from '../constants';
 import { EditMyTopicFormActions } from './EditMyTopicFormActions';

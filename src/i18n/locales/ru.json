@@ -1,6 +1,11 @@
 {
   "MyTopicsPage": {
-    "title": "Мои темы"
+    "title": "Мои темы",
+    "description": "Созданные мной темы"
+  },
+  "AllTopicsPage": {
+    "title": "Все темы",
+    "description": "Темы всех пользователей"
   },
   "BotMenu": {
     "status": "Проверить статус",

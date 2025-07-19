@@ -5,7 +5,7 @@ import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { TopicsContextProvider, TopicsManageType } from '@/contexts/TopicsContext';
-import { getThisUserTopics } from '@/features/topics/actions';
+import { getAllUsersTopics } from '@/features/topics/actions/getAllUsersTopics';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
@@ -13,7 +13,7 @@ import { TAwaitedLocaleProps } from '@/i18n/types';
 import { ManageTopicsPageWrapper } from './ManageTopicsPage';
 import { PageHeader } from './shared';
 
-type TMyTopicsLayoutProps = TAwaitedLocaleProps & {
+type TAllTopicsLayoutProps = TAwaitedLocaleProps & {
   children: React.ReactNode;
   addTopicModal: React.ReactNode; // slot from @addTopicModal
   deleteTopicModal: React.ReactNode; // slot from @deleteTopicModal
@@ -21,7 +21,7 @@ type TMyTopicsLayoutProps = TAwaitedLocaleProps & {
 
 export async function generateMetadata({ params }: TAwaitedLocaleProps) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'MyTopicsPage' });
+  const t = await getTranslations({ locale, namespace: 'AllTopicsPage' });
   return constructMetadata({
     locale,
     title: t('title'),
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: TAwaitedLocaleProps) {
   });
 }
 
-export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
+export async function AllTopicsLayout(props: TAllTopicsLayoutProps) {
   const {
     children,
     addTopicModal, // slot from @addTopicModal
@@ -37,7 +37,7 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
     params,
   } = props;
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'MyTopicsPage' });
+  const t = await getTranslations({ locale, namespace: 'AllTopicsPage' });
 
   // NOTE: Checking NEXT_PUBLIC_USER_REQUIRED or existed user session
   const user = await getCurrentUser();
@@ -51,13 +51,13 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
   // Enable static rendering
   setRequestLocale(locale);
 
-  const topics: TTopic[] | undefined = await getThisUserTopics();
+  const topics: TTopic[] | undefined = await getAllUsersTopics();
 
   return (
     <TopicsContextProvider
       topics={topics}
-      namespace={'MyTopicsPage'}
-      manageType={TopicsManageType.myTopics}
+      namespace={'AllTopicsPage'}
+      manageType={TopicsManageType.allTopics}
     >
       <ManageTopicsPageWrapper>
         <PageHeader heading={t('title')} text={t('description')} />

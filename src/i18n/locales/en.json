@@ -3,6 +3,10 @@
     "title": "My Topics",
     "description": "Topics created by me"
   },
+  "AllTopicsPage": {
+    "title": "All Topics",
+    "description": "Topics by all users"
+  },
   "BotMenu": {
     "status": "Check your status",
     "start": "Start",

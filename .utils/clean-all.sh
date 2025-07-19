@@ -1,6 +1,6 @@
 #!/bin/sh
 # @desc Clean all temp files
-# @changed 2025.07.17, 13:45
+# @changed 2025.07.19, 23:10
 
 scriptsPath=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 rootPath=`dirname "$scriptsPath"`
@@ -28,6 +28,7 @@ $FINDCMD . \
   -not \( -name '.git' -prune \) \
   -not \( -name '.vscode' -prune \) \
   -not \( -name '.next' -prune \) \
+  -not \( -name '.husky' -prune \) \
   -not \( -name '.venv*' -prune \) \
   -not \( -name 'out' -prune \) \
   -not \( -name 'build*' -prune \) \

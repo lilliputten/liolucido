@@ -20,7 +20,7 @@ type TChildProps = /* Omit<TEditTopicCardProps, 'className'> & */ {
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
 };
 
-function Title({ goBack }: Pick<TChildProps, 'goBack'>) {
+function Title() {
   return (
     <div
       className={cn(
@@ -75,7 +75,6 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
 }
 
 function Header(props: TChildProps) {
-  const { goBack } = props;
   return (
     <CardHeader
       className={cn(
@@ -83,7 +82,7 @@ function Header(props: TChildProps) {
         'item-start flex flex-row flex-wrap',
       )}
     >
-      <Title goBack={goBack} />
+      <Title />
       <Toolbar {...props} />
     </CardHeader>
   );

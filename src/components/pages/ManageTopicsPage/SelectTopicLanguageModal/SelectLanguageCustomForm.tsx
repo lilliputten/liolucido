@@ -5,18 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { TLanguage, TLanguageId, TSelectLanguageData } from '@/shared/types/language';
+import { TLanguage, TLanguageId } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Icons } from '@/components/shared/icons';
+import { TTopicLanguageData } from '@/features/topics/types';
 
 import { maxIdLength, maxNameLength, minIdLength, minNameLength } from '../constants';
 
 type TFormData = TLanguage;
 
 interface TProps {
-  selectLanguage: (language: TSelectLanguageData) => void; // Promise<TLanguage[]>;
+  selectLanguage: (language: TTopicLanguageData) => void; // Promise<TLanguage[]>;
   className?: string;
   langCode?: TLanguageId;
   langName?: string;
@@ -64,7 +65,7 @@ export const SelectLanguageCustomForm: React.FC<TProps> = (props) => {
   const isSubmitEnabled = /* !isPending && */ isDirty && isValid;
 
   const onSubmit = handleSubmit((language) => {
-    const topicLang: TSelectLanguageData = {
+    const topicLang: TTopicLanguageData = {
       langCode: language.id,
       langName: language.name,
       langCustom: true,
