@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/shared/icons';
+import { Icons, TIconsKey } from '@/components/shared/icons';
 
 type ErrorPlaceHolderProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -32,7 +32,7 @@ export function ErrorPlaceHolder({
 }
 
 interface ErrorPlaceHolderIconProps extends Partial<React.SVGProps<SVGSVGElement>> {
-  name: keyof typeof Icons;
+  name: TIconsKey;
   ref?: ((instance: SVGSVGElement | null) => void) | React.RefObject<SVGSVGElement> | null;
 }
 
