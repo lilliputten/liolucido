@@ -8,7 +8,20 @@ import { isDev } from '@/constants';
 import { getUserById } from '@/features/users/actions/';
 import { TExtendedUser } from '@/features/users/types/TUser';
 
-import authConfig from './auth.config';
+import authConfig from './auth.config.server';
+
+/* // UNUSED: Workaround for make sure that `auth.config.server` is used only on server.
+ * // Use different imports for server and client
+ * import authConfig from './auth.config';
+ * // This is a dynamic import that only runs on the server
+ * // It's not included in the client bundle
+ * let serverConfig = authConfig;
+ * if (typeof window === 'undefined') {
+ *   // We're on the server
+ *   // eslint-disable-next-line @typescript-eslint/no-require-imports
+ *   serverConfig = require('./auth.config.server').default;
+ * }
+ */
 
 export const nextAuthApp = NextAuth({
   debug: false && isDev,
@@ -118,6 +131,7 @@ export const nextAuthApp = NextAuth({
       return token;
     },
   } satisfies AuthConfig['callbacks'],
+  // Use the server config if we're on the server, otherwise use the client-safe config
   ...authConfig,
 });
 

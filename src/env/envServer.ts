@@ -1,3 +1,6 @@
+// This file should only be used in server components
+// 'use server';
+
 import { z } from 'zod';
 
 const envSchema = z.object({
