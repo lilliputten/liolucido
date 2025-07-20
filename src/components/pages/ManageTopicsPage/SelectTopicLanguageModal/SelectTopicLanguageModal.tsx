@@ -9,6 +9,7 @@ import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { isDev } from '@/constants';
+import { useTopicsContext } from '@/contexts/TopicsContext';
 import {
   selectTopicEventName,
   TSelectTopicLanguageData,
@@ -26,6 +27,12 @@ interface TSelectTopicLanguageModalProps extends TTopicLanguageData {
 export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) {
   const { langCode, langName, langCustom, topicId } = props;
   const router = useRouter();
+  // TODO: Redirect to hardcoded edit url for a topic
+  // const { routePath } = useTopicsContext();
+  // const hideModal = React.useCallback(
+  //   () => router.replace(`${routePath}/${topicId}/edit`),
+  //   [router, routePath, topicId],
+  // );
   const hideModal = React.useCallback(() => router.back(), [router]);
   const [isPending, startTransition] = React.useTransition();
   const { isMobile } = useMediaQuery();

@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -126,22 +127,22 @@ function TopicTableRow(props: TTopicTableRowProps) {
 
   return (
     <TableRow className="truncate" data-topic-id={id}>
-      <TableCell className="max-w-[150px] truncate">
+      <TableCell className="max-w-[8em] truncate">
         <div className="truncate text-lg font-medium">{name}</div>
       </TableCell>
       {isAdminMode && (
-        <TableCell id="topicUser" className="max-w-[150px] truncate max-sm:hidden">
+        <TableCell id="topicUser" className="max-w-[8em] truncate max-sm:hidden">
           <div className="truncate" title={topicUser?.name || undefined}>
-            {topicUser?.name || '...'}
+            {topicUser?.name || <Skeleton className="h-[2em] w-[8em] rounded-sm" />}
           </div>
         </TableCell>
       )}
-      <TableCell id="language" className="max-w-[150px] truncate max-sm:hidden">
+      <TableCell id="language" className="max-w-[8em] truncate max-sm:hidden">
         <div className="truncate">
           {[langName, langCode && `(${langCode})`].filter(Boolean).join(' ')}
         </div>
       </TableCell>
-      <TableCell id="keywords" className="max-w-[150px] truncate max-sm:hidden">
+      <TableCell id="keywords" className="max-w-[8em] truncate max-sm:hidden">
         <div className="truncate">{keywords}</div>
       </TableCell>
       <TableCell className="text-right">

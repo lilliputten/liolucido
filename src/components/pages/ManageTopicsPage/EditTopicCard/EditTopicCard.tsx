@@ -92,7 +92,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { topics } = useTopicsContext();
+  const { topics, routePath } = useTopicsContext();
   const topic: TTopic | undefined = React.useMemo(
     () => topics.find(({ id }) => id === topicId),
     [topics, topicId],
@@ -100,7 +100,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
   if (!topicId || !topic) {
     throw new Error('No such topic exists');
   }
-  const goBack = React.useCallback(() => router.back(), [router]);
+  const goBack = React.useCallback(() => router.replace(routePath), [routePath, router]);
   return (
     <Card
       className={cn(

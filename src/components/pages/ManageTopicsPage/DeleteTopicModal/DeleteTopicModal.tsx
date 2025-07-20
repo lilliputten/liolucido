@@ -23,8 +23,9 @@ interface TDeleteTopicModalProps {
 export function DeleteTopicModal(props: TDeleteTopicModalProps) {
   const { topicId } = props;
   const router = useRouter();
-  const hideModal = React.useCallback(() => router.back(), [router]);
   const { topics, setTopics } = useTopicsContext();
+  const hideModal = React.useCallback(() => router.back(), [router]);
+  // const hideModal = React.useCallback(() => router.replace(routePath), [routePath, router]);
   if (!topicId) {
     throw new Error('No topic id passed for deletion');
   }

@@ -35,7 +35,16 @@ function FormHint({ children }: { children?: React.ReactNode }) {
 }
 
 function FormSection({ children }: TPropsWithChildren) {
-  return <div className="flex w-full flex-col gap-6 py-2">{children}</div>;
+  return (
+    <div
+      className={cn(
+        isDev && '__EditMyTopicFormFields_FormSection', // DEBUG
+        'flex w-full flex-1 flex-col gap-6 py-2 sm:w-[45%]',
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
 export function EditMyTopicFormFields(props: TEditMyTopicFormFieldsProps) {
@@ -136,8 +145,8 @@ export function EditMyTopicFormFields(props: TEditMyTopicFormFieldsProps) {
                     onClick={selectLanguage}
                     className="flex w-full justify-stretch gap-4 text-left"
                   >
-                    <span className="flex-1">
-                      {langName ? <strong>{langName}</strong> : <>Select</>}
+                    <span className="flex-1 truncate">
+                      {langName ? <strong className="truncate">{langName}</strong> : <>Select</>}
                     </span>
                     {langCode && <span className="opacity-50">{langCode}</span>}
                     {langCustom && (

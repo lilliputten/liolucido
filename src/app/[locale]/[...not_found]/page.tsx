@@ -11,13 +11,19 @@ export default function NotFound() {
   return (
     <PageWrapper
       className={cn(
-        isDev && '__NotFoundPage', // DEBUG
+        isDev && '__NotFound', // DEBUG
       )}
-      innerClassName="gap-6 justify-center items-center"
+      innerClassName="gap-6 justify-center items-center p-4"
       scrollable
       limitWidth
     >
-      <NotFoundScreen />
+      <NotFoundScreen
+        title="Top"
+        className={cn(
+          isDev && '__NotFound_Screen', // DEBUG
+          'w-full',
+        )}
+      />
     </PageWrapper>
   );
 }
