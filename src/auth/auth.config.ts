@@ -8,7 +8,7 @@ import { envServer } from '@/env/envServer';
 // import Resend from 'next-auth/providers/resend';
 // import { sendVerificationRequest } from '@/lib/email';
 
-import { telegramProvider } from './telegram-provider';
+// import { telegramProvider } from './telegram-provider';
 
 export default {
   providers: [
@@ -30,6 +30,6 @@ export default {
      *   sendVerificationRequest,
      * }),
      */
-    telegramProvider,
+    // telegramProvider, // NOTE: Temporarily don't use it, as it's buggy
   ],
 } satisfies NextAuthConfig;

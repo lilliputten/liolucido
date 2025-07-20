@@ -17,28 +17,10 @@ export const telegramProvider = CredentialsProvider({
     const sp = new URLSearchParams(queryStr);
     const queryParams = Object.fromEntries(sp);
     const data = objectToAuthDataMap(queryParams);
-    /* const text = await req.text(); // Unpacked credentials
-     * console.log('[telegram-provider:authorize] Got data', {
-     *   data,
-     *   text,
-     *   _credentials,
-     *   queryStr,
-     *   sp,
-     *   queryParams,
-     *   req,
-     *   validator,
-     * });
-     */
 
     const user = await validator.validate(data);
 
     const isOk = user.id && user.first_name;
-
-    /* console.log('[telegram-provider:authorize] Got user', {
-     *   user,
-     *   data,
-     * });
-     */
 
     if (isOk) {
       const returned = {
@@ -48,11 +30,6 @@ export const telegramProvider = CredentialsProvider({
         image: user.photo_url,
       };
       try {
-        /* console.log('[telegram-provider:authorize] Create user', {
-         *   user,
-         *   data,
-         * });
-         */
         await createUserOrUpdateTelegramUser(user);
         // TODO: Create account?
       } catch (error) {

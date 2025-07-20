@@ -1,9 +1,11 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import { getCurrentUser } from '@/lib/session';
 import { cn, constructMetadata } from '@/lib/utils';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { WelcomeScreen } from '@/components/screens/WelcomeScreen';
 import { isDev } from '@/constants';
+import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 type TWelcomePageProps = TAwaitedLocaleProps;
@@ -19,6 +21,11 @@ export async function generateMetadata({ params }: TAwaitedLocaleProps) {
 
 export async function WelcomePage({ params }: TWelcomePageProps) {
   const { locale } = await params;
+
+  const user = await getCurrentUser();
+  const userId = user?.id;
+  // Check also if the user really exists in the database>
+  const isLoggedUser = !!userId && (await checkIfUserExists(userId));
 
   // Enable static rendering
   setRequestLocale(locale);
@@ -40,6 +47,7 @@ export async function WelcomePage({ params }: TWelcomePageProps) {
         className={cn(
           isDev && '__WelcomePage_WelcomeScreen', // DEBUG
         )}
+        isLoggedUser={isLoggedUser}
       />
     </PageWrapper>
   );

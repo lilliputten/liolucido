@@ -21,7 +21,8 @@ export interface TopicsContextData {
   setTopics: React.Dispatch<React.SetStateAction<TTopic[]>>;
   /** Topics type: only user's topics or all topics (for admin) */
   manageType: TTopicsManageType;
+  /** Route for this topics manage context (depends on `manageType`) */
+  routePath: TRoutePath;
   /** Translation namespace, for `useTranslations` or `getTranslations`, default is "ManageTopicsPage" */
   namespace: string;
-  routePath: TRoutePath;
 }
