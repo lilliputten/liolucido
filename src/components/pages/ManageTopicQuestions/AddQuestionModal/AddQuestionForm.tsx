@@ -5,18 +5,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
 
-import { maxNameLength, minNameLength } from '../constants';
+import { maxTextLength, minTextLength } from '../constants';
 
 export type TAddQuestionParams = TNewQuestion;
 
@@ -45,7 +44,7 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
   const formSchema = React.useMemo(
     () =>
       z.object({
-        text: z.string().min(minNameLength).max(maxNameLength),
+        text: z.string().min(minTextLength).max(maxTextLength),
       }),
     [],
   );
@@ -58,55 +57,25 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
 
   // @see https://react-hook-form.com/docs/useform
   const form = useForm<TFormData>({
-    // @see https://react-hook-form.com/docs/useform
-    mode: 'onChange', // 'all', // Validation strategy before submitting behaviour.
-    // mode: 'all', // Validation strategy before submitting behaviour.
-    criteriaMode: 'all', // Display all validation errors or one at a time.
+    mode: 'onChange',
+    criteriaMode: 'all',
     resolver: zodResolver(formSchema),
-    defaultValues, // Default values for the form.
+    defaultValues,
   });
 
-  const {
-    // @see https://react-hook-form.com/docs/useform
-    formState, // FormState<TFieldValues>;
-    handleSubmit, // UseFormHandleSubmit<TFieldValues, TTransformedValues>;
-    // register, // UseFormRegister<TFieldValues>;
-    // reset, // UseFormReset<TFieldValues>;
-    setFocus,
-  } = form;
+  const { formState, handleSubmit, setFocus } = form;
 
   // Focus the first field (should it be used with a languages list?)
   React.useEffect(() => setFocus('text'), [setFocus]);
 
-  const {
-    // @see https://react-hook-form.com/docs/useform/formstate
-    isDirty, // boolean;
-    // errors, // FieldErrors<TFieldValues>;
-    isValid, // boolean;
-  } = formState;
+  const { isDirty, isValid } = formState;
 
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
   const onSubmit = handleSubmit((formData) => {
     const { text } = formData;
     const newQuestion: TNewQuestion = { text, topicId };
-    return handleAddQuestion(newQuestion)
-      .then((result) => {
-        console.log('[AddQuestionForm:handleSubmit]', result);
-        debugger;
-        // reset();
-        // if (handleClose) {
-        //   handleClose();
-        // }
-      })
-      .catch((error) => {
-        const message = getErrorText(error) || 'An unknown error has occurred.';
-        // eslint-disable-next-line no-console
-        console.error('[AddQuestionForm:onSubmit]', message, {
-          error,
-        });
-        debugger; // eslint-disable-line no-debugger
-      });
+    handleAddQuestion(newQuestion);
   });
 
   const onClose = (ev: React.MouseEvent) => {
@@ -140,11 +109,11 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
                 Question Text
               </Label>
               <FormControl>
-                <Input
+                <Textarea
                   id={nameKey}
-                  type="text"
                   className="flex-1"
                   placeholder="Text"
+                  rows={5}
                   {...field}
                   onChange={(ev) => field.onChange(ev)}
                 />

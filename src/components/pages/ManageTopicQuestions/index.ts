@@ -1,5 +1,5 @@
 export * from './AddQuestionModal';
-// export * from './DeleteQuestionModal';
+export * from './DeleteQuestionModal';
 // export * from './EditTopicCard';
 export * from './ManageTopicQuestionsLayout';
 export * from './ManageTopicQuestionsLoading';

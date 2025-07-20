@@ -3,9 +3,9 @@
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
-import { TTopic } from '@/features/topics/types';
+import { TQuestion } from '@/features/questions/types';
 
-export async function deleteTopic(topic: TTopic) {
+export async function deleteQuestion(question: TQuestion) {
   // Check user rights to delete the question...?
   const user = await getCurrentUser();
   const userId = user?.id;
@@ -13,23 +13,31 @@ export async function deleteTopic(topic: TTopic) {
     throw new Error('Undefined user');
   }
   // Check user rights to delete the question...
-  if (userId !== topic.userId || user.role !== 'ADMIN') {
-    throw new Error('Current user not allowed to delete the topic');
+  const topicId = question.topicId;
+  const topic = await prisma.topic.findUnique({
+    where: { id: topicId },
+  });
+  if (!topic) {
+    throw new Error('Not found owner topic for the deleting question');
+  }
+  if (userId !== topic?.userId || user.role !== 'ADMIN') {
+    throw new Error('Current user not allowed to delete the question');
   }
   try {
     if (isDev) {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    const removedTopic = await prisma.topic.delete({
+    // TODO: Check if the current user allowed to delete the question?
+    const removedQuestion = await prisma.question.delete({
       where: {
-        id: topic.id,
+        id: question.id,
       },
     });
-    return removedTopic;
+    return removedQuestion;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[deleteTopic] catch', {
+    console.error('[deleteQuestion] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger
