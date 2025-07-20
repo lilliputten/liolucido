@@ -2,23 +2,23 @@
 
 import { prisma } from '@/lib/db';
 import { isDev } from '@/constants';
+import { TTopicId } from '@/features/topics/types';
 
-import { TTopic, TTopicId } from '../types';
+import { TQuestion } from '../types';
 
-export async function getTopic(id: TTopicId) {
+export async function getTopicQuestions(topicId: TTopicId) {
   try {
     if (isDev) {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    const topic: TTopic | undefined =
-      (await prisma.topic.findUnique({
-        where: { id },
-      })) || undefined;
-    return topic;
+    const questions: TQuestion[] = await prisma.question.findMany({
+      where: { topicId },
+    });
+    return questions;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[getTopic] catch', {
+    console.error('[getTopicQuestions] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger

@@ -3,7 +3,7 @@ import { Topic } from '@prisma/client';
 import { ExtendNullWithUndefined, ReplaceNullWithUndefined } from '@/lib/ts';
 
 export type TTopic = ExtendNullWithUndefined<Topic>;
-export type TTopicNoNulls = ReplaceNullWithUndefined<Topic>;
+export type TTopicReal = ReplaceNullWithUndefined<Topic>;
 
 export type TTopicId = TTopic['id'];
 

@@ -34,11 +34,11 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   const openDeleteTopicModal = React.useCallback(
     (topicId: TTopicId) => {
       const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
-      if (!hasTopic) {
+      if (hasTopic) {
+        router.push(`${topicsContext.routePath}/delete?id=${topicId}`);
+      } else {
         toast.error('The requested topic does not exist.');
         router.replace(topicsContext.routePath);
-      } else {
-        router.push(`${topicsContext.routePath}/delete?id=${topicId}`);
       }
     },
     [router, topicsContext],
@@ -49,30 +49,50 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
     }
   }, [deleteTopicId, openDeleteTopicModal]);
 
-  // Edit Topic Page
-  const openEditTopicModal = React.useCallback(
+  // Edit Topic Card
+  const openEditTopicCard = React.useCallback(
     (topicId: TTopicId) => {
       const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
-      if (!hasTopic) {
+      if (hasTopic) {
+        router.push(`${topicsContext.routePath}/${topicId}/edit`);
+      } else {
         toast.error('The requested topic does not exist.');
         router.replace(topicsContext.routePath);
-      } else {
-        router.push(`${topicsContext.routePath}/${topicId}/edit`);
       }
     },
     [router, topicsContext],
   );
   React.useEffect(() => {
     if (editTopicId) {
-      openEditTopicModal(editTopicId);
+      openEditTopicCard(editTopicId);
     }
-  }, [editTopicId, openEditTopicModal]);
+  }, [editTopicId, openEditTopicCard]);
+
+  // Edit Questions Page
+  const openEditQuestionsPage = React.useCallback(
+    (topicId: TTopicId) => {
+      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
+      if (hasTopic) {
+        router.push(`${topicsContext.routePath}/${topicId}/questions`);
+      } else {
+        toast.error('The requested topic does not exist.');
+        router.replace(topicsContext.routePath);
+      }
+    },
+    [router, topicsContext],
+  );
+  React.useEffect(() => {
+    if (editTopicId) {
+      openEditQuestionsPage(editTopicId);
+    }
+  }, [editTopicId, openEditQuestionsPage]);
 
   return (
     <ManageTopicsListWrapper
       openAddTopicModal={openAddTopicModal}
       openDeleteTopicModal={openDeleteTopicModal}
-      openEditTopicModal={openEditTopicModal}
+      openEditTopicCard={openEditTopicCard}
+      openEditQuestionsPage={openEditQuestionsPage}
     />
   );
 }

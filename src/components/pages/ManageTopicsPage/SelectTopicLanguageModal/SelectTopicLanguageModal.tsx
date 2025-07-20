@@ -9,7 +9,6 @@ import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
 import {
   selectTopicEventName,
   TSelectTopicLanguageData,

@@ -24,8 +24,8 @@ export default function NotFound() {
           isDev && '__TopicNotFoundPage_Screen', // DEBUG
           'w-full',
         )}
-        iconName="Topics"
-        title="Wrong topic sub page requested"
+        iconName="topics"
+        title="Wrong topic component requested"
       />
     </PageWrapper>
   );

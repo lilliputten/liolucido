@@ -20,10 +20,10 @@ export const sidebarLinks: SidebarNavItem[] = [
     titleId: 'My Data',
     authorizedOnly: true,
     items: [
-      { href: myTopicsRoute, icon: 'Topics', titleId: 'My Topics' },
+      { href: myTopicsRoute, icon: 'topics', titleId: 'My Topics' },
       {
         href: allTopicsRoute,
-        icon: 'AllTopics',
+        icon: 'allTopics',
         titleId: 'All Topics',
         authorizedOnly: UserRoles.ADMIN,
       },

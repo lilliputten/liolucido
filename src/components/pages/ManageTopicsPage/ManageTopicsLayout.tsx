@@ -4,20 +4,20 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
-import { TopicsContextProvider } from '@/contexts/TopicsContext';
 import {
+  TopicsContextProvider,
   TopicsManageScopeIds,
   topicsNamespaces,
   topicsRoutes,
   TTopicsManageScopeId,
-} from '@/contexts/TopicsContextConstants';
+} from '@/contexts/TopicsContext';
 import { getAllUsersTopics, getThisUserTopics } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
-import { ManageTopicsPageWrapper } from './ManageTopicsPage';
-import { PageHeader } from './shared';
+import { PageHeader } from '../shared';
+import { ManageTopicsPageWrapper } from './ManageTopicsPageWrapper';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId }>;
 

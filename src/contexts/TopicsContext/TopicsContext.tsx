@@ -11,7 +11,7 @@ import {
   TopicsContextData,
   topicsRoutes,
   TTopicsManageScopeId,
-} from './TopicsContextConstants';
+} from './TopicsContextDefinitions';
 
 const TopicsContext = React.createContext<TopicsContextData | undefined>(undefined);
 

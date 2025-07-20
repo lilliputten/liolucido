@@ -26,7 +26,7 @@ export async function getThisUserTopics() {
     return undefined;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[getAllUsersTopics] catch', {
+    console.error('[getThisUserTopics] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger

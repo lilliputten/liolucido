@@ -1,18 +1,19 @@
-'use client';
-
 import { cn } from '@/lib/utils';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import NotFoundScreen from '@/components/pages/shared/NotFoundScreen';
 import { isDev } from '@/constants';
 
-// TODO: Force 404 status code for the response
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata() {
+  return { status: 404 };
+}
 
 export default function NotFound() {
   return (
     <PageWrapper
       className={cn(
-        isDev && '__NotFoundPage', // DEBUG
-        'w-full p-4',
+        isDev && '__TopicNotFoundPage', // DEBUG
       )}
       innerClassName="gap-6 justify-center items-center"
       scrollable
@@ -20,11 +21,11 @@ export default function NotFound() {
     >
       <NotFoundScreen
         className={cn(
-          isDev && '__NotFoundPage_Screen', // DEBUG
+          isDev && '__TopicNotFoundPage_Screen', // DEBUG
           'w-full',
         )}
-        iconName="topics"
-        title="Wrong topics page requested"
+        iconName="questions"
+        title="Wrong question component requested"
       />
     </PageWrapper>
   );
