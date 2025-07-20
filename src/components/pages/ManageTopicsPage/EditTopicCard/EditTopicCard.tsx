@@ -7,7 +7,7 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { EditMyTopicForm } from './EditMyTopicForm';

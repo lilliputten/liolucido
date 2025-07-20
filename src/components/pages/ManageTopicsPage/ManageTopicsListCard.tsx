@@ -18,7 +18,8 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { TopicsManageScopeIds, useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext/TopicsContextDefinitions';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersForTopics';

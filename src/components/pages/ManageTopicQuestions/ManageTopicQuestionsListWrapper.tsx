@@ -4,7 +4,7 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
+import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
 import { TQuestionId } from '@/features/questions/types';
 
 import { PageEmpty } from '../shared';

@@ -5,8 +5,11 @@ import { TRoutePath, welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { PageError } from '@/components/shared/PageError';
-import { QuestionsContextProvider } from '@/contexts/QuestionsContext';
-import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { QuestionsContextProvider } from '@/contexts/QuestionsContext/QuestionsContext';
+import {
+  topicsRoutes,
+  TTopicsManageScopeId,
+} from '@/contexts/TopicsContext/TopicsContextDefinitions';
 import { getTopicQuestions } from '@/features/questions/actions/getTopicQuestions';
 import { TQuestion } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
@@ -64,7 +67,7 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
   const questions: TQuestion[] = await questionsPromise;
 
   return (
-    <QuestionsContextProvider questions={questions} routePath={routePath}>
+    <QuestionsContextProvider questions={questions} routePath={routePath} topicId={topicId}>
       <div>Questions list</div>
       {/*
       {isDev && <pre className="opacity-50">{JSON.stringify(questions, null, 2)}</pre>}

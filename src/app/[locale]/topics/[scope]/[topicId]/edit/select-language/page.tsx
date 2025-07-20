@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { SelectTopicLanguageModal } from '@/components/pages/ManageTopicsPage';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 
 interface SelectLanguagePageProps {
   params: Promise<{

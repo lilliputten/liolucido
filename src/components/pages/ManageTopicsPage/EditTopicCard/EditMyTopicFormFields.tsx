@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopic } from '@/features/topics/types';
 
 import { TFormData } from './types';

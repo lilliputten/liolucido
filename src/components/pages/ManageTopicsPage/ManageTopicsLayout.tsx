@@ -4,13 +4,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
+import { TopicsContextProvider } from '@/contexts/TopicsContext/TopicsContext';
 import {
-  TopicsContextProvider,
   TopicsManageScopeIds,
   topicsNamespaces,
   topicsRoutes,
   TTopicsManageScopeId,
-} from '@/contexts/TopicsContext';
+} from '@/contexts/TopicsContext/TopicsContextDefinitions';
 import { getAllUsersTopics, getThisUserTopics } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';

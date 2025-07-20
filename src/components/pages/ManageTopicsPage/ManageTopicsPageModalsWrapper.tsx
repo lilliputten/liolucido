@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
 import { ManageTopicsListWrapper } from './ManageTopicsListWrapper';

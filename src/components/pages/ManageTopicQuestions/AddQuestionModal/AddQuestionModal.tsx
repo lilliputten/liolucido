@@ -10,13 +10,13 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { addNewTopic } from '@/features/topics/actions/addNewTopic';
-import { TNewTopic, TTopic } from '@/features/topics/types';
+import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
+import { addNewQuestion } from '@/features/questions/actions';
+import { TNewQuestion, TQuestion } from '@/features/questions/types';
 
-import { AddTopicForm } from './AddTopicForm';
+import { AddQuestionForm } from './AddQuestionForm';
 
-export function AddTopicModal(/* props: TAddTopicModalProps */) {
+export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
   const [isVisible, setVisible] = React.useState(true);
   const router = useRouter();
   const hideModal = React.useCallback(() => {
@@ -26,41 +26,42 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
-  const topicsContext = useTopicsContext();
+  const questionsContext = useQuestionsContext();
+  const { topicId } = questionsContext;
 
-  const handleAddTopic = React.useCallback(
-    (newTopic: TNewTopic) => {
+  const handleAddQuestion = React.useCallback(
+    (newQuestion: TNewQuestion) => {
       return new Promise((resolve, reject) => {
         return startUpdating(() => {
-          const promise = addNewTopic(newTopic)
-            .then((addedTopic) => {
+          const promise = addNewQuestion(newQuestion)
+            .then((addedQuestion) => {
               // Update topics list
-              topicsContext.setTopics((topics) => topics.concat(addedTopic));
-              resolve(addedTopic);
+              questionsContext.setQuestions((questions) => questions.concat(addedQuestion));
+              resolve(addedQuestion);
               // NOTE: Close or go to the edit page
               setVisible(false);
-              router.replace(`${topicsContext.routePath}/${addedTopic.id}/edit`);
-              return addedTopic;
+              router.replace(`${questionsContext.routePath}/${addedQuestion.id}/edit`);
+              return addedQuestion;
             })
             .catch((error) => {
               // eslint-disable-next-line no-console
-              console.error('[AddTopicModal:handleAddTopic:catch]', getErrorText(error), {
+              console.error('[AddQuestionModal:handleAddQuestion:catch]', getErrorText(error), {
                 error,
-                newTopic,
+                newQuestion,
               });
               debugger; // eslint-disable-line no-debugger
               reject(error);
               throw error;
             });
-          toast.promise<TTopic>(promise, {
-            loading: 'Creating new topic...',
-            success: (topic) => `Successfully created new topic "${topic.name}"`,
-            error: 'Can not create new topic',
+          toast.promise<TQuestion>(promise, {
+            loading: 'Creating a new question...',
+            success: 'Successfully created a new question.',
+            error: 'Can not create a new question',
           });
         });
       });
     },
-    [topicsContext, router],
+    [questionsContext, router],
   );
 
   return (
@@ -68,29 +69,30 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
       isVisible={isVisible}
       hideModal={hideModal}
       className={cn(
-        isDev && '__AddTopicModal', // DEBUG
+        isDev && '__AddQuestionModal', // DEBUG
         'gap-0',
         isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div
         className={cn(
-          isDev && '__AddTopicModal_Header', // DEBUG
+          isDev && '__AddQuestionModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
           'flex flex-col border-b bg-accent px-8 py-4',
         )}
       >
-        <DialogTitle className="DialogTitle">Add Topic</DialogTitle>
+        <DialogTitle className="DialogTitle">Add Question</DialogTitle>
         <DialogDescription aria-hidden="true" hidden>
-          Add topic dialog
+          Add question dialog
         </DialogDescription>
       </div>
       <div className="flex flex-col px-8 py-4">
-        <AddTopicForm
-          handleAddTopic={handleAddTopic}
+        <AddQuestionForm
+          handleAddQuestion={handleAddQuestion}
           className="p-8"
           handleClose={hideModal}
           isPending={isPending}
+          topicId={topicId}
         />
       </div>
     </Modal>

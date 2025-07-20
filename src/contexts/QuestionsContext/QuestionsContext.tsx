@@ -4,6 +4,7 @@ import React from 'react';
 
 import { TRoutePath } from '@/config/routesConfig';
 import { TQuestion } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
 
 import { QuestionsContextData } from './QuestionsContextDefinitions';
 
@@ -13,12 +14,14 @@ interface QuestionsContextProviderProps {
   children: React.ReactNode;
   questions?: TQuestion[];
   routePath: TRoutePath;
+  topicId: TTopicId;
 }
 
 export function QuestionsContextProvider({
   children,
   questions: initialQuestions = [],
   routePath,
+  topicId,
 }: QuestionsContextProviderProps) {
   const [questions, setQuestions] = React.useState<TQuestion[]>(initialQuestions);
 
@@ -27,8 +30,9 @@ export function QuestionsContextProvider({
       questions,
       setQuestions,
       routePath: routePath as TRoutePath,
+      topicId,
     }),
-    [questions, routePath],
+    [questions, routePath, topicId],
   );
 
   return <QuestionsContext.Provider value={questionsContext}>{children}</QuestionsContext.Provider>;
