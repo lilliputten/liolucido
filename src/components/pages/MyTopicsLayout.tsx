@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { welcomeRoute } from '@/config/routesConfig';
+import { myTopicsRoute, welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { TopicsContextProvider } from '@/contexts/TopicsContext';
@@ -58,6 +58,7 @@ export async function MyTopicsLayout(props: TMyTopicsLayoutProps) {
       topics={topics}
       namespace={'MyTopicsPage'}
       manageType={TopicsManageTypes.MY_TOPICS}
+      routePath={myTopicsRoute}
     >
       <ManageTopicsPageWrapper>
         <PageHeader heading={t('title')} text={t('description')} />

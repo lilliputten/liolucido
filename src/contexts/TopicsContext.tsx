@@ -20,6 +20,7 @@ interface TopicsContextProviderProps {
   topics?: TTopic[];
   manageType?: TTopicsManageType;
   namespace?: string;
+  routePath?: TRoutePath;
 }
 
 export function TopicsContextProvider({
@@ -27,6 +28,7 @@ export function TopicsContextProvider({
   topics: initialTopics = [],
   manageType = defaultTopicsManageType,
   namespace = defaultTopicsNamespace,
+  routePath,
 }: TopicsContextProviderProps) {
   const [topics, setTopics] = React.useState<TTopic[]>(initialTopics);
 
@@ -36,9 +38,9 @@ export function TopicsContextProvider({
       setTopics,
       namespace,
       manageType,
-      routePath: topicsRoutes[manageType] as TRoutePath,
+      routePath: (routePath || topicsRoutes[manageType]) as TRoutePath,
     }),
-    [topics, namespace, manageType],
+    [topics, namespace, manageType, routePath],
   );
 
   return <TopicsContext.Provider value={topicsContext}>{children}</TopicsContext.Provider>;
