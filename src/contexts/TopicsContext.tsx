@@ -2,35 +2,46 @@
 
 import React from 'react';
 
+import { TRoutePath } from '@/config/routesConfig';
 import { TTopic } from '@/features/topics/types';
 
-interface TopicsContextValue {
-  topics: TTopic[];
-  setTopics: React.Dispatch<React.SetStateAction<TTopic[]>>;
-}
+import {
+  defaultTopicsManageType,
+  defaultTopicsNamespace,
+  TopicsContextData,
+  topicsRoutes,
+  TTopicsManageType,
+} from './TopicsContextConstants';
 
-const TopicsContext = React.createContext<TopicsContextValue | undefined>(undefined);
+const TopicsContext = React.createContext<TopicsContextData | undefined>(undefined);
 
 interface TopicsContextProviderProps {
   children: React.ReactNode;
-  initialTopics?: TTopic[];
+  topics?: TTopic[];
+  manageType?: TTopicsManageType;
+  namespace?: string;
 }
 
 export function TopicsContextProvider({
   children,
-  initialTopics = [],
+  topics: initialTopics = [],
+  manageType = defaultTopicsManageType,
+  namespace = defaultTopicsNamespace,
 }: TopicsContextProviderProps) {
   const [topics, setTopics] = React.useState<TTopic[]>(initialTopics);
 
-  const value = React.useMemo(
+  const topicsContext = React.useMemo(
     () => ({
       topics,
       setTopics,
+      namespace,
+      manageType,
+      routePath: topicsRoutes[manageType] as TRoutePath,
     }),
-    [topics],
+    [topics, namespace, manageType],
   );
 
-  return <TopicsContext.Provider value={value}>{children}</TopicsContext.Provider>;
+  return <TopicsContext.Provider value={topicsContext}>{children}</TopicsContext.Provider>;
 }
 
 export function useTopicsContext() {

@@ -11,7 +11,7 @@ import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
 import { NavBarBrand } from '@/components/layout/NavBarBrand';
 import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
-import { isDev, isUserRequired } from '@/constants';
+import { isDev } from '@/constants';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
@@ -62,7 +62,7 @@ export function NavBar(props: NavBarProps) {
         {links && links.length > 0 ? (
           <nav className="hidden gap-6 md:flex">
             {links
-              .filter((item) => !isUserRequired || !item.userRequiredOnly || isUser)
+              .filter((item) => !item.userRequiredOnly || isUser)
               .map((item) => {
                 // Check if it's current item using `getAllRouteSynonyms(item.href, locale)`
                 const allHrefs = getAllRouteSynonyms(item.href, locale);
