@@ -57,7 +57,7 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
         toast.error('The requested topic does not exist.');
         router.replace(topicsContext.routePath);
       } else {
-        router.push(`${topicsContext.routePath}/edit/${topicId}`);
+        router.push(`${topicsContext.routePath}/${topicId}/edit`);
       }
     },
     [router, topicsContext],

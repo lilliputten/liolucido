@@ -39,7 +39,7 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
               resolve(addedTopic);
               // NOTE: Close or go to the edit page
               setVisible(false);
-              router.replace(`${topicsContext.routePath}/edit/${addedTopic.id}`);
+              router.replace(`${topicsContext.routePath}/${addedTopic.id}/edit`);
               return addedTopic;
             })
             .catch((error) => {

@@ -9,8 +9,8 @@ interface EditManageTopicPageProps {
 }
 
 export default async function EditManageTopicPage({ params }: EditManageTopicPageProps) {
-  const { topicId: topicIdRaw } = await params;
-  const topicId = topicIdRaw ? (parseInt(topicIdRaw) as TTopicId) : undefined;
+  const { topicId: id } = await params;
+  const topicId = id ? (parseInt(id) as TTopicId) : undefined;
 
   if (!topicId) {
     return <PageError error={'Invalid topic ID.'} />;

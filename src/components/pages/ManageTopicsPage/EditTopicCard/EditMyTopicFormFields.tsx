@@ -52,7 +52,7 @@ export function EditMyTopicFormFields(props: TEditMyTopicFormFieldsProps) {
       if (langName) params.append('langName', langName);
       if (langCustom) params.append('langCustom', String(langCustom));
       router.push(
-        `${topicsContext.routePath}/edit/${topic.id}/select-language?${params.toString()}`,
+        `${topicsContext.routePath}/${topic.id}/edit/select-language?${params.toString()}`,
       );
     },
     [form, router, topic, topicsContext],
