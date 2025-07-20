@@ -18,7 +18,7 @@ import {
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext';
-import { TopicsManageTypes } from '@/contexts/TopicsContextConstants';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContextConstants';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersForTopics';
@@ -174,8 +174,8 @@ function TopicTableRow(props: TTopicTableRowProps) {
 
 export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
   const { className, topics, handleDeleteTopic, handleEditTopic } = props;
-  const { manageType } = useTopicsContext();
-  const isAdminMode = manageType === TopicsManageTypes.ALL_TOPICS;
+  const { manageScope } = useTopicsContext();
+  const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS;
   // const user = useSessionUser();
   // const isAdmin = !!user && user.role === 'ADMIN';
   const cachedUsers = useCachedUsersForTopics({

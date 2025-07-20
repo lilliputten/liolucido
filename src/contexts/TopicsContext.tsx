@@ -6,11 +6,11 @@ import { TRoutePath } from '@/config/routesConfig';
 import { TTopic } from '@/features/topics/types';
 
 import {
-  defaultTopicsManageType,
+  defaultTopicsManageScope,
   defaultTopicsNamespace,
   TopicsContextData,
   topicsRoutes,
-  TTopicsManageType,
+  TTopicsManageScopeId,
 } from './TopicsContextConstants';
 
 const TopicsContext = React.createContext<TopicsContextData | undefined>(undefined);
@@ -18,7 +18,7 @@ const TopicsContext = React.createContext<TopicsContextData | undefined>(undefin
 interface TopicsContextProviderProps {
   children: React.ReactNode;
   topics?: TTopic[];
-  manageType?: TTopicsManageType;
+  manageScope?: TTopicsManageScopeId;
   namespace?: string;
   routePath?: TRoutePath;
 }
@@ -26,7 +26,7 @@ interface TopicsContextProviderProps {
 export function TopicsContextProvider({
   children,
   topics: initialTopics = [],
-  manageType = defaultTopicsManageType,
+  manageScope = defaultTopicsManageScope,
   namespace = defaultTopicsNamespace,
   routePath,
 }: TopicsContextProviderProps) {
@@ -37,10 +37,10 @@ export function TopicsContextProvider({
       topics,
       setTopics,
       namespace,
-      manageType,
-      routePath: (routePath || topicsRoutes[manageType]) as TRoutePath,
+      manageScope,
+      routePath: (routePath || topicsRoutes[manageScope]) as TRoutePath,
     }),
-    [topics, namespace, manageType, routePath],
+    [topics, namespace, manageScope, routePath],
   );
 
   return <TopicsContext.Provider value={topicsContext}>{children}</TopicsContext.Provider>;
