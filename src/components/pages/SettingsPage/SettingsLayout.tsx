@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { constructMetadata } from '@/lib/utils';
 // import { SettingsContextProvider } from '@/contexts/SettingsContext/SettingsContext';
 // import { getAllUsersSettings, getThisUserSettings } from '@/features/settings/actions';
-import { TSettings } from '@/features/settings/types';
+// import { TSettings } from '@/features/settings/types';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 import { PageHeader } from '../shared';

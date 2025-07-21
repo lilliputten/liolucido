@@ -13,6 +13,7 @@ import { GenericLayout } from '@/components/layout/GenericLayout';
 import ModalProvider from '@/components/modals/providers';
 import { TailwindIndicator } from '@/components/service/TailwindIndicator';
 import { fontDefault, fontHeading, fontMono } from '@/assets/fonts';
+import { SettingsContextProvider } from '@/contexts/SettingsContext';
 import { routing } from '@/i18n/routing';
 import { TAwaitedLocaleProps, TLocale } from '@/i18n/types';
 
@@ -118,10 +119,12 @@ async function RootLayout(props: TRootLayoutProps) {
                   // containerAriaLabel?: string;
                   // pauseWhenPageIsHidden?: boolean;
                 />
-                <GenericLayout>
-                  {/* Core content */}
-                  {children}
-                </GenericLayout>
+                <SettingsContextProvider>
+                  <GenericLayout>
+                    {/* Core content */}
+                    {children}
+                  </GenericLayout>
+                </SettingsContextProvider>
                 <TailwindIndicator />
               </ModalProvider>
             </ThemeProvider>
