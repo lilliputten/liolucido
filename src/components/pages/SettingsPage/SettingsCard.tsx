@@ -7,17 +7,20 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { DemoList } from '@/components/debug/DemoList';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { useSettingsContext } from '@/contexts/SettingsContext';
 
-// import { useSettingsContext } from '@/contexts/SettingsContext/SettingsContext';
-// import { TSettings } from '@/features/settings/types';
+import { SettingsForm } from './SettingsForm';
 
 const saveScrollHash = getRandomHashString();
 
 type TSettingsCardProps = TPropsWithClassName;
-type TChildProps = Omit<TSettingsCardProps, 'className'>;
+// type TChildProps = Omit<TSettingsCardProps, 'className'>;
+type TChildProps = {
+  // goBack: () => void;
+  toolbarPortalRef: React.RefObject<HTMLDivElement>;
+};
 
 /* // UNUSED: Title
  * function Title() {
@@ -35,14 +38,16 @@ type TChildProps = Omit<TSettingsCardProps, 'className'>;
  * }
  */
 
-function Toolbar(_props: TChildProps) {
+function Toolbar({ toolbarPortalRef }: TChildProps) {
   return (
     <div
+      ref={toolbarPortalRef}
       className={cn(
         isDev && '__SettingsCard_Toolbar', // DEBUG
         'flex flex-wrap gap-2',
       )}
     >
+      {/*
       <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
         <Link href="#" className="flex items-center gap-2">
           <Icons.check className="hidden size-4 sm:block" />
@@ -55,6 +60,7 @@ function Toolbar(_props: TChildProps) {
           <span>Refresh</span>
         </Link>
       </Button>
+      */}
     </div>
   );
 }
@@ -75,7 +81,12 @@ function Header(props: TChildProps) {
 
 export function SettingsCard(props: TSettingsCardProps) {
   const { className } = props;
-  // const { settings } = useSettingsContext();
+  const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
+  // React.useEffect(() => {
+  //   console.log('XXX', toolbarPortalRef);
+  //   debugger;
+  // }, [toolbarPortalRef])
+  const { settings } = useSettingsContext();
   /* // Detect user mode
    * const user = useSessionUser();
    * const isAdminMode = user?.role === 'ADMIN';
@@ -84,12 +95,15 @@ export function SettingsCard(props: TSettingsCardProps) {
     <Card
       className={cn(
         isDev && '__SettingsCard', // DEBUG
-        'xl:col-span-2',
+        // 'xl:col-span-2',
         'relative flex flex-1 flex-col overflow-hidden',
         className,
       )}
     >
-      <Header {...props} />
+      <Header
+        // goBack={goBack}
+        toolbarPortalRef={toolbarPortalRef}
+      />
       <CardContent
         className={cn(
           isDev && '__SettingsCard_Content', // DEBUG
@@ -101,8 +115,7 @@ export function SettingsCard(props: TSettingsCardProps) {
           saveScrollHash={saveScrollHash}
           viewportClassName="px-6"
         >
-          <DemoList count={70} />
-          CONTENT
+          <SettingsForm settings={settings} toolbarPortalRef={toolbarPortalRef} />
         </ScrollArea>
       </CardContent>
     </Card>
