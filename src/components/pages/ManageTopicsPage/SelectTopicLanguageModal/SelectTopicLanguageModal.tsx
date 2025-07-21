@@ -26,6 +26,12 @@ interface TSelectTopicLanguageModalProps extends TTopicLanguageData {
 export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) {
   const { langCode, langName, langCustom, topicId } = props;
   const router = useRouter();
+  // TODO: Redirect to hardcoded edit url for a topic
+  // const { routePath } = useTopicsContext();
+  // const hideModal = React.useCallback(
+  //   () => router.replace(`${routePath}/${topicId}/edit`),
+  //   [router, routePath, topicId],
+  // );
   const hideModal = React.useCallback(() => router.back(), [router]);
   const [isPending, startTransition] = React.useTransition();
   const { isMobile } = useMediaQuery();

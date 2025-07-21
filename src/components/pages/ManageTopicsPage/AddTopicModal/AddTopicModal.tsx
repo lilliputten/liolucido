@@ -10,7 +10,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { addNewTopic } from '@/features/topics/actions/addNewTopic';
 import { TNewTopic, TTopic } from '@/features/topics/types';
 
@@ -39,7 +39,7 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
               resolve(addedTopic);
               // NOTE: Close or go to the edit page
               setVisible(false);
-              router.replace(`${topicsContext.routePath}/edit/${addedTopic.id}`);
+              router.replace(`${topicsContext.routePath}/${addedTopic.id}/edit`);
               return addedTopic;
             })
             .catch((error) => {

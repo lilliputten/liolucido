@@ -4,7 +4,7 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 
 import { PageEmpty } from '../shared';
@@ -13,11 +13,13 @@ import { ManageTopicsListCard } from './ManageTopicsListCard';
 interface TTopicsListProps {
   openAddTopicModal: () => void;
   openDeleteTopicModal: (topicId: TTopicId) => void;
-  openEditTopicModal: (topicId: TTopicId) => void;
+  openEditTopicCard: (topicId: TTopicId) => void;
+  openEditQuestionsPage: (topicId: TTopicId) => void;
 }
 
 export function ManageTopicsListWrapper(props: TTopicsListProps) {
-  const { openAddTopicModal, openDeleteTopicModal, openEditTopicModal } = props;
+  const { openAddTopicModal, openDeleteTopicModal, openEditTopicCard, openEditQuestionsPage } =
+    props;
   const { topics } = useTopicsContext();
 
   const hasTopics = !!topics.length;
@@ -37,7 +39,8 @@ export function ManageTopicsListWrapper(props: TTopicsListProps) {
           )}
           topics={topics}
           handleDeleteTopic={openDeleteTopicModal}
-          handleEditTopic={openEditTopicModal}
+          handleEditTopic={openEditTopicCard}
+          handleEditQuestions={openEditQuestionsPage}
           handleAddTopic={openAddTopicModal}
         />
       ) : (
@@ -45,6 +48,7 @@ export function ManageTopicsListWrapper(props: TTopicsListProps) {
           className="size-full flex-1"
           onButtonClick={openAddTopicModal}
           buttonTitle="Add Topic"
+          iconName="topics"
           title="No topics have been created yet"
           description="You dont have any topics yet. Add any topic to your profile."
         />

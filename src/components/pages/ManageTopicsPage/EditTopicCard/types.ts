@@ -1,7 +1,7 @@
-import { TTopicNoNulls } from '@/features/topics/types';
+import { TTopicReal } from '@/features/topics/types';
 
 export type TFormData = Pick<
-  TTopicNoNulls,
+  TTopicReal,
   | 'name' // string
   | 'isPublic' // boolean
   | 'keywords' // string

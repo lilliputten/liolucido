@@ -1,4 +1,8 @@
 {
+  "ManageTopicQuestions": {
+    "title": "Вопросы",
+    "description": "Вопросы в теме"
+  },
   "MyTopicsPage": {
     "title": "Мои темы",
     "description": "Созданные мной темы"

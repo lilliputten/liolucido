@@ -10,7 +10,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
@@ -23,8 +23,9 @@ interface TDeleteTopicModalProps {
 export function DeleteTopicModal(props: TDeleteTopicModalProps) {
   const { topicId } = props;
   const router = useRouter();
-  const hideModal = React.useCallback(() => router.back(), [router]);
   const { topics, setTopics } = useTopicsContext();
+  const hideModal = React.useCallback(() => router.back(), [router]);
+  // const hideModal = React.useCallback(() => router.replace(routePath), [routePath, router]);
   if (!topicId) {
     throw new Error('No topic id passed for deletion');
   }

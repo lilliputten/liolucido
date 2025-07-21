@@ -1,0 +1,7 @@
+import type { NextAuthConfig } from 'next-auth';
+
+// This is a client-safe version of the auth config
+// It doesn't import server-only environment variables
+export default {
+  providers: [],
+} satisfies NextAuthConfig;

@@ -1,5 +1,7 @@
 'use server';
 
+import { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
@@ -18,15 +20,19 @@ export async function getThisUserTopics() {
     const user = await getCurrentUser();
     const userId = user?.id;
     if (userId) {
-      const topics: TTopic[] = await prisma.topic.findMany({
+      const include: Prisma.TopicInclude = {
+        _count: { select: { questions: true } },
+      };
+      const topics = await prisma.topic.findMany({
         where: { userId },
+        include,
       });
       return topics;
     }
     return undefined;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[getAllUsersTopics] catch', {
+    console.error('[getThisUserTopics] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger

@@ -7,10 +7,10 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
-import { EditMyTopicForm } from './EditMyTopicForm';
+import { EditTopicForm } from './EditTopicForm';
 
 interface TEditTopicCardProps extends TPropsWithClassName {
   topicId: TTopicId;
@@ -58,7 +58,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
     <div
       ref={toolbarPortalRef}
       className={cn(
-        isDev && '__ManageTopicsListCard_Toolbar', // DEBUG
+        isDev && '__EditTopicCard_Toolbar', // DEBUG
         '__ml-auto __shrink-0 flex flex-wrap gap-2',
       )}
     >
@@ -92,7 +92,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { topics } = useTopicsContext();
+  const { topics, routePath } = useTopicsContext();
   const topic: TTopic | undefined = React.useMemo(
     () => topics.find(({ id }) => id === topicId),
     [topics, topicId],
@@ -100,7 +100,13 @@ export function EditTopicCard(props: TEditTopicCardProps) {
   if (!topicId || !topic) {
     throw new Error('No such topic exists');
   }
-  const goBack = React.useCallback(() => router.back(), [router]);
+  const goBack = React.useCallback(() => {
+    if (window.history.length) {
+      router.back();
+    } else {
+      router.replace(routePath);
+    }
+  }, [router, routePath]);
   return (
     <Card
       className={cn(
@@ -117,7 +123,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <EditMyTopicForm topic={topic} onCancel={goBack} toolbarPortalRef={toolbarPortalRef} />
+        <EditTopicForm topic={topic} onCancel={goBack} toolbarPortalRef={toolbarPortalRef} />
       </CardContent>
     </Card>
   );

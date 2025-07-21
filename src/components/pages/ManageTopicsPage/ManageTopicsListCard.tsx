@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -17,8 +19,8 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
-import { TopicsManageTypes } from '@/contexts/TopicsContextConstants';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersForTopics';
@@ -29,6 +31,7 @@ interface TManageTopicsListCardProps extends TPropsWithClassName {
   topics: TTopic[];
   handleDeleteTopic: (topicId: TTopicId) => void;
   handleEditTopic: (topicId: TTopicId) => void;
+  handleEditQuestions: (topicId: TTopicId) => void;
   handleAddTopic: () => void;
 }
 type TChildProps = Omit<TManageTopicsListCardProps, 'className'>;
@@ -42,9 +45,7 @@ function Title() {
       )}
     >
       <CardTitle>Current topics</CardTitle>
-      <CardDescription className="text-balance">
-        Topics you have added to the profile.
-      </CardDescription>
+      <CardDescription className="sr-only text-balance">My own topics.</CardDescription>
     </div>
   );
 }
@@ -92,8 +93,16 @@ function TopicTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
   return (
     <TableHeader>
       <TableRow>
+        {isAdminMode && isDev && (
+          <TableHead id="topicId" className="truncate max-sm:hidden">
+            ID
+          </TableHead>
+        )}
         <TableHead id="name" className="truncate">
           Topic Name
+        </TableHead>
+        <TableHead id="questions" className="truncate">
+          Questions
         </TableHead>
         {isAdminMode && (
           <TableHead id="topicUser" className="truncate max-sm:hidden">
@@ -115,33 +124,59 @@ interface TTopicTableRowProps {
   topic: TTopic;
   handleDeleteTopic: TManageTopicsListCardProps['handleDeleteTopic'];
   handleEditTopic: TManageTopicsListCardProps['handleEditTopic'];
+  handleEditQuestions: TManageTopicsListCardProps['handleEditQuestions'];
   isAdminMode: boolean;
   cachedUsers: TCachedUsers;
 }
 
 function TopicTableRow(props: TTopicTableRowProps) {
-  const { topic, handleDeleteTopic, handleEditTopic, isAdminMode, cachedUsers } = props;
-  const { id, name, langCode, langName, keywords, userId } = topic;
+  const {
+    topic,
+    handleDeleteTopic,
+    handleEditTopic,
+    handleEditQuestions,
+    isAdminMode,
+    cachedUsers,
+  } = props;
+  const { id, name, langCode, langName, keywords, userId, _count } = topic;
+  const questionsCount = _count?.questions;
   const topicUser = isAdminMode ? cachedUsers[userId] : undefined;
 
   return (
     <TableRow className="truncate" data-topic-id={id}>
-      <TableCell className="max-w-[150px] truncate">
-        <div className="truncate text-lg font-medium">{name}</div>
-      </TableCell>
-      {isAdminMode && (
-        <TableCell id="topicUser" className="max-w-[150px] truncate max-sm:hidden">
-          <div className="truncate" title={topicUser?.name || undefined}>
-            {topicUser?.name || '...'}
+      {isAdminMode && isDev && (
+        <TableCell id="topicId" className="max-w-[8em] truncate max-sm:hidden">
+          <div className="truncate">
+            <span className="mr-[2px] opacity-30">#</span>
+            {id}
           </div>
         </TableCell>
       )}
-      <TableCell id="language" className="max-w-[150px] truncate max-sm:hidden">
+      <TableCell id="name" className="max-w-[8em] truncate">
+        <div className="truncate text-lg font-medium">{name}</div>
+      </TableCell>
+      <TableCell id="questions" className="max-w-[8em] truncate">
+        <div className="truncate">
+          {questionsCount ? (
+            <span className="font-bold">{questionsCount}</span>
+          ) : (
+            <span className="opacity-30">—</span>
+          )}
+        </div>
+      </TableCell>
+      {isAdminMode && (
+        <TableCell id="topicUser" className="max-w-[8em] truncate max-sm:hidden">
+          <div className="truncate" title={topicUser?.name || undefined}>
+            {topicUser?.name || <Skeleton className="h-[2em] w-[8em] rounded-sm" />}
+          </div>
+        </TableCell>
+      )}
+      <TableCell id="language" className="max-w-[8em] truncate max-sm:hidden">
         <div className="truncate">
           {[langName, langCode && `(${langCode})`].filter(Boolean).join(' ')}
         </div>
       </TableCell>
-      <TableCell id="keywords" className="max-w-[150px] truncate max-sm:hidden">
+      <TableCell id="keywords" className="max-w-[8em] truncate max-sm:hidden">
         <div className="truncate">{keywords}</div>
       </TableCell>
       <TableCell className="text-right">
@@ -160,6 +195,16 @@ function TopicTableRow(props: TTopicTableRowProps) {
             variant="ghost"
             size="icon"
             className="size-9 shrink-0"
+            onClick={() => handleEditQuestions(topic.id)}
+            aria-label="Edit Questions"
+            title="Edit Questions"
+          >
+            <Icons.questions className="size-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 shrink-0"
             onClick={() => handleDeleteTopic(topic.id)}
             aria-label="Delete"
             title="Delete"
@@ -173,11 +218,10 @@ function TopicTableRow(props: TTopicTableRowProps) {
 }
 
 export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
-  const { className, topics, handleDeleteTopic, handleEditTopic } = props;
-  const { manageType } = useTopicsContext();
-  const isAdminMode = manageType === TopicsManageTypes.ALL_TOPICS;
-  // const user = useSessionUser();
-  // const isAdmin = !!user && user.role === 'ADMIN';
+  const { className, topics, handleDeleteTopic, handleEditTopic, handleEditQuestions } = props;
+  const { manageScope } = useTopicsContext();
+  const user = useSessionUser();
+  const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';
   const cachedUsers = useCachedUsersForTopics({
     topics,
     bypass: !isAdminMode, // Do not use users data if not admin user role
@@ -212,6 +256,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
                   topic={topic}
                   handleDeleteTopic={handleDeleteTopic}
                   handleEditTopic={handleEditTopic}
+                  handleEditQuestions={handleEditQuestions}
                   isAdminMode={isAdminMode}
                   cachedUsers={cachedUsers}
                 />

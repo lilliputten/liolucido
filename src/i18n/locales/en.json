@@ -1,4 +1,8 @@
 {
+  "ManageTopicQuestions": {
+    "title": "Questions",
+    "description": "Questions for the topic"
+  },
   "MyTopicsPage": {
     "title": "My Topics",
     "description": "Topics created by me"
