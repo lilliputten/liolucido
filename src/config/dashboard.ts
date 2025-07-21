@@ -50,7 +50,7 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     titleId: 'Options',
     items: [
-      { href: settingsRoute, icon: 'settings', titleId: 'Settings', disabled: true },
+      { href: settingsRoute, icon: 'settings', titleId: 'Settings' },
       { href: rootRoute, icon: 'home', titleId: 'Homepage' },
       { href: rootRoute, icon: 'bookOpen', titleId: 'Documentation', disabled: true },
       {

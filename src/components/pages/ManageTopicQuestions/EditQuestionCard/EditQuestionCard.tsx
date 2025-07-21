@@ -41,7 +41,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
       ref={toolbarPortalRef}
       className={cn(
         isDev && '__EditQuestionCard_Toolbar', // DEBUG
-        '__ml-auto __shrink-0 flex flex-wrap gap-2',
+        'flex flex-wrap gap-2',
       )}
     >
       {/* // Example

@@ -47,8 +47,12 @@
   "TestPage": {
     "title": "Test - TrainWizzz!"
   },
+  "SettingsPage": {
+    "title": "Настройки - TrainWizzz!",
+    "description": "Настройки приложения"
+  },
   "WelcomePage": {
-    "title": "Добро пожаловать - Team Tree"
+    "title": "Добро пожаловать - TrainWizzz!"
   },
   "SmallWelcomeText": {
     "content": "<p>Это небольшой иерархический редактор данных. Взгляните на небольшую <infolink>инструкцию</infolink>.\n</p>",
