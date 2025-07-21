@@ -18,7 +18,7 @@ import { TTopic } from '@/features/topics/types';
 
 import { TFormData } from './types';
 
-interface TEditMyTopicFormFieldsProps {
+interface TEditTopicFormFieldsProps {
   topic: TTopic;
   isSubmitEnabled?: boolean;
   isPending?: boolean;
@@ -38,8 +38,8 @@ function FormSection({ children }: TPropsWithChildren) {
   return (
     <div
       className={cn(
-        isDev && '__EditMyTopicFormFields_FormSection', // DEBUG
-        'flex w-full flex-1 flex-col gap-6 py-2 sm:w-[45%]',
+        isDev && '__EditTopicFormFields_FormSection', // DEBUG
+        'flex w-full flex-1 flex-col gap-6 py-2 md:w-[45%]',
       )}
     >
       {children}
@@ -47,7 +47,7 @@ function FormSection({ children }: TPropsWithChildren) {
   );
 }
 
-export function EditMyTopicFormFields(props: TEditMyTopicFormFieldsProps) {
+export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
   const router = useRouter();
   const { className, topic, form } = props;
   const topicsContext = useTopicsContext();
@@ -135,7 +135,7 @@ export function EditMyTopicFormFields(props: TEditMyTopicFormFieldsProps) {
                 <Label htmlFor={langCodeKey}>Language</Label>
                 <div
                   className={cn(
-                    isDev && '__EditMyTopicForm_SelectLanguage', // DEBUG
+                    isDev && '__EditTopicForm_SelectLanguage', // DEBUG
                     'flex items-center',
                   )}
                 >

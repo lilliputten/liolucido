@@ -4,13 +4,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
-import { TopicsContextProvider } from '@/contexts/TopicsContext/TopicsContext';
 import {
   TopicsManageScopeIds,
   topicsNamespaces,
   topicsRoutes,
   TTopicsManageScopeId,
-} from '@/contexts/TopicsContext/TopicsContextDefinitions';
+} from '@/contexts/TopicsContext';
+import { TopicsContextProvider } from '@/contexts/TopicsContext/TopicsContext';
 import { getAllUsersTopics, getThisUserTopics } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
@@ -84,7 +84,7 @@ export async function ManageTopicsLayout(props: TManageTopicsLayoutProps) {
   setRequestLocale(locale);
 
   const topicsPromise = isAdminMode ? getAllUsersTopics() : getThisUserTopics();
-  const topics: TTopic[] | undefined = await topicsPromise;
+  const topics: TTopic[] = (await topicsPromise) || [];
 
   return (
     <TopicsContextProvider

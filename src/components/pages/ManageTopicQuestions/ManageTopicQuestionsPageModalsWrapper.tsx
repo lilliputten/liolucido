@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
+import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TQuestionId } from '@/features/questions/types';
 
 import { ManageTopicQuestionsListWrapper } from './ManageTopicQuestionsListWrapper';

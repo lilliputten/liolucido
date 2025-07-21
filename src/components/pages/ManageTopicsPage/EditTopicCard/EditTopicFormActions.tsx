@@ -19,7 +19,7 @@ interface TProps {
   onSubmit: (data: TFormData) => void;
 }
 
-export function EditMyTopicFormActions(props: TProps) {
+export function EditTopicFormActions(props: TProps) {
   const { isSubmitEnabled, isPending, onCancel, form, onSubmit } = props;
   const { isDirty } = form.formState;
   const Icon = isPending ? Icons.spinner : Icons.check;
@@ -30,7 +30,7 @@ export function EditMyTopicFormActions(props: TProps) {
       {!isDirty && (
         <Button variant="ghost" size="sm" onClick={onCancel} className="gap-2" disabled={isDirty}>
           <Icons.arrowLeft className="size-4" />
-          <span>Back to the list</span>
+          <span>Back</span>
         </Button>
       )}
       {isDirty && (

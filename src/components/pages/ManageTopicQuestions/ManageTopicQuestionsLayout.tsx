@@ -5,13 +5,11 @@ import { TRoutePath, welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { PageError } from '@/components/shared/PageError';
-import { QuestionsContextProvider } from '@/contexts/QuestionsContext/QuestionsContext';
-import {
-  topicsRoutes,
-  TTopicsManageScopeId,
-} from '@/contexts/TopicsContext/TopicsContextDefinitions';
+import { QuestionsContextProvider } from '@/contexts/QuestionsContext';
+import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { getTopicQuestions } from '@/features/questions/actions/getTopicQuestions';
 import { TQuestion } from '@/features/questions/types';
+import { getTopic } from '@/features/topics/actions';
 import { TTopicId } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
@@ -43,13 +41,19 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
     deleteQuestionModal, // slot from @deleteQuestionModal
     params,
   } = props;
-  const { locale, scope, topicId: id } = await params;
+  const resolvedParams = await params;
+  const { locale, scope, topicId: id } = resolvedParams;
   const topicId = id ? (parseInt(id) as TTopicId) : undefined;
   const topicRoutePath = topicsRoutes[scope];
   const routePath = `${topicRoutePath}/${topicId}/questions` as TRoutePath;
 
   if (!topicId) {
     return <PageError error={'Invalid topic ID.'} />;
+  }
+
+  const topic = await getTopic(topicId);
+  if (!topic) {
+    return <PageError error={'Not found a topic for the question.'} />;
   }
 
   const user = await getCurrentUser();
@@ -67,11 +71,13 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
   const questions: TQuestion[] = await questionsPromise;
 
   return (
-    <QuestionsContextProvider questions={questions} routePath={routePath} topicId={topicId}>
-      <div>Questions list</div>
-      {/*
-      {isDev && <pre className="opacity-50">{JSON.stringify(questions, null, 2)}</pre>}
-      */}
+    <QuestionsContextProvider
+      questions={questions}
+      routePath={routePath}
+      topicRoutePath={topicRoutePath}
+      topicId={topicId}
+      topicName={topic.name}
+    >
       {children}
       {addQuestionModal}
       {deleteQuestionModal}

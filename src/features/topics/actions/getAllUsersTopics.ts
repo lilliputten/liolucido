@@ -1,5 +1,7 @@
 'use server';
 
+import { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/db';
 import { isDev } from '@/constants';
 
@@ -11,8 +13,12 @@ export async function getAllUsersTopics() {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
+    const include: Prisma.TopicInclude = {
+      _count: { select: { questions: true } },
+    };
     const topics: TTopic[] = await prisma.topic.findMany({
       // where: { userId },
+      include,
     });
     return topics;
   } catch (error) {

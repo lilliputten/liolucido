@@ -1,10 +1,13 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
+import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TQuestionId } from '@/features/questions/types';
 
 import { PageEmpty } from '../shared';
@@ -21,6 +24,16 @@ export function ManageTopicQuestionsListWrapper(props: TQuestionsListProps) {
   const { questions } = useQuestionsContext();
 
   const hasQuestions = !!questions.length;
+
+  const router = useRouter();
+  const { topicRoutePath } = useQuestionsContext();
+  const goBack = React.useCallback(() => {
+    if (window.history.length) {
+      router.back();
+    } else {
+      router.replace(topicRoutePath);
+    }
+  }, [router, topicRoutePath]);
 
   return (
     <div
@@ -43,11 +56,21 @@ export function ManageTopicQuestionsListWrapper(props: TQuestionsListProps) {
       ) : (
         <PageEmpty
           className="size-full flex-1"
-          onButtonClick={openAddQuestionModal}
-          buttonTitle="Add Question"
           iconName="questions"
           title="No questions have been created yet"
           description="You dont have any questions yet. Add any question to your profile."
+          buttons={
+            <>
+              <Button onClick={goBack} className="flex gap-2">
+                <Icons.arrowLeft className="size-4" />
+                Go Back
+              </Button>
+              <Button onClick={openAddQuestionModal} className="flex gap-2">
+                <Icons.add className="size-4" />
+                Add Question
+              </Button>
+            </>
+          }
         />
       )}
     </div>

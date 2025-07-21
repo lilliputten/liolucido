@@ -12,43 +12,34 @@ import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { updateTopic } from '@/features/topics/actions';
-import { TTopic } from '@/features/topics/types';
-import {
-  selectTopicEventName,
-  TSelectTopicLanguageData,
-} from '@/features/topics/types/TSelectTopicLanguageData';
+import { useQuestionsContext } from '@/contexts/QuestionsContext';
+import { updateQuestion } from '@/features/questions/actions';
+import { TQuestion } from '@/features/questions/types';
 
 import { maxNameLength, minNameLength } from '../constants';
-import { EditMyTopicFormActions } from './EditMyTopicFormActions';
-import { EditMyTopicFormFields } from './EditMyTopicFormFields';
+import { EditQuestionFormActions } from './EditQuestionFormActions';
+import { EditQuestionFormFields } from './EditQuestionFormFields';
 import { TFormData } from './types';
 
 const __debugShowData = false;
 
-interface TEditMyTopicFormProps {
-  topic: TTopic;
+interface TEditQuestionFormProps {
+  question: TQuestion;
   className?: string;
   onCancel?: () => void;
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
 }
 
-export function EditMyTopicForm(props: TEditMyTopicFormProps) {
-  const { topic, className, onCancel, toolbarPortalRef } = props;
-  const { setTopics } = useTopicsContext();
+export function EditQuestionForm(props: TEditQuestionFormProps) {
+  const { question, className, onCancel, toolbarPortalRef } = props;
+  const { setQuestions } = useQuestionsContext();
   const [isPending, startTransition] = React.useTransition();
 
   const formSchema = React.useMemo(
     () =>
       z
         .object({
-          name: z.string().min(minNameLength).max(maxNameLength),
-          isPublic: z.boolean(),
-          keywords: z.string().optional(),
-          langCode: z.string().optional(),
-          langName: z.string().optional(),
-          langCustom: z.boolean().optional(),
+          text: z.string().min(minNameLength).max(maxNameLength),
           answersCountRandom: z.boolean().optional(),
           answersCountMin: z.union([z.string().optional(), z.number()]),
           answersCountMax: z.union([z.string().optional(), z.number()]),
@@ -91,17 +82,12 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
 
   const defaultValues: TFormData = React.useMemo(
     () => ({
-      name: topic.name || '',
-      isPublic: topic.isPublic || false,
-      keywords: topic.keywords || '',
-      langCode: topic.langCode || '',
-      langName: topic.langName || '',
-      langCustom: topic.langCustom || false,
-      answersCountRandom: topic.answersCountRandom || false,
-      answersCountMin: topic.answersCountMin || undefined,
-      answersCountMax: topic.answersCountMax || undefined,
+      text: question.text || '',
+      answersCountRandom: question.answersCountRandom || false,
+      answersCountMin: question.answersCountMin || undefined,
+      answersCountMax: question.answersCountMax || undefined,
     }),
-    [topic],
+    [question],
   );
 
   // @see https://react-hook-form.com/docs/useform
@@ -115,65 +101,43 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
   // @see https://react-hook-form.com/docs/useform/formstate
   const { isDirty, isValid } = form.formState;
 
-  // Listen for the language-selected custom event
-  React.useEffect(() => {
-    const handleLanguageSelected = (event: CustomEvent<TSelectTopicLanguageData>) => {
-      const { langCode, langName, langCustom, topicId } = event.detail;
-      // Make sure the event is for this topic
-      if (topicId === topic.id) {
-        // Update the form fields
-        const opts = { shouldDirty: true, shouldValidate: true };
-        form.setValue('langCode', langCode, opts);
-        form.setValue('langName', langName, opts);
-        form.setValue('langCustom', langCustom, opts);
-      }
-    };
-    window.addEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
-    return () => {
-      window.removeEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
-    };
-  }, [topic, form]);
-
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
   const handleFormSubmit = React.useCallback(
     (formData: TFormData) => {
-      const editedTopic: TTopic = {
-        ...topic,
-        name: formData.name,
-        isPublic: formData.isPublic,
-        keywords: formData.keywords,
-        langCode: formData.langCode,
-        langName: formData.langName,
-        langCustom: formData.langCustom,
+      const editedQuestion: TQuestion = {
+        ...question,
+        text: formData.text,
         answersCountRandom: formData.answersCountRandom,
         answersCountMin: formData.answersCountMin,
         answersCountMax: formData.answersCountMax,
       };
       startTransition(() => {
-        const savePromise = updateTopic(editedTopic);
+        const savePromise = updateQuestion(editedQuestion);
         toast.promise<unknown>(savePromise, {
-          loading: 'Saving the topic data...',
-          success: 'Successfully saved the topic',
-          error: 'Can not save the topic data.',
+          loading: 'Saving the question data...',
+          success: 'Successfully saved the question',
+          error: 'Can not save the question data.',
         });
         return savePromise
-          .then((updatedTopic) => {
-            setTopics((topics) => {
-              return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
+          .then((updatedQuestion) => {
+            setQuestions((questions) => {
+              return questions.map((question) =>
+                question.id === updatedQuestion.id ? updatedQuestion : question,
+              );
             });
             form.reset(form.getValues());
           })
           .catch((error) => {
             const message = getErrorText(error);
             // eslint-disable-next-line no-console
-            console.error('[EditMyTopicForm:handleFormSubmit]', message, {
+            console.error('[EditQuestionForm:handleFormSubmit]', message, {
               error,
             });
           });
       });
     },
-    [form, setTopics, topic],
+    [form, setQuestions, question],
   );
 
   const handleCancel = React.useCallback(
@@ -194,7 +158,7 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
         <form
           onSubmit={form.handleSubmit(handleFormSubmit)}
           className={cn(
-            isDev && '__EditMyTopicForm', // DEBUG
+            isDev && '__EditQuestionForm', // DEBUG
             'flex w-full flex-col gap-4 overflow-hidden',
             isPending && 'pointer-events-none opacity-50',
             className,
@@ -204,8 +168,8 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
             <pre className="opacity-50">{JSON.stringify(defaultValues, null, 2)}</pre>
           )}
           <ScrollArea>
-            <EditMyTopicFormFields
-              topic={topic}
+            <EditQuestionFormFields
+              question={question}
               form={form}
               isSubmitEnabled={isSubmitEnabled}
               isPending={isPending}
@@ -216,8 +180,8 @@ export function EditMyTopicForm(props: TEditMyTopicFormProps) {
       </Form>
       {toolbarPortalRoot &&
         createPortal(
-          <EditMyTopicFormActions
-            topic={topic}
+          <EditQuestionFormActions
+            question={question}
             form={form}
             isSubmitEnabled={isSubmitEnabled}
             isPending={isPending}

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
@@ -18,8 +19,8 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TopicsManageScopeIds } from '@/contexts/TopicsContext/TopicsContextDefinitions';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersForTopics';
@@ -44,9 +45,7 @@ function Title() {
       )}
     >
       <CardTitle>Current topics</CardTitle>
-      <CardDescription className="text-balance">
-        Topics you have added to the profile.
-      </CardDescription>
+      <CardDescription className="sr-only text-balance">My own topics.</CardDescription>
     </div>
   );
 }
@@ -94,14 +93,17 @@ function TopicTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
   return (
     <TableHeader>
       <TableRow>
-        <TableHead id="name" className="truncate">
-          Topic Name
-        </TableHead>
         {isAdminMode && isDev && (
           <TableHead id="topicId" className="truncate max-sm:hidden">
             ID
           </TableHead>
         )}
+        <TableHead id="name" className="truncate">
+          Topic Name
+        </TableHead>
+        <TableHead id="questions" className="truncate">
+          Questions
+        </TableHead>
         {isAdminMode && (
           <TableHead id="topicUser" className="truncate max-sm:hidden">
             User
@@ -136,22 +138,32 @@ function TopicTableRow(props: TTopicTableRowProps) {
     isAdminMode,
     cachedUsers,
   } = props;
-  const { id, name, langCode, langName, keywords, userId } = topic;
+  const { id, name, langCode, langName, keywords, userId, _count } = topic;
+  const questionsCount = _count?.questions;
   const topicUser = isAdminMode ? cachedUsers[userId] : undefined;
 
   return (
     <TableRow className="truncate" data-topic-id={id}>
-      <TableCell className="max-w-[8em] truncate">
-        <div className="truncate text-lg font-medium">{name}</div>
-      </TableCell>
       {isAdminMode && isDev && (
         <TableCell id="topicId" className="max-w-[8em] truncate max-sm:hidden">
           <div className="truncate">
             <span className="mr-[2px] opacity-30">#</span>
-            {topic.id}
+            {id}
           </div>
         </TableCell>
       )}
+      <TableCell id="name" className="max-w-[8em] truncate">
+        <div className="truncate text-lg font-medium">{name}</div>
+      </TableCell>
+      <TableCell id="questions" className="max-w-[8em] truncate">
+        <div className="truncate">
+          {questionsCount ? (
+            <span className="font-bold">{questionsCount}</span>
+          ) : (
+            <span className="opacity-30">—</span>
+          )}
+        </div>
+      </TableCell>
       {isAdminMode && (
         <TableCell id="topicUser" className="max-w-[8em] truncate max-sm:hidden">
           <div className="truncate" title={topicUser?.name || undefined}>
@@ -208,9 +220,8 @@ function TopicTableRow(props: TTopicTableRowProps) {
 export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
   const { className, topics, handleDeleteTopic, handleEditTopic, handleEditQuestions } = props;
   const { manageScope } = useTopicsContext();
-  const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS;
-  // const user = useSessionUser();
-  // const isAdmin = !!user && user.role === 'ADMIN';
+  const user = useSessionUser();
+  const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';
   const cachedUsers = useCachedUsersForTopics({
     topics,
     bypass: !isAdminMode, // Do not use users data if not admin user role

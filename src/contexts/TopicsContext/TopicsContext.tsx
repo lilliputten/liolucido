@@ -10,17 +10,12 @@ import {
   defaultTopicsNamespace,
   TopicsContextData,
   topicsRoutes,
-  TTopicsManageScopeId,
 } from './TopicsContextDefinitions';
 
 const TopicsContext = React.createContext<TopicsContextData | undefined>(undefined);
 
-interface TopicsContextProviderProps {
+interface TopicsContextProviderProps extends Omit<TopicsContextData, 'setTopics'> {
   children: React.ReactNode;
-  topics?: TTopic[];
-  manageScope?: TTopicsManageScopeId;
-  namespace?: string;
-  routePath?: TRoutePath;
 }
 
 export function TopicsContextProvider({

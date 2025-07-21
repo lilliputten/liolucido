@@ -10,21 +10,35 @@ interface TPageEmptyProps extends TPropsWithClassName {
   onButtonClick?: () => void; // React.Dispatch<React.SetStateAction<void>>;
   buttonTitle?: TReactNode;
   iconName?: TIconsKey;
+  buttons?: TReactNode;
 }
 
 export function PageEmpty(props: TPageEmptyProps) {
-  const { className, title, description, buttonTitle, onButtonClick, iconName = 'warning' } = props;
+  const {
+    className,
+    title,
+    description,
+    buttonTitle,
+    onButtonClick,
+    buttons,
+    iconName = 'warning',
+  } = props;
+  const hasCustomButton = !!(onButtonClick && buttonTitle);
+  const hasAnyButtons = !!(buttons || hasCustomButton);
   return (
     <EmptyPlaceholder className={cn(className, '__PageEmpty')}>
       <EmptyPlaceholder.Icon name={iconName} />
       <EmptyPlaceholder.Title>{title}</EmptyPlaceholder.Title>
       <EmptyPlaceholder.Description>{description}</EmptyPlaceholder.Description>
-      {!!(onButtonClick && buttonTitle) && (
+      {hasAnyButtons && (
         <div className="flex w-full justify-center gap-4">
-          <Button onClick={onButtonClick}>
-            <Icons.add className="mr-2 size-4" />
-            {buttonTitle}
-          </Button>
+          {hasCustomButton && (
+            <Button onClick={onButtonClick} className="flex gap-2">
+              <Icons.add className="size-4" />
+              {buttonTitle}
+            </Button>
+          )}
+          {buttons}
         </div>
       )}
     </EmptyPlaceholder>

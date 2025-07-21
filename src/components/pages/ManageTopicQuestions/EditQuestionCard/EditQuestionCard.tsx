@@ -7,15 +7,15 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { useQuestionsContext } from '@/contexts/QuestionsContext';
+import { TQuestion, TQuestionId } from '@/features/questions/types';
 
-import { EditTopicForm } from './EditTopicForm';
+import { EditQuestionForm } from './EditQuestionForm';
 
-interface TEditTopicCardProps extends TPropsWithClassName {
-  topicId: TTopicId;
+interface TEditQuestionCardProps extends TPropsWithClassName {
+  questionId: TQuestionId;
 }
-type TChildProps = /* Omit<TEditTopicCardProps, 'className'> & */ {
+type TChildProps = {
   goBack: () => void;
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
 };
@@ -24,31 +24,13 @@ function Title() {
   return (
     <div
       className={cn(
-        isDev && '__EditTopicCard_Title', // DEBUG
+        isDev && '__EditQuestionCard_Title', // DEBUG
         'flex flex-1 items-center gap-2',
-        // 'grid grid-cols-[2em_1fr]',
       )}
     >
-      {/*
-      <Button
-        variant="ghost"
-        size="icon"
-        className="size-9 shrink-0 hover:opacity-80"
-        aria-label="Back to the topics list"
-        title="Back to the topics list"
-        onClick={goBack}
-      >
-        <Icons.arrowLeft className="size-4" />
-      </Button>
-      */}
       <CardTitle className="flex items-center">
-        <span>Edit topic</span>
+        <span>Edit question</span>
       </CardTitle>
-      {/*
-      <CardDescription className="col-span-2 col-start-1 text-balance">
-        Edit topic properties.
-      </CardDescription>
-      */}
     </div>
   );
 }
@@ -58,7 +40,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
     <div
       ref={toolbarPortalRef}
       className={cn(
-        isDev && '__EditTopicCard_Toolbar', // DEBUG
+        isDev && '__EditQuestionCard_Toolbar', // DEBUG
         '__ml-auto __shrink-0 flex flex-wrap gap-2',
       )}
     >
@@ -78,7 +60,7 @@ function Header(props: TChildProps) {
   return (
     <CardHeader
       className={cn(
-        isDev && '__EditTopicCard_Header', // DEBUG
+        isDev && '__EditQuestionCard_Header', // DEBUG
         'item-start flex flex-row flex-wrap',
       )}
     >
@@ -88,17 +70,17 @@ function Header(props: TChildProps) {
   );
 }
 
-export function EditTopicCard(props: TEditTopicCardProps) {
-  const { className, topicId } = props;
+export function EditQuestionCard(props: TEditQuestionCardProps) {
+  const { className, questionId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { topics, routePath } = useTopicsContext();
-  const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
+  const { questions, routePath } = useQuestionsContext();
+  const question: TQuestion | undefined = React.useMemo(
+    () => questions.find(({ id }) => id === questionId),
+    [questions, questionId],
   );
-  if (!topicId || !topic) {
-    throw new Error('No such topic exists');
+  if (!questionId || !question) {
+    throw new Error('No such question exists');
   }
   const goBack = React.useCallback(() => {
     if (window.history.length) {
@@ -110,7 +92,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
   return (
     <Card
       className={cn(
-        isDev && '__EditTopicCard', // DEBUG
+        isDev && '__EditQuestionCard', // DEBUG
         'xl:col-span-2',
         'relative flex flex-1 flex-col overflow-hidden',
         className,
@@ -119,11 +101,15 @@ export function EditTopicCard(props: TEditTopicCardProps) {
       <Header goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
       <CardContent
         className={cn(
-          isDev && '__EditTopicCard_Content', // DEBUG
+          isDev && '__EditQuestionCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <EditTopicForm topic={topic} onCancel={goBack} toolbarPortalRef={toolbarPortalRef} />
+        <EditQuestionForm
+          question={question}
+          onCancel={goBack}
+          toolbarPortalRef={toolbarPortalRef}
+        />
       </CardContent>
     </Card>
   );

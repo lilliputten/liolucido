@@ -9,7 +9,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
+import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { deleteQuestion } from '@/features/questions/actions/deleteQuestion';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 
