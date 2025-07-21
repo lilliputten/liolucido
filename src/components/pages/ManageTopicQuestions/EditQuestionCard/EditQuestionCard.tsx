@@ -93,7 +93,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
     <Card
       className={cn(
         isDev && '__EditQuestionCard', // DEBUG
-        'xl:col-span-2',
+        // 'xl:col-span-2', // ???
         'relative flex flex-1 flex-col overflow-hidden',
         className,
       )}
