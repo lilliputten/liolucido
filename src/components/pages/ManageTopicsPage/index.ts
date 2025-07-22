@@ -5,4 +5,3 @@ export * from './ManageTopicsLayout';
 export * from './ManageTopicsLoading';
 export * from './ManageTopicsPage';
 export * from './ManageTopicsPageWrapper';
-export * from './SelectTopicLanguageModal';
