@@ -68,9 +68,9 @@ export function SettingsForm(props: TSettingsFormProps) {
          * });
          */
         toast.promise<TSettings>(savePromise, {
-          loading: 'Saving the settings data...',
-          success: 'Successfully saved the settings',
-          error: 'Can not save the settings data.',
+          loading: 'Saving settings data...',
+          success: 'Successfully saved settings.',
+          error: 'Can not save settings data.',
         });
         return savePromise
           .then((updatedSettings) => {
