@@ -7,6 +7,7 @@ import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.scss';
 import '@/styles/root.scss';
 
+import { getCurrentUser } from '@/lib/session';
 import { cn, constructMetadata } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { GenericLayout } from '@/components/layout/GenericLayout';
@@ -54,10 +55,13 @@ async function RootLayout(props: TRootLayoutProps) {
   // Provide i18n translations
   const messages = await getMessages();
 
+  const user = await getCurrentUser();
+  const userId = user?.id;
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/*
+        {/* // TODO: Set SEO and OG meta tags
         <meta property="og:url" content="https://vanilla-tasks.lilliputten.com/" />
         <meta property="og:title" content="Vanilla Tasks Tracker" />
         <meta
@@ -119,7 +123,7 @@ async function RootLayout(props: TRootLayoutProps) {
                   // containerAriaLabel?: string;
                   // pauseWhenPageIsHidden?: boolean;
                 />
-                <SettingsContextProvider>
+                <SettingsContextProvider userId={userId}>
                   <GenericLayout>
                     {/* Core content */}
                     {children}

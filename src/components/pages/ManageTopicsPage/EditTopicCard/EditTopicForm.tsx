@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createPortal } from 'react-dom';
 import { useForm } from 'react-hook-form';
@@ -36,7 +37,8 @@ interface TEditTopicFormProps {
 
 export function EditTopicForm(props: TEditTopicFormProps) {
   const { topic, className, onCancel, toolbarPortalRef } = props;
-  const { setTopics } = useTopicsContext();
+  const router = useRouter();
+  const topicsContext = useTopicsContext();
   const [isPending, startTransition] = React.useTransition();
 
   const formSchema = React.useMemo(
@@ -115,7 +117,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
   // @see https://react-hook-form.com/docs/useform/formstate
   const { isDirty, isValid } = form.formState;
 
-  // Listen for the language-selected custom event
+  // Listen for the select language modal custom event
   React.useEffect(() => {
     const handleLanguageSelected = (event: CustomEvent<TSelectTopicLanguageData>) => {
       const { langCode, langName, langCustom, topicId } = event.detail;
@@ -133,6 +135,22 @@ export function EditTopicForm(props: TEditTopicFormProps) {
       window.removeEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
     };
   }, [topic, form]);
+
+  // Select language modal trigger
+  const selectLanguage = React.useCallback(
+    (ev: React.MouseEvent) => {
+      ev.preventDefault();
+      const [langCode, langName, langCustom] = form.watch(['langCode', 'langName', 'langCustom']);
+      const params = new URLSearchParams();
+      if (langCode) params.append('langCode', langCode);
+      if (langName) params.append('langName', langName);
+      if (langCustom) params.append('langCustom', String(langCustom));
+      router.push(
+        `${topicsContext.routePath}/${topic.id}/edit/select-language?${params.toString()}`,
+      );
+    },
+    [form, router, topic, topicsContext],
+  );
 
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
@@ -159,7 +177,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         });
         return savePromise
           .then((updatedTopic) => {
-            setTopics((topics) => {
+            topicsContext.setTopics((topics) => {
               return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
             });
             form.reset(form.getValues());
@@ -173,7 +191,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
           });
       });
     },
-    [form, setTopics, topic],
+    [form, topicsContext, topic],
   );
 
   const handleCancel = React.useCallback(
@@ -210,6 +228,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
               isSubmitEnabled={isSubmitEnabled}
               isPending={isPending}
               onCancel={handleCancel}
+              selectLanguage={selectLanguage}
             />
           </ScrollArea>
         </form>

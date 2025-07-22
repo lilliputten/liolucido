@@ -1,6 +1,9 @@
-import { SettingsPageModalsWrapper } from './SettingsPageModalsWrapper';
+import { getCurrentUser } from '@/lib/session';
+
+import { SettingsCard } from './SettingsCard';
 
 export async function SettingsPage() {
-  // TODO: Get and pass forward modals' and routes' handlers...
-  return <SettingsPageModalsWrapper />;
+  const user = await getCurrentUser();
+  const userId = user?.id;
+  return <SettingsCard userId={userId} />;
 }

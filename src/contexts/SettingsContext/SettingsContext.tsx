@@ -4,25 +4,23 @@ import React from 'react';
 import { toast } from 'sonner';
 
 import { removeFalsyValues, removeNullUndefinedValues } from '@/lib/helpers/objects';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { getSettings, updateSettings } from '@/features/settings/actions';
 import { defaultSettings, settingsSchema, TSettings } from '@/features/settings/types';
+import { TDefinedUserId } from '@/features/users/types/TUser';
 
 import { SettingsContextData } from './SettingsContextDefinitions';
 
 const SettingsContext = React.createContext<SettingsContextData | undefined>(undefined);
 
-// extends Omit<SettingsContextData, 'setInited' | 'setSettings'>
 interface SettingsContextProviderProps {
   children: React.ReactNode;
+  userId?: TDefinedUserId;
 }
 
-export function SettingsContextProvider({ children }: SettingsContextProviderProps) {
+export function SettingsContextProvider({ children, userId }: SettingsContextProviderProps) {
   const [settings, setSettings] = React.useState<TSettings>({ ...defaultSettings });
   const [inited, setInited] = React.useState(false);
-
-  const user = useSessionUser();
-  const userId = user?.id;
+  const [userInited, setUserInited] = React.useState(false);
 
   // TODO: To use on user logout
   const resetLocalSettings = React.useCallback(
@@ -95,10 +93,13 @@ export function SettingsContextProvider({ children }: SettingsContextProviderPro
           });
           debugger; // eslint-disable-line no-debugger
           toast.error('Can not load settings from server');
+        })
+        .finally(() => {
+          setUserInited(true);
         });
     }
     setInited(true);
-  }, [userId, setInited]);
+  }, [userId]);
 
   /** Save settings on the server (if user authorized) and locally */
   const saveSettings = React.useCallback(
@@ -128,14 +129,15 @@ export function SettingsContextProvider({ children }: SettingsContextProviderPro
 
   const settingsContext = React.useMemo(
     () => ({
-      user,
+      userId,
       settings,
       setSettings,
       saveSettings,
       resetLocalSettings,
       inited,
+      userInited,
     }),
-    [user, settings, saveSettings, inited, resetLocalSettings],
+    [userId, settings, saveSettings, resetLocalSettings, inited, userInited],
   );
 
   return <SettingsContext.Provider value={settingsContext}>{children}</SettingsContext.Provider>;

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { UseFormReturn } from 'react-hook-form';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
@@ -13,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopic } from '@/features/topics/types';
 
 import { TFormData } from './types';
@@ -25,6 +23,7 @@ interface TEditTopicFormFieldsProps {
   onCancel?: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   className?: string;
+  selectLanguage: (ev: React.MouseEvent) => void;
 }
 
 function FormHint({ children }: { children?: React.ReactNode }) {
@@ -48,24 +47,7 @@ function FormSection({ children }: TPropsWithChildren) {
 }
 
 export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
-  const router = useRouter();
-  const { className, topic, form } = props;
-  const topicsContext = useTopicsContext();
-  // Select language
-  const selectLanguage = React.useCallback(
-    (ev: React.MouseEvent) => {
-      ev.preventDefault();
-      const [langCode, langName, langCustom] = form.watch(['langCode', 'langName', 'langCustom']);
-      const params = new URLSearchParams();
-      if (langCode) params.append('langCode', langCode);
-      if (langName) params.append('langName', langName);
-      if (langCustom) params.append('langCustom', String(langCustom));
-      router.push(
-        `${topicsContext.routePath}/${topic.id}/edit/select-language?${params.toString()}`,
-      );
-    },
-    [form, router, topic, topicsContext],
-  );
+  const { className, form, selectLanguage } = props;
   // Create unique keys for labels
   const nameKey = React.useId();
   const isPublicKey = React.useId();
@@ -133,30 +115,23 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
             return (
               <FormItem className="flex w-full flex-col gap-4">
                 <Label htmlFor={langCodeKey}>Language</Label>
-                <div
-                  className={cn(
-                    isDev && '__EditTopicForm_SelectLanguage', // DEBUG
-                    'flex items-center',
-                  )}
+                <Button
+                  id={langCodeKey}
+                  variant="outline"
+                  onClick={selectLanguage}
+                  className="flex w-full justify-stretch gap-4 text-left"
                 >
-                  <Button
-                    id={langCodeKey}
-                    variant="outline"
-                    onClick={selectLanguage}
-                    className="flex w-full justify-stretch gap-4 text-left"
-                  >
-                    <span className="flex-1 truncate">
-                      {langName ? <strong className="truncate">{langName}</strong> : <>Select</>}
+                  <span className="flex-1 truncate">
+                    {langName ? <strong className="truncate">{langName}</strong> : <>Select</>}
+                  </span>
+                  {langCode && <span className="opacity-50">{langCode}</span>}
+                  {langCustom && (
+                    <span className="opacity-50">
+                      <Icons.edit className="size-3" />
                     </span>
-                    {langCode && <span className="opacity-50">{langCode}</span>}
-                    {langCustom && (
-                      <span className="opacity-50">
-                        <Icons.edit className="size-3" />
-                      </span>
-                    )}
-                    <Icons.languages className="size-4" />
-                  </Button>
-                </div>
+                  )}
+                  <Icons.languages className="size-4" />
+                </Button>
                 <FormHint>An optional predefined or custom language for the topic.</FormHint>
                 <FormMessage />
               </FormItem>

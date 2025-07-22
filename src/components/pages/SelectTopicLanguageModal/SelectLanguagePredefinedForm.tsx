@@ -21,7 +21,7 @@ import { Icons } from '@/components/shared/icons';
 import { predefinedLanguages } from '@/constants/languages';
 import { TTopicLanguageData } from '@/features/topics/types';
 
-import { minIdLength } from '../constants';
+import { minIdLength } from './constants';
 
 interface TFormData {
   id?: TLanguageId;

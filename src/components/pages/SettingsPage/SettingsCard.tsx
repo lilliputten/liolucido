@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
@@ -7,33 +9,18 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
+import { TDefinedUserId } from '@/features/users/types/TUser';
 
 import { SettingsForm } from './SettingsForm';
 
 const saveScrollHash = getRandomHashString();
 
-type TSettingsCardProps = TPropsWithClassName;
-// type TChildProps = Omit<TSettingsCardProps, 'className'>;
+type TSettingsCardProps = TPropsWithClassName & {
+  userId?: TDefinedUserId;
+};
 type TChildProps = {
-  // goBack: () => void;
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
 };
-
-/* // UNUSED: Title
- * function Title() {
- *   return (
- *     <div
- *       className={cn(
- *         isDev && '__SettingsCard_Title', // DEBUG
- *         'grid flex-1 gap-2',
- *       )}
- *     >
- *       <CardTitle>Current settings</CardTitle>
- *       <CardDescription className="sr-only text-balance">My own settings.</CardDescription>
- *     </div>
- *   );
- * }
- */
 
 function Toolbar({ toolbarPortalRef }: TChildProps) {
   return (
@@ -44,20 +31,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
         'flex flex-wrap gap-2',
       )}
     >
-      {/*
-      <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
-        <Link href="#" className="flex items-center gap-2">
-          <Icons.check className="hidden size-4 sm:block" />
-          <span>Save</span>
-        </Link>
-      </Button>
-      <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
-        <Link href="#" className="flex items-center gap-2">
-          <Icons.refresh className="hidden size-4 sm:block" />
-          <span>Refresh</span>
-        </Link>
-      </Button>
-      */}
+      {/* TODO: Place shared buttons here */}
     </div>
   );
 }
@@ -70,19 +44,17 @@ function Header(props: TChildProps) {
         'flex flex-row flex-wrap items-start',
       )}
     >
-      {/* <Title /> */}
+      {/* // UNUSED: Title section
+      <Title />
+      */}
       <Toolbar {...props} />
     </CardHeader>
   );
 }
 
 export function SettingsCard(props: TSettingsCardProps) {
-  const { className } = props;
+  const { className, userId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  // React.useEffect(() => {
-  //   console.log('XXX', toolbarPortalRef);
-  //   debugger;
-  // }, [toolbarPortalRef])
   const { settings } = useSettingsContext();
   /* // Detect user mode
    * const user = useSessionUser();
@@ -92,27 +64,19 @@ export function SettingsCard(props: TSettingsCardProps) {
     <Card
       className={cn(
         isDev && '__SettingsCard', // DEBUG
-        // 'xl:col-span-2',
         'relative flex flex-1 flex-col overflow-hidden',
         className,
       )}
     >
-      <Header
-        // goBack={goBack}
-        toolbarPortalRef={toolbarPortalRef}
-      />
+      <Header toolbarPortalRef={toolbarPortalRef} />
       <CardContent
         className={cn(
           isDev && '__SettingsCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ScrollArea
-          saveScrollKey="SettingsCard"
-          saveScrollHash={saveScrollHash}
-          viewportClassName="px-6"
-        >
-          <SettingsForm settings={settings} toolbarPortalRef={toolbarPortalRef} />
+        <ScrollArea saveScrollKey="SettingsCard" saveScrollHash={saveScrollHash}>
+          <SettingsForm settings={settings} userId={userId} toolbarPortalRef={toolbarPortalRef} />
         </ScrollArea>
       </CardContent>
     </Card>
