@@ -12,14 +12,11 @@ import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
-// import { updateSettings } from '@/features/settings/actions';
-import { defaultSettings, settingsSchema, TSettings } from '@/features/settings/types';
+import { settingsSchema, TSettings } from '@/features/settings/types';
 
 import { SettingsFormActions } from './SettingsFormActions';
 import { SettingsFormFields } from './SettingsFormFields';
 import { TFormData } from './types';
-
-const __debugShowData = false;
 
 interface TSettingsFormProps {
   settings: TSettings;
@@ -29,12 +26,12 @@ interface TSettingsFormProps {
 
 export function SettingsForm(props: TSettingsFormProps) {
   const { settings, className, toolbarPortalRef } = props;
-  const { setSettings } = useSettingsContext();
+  const { saveSettings } = useSettingsContext();
   const [isPending, startTransition] = React.useTransition();
 
   const formSchema = React.useMemo(() => settingsSchema, []);
 
-  const defaultValues: TFormData = React.useMemo(() => defaultSettings, []);
+  // const defaultValues: TFormData = React.useMemo(() => defaultSettings, []);
 
   // @see https://react-hook-form.com/docs/useform
   const form = useForm<TFormData>({
@@ -42,10 +39,17 @@ export function SettingsForm(props: TSettingsFormProps) {
     mode: 'onChange', // 'all', // Validation strategy before submitting behaviour.
     criteriaMode: 'all', // Display all validation errors or one at a time.
     resolver: zodResolver(formSchema),
-    defaultValues, // Default values for the form.
+    // defaultValues: settings, // Default values for the form.
+    values: settings, // Default values for the form.
   });
   // @see https://react-hook-form.com/docs/useform/formstate
   const { isDirty, isValid } = form.formState;
+  /* console.log('[SettingsForm]', isDirty, isValid, {
+   *   settings,
+   *   formState: form.formState,
+   *   // values: form.formState.values,
+   * });
+   */
 
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
@@ -56,11 +60,13 @@ export function SettingsForm(props: TSettingsFormProps) {
         ...formData,
       };
       startTransition(() => {
-        // const savePromise = updateSettings(editedSettings); // TODO!
-        const savePromise = new Promise<TSettings>((resolve, _reject) => {
-          // setTimeout(reject, 1000, 'Demo error!');
-          setTimeout(resolve, 1000, editedSettings);
-        });
+        const savePromise = saveSettings(editedSettings);
+        /* // DEBUG
+         * const savePromise = new Promise<TSettings>((resolve, _reject) => {
+         *   // setTimeout(reject, 1000, 'Demo error!');
+         *   setTimeout(resolve, 1000, editedSettings);
+         * });
+         */
         toast.promise<TSettings>(savePromise, {
           loading: 'Saving the settings data...',
           success: 'Successfully saved the settings',
@@ -68,9 +74,7 @@ export function SettingsForm(props: TSettingsFormProps) {
         });
         return savePromise
           .then((updatedSettings) => {
-            console.log('[SettingsForm] Settings has been updated', updatedSettings);
-            setSettings(updatedSettings);
-            form.reset(form.getValues());
+            form.reset(updatedSettings);
           })
           .catch((error) => {
             const message = getErrorText(error);
@@ -81,7 +85,7 @@ export function SettingsForm(props: TSettingsFormProps) {
           });
       });
     },
-    [form, setSettings, settings],
+    [form, saveSettings, settings],
   );
 
   const handleCancel = undefined;
@@ -100,9 +104,14 @@ export function SettingsForm(props: TSettingsFormProps) {
             className,
           )}
         >
+          {/*
           {__debugShowData && isDev && (
-            <pre className="opacity-50">{JSON.stringify(defaultValues, null, 2)}</pre>
+            <pre className="opacity-50">
+              defaultValues:
+              {JSON.stringify(defaultValues, null, 2)}
+            </pre>
           )}
+          */}
           <ScrollArea>
             <SettingsFormFields
               settings={settings}

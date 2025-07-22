@@ -6,8 +6,6 @@ import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
-import { TTopic } from '../types';
-
 export async function getThisUserTopics() {
   try {
     if (isDev) {
