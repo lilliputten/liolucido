@@ -166,7 +166,7 @@
     "prisma-validate": "echo --Check prisma configuration-- && prisma validate",
     "prisma-format": "echo --Format prisma configuration file-- && prisma format",
     "prisma-generate": "echo --Generate database client-- && node prisma-switch.mjs && prisma generate",
-    "prisma-db-push": "echo --Create database-- && prisma db push",
+    "prisma-db-push": "echo --Create database-- && prisma db push --accept-data-loss",
     "prisma-db-push-test": "echo --Create test database-- && cross-env DATABASE_URL='file:.data/test.db' prisma db push --accept-data-loss",
     "prisma-db-push-all": "echo --Create all databases-- && npm-run-all prisma-db-push prisma-db-push-test",
     "prisma-studio": "echo --Run database explorer-- && prisma studio",
