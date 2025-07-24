@@ -1,9 +1,117 @@
 @use 'sass:color';
+@use 'sass:math';
+
+@function toRGBValues($colour) {
+  @return color.red($colour) + ', ' + color.green($colour) + ', ' + color.blue($colour);
+}
+
+@function toRGB($colour) {
+  @return rgb(color.red($colour), color.green($colour), color.blue($colour));
+}
+
+@function toRGBA($colour, $alpha: 1) {
+  @return rgba(toRGB($colour), $alpha);
+}
 
 @function rgbComponents($color) {
   // NOTE: New format (TODO, @see https://sass-lang.com/documentation/breaking-changes/color-functions/#old-channel-functions)
-  @return color.channel($color, 'red', $space: rgb) color.channel($color, 'green', $space: rgb)
-    color.channel($color, 'blue', $space: rgb);
   // Old format (pre SASS v.1.80?)
   // @return color.red($color) color.green($color) color.blue($color);
+  // Remove decimals from automatically generated colors with `math.round`, like following (primaryLightColor): `rgb(218.3846153846, 53.6153846154, 126.8461538462)`
+  @return math.clamp(0, math.round(color.channel($color, 'red', $space: rgb)), 255)
+    math.clamp(0, math.round(color.channel($color, 'green', $space: rgb)), 255)
+    math.clamp(0, math.round(color.channel($color, 'blue', $space: rgb)), 255);
+}
+
+@function cleanRgb($rgb) {
+  @return rgb(rgbComponents($rgb));
+}
+
+@mixin defineThemeSpread($color, $fix: 0%) {
+  --theme-color-50-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 45%))};
+  --theme-color-100-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 40%))};
+  --theme-color-200-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 30%))};
+  --theme-color-300-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 20%))};
+  --theme-color-400-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 10%))};
+  --theme-color-500-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix))};
+  --theme-color-600-RGB: #{rgbComponents(color.adjust($color, $lightness: 10%))};
+  --theme-color-700-RGB: #{rgbComponents(color.adjust($color, $lightness: 20%))};
+  --theme-color-800-RGB: #{rgbComponents(color.adjust($color, $lightness: 30%))};
+  --theme-color-900-RGB: #{rgbComponents(color.adjust($color, $lightness: 40%))};
+  --theme-color-950-RGB: #{rgbComponents(color.adjust($color, $lightness: 45%))};
+}
+@mixin placeCoreThemeColors() {
+  .html {
+    --theme-color-50: rgb(var(--theme-color-50-RGB) / var(--theme-opacity, 1));
+    --theme-color-100: rgb(var(--theme-color-100-RGB) / var(--theme-opacity, 1));
+    --theme-color-200: rgb(var(--theme-color-200-RGB) / var(--theme-opacity, 1));
+    --theme-color-300: rgb(var(--theme-color-300-RGB) / var(--theme-opacity, 1));
+    --theme-color-400: rgb(var(--theme-color-400-RGB) / var(--theme-opacity, 1));
+    --theme-color-500: rgb(var(--theme-color-500-RGB) / var(--theme-opacity, 1));
+    --theme-color-600: rgb(var(--theme-color-600-RGB) / var(--theme-opacity, 1));
+    --theme-color-700: rgb(var(--theme-color-700-RGB) / var(--theme-opacity, 1));
+    --theme-color-800: rgb(var(--theme-color-800-RGB) / var(--theme-opacity, 1));
+    --theme-color-900: rgb(var(--theme-color-900-RGB) / var(--theme-opacity, 1));
+    --theme-color-950: rgb(var(--theme-color-950-RGB) / var(--theme-opacity, 1));
+  }
+}
+
+// Define themes (from a global variable `$themes`, see definition in the `src/config/theme.ts`)
+@mixin defineAllThemes($themes, $defaultTheme) {
+  @each $id, $color, $fix in $themes {
+    /* Theme: #{$id} #{$color} #{$fix} */
+    @if $id == $defaultTheme {
+      /* default */
+      html,
+      html.#{'theme-' + $id} {
+        @include defineThemeSpread($color, $fix);
+      }
+    } @else {
+      html.#{'theme-' + $id} {
+        @include defineThemeSpread($color, $fix);
+      }
+    }
+  }
+}
+
+@mixin placeThemeRules() {
+  // Text
+  .text-theme-50 { color: rgb(var(--theme-color-50-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-100 { color: rgb(var(--theme-color-100-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-200 { color: rgb(var(--theme-color-200-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-300 { color: rgb(var(--theme-color-300-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-400 { color: rgb(var(--theme-color-400-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme,
+  .text-theme-500 { color: rgb(var(--theme-color-500-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-600 { color: rgb(var(--theme-color-600-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-700 { color: rgb(var(--theme-color-700-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-800 { color: rgb(var(--theme-color-800-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-900 { color: rgb(var(--theme-color-900-RGB) / var(--theme-text-opacity, 1)); }
+  .text-theme-950 { color: rgb(var(--theme-color-950-RGB) / var(--theme-text-opacity, 1)); }
+  // Background
+  .background-theme-50 { background-color: rgb(var(--theme-color-50-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-100 { background-color: rgb(var(--theme-color-100-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-200 { background-color: rgb(var(--theme-color-200-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-300 { background-color: rgb(var(--theme-color-300-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-400 { background-color: rgb(var(--theme-color-400-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme,
+  .background-theme-500 { background-color: rgb(var(--theme-color-500-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-600 { background-color: rgb(var(--theme-color-600-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-700 { background-color: rgb(var(--theme-color-700-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-800 { background-color: rgb(var(--theme-color-800-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-900 { background-color: rgb(var(--theme-color-900-RGB) / var(--theme-background-opacity, 1)); }
+  .background-theme-950 { background-color: rgb(var(--theme-color-950-RGB) / var(--theme-background-opacity, 1)); }
+  // Fill
+  .fill-theme-50 { fill: rgb(var(--theme-color-50-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-100 { fill: rgb(var(--theme-color-100-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-200 { fill: rgb(var(--theme-color-200-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-300 { fill: rgb(var(--theme-color-300-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-400 { fill: rgb(var(--theme-color-400-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme,
+  .fill-theme-500 { fill: rgb(var(--theme-color-500-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-600 { fill: rgb(var(--theme-color-600-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-700 { fill: rgb(var(--theme-color-700-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-800 { fill: rgb(var(--theme-color-800-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-900 { fill: rgb(var(--theme-color-900-RGB) / var(--theme-fill-opacity, 1)); }
+  .fill-theme-950 { fill: rgb(var(--theme-color-950-RGB) / var(--theme-fill-opacity, 1)); }
 }

@@ -27,6 +27,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        margo: '#0f0',
         background: 'var(--backgroundColor)',
         foreground: 'var(--foregroundColor)',
         ...primaryColorSpread,
@@ -138,8 +139,19 @@ export default {
             opacity: '1',
           },
         },
+        /* // EXAMPLE: Sonner toast rotating spinner
+         * 'rotating-spin': {
+         *   '100%': {
+         *     transform: 'rotate(360deg)',
+         *   },
+         * },
+         */
       },
       animation: {
+        /* // EXAMPLE: Sonner toast rotating spinner
+         * 'loading-wrapper': 'rotating-spin 4s linear infinite',
+         */
+
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
 
