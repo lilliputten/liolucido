@@ -48,6 +48,14 @@ export function SettingsForm(props: TSettingsFormProps) {
 
   // Listen for the select language modal custom event
   React.useEffect(() => {
+    /* // DEBUG
+     * const testPromise = new Promise((resolve) => setTimeout(resolve, 10000));
+     * toast.promise(testPromise, {
+     *   loading: 'Testing...',
+     *   success: 'Successfully tested.',
+     *   error: 'Can not test.',
+     * });
+     */
     const handleLanguageSelected = (event: CustomEvent<TSelectTopicLanguageData>) => {
       const { langCode, langName, langCustom } = event.detail;
       // Update the form fields
@@ -56,6 +64,9 @@ export function SettingsForm(props: TSettingsFormProps) {
       form.setValue('langName', langName, opts);
       form.setValue('langCustom', langCustom, opts);
     };
+    // XXX: Test theme support
+    const html = document.body.parentNode as HTMLElement;
+    html?.classList.add('theme-blue');
     window.addEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
     return () => {
       window.removeEventListener(selectTopicEventName, handleLanguageSelected as EventListener);

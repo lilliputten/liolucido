@@ -40,7 +40,12 @@ export async function SettingsLayout(props: TSettingsLayoutProps) {
 
   return (
     <SettingsPageWrapper>
-      <PageHeader heading={t('title')} text={t('description')} />
+      <PageHeader
+        heading={t('title')}
+        text={t('description')}
+        // Test themes
+        className="text-theme-500"
+      />
       {children}
       {selectLanguageModal}
     </SettingsPageWrapper>

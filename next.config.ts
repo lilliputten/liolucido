@@ -1,6 +1,15 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+import {
+  defaultTheme,
+  primaryColor,
+  primaryForegroundColor,
+  secondaryColor,
+  secondaryForegroundColor,
+  themesData,
+} from './src/config/theme';
+
 // Import environments to ensure if they're ok
 import './src/env/envServer';
 import './src/env/envClient';
@@ -21,7 +30,30 @@ const isDev = process.env.NODE_ENV === 'development';
 // @see https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
 const withNextIntl = createNextIntlPlugin();
 
+// Create a list of lists (id, color, [percentFix='0%']] for themes values
+const scssThemes = Object.entries(themesData)
+  .map(([id, { color, fix }]) => {
+    return [id, color, fix == undefined ? '0%' : typeof fix === 'number' ? fix + '%' : fix].join(
+      ' ',
+    );
+  })
+  .join(', ');
+const scssVariables = `
+$primaryColor: ${primaryColor};
+$secondaryColor: ${secondaryColor};
+$primaryForegroundColor: ${primaryForegroundColor};
+$secondaryForegroundColor: ${secondaryForegroundColor};
+$defaultTheme: ${defaultTheme};
+$themes: ( ${scssThemes} );
+`;
+// console.log('XXX', scssVariables);
+// process.exit(1);
+
 const nextConfig: NextConfig = {
+  sassOptions: {
+    additionalData: scssVariables,
+    silenceDeprecations: ['legacy-js-api'],
+  },
   experimental: {
     // serverActions: {
     //   allowedOrigins: [
@@ -32,9 +64,6 @@ const nextConfig: NextConfig = {
   },
   compress: !isDev, // In favor of xtunnel (it loses `gzip` header)
   reactStrictMode: true,
-  sassOptions: {
-    silenceDeprecations: ['legacy-js-api'],
-  },
   webpack: (config) => {
     return {
       ...config,

@@ -53,6 +53,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   return (
     <div className={cn('flex w-full flex-col gap-6 px-6 py-2 md:flex-row', className)}>
       <FormSection>
+        {/* showOthersTopics */}
         <FormField
           name="showOthersTopics"
           control={form.control}
@@ -72,6 +73,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
           )}
         />
       </FormSection>
+      {/* langCode */}
       <FormSection>
         <FormField
           name="langCode"
@@ -84,7 +86,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
             ]);
             return (
               <FormItem className="flex w-full flex-col gap-4">
-                <Label htmlFor={langCodeKey}>Language</Label>
+                <Label htmlFor={langCodeKey}>Topics language</Label>
                 <Button
                   id={langCodeKey}
                   variant="outline"
