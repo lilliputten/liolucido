@@ -1,6 +1,6 @@
-export const localesList = ['en', 'ru'];
-export const defaultLocale = localesList[0];
-export type TLocale = 'en' | 'ru'; // (typeof localesList)[number];
+export const localesList = ['en', 'ru'] as const;
+export type TLocale = (typeof localesList)[number];
+export const defaultLocale: TLocale = localesList[0];
 export type TLocaleParams = { locale: TLocale };
 export type TLocaleProps = { params: TLocaleParams };
 // TODO: Define extendable params type (allowing to receive other properties

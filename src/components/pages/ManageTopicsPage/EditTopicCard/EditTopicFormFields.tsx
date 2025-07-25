@@ -56,6 +56,15 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
   const answersCountRandomKey = React.useId();
   const answersCountMinKey = React.useId();
   const answersCountMaxKey = React.useId();
+  // Reset language
+  const resetLang = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const opts = { shouldDirty: true, shouldValidate: true };
+    form.setValue('langCode', undefined, opts);
+    form.setValue('langName', undefined, opts);
+    form.setValue('langCustom', undefined, opts);
+  };
   return (
     <div className={cn('flex w-full flex-col gap-6 px-6 py-2 md:flex-row', className)}>
       <FormSection>
@@ -122,7 +131,11 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                   className="flex w-full justify-stretch gap-4 text-left"
                 >
                   <span className="flex-1 truncate">
-                    {langName ? <strong className="truncate">{langName}</strong> : <>Select</>}
+                    {langName ? (
+                      <strong className="truncate">{langName}</strong>
+                    ) : (
+                      <>Select language</>
+                    )}
                   </span>
                   {langCode && <span className="opacity-50">{langCode}</span>}
                   {langCustom && (
@@ -130,7 +143,10 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                       <Icons.edit className="size-3" />
                     </span>
                   )}
+                  {langCode && <Icons.close onClick={resetLang} className="size-4" />}
+                  {/*
                   <Icons.languages className="size-4" />
+                  */}
                 </Button>
                 <FormHint>An optional predefined or custom language for the topic.</FormHint>
                 <FormMessage />

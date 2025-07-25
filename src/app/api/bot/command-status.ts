@@ -12,7 +12,10 @@ import { getTelegramUserThumbnailUrl } from './helpers/getTelegramUserThumbnailU
 
 bot.command('status', async (ctx: CommandContext<BotContext>) => {
   const locale = getContextLocale(ctx);
-  const tNav = await getTranslations({ locale: locale, namespace: 'NavLocaleSwitcher' });
+  const tNavLocaleSwitcher = await getTranslations({
+    locale: locale,
+    namespace: 'NavLocaleSwitcher',
+  });
   const t = await getTranslations({ namespace: 'Bot', locale });
   const ctxUser = ctx.from;
   if (!ctxUser) {
@@ -58,7 +61,7 @@ bot.command('status', async (ctx: CommandContext<BotContext>) => {
     },
   });
   const format = await getFormatter({ locale });
-  const localeText = tNav('locale', { locale });
+  const localeText = tNavLocaleSwitcher('locale', { locale });
   const showData = {
     locale,
     localeText,

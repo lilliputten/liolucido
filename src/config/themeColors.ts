@@ -7,16 +7,16 @@ export const primaryForegroundColor = '#fff';
 export const secondaryColor = '#fb1';
 export const secondaryForegroundColor = '#000';
 
-export const themeIds = ['brand', 'blue'] as const;
-export const defaultTheme: TThemeId = 'brand';
-export type TThemeId = (typeof themeIds)[number];
-interface TThemeData {
+export const themeColorIds = ['brand', 'blue'] as const;
+export const defaultThemeColor: TThemeColorId = 'brand';
+export type TThemeColorId = (typeof themeColorIds)[number];
+interface TThemeColorData {
   /* Initial color, for the default or `*-500` value */
   color: string;
   /** Percentage fix for the final color value adjustment, optional, default value is '0%' */
   fix?: number | string;
 }
-export const themesData: Record<TThemeId, TThemeData> = {
+export const themeColorData: Record<TThemeColorId, TThemeColorData> = {
   brand: { color: primaryColor, fix: 20 },
   // See for tailwind color definitions:
   // https://tailwindcss.com/docs/colors

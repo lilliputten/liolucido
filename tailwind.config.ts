@@ -5,7 +5,7 @@ import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import { getColorSpread } from './build-utils/getColorSpread';
 // NOTE: It's not possible to export css modules on this stage
-import { primaryColor, secondaryColor } from './src/config/theme';
+import { primaryColor, secondaryColor } from './src/config/themeColors';
 
 // Core app color definitions
 // UNUSED? Construct primary/secondary colors spread tables
@@ -35,14 +35,28 @@ export default {
         border: 'var(--borderColor)',
         input: 'var(--inputColor)',
         ring: 'var(--ringColor)',
-        backgroundLight: 'var(--backgroundLightColor)',
-        foregroundLight: 'var(--foregroundLightColor)',
-        backgroundDark: 'var(--backgroundDarkColor)',
-        foregroundDark: 'var(--foregroundDarkColor)',
+        'background-light': 'var(--backgroundLightColor)',
+        'foreground-light': 'var(--foregroundLightColor)',
+        'background-dark': 'var(--backgroundDarkColor)',
+        'foreground-dark': 'var(--foregroundDarkColor)',
         destructive: {
           DEFAULT: 'var(--appDestructiveColor)',
           foreground: 'var(--appDestructiveForegroundColor)',
         },
+        // Theme colors
+        'theme-foreground': '#fff',
+        theme: 'rgb(var(--theme-color-500-RGB))',
+        'theme-50': 'rgb(var(--theme-color-50-RGB))',
+        'theme-100': 'rgb(var(--theme-color-100-RGB))',
+        'theme-200': 'rgb(var(--theme-color-200-RGB))',
+        'theme-300': 'rgb(var(--theme-color-300-RGB))',
+        'theme-400': 'rgb(var(--theme-color-400-RGB))',
+        'theme-500': 'rgb(var(--theme-color-500-RGB))',
+        'theme-600': 'rgb(var(--theme-color-600-RGB))',
+        'theme-700': 'rgb(var(--theme-color-700-RGB))',
+        'theme-800': 'rgb(var(--theme-color-800-RGB))',
+        'theme-900': 'rgb(var(--theme-color-900-RGB))',
+        'theme-950': 'rgb(var(--theme-color-950-RGB))',
         success: {
           DEFAULT: 'var(--appSuccessColor)',
           foreground: 'var(--appSuccessForegroundColor)',

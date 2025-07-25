@@ -64,7 +64,12 @@
   },
   "NavLocaleSwitcher": {
     "label": "Change language",
-    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Unknown}}"
+    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Auto-detect}}"
+  },
+  "Settings": {},
+  "Themes": {
+    "blue": "Blue",
+    "brand": "Application theme"
   },
   "NavModeToggle": {
     "label": "Toggle theme",

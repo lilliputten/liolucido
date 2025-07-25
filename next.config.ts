@@ -2,13 +2,13 @@ import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 import {
-  defaultTheme,
+  defaultThemeColor,
   primaryColor,
   primaryForegroundColor,
   secondaryColor,
   secondaryForegroundColor,
-  themesData,
-} from './src/config/theme';
+  themeColorData,
+} from './src/config/themeColors';
 
 // Import environments to ensure if they're ok
 import './src/env/envServer';
@@ -31,7 +31,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const withNextIntl = createNextIntlPlugin();
 
 // Create a list of lists (id, color, [percentFix='0%']] for themes values
-const scssThemes = Object.entries(themesData)
+const scssThemes = Object.entries(themeColorData)
   .map(([id, { color, fix }]) => {
     return [id, color, fix == undefined ? '0%' : typeof fix === 'number' ? fix + '%' : fix].join(
       ' ',
@@ -43,7 +43,7 @@ $primaryColor: ${primaryColor};
 $secondaryColor: ${secondaryColor};
 $primaryForegroundColor: ${primaryForegroundColor};
 $secondaryForegroundColor: ${secondaryForegroundColor};
-$defaultTheme: ${defaultTheme};
+$defaultTheme: ${defaultThemeColor};
 $themes: ( ${scssThemes} );
 `;
 // console.log('XXX', scssVariables);

@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
-import { TSettings } from '@/features/settings/types';
+import { nulledSettings, TSettings } from '@/features/settings/types';
 
 export async function updateSettings(settings: TSettings) {
   if (isDev) {
@@ -17,9 +17,14 @@ export async function updateSettings(settings: TSettings) {
   if (!userId) {
     throw new Error('Got undefined user');
   }
+  // NOTE: Don't pass userId to `create`
+  const { userId: _, ...settingsForCreate } = { ...nulledSettings, ...settings };
+  const update: Prisma.UserSettingsUpdateInput = settingsForCreate;
+  const create: Prisma.UserSettingsCreateInput = {
+    ...settingsForCreate,
+    user: { connect: { id: userId } },
+  };
   try {
-    const update: Prisma.UserSettingsUncheckedUpdateInput = { ...settings };
-    const create: Prisma.UserSettingsUncheckedCreateInput = { ...settings, userId };
     /* // Full type example:
      * const update: Prisma.XOR<Prisma.UserSettingsUpdateInput, Prisma.UserSettingsUncheckedUpdateInput> = { ...settings };
      */
@@ -33,6 +38,10 @@ export async function updateSettings(settings: TSettings) {
     // eslint-disable-next-line no-console
     console.error('[updateSettings] Caught error', {
       error,
+      update,
+      create,
+      user,
+      userId,
     });
     debugger; // eslint-disable-line no-debugger
     throw error;

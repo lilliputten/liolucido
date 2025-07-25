@@ -30,7 +30,7 @@ interface TSettingsFormProps {
 
 export function SettingsForm(props: TSettingsFormProps) {
   const { settings, className, userId, toolbarPortalRef } = props;
-  const { saveSettings, inited, userInited } = useSettingsContext();
+  const { updateAndSaveSettings, inited, userInited } = useSettingsContext();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 
@@ -64,9 +64,14 @@ export function SettingsForm(props: TSettingsFormProps) {
       form.setValue('langName', langName, opts);
       form.setValue('langCustom', langCustom, opts);
     };
-    // XXX: Test theme support
-    const html = document.body.parentNode as HTMLElement;
-    html?.classList.add('theme-blue');
+    /* // DEBUG: Test theme support
+     * const html = document.body.parentNode as HTMLElement;
+     * html?.classList.add('theme-blue');
+     * const dataset = html?.dataset;
+     * if (dataset) {
+     *   dataset.themeColor = 'blue';
+     * }
+     */
     window.addEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
     return () => {
       window.removeEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
@@ -98,7 +103,7 @@ export function SettingsForm(props: TSettingsFormProps) {
         ...formData,
       };
       startTransition(() => {
-        const savePromise = saveSettings(editedSettings);
+        const savePromise = updateAndSaveSettings(editedSettings);
         /* // DEBUG
          * const savePromise = new Promise<TSettings>((resolve, _reject) => {
          *   // setTimeout(reject, 1000, 'Demo error!');
@@ -123,7 +128,7 @@ export function SettingsForm(props: TSettingsFormProps) {
           });
       });
     },
-    [form, saveSettings, settings],
+    [form, updateAndSaveSettings, settings],
   );
 
   const handleCancel = undefined;
