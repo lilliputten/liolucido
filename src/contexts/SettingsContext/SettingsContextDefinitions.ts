@@ -20,5 +20,6 @@ export interface SettingsContextData {
   userInited: boolean;
   /** The settings data has been initialized and is ready to use */
   inited: boolean;
+  /** The settings are completely ready */
   ready: boolean;
 }

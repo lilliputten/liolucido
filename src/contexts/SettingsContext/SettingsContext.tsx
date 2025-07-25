@@ -22,6 +22,34 @@ interface SettingsContextProviderProps {
   userId?: TDefinedUserId;
 }
 
+function getLocalSettingsThemeColor() {
+  const settingsJson = window.localStorage.getItem('settings');
+  if (settingsJson) {
+    try {
+      /** @type {TSettings} */
+      const settings = JSON.parse(settingsJson);
+      const themeColor = settings.themeColor;
+      if (themeColor) {
+        /** @type {HTMLElement} */
+        const html = document.body.parentNode as HTMLElement;
+        const dataset = html && html.dataset;
+        if (dataset) {
+          dataset.themeColor = themeColor;
+        }
+      }
+      const settingsParsed: TSettings = settingsSchema.parse(settings);
+      return settings;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[SettingsContext] Can not parse local settings from:', settingsJson, {
+        error,
+      });
+      debugger; // eslint-disable-line no-debugger
+      // toast.error('Can not parse local settings data');
+    }
+  }
+}
+
 function getLocalSettings() {
   const settingsJson = window.localStorage.getItem('settings');
   if (settingsJson) {

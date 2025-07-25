@@ -1,5 +1,3 @@
-// import React from 'react';
-
 type TRootLayoutProps = {
   children: React.ReactNode;
 };

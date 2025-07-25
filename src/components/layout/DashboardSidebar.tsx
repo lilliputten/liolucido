@@ -24,6 +24,7 @@ import { NavModeToggle } from '@/components/layout/NavModeToggle';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 
+import { DialogDescription } from '../ui/dialog';
 import { NavBarBrand } from './NavBarBrand';
 
 interface DashboardSidebarProps {
@@ -208,6 +209,7 @@ export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren
     return (
       <Sheet open={open} onOpenChange={setOpen}>
         <DialogTitle className="sr-only">Navigation menu</DialogTitle>
+        <DialogDescription className="sr-only">Navigation menu</DialogDescription>
         {/* NOTE: Former navigation menu toggler. Now used a button from the NavBar
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="size-9 shrink-0 md:hidden">
