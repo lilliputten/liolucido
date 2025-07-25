@@ -12,6 +12,7 @@ import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TDefinedUserId } from '@/features/users/types/TUser';
 
 import { SettingsForm } from './SettingsForm';
+import { SettingsLoading } from './SettingsLoading';
 
 const saveScrollHash = getRandomHashString();
 
@@ -31,7 +32,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
         'flex flex-wrap gap-2',
       )}
     >
-      {/* TODO: Place shared buttons here */}
+      {/* TODO: Place other shared buttons here */}
     </div>
   );
 }
@@ -44,9 +45,7 @@ function Header(props: TChildProps) {
         'flex flex-row flex-wrap items-start',
       )}
     >
-      {/* // UNUSED: Title section
-      <Title />
-      */}
+      {/* // UNUSED: Title section */}
       <Toolbar {...props} />
     </CardHeader>
   );
@@ -55,11 +54,10 @@ function Header(props: TChildProps) {
 export function SettingsCard(props: TSettingsCardProps) {
   const { className, userId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const { settings } = useSettingsContext();
-  /* // Detect user mode
-   * const user = useSessionUser();
-   * const isAdminMode = user?.role === 'ADMIN';
-   */
+  const { settings, ready } = useSettingsContext();
+  if (!ready) {
+    return <SettingsLoading />;
+  }
   return (
     <Card
       className={cn(

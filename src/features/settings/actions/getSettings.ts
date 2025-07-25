@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
+import { TSettings } from '../types';
+
 export async function getSettings() {
   try {
     if (isDev) {
@@ -16,7 +18,7 @@ export async function getSettings() {
       const settings = await prisma.userSettings.findUnique({
         where: { userId },
       });
-      return settings;
+      return settings ? (settings as TSettings) : undefined;
     }
     return undefined;
   } catch (error) {

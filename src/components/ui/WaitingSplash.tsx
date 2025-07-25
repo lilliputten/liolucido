@@ -45,7 +45,7 @@ export function WaitingSplash(props: TWaitingSplashProps) {
           'absolute',
           'inset-0',
           'opacity-80',
-          isLight ? 'bg-backgroundLight' : 'bg-backgroundDark',
+          isLight ? 'bg-background-light' : 'bg-background-dark',
         )}
       />
       <Icons.spinner
@@ -54,7 +54,7 @@ export function WaitingSplash(props: TWaitingSplashProps) {
           'size-8',
           'animate-spin',
         )}
-        // color={isLight ? foregroundLightColor : foregroundDarkColor} // XXX: Use theme color?
+        // color={isLight ? foreground-lightColor : foreground-darkColor} // XXX: Use theme color?
         color={secondaryColor}
       />
     </div>

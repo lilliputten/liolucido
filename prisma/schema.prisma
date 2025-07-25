@@ -98,7 +98,14 @@ model UserSettings {
   userId String @id @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  showOthersTopics Boolean @default(false) @map("show_others_topics")
+  showOthersTopics Boolean? @default(false) @map("show_others_topics")
+
+  // The application language.
+  locale String? @map("locale") // Language code ("en", "ru", ee the defintion in `src/i18n/types.ts`
+
+  // The application theme: the color and the dark/light/system switch
+  theme      String? @map("theme")
+  themeColor String? @map("theme_color")
 
   // An optional language code and name to find topics
   langCode   String?  @map("lang_code") // Language code (eg, "en", "ru", etc, or custom)
@@ -126,13 +133,6 @@ model Topic {
 
   // An optional list of keywords separated by commas.
   keywords String?
-
-  // The application language.
-  lang String? @map("lang") // Language code ("en", "ru", ee the defintion in `src/i18n/types.ts`
-
-  // The application theme: the color and the dark/light switch
-  themeColor String?  @map("theme_color")
-  darkTheme  Boolean? @map("dark_theme")
 
   // An optional language code and name for the topic.
   langCode   String?  @map("lang_code") // Language code (eg, "en", "ru", etc, or custom)

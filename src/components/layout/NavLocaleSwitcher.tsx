@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
@@ -14,7 +13,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { isDev } from '@/constants';
-import { routing, usePathname, useRouter } from '@/i18n/routing';
+import { useSettingsContext } from '@/contexts/SettingsContext';
+import { routing } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
 interface TNavLocaleSwitcherProps extends TPropsWithClassName {
@@ -25,28 +25,22 @@ interface TNavLocaleSwitcherProps extends TPropsWithClassName {
 export function NavLocaleSwitcher(props: TNavLocaleSwitcherProps) {
   const { onPrimary, onSidebar, className } = props;
   const t = useTranslations('NavLocaleSwitcher');
+  const tNavLocaleSwitcher = useTranslations('NavLocaleSwitcher');
 
   // NOTE: This one doesn't change on real locale change
   const locale = useLocale();
 
-  const pathname = usePathname();
-  const router = useRouter();
-  const params = useParams();
-
   const [isPending, startTransition] = React.useTransition();
+
+  const { setLocale } = useSettingsContext();
 
   function onSelectChange(event: React.MouseEvent<HTMLDivElement>) {
     const target = event.currentTarget as HTMLDivElement;
     const { dataset } = target;
     const nextLocale = dataset.locale as TLocale;
-    startTransition(() => {
-      router.replace(
-        // @ts-expect-error -- TypeScript will validate that only known `params`
-        // are used in combination with a given `pathname`. Since the two will
-        // always match for the current route, we can skip runtime checks.
-        { pathname, params },
-        { locale: nextLocale },
-      );
+    // TODO: Set locale in settings
+    startTransition(async () => {
+      await setLocale(nextLocale);
     });
   }
 
@@ -67,7 +61,7 @@ export function NavLocaleSwitcher(props: TNavLocaleSwitcherProps) {
         >
           <span>
             {/* Locale name */}
-            {t('locale', { locale })}
+            {tNavLocaleSwitcher('locale', { locale })}
           </span>
           <span className="sr-only">{t('label')}</span>
         </Button>
@@ -75,7 +69,6 @@ export function NavLocaleSwitcher(props: TNavLocaleSwitcherProps) {
       <DropdownMenuContent align={onSidebar ? 'start' : 'end'}>
         {routing.locales.map((cur) => (
           <DropdownMenuItem
-            //
             key={cur}
             data-locale={cur}
             onClick={onSelectChange}
