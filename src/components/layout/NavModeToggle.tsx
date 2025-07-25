@@ -41,7 +41,7 @@ export function NavModeToggle(props: TNavModeToggleProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild aria-label={t('label')}>
         <Button
-          variant={onPrimary ? 'ghostOnPrimary' : 'ghost'}
+          variant={onPrimary ? 'ghostOnTheme' : 'ghost'}
           size="sm"
           className={cn(
             isDev && '__NavModeToggle', // DEBUG

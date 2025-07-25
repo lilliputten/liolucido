@@ -48,7 +48,7 @@ export function NavLocaleSwitcher(props: TNavLocaleSwitcherProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={onPrimary ? 'ghostOnPrimary' : 'ghost'}
+          variant={onPrimary ? 'ghostOnTheme' : 'ghost'}
           size="sm"
           className={cn(
             isDev && '__NavLocaleSwitcher', // DEBUG

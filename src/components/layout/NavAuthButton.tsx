@@ -46,7 +46,7 @@ export function NavUserAuthButton(props: TNavAuthButtonProps) {
       ) : (
         <Button
           className="gap-2 px-5 md:flex"
-          variant={onPrimary ? 'ghostOnPrimary' : 'ghost'}
+          variant={onPrimary ? 'ghostOnTheme' : 'ghost'}
           size="sm"
           onClick={() => setShowSignInModal(true)}
         >
