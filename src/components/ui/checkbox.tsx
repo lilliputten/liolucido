@@ -44,7 +44,7 @@ const Checkbox = React.forwardRef<
         'focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed',
         'disabled:opacity-50',
-        // 'data-[state=checked]:border-primary', // Original checkbox styling
+        // 'data-[state=checked]:border-theme', // Original checkbox styling
         'data-[state=checked]:border-muted-foreground',
         className,
       )}
@@ -66,7 +66,7 @@ const Checkbox = React.forwardRef<
           'flex',
           'items-center',
           'justify-center',
-          // 'text-primary', // Original checkbox styling
+          // 'text-theme', // Original checkbox styling
           'text-muted-foreground',
         )}
       >

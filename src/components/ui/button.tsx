@@ -26,7 +26,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default: 'bg-theme text-theme-foreground hover:bg-theme/90',
         primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
         theme: 'bg-theme text-theme-foreground hover:bg-theme/90',
         destructive: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground',
@@ -38,7 +38,8 @@ const buttonVariants = cva(
         ghostDark: 'hover:bg-black/20 hover:text-accent-foreground',
         ghostGray: 'hover:bg-gray-500/15 hover:text-accent-foreground',
         ghostOnPrimary: 'text-primary-foreground hover:bg-primary-400/50',
-        link: 'text-primary underline-offset-4 hover:underline',
+        ghostOnTheme: 'text-theme-foreground hover:bg-theme-400/50',
+        link: 'text-theme underline-offset-4 hover:underline',
         disable: 'cursor-not-allowed border border-input bg-transparent text-neutral-600',
       },
       size: {

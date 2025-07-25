@@ -37,7 +37,7 @@ export function NavBar(props: NavBarProps) {
         'z-40',
         'flex',
         'w-full',
-        'bg-primary',
+        'bg-theme',
         commonXPaddingTwStyle,
         'justify-stretch',
         'transition-all',
@@ -79,7 +79,7 @@ export function NavBar(props: NavBarProps) {
                       'text-lg',
                       'font-medium',
                       'transition-all',
-                      'text-primary-foreground/80',
+                      'text-theme-foreground/80',
                       'opacity-100',
                       'hover:opacity-80',
                       'sm:text-sm',
@@ -113,7 +113,7 @@ export function NavBar(props: NavBarProps) {
               'items-center',
               'justify-center',
               'size-8 rounded-sm px-0',
-              'text-primary-foreground hover:bg-primary-400/50',
+              'text-theme-foreground hover:bg-theme-400/50',
             )}
           >
             <Icons.github className="size-6" />
@@ -136,14 +136,14 @@ export function NavBar(props: NavBarProps) {
             commonXMarginTwStyle,
             'transition-all',
             'duration-200',
-            'text-primary-foreground hover:bg-primary-400/50',
+            'text-theme-foreground hover:bg-theme-400/50',
             'focus:outline-none',
-            'active:bg-primary-300',
+            'active:bg-theme-300',
             'md:hidden',
-            open && 'opacity-50 hover:bg-primary-400',
+            open && 'opacity-50 hover:bg-theme-400',
           )}
         >
-          <Menu className="size-5 text-primary-foreground" />
+          <Menu className="size-5 text-theme-foreground" />
         </button>
       </div>
     </header>
