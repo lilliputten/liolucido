@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createPortal } from 'react-dom';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
@@ -110,11 +109,13 @@ export function SettingsForm(props: TSettingsFormProps) {
          *   setTimeout(resolve, 1000, editedSettings);
          * });
          */
-        toast.promise<TSettings>(savePromise, {
-          loading: 'Saving settings data...',
-          success: 'Successfully saved settings.',
-          error: 'Can not save settings data.',
-        });
+        /* // NOTE: Toasts are shown in the `SettingsContext`
+         * toast.promise<TSettings>(savePromise, {
+         *   loading: 'Saving settings data...',
+         *   success: 'Successfully saved settings.',
+         *   error: 'Can not save settings data.',
+         * });
+         */
         return savePromise
           .then((updatedSettings) => {
             form.reset(updatedSettings);
