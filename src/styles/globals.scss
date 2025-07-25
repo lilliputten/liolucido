@@ -23,9 +23,16 @@
  * - https://medium.com/@oodri/tailwind-dynamic-color-theme-solution-4351d0495c7f
  */
 
+@theme {
+  --color-mint-500: oklch(0.72 0.11 178);
+  // --font-display: "Satoshi", "sans-serif";
+  // --breakpoint-3xl: 120rem;
+  --color-avocado-100: oklch(0.99 0 0);
+}
+
 @layer base {
   :root {
-    // NOTE: See also (duplicating) definitions in: `config/theme.ts`
+    // NOTE: See also (duplicating) definitions in: `config/themeColors.ts`
 
     // Core colors
 
@@ -174,6 +181,7 @@
   }
 
   body {
+    --test: #{$primaryColor};
     @apply bg-background text-foreground;
     font-feature-settings:
       'rlig' 1,
@@ -260,6 +268,7 @@
   }
 }
 
+// See animation examples in the `tailwind.config.ts`
 // Animate sonner toast spinner
 .sonner-loading-wrapper {
   animation: rotating-spin 4s linear infinite;
@@ -269,3 +278,7 @@
     transform: rotate(360deg);
   }
 }
+
+// Define themes (from global variables `$themes` and `$defaultTheme`, see definitions in the `src/config/themeColors.ts`)
+@include defineAllThemes($themes, $defaultTheme);
+// @include placeCoreThemeColors();

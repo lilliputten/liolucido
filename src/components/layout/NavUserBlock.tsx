@@ -5,6 +5,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { settingsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenuContent,
@@ -98,7 +99,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
             className={cn(
               isDev && '__NavUserBlock_UserAvatar', // DEBUG
               className,
-              'size-8 rounded-full bg-primary-300/25',
+              'size-8 rounded-full bg-theme-300/25',
               isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
               onSidebar && 'flex',
             )}
@@ -152,10 +153,10 @@ export function NavUserBlock(props: TNavUserBlockProps) {
 
           <MenuItem asChild>
             <Link
-              href="/" // "/dashboard/settings"
+              href={settingsRoute}
               className={cn(
                 'flex items-center space-x-2.5',
-                'disabled', // UNUSED
+                // 'disabled', // UNUSED
               )}
             >
               <Settings className="size-4" />

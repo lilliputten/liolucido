@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { defaultSystemTheme, systemThemeIcons, TSystemThemeId } from '@/config/themes';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,19 +13,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Icon, Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { useSettingsContext } from '@/contexts/SettingsContext';
+
+import { Icons } from '../shared/icons';
 
 interface TNavModeToggleProps extends TPropsWithClassName {
   onPrimary?: boolean;
   onSidebar?: boolean;
 }
-
-const themeIcons: Record<string, Icon> = {
-  light: Icons.sun,
-  dark: Icons.moon,
-  system: Icons.laptop,
-};
 
 export function NavModeToggle(props: TNavModeToggleProps) {
   const {
@@ -32,13 +29,19 @@ export function NavModeToggle(props: TNavModeToggleProps) {
     //  onSidebar,
     className,
   } = props;
-  const { theme: currentTheme, themes, setTheme } = useTheme();
+  const {
+    theme: currentTheme = defaultSystemTheme,
+    themes,
+    // setTheme: setSystemTheme,
+  } = useTheme();
+  // const ThemeIcon = systemThemeIcons[currentTheme as TSystemThemeId];
+  const { setTheme } = useSettingsContext();
   const t = useTranslations('NavModeToggle');
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild aria-label={t('label')}>
         <Button
-          variant={onPrimary ? 'ghostOnPrimary' : 'ghost'}
+          variant={onPrimary ? 'ghostOnTheme' : 'ghost'}
           size="sm"
           className={cn(
             isDev && '__NavModeToggle', // DEBUG
@@ -48,22 +51,17 @@ export function NavModeToggle(props: TNavModeToggleProps) {
           )}
           title={t('label')}
         >
+          {/*
+          <ThemeIcon className="transition-all" />
+          */}
           <Icons.sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Icons.moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span
-            className={cn(
-              // DEBUG
-              // !onSidebar &&
-              'sr-only',
-            )}
-          >
-            {t('label')}
-          </span>
+          <span className="sr-only">{t('label')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {themes.map((thisTheme) => {
-          const ThemeIcon = themeIcons[thisTheme];
+          const ThemeIcon = systemThemeIcons[thisTheme as TSystemThemeId];
           return (
             <DropdownMenuItem
               key={thisTheme}

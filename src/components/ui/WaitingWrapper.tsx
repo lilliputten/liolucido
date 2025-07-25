@@ -34,7 +34,7 @@ export function WaitingWrapper(props: TWaitingWrapperProps) {
         'justify-center',
         'transition',
         'duration-1000',
-        isLight !== undefined && (isLight ? 'bg-backgroundLight' : 'bg-backgroundDark'),
+        isLight !== undefined && (isLight ? 'bg-background-light' : 'bg-background-dark'),
         hidden && 'opacity-0',
         hidden && 'pointer-events-none',
       )}

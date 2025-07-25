@@ -48,7 +48,7 @@ const ScrollArea = React.forwardRef<
       if (!saveScrollHash || saveScrollHash.includes(packDelim)) {
         throw new Error(`saveScrollHash should be non-empty string without "${packDelim}" symbols`);
       }
-      const savedData = localStorage.getItem(saveScrollKeyPrefix + saveScrollKey);
+      const savedData = sessionStorage.getItem(saveScrollKeyPrefix + saveScrollKey);
       // Restore scroll if data has been saved and saved hash value correspond current hash.
       if (savedData) {
         const unpacked = savedData.split(packDelim);
@@ -69,14 +69,14 @@ const ScrollArea = React.forwardRef<
       const handleScroll = () => {
         const { scrollTop, scrollLeft } = node;
         if (!scrollTop && !scrollLeft) {
-          localStorage.removeItem(saveScrollKeyPrefix + saveScrollKey);
+          sessionStorage.removeItem(saveScrollKeyPrefix + saveScrollKey);
         } else {
           // Save scroll position to restore later.
           const packed = [saveScrollHash, scrollTop, scrollLeft]
             .map((v) => (v ? String(v) : ''))
             .join(packDelim)
             .replace(finalDelimsReg, '');
-          localStorage.setItem(saveScrollKeyPrefix + saveScrollKey, packed);
+          sessionStorage.setItem(saveScrollKeyPrefix + saveScrollKey, packed);
         }
         /* console.log('[ScrollArea] Save scroll', {
          *   scrollTop,

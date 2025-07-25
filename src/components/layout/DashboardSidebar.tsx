@@ -24,6 +24,7 @@ import { NavModeToggle } from '@/components/layout/NavModeToggle';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 
+import { DialogDescription } from '../ui/dialog';
 import { NavBarBrand } from './NavBarBrand';
 
 interface DashboardSidebarProps {
@@ -75,7 +76,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
       <div
         className={cn(
           isDev && '__DashboardSidebar', // DEBUG
-          'bg-primary/10',
+          'bg-theme/10',
         )}
       >
         <ScrollArea
@@ -134,6 +135,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     ) : (
                       <div className="h-4" />
                     )}
+                    {/* Show sections menu */}
                     {section.items.map((item) => {
                       const Icon = Icons[item.icon || 'arrowRight'];
                       return (
@@ -144,7 +146,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 key={`link-${item.titleId}`}
                                 href={item.disabled ? '#' : item.href}
                                 className={cn(
-                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-primary',
+                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme',
                                   path === item.href
                                     ? 'bg-muted'
                                     : 'text-muted-foreground hover:text-accent-foreground',
@@ -167,7 +169,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                     key={`link-tooltip-${item.titleId}`}
                                     href={item.disabled ? '#' : item.href}
                                     className={cn(
-                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-primary',
+                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-theme',
                                       path === item.href
                                         ? 'bg-muted'
                                         : 'text-muted-foreground hover:text-accent-foreground',
@@ -207,6 +209,7 @@ export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren
     return (
       <Sheet open={open} onOpenChange={setOpen}>
         <DialogTitle className="sr-only">Navigation menu</DialogTitle>
+        <DialogDescription className="sr-only">Navigation menu</DialogDescription>
         {/* NOTE: Former navigation menu toggler. Now used a button from the NavBar
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="size-9 shrink-0 md:hidden">
@@ -225,7 +228,7 @@ export function MobileSheetWrapper(props: TMobileSheetProps & TPropsWithChildren
           <ScrollArea
             className={cn(
               isDev && '__DashboardSidebar_MobileSheetWrapper_ScrollArea', // DEBUG
-              'h-full overflow-y-auto bg-primary/10',
+              'h-full overflow-y-auto bg-theme/10',
             )}
           >
             {/* MobileSheetSidebar */}
@@ -262,7 +265,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
                   }}
                   href={item.disabled ? '#' : item.href}
                   className={cn(
-                    'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-primary',
+                    'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme',
                     path === item.href
                       ? 'bg-muted'
                       : 'text-muted-foreground hover:text-accent-foreground',

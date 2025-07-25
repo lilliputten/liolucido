@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { SelectTopicLanguageModal } from '@/components/pages/ManageTopicsPage';
+import { SelectTopicLanguageModal } from '@/components/pages/SelectTopicLanguageModal';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 
 interface SelectTopicLanguageModalPageProps {
@@ -16,7 +16,7 @@ interface SelectTopicLanguageModalPageProps {
   }>;
 }
 
-export default function SelectTopicLanguageModalPage({
+export default function SelectTopicLanguageModalInterceptingRoute({
   params,
   searchParams,
 }: SelectTopicLanguageModalPageProps) {

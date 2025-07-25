@@ -21,7 +21,7 @@ import { Icons } from '@/components/shared/icons';
 import { predefinedLanguages } from '@/constants/languages';
 import { TTopicLanguageData } from '@/features/topics/types';
 
-import { minIdLength } from '../constants';
+import { minIdLength } from './constants';
 
 interface TFormData {
   id?: TLanguageId;
@@ -119,10 +119,10 @@ export const SelectLanguagePredefinedForm: React.FC<TProps> = (props) => {
                 registerSelectField.onChange({ target: { name: 'id', value } })
               }
             >
-              <SelectTrigger className="SelectTrigger flex-1" aria-label="Language">
+              <SelectTrigger className="__SelectTrigger flex-1" aria-label="Language">
                 <SelectValue placeholder="Select a language…" />
               </SelectTrigger>
-              <SelectContent className="SelectContent">
+              <SelectContent className="__SelectContent">
                 {languagesList.map(({ id, name }) => (
                   <SelectItem value={id} key={id}>
                     {name}

@@ -42,13 +42,17 @@
     "about": "Go to the about page"
   },
   "DataPage": {
-    "title": "Data editor - TrainWizzz!"
+    "title": "Data editor"
   },
   "TestPage": {
-    "title": "Test - TrainWizzz!"
+    "title": "Test"
+  },
+  "SettingsPage": {
+    "title": "Settings",
+    "description": "Application settings"
   },
   "WelcomePage": {
-    "title": "Welcome - TrainWizzz!"
+    "title": "Welcome"
   },
   "SmallWelcomeText": {
     "content": "<p>This is a small hierarchical data editor. Take a look at a small <infolink>instruction manual</infolink>.</p>",
@@ -60,7 +64,12 @@
   },
   "NavLocaleSwitcher": {
     "label": "Change language",
-    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Unknown}}"
+    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Auto-detect}}"
+  },
+  "Settings": {},
+  "Themes": {
+    "blue": "Blue",
+    "brand": "Application theme"
   },
   "NavModeToggle": {
     "label": "Toggle theme",

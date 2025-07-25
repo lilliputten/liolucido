@@ -20,36 +20,26 @@ import { SelectLanguageCustomForm } from './SelectLanguageCustomForm';
 import { SelectLanguagePredefinedForm } from './SelectLanguagePredefinedForm';
 
 interface TSelectTopicLanguageModalProps extends TTopicLanguageData {
-  topicId: TTopicId;
+  topicId?: TTopicId;
 }
 
 export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) {
   const { langCode, langName, langCustom, topicId } = props;
   const router = useRouter();
-  // TODO: Redirect to hardcoded edit url for a topic
-  // const { routePath } = useTopicsContext();
-  // const hideModal = React.useCallback(
-  //   () => router.replace(`${routePath}/${topicId}/edit`),
-  //   [router, routePath, topicId],
-  // );
   const hideModal = React.useCallback(() => router.back(), [router]);
-  const [isPending, startTransition] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
   const selectLanguage = React.useCallback(
     (selectedLanguage: TTopicLanguageData) => {
-      // TODO: Remove transition
-      startTransition(() => {
-        // Dispatch a custom event with the selected language data
-        const topicLang: TSelectTopicLanguageData = { topicId, ...selectedLanguage };
-        const event = new CustomEvent<TSelectTopicLanguageData>(selectTopicEventName, {
-          detail: topicLang,
-          bubbles: true,
-        });
-        window.dispatchEvent(event);
-        // Close the modal
-        hideModal();
+      // Dispatch a custom event with the selected language data
+      const topicLang: TSelectTopicLanguageData = { topicId, ...selectedLanguage };
+      const event = new CustomEvent<TSelectTopicLanguageData>(selectTopicEventName, {
+        detail: topicLang,
+        bubbles: true,
       });
+      window.dispatchEvent(event);
+      // Close the modal
+      hideModal();
     },
     [hideModal, topicId],
   );
@@ -61,7 +51,7 @@ export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) 
       className={cn(
         isDev && '__SelectTopicLanguageModal', // DEBUG
         'gap-0',
-        isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
+        // isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div

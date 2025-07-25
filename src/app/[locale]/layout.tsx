@@ -1,4 +1,5 @@
 import React from 'react';
+import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -7,12 +8,16 @@ import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.scss';
 import '@/styles/root.scss';
 
+import { defaultThemeColor } from '@/config/themeColors';
+import { getCurrentUser } from '@/lib/session';
 import { cn, constructMetadata } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { GenericLayout } from '@/components/layout/GenericLayout';
 import ModalProvider from '@/components/modals/providers';
 import { TailwindIndicator } from '@/components/service/TailwindIndicator';
 import { fontDefault, fontHeading, fontMono } from '@/assets/fonts';
+import { SettingsContextProvider } from '@/contexts/SettingsContext';
+import { getSettings } from '@/features/settings/actions';
 import { routing } from '@/i18n/routing';
 import { TAwaitedLocaleProps, TLocale } from '@/i18n/types';
 
@@ -53,10 +58,17 @@ async function RootLayout(props: TRootLayoutProps) {
   // Provide i18n translations
   const messages = await getMessages();
 
+  const user = await getCurrentUser();
+  const userId = user?.id;
+
+  const settings = await getSettings();
+  // TODO: Alternatively, store the color settings in cookies and fetch on the server if no authorized user settings found.
+  const themeColor = settings?.themeColor || defaultThemeColor;
+
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} data-theme-color={themeColor} suppressHydrationWarning>
       <head>
-        {/*
+        {/* // TODO: Set SEO and OG meta tags
         <meta property="og:url" content="https://vanilla-tasks.lilliputten.com/" />
         <meta property="og:title" content="Vanilla Tasks Tracker" />
         <meta
@@ -70,6 +82,12 @@ async function RootLayout(props: TRootLayoutProps) {
         <meta property="og:image:height" content="630" />
         <meta property="og:type" content="website" />
         */}
+        {/* Runs before any interactive/hydration code to update user settings to avoid content flash */}
+        <Script
+          id="layoyut-init-theme"
+          strategy="beforeInteractive"
+          src="/static/layoyut-init-theme.js"
+        />
       </head>
       <body
         className={cn(
@@ -90,7 +108,7 @@ async function RootLayout(props: TRootLayoutProps) {
               disableTransitionOnChange
             >
               <ModalProvider>
-                {/* NOTE: The toaster should be locatred before the content */}
+                {/* NOTE: The toaster should be located before the main content */}
                 <Toaster
                   // @see https://sonner.emilkowal.ski/toaster#api-reference
                   expand
@@ -118,10 +136,12 @@ async function RootLayout(props: TRootLayoutProps) {
                   // containerAriaLabel?: string;
                   // pauseWhenPageIsHidden?: boolean;
                 />
-                <GenericLayout>
-                  {/* Core content */}
-                  {children}
-                </GenericLayout>
+                <SettingsContextProvider userId={userId}>
+                  <GenericLayout>
+                    {/* Core content */}
+                    {children}
+                  </GenericLayout>
+                </SettingsContextProvider>
                 <TailwindIndicator />
               </ModalProvider>
             </ThemeProvider>

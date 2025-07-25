@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { SelectTopicLanguageModal } from '@/components/pages/ManageTopicsPage';
+import { SelectTopicLanguageModal } from '@/components/pages/SelectTopicLanguageModal';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 
 interface SelectLanguagePageProps {
@@ -16,7 +16,10 @@ interface SelectLanguagePageProps {
   }>;
 }
 
-export default function SelectLanguagePage({ params, searchParams }: SelectLanguagePageProps) {
+export default function SelectTopicLanguageModalParallelRoute({
+  params,
+  searchParams,
+}: SelectLanguagePageProps) {
   const { langCode, langName, langCustom } = React.use(searchParams);
   const { topicId: tipicIdRaw } = React.use(params);
   const topicId = parseInt(tipicIdRaw);

@@ -10,7 +10,7 @@ export function UpgradeCard({ className }: TPropsWithClassName) {
       className={cn(
         isDev && '__UpgradeCard', // DEBUG
         'md:max-xl:rounded-none md:max-xl:border-none md:max-xl:shadow-none',
-        'bg-primary/10',
+        'bg-theme/10',
         className,
       )}
     >
@@ -21,7 +21,7 @@ export function UpgradeCard({ className }: TPropsWithClassName) {
         </CardDescription>
       </CardHeader>
       <CardContent className="md:max-xl:px-4">
-        <Button size="sm" className="w-full">
+        <Button size="sm" variant="theme" className="w-full">
           Upgrade
         </Button>
       </CardContent>

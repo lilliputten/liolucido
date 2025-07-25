@@ -31,10 +31,10 @@ function SignInModal(props: TSignInModalProps) {
         // prettier-ignore
         isDev && '__SignInModal',
         'text-center',
-        'text-primary-foreground',
+        'text-theme-foreground',
       )}
     >
-      <div className="w-full bg-primary">
+      <div className="w-full bg-theme">
         <div
           className={cn(
             // prettier-ignore
@@ -43,9 +43,9 @@ function SignInModal(props: TSignInModalProps) {
             'items-center',
             'justify-center',
             'space-y-3',
-            'bg-primary',
+            'bg-theme',
             'border-b',
-            'border-primary-400',
+            'border-theme-400',
             'px-4',
             'py-6',
             'pt-8',
@@ -60,7 +60,7 @@ function SignInModal(props: TSignInModalProps) {
             'flex',
             'flex-col',
             'space-y-4',
-            'bg-primary-400',
+            'bg-theme-400',
             'px-4',
             'py-8',
             'md:px-16',

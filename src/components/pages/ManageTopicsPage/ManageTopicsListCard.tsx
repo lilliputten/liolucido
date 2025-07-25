@@ -56,7 +56,7 @@ function Toolbar(props: TChildProps) {
     <div
       className={cn(
         isDev && '__ManageTopicsListCard_Toolbar', // DEBUG
-        '__ml-auto __shrink-0 flex flex-wrap gap-2',
+        'flex flex-wrap gap-2',
       )}
     >
       <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">

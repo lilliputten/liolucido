@@ -1,9 +1,12 @@
 // Colors...
 
-$primaryColor: #818;
-$primaryForegroundColor: #fff;
-$secondaryColor: #fb1;
-$secondaryForegroundColor: #000;
+/* // Those variables are imported (via next.config.ts) from the `src/config/themeColors.ts` module
+ * $primaryColor: #818;
+ * $primaryForegroundColor: #fff;
+ * $secondaryColor: #fb1;
+ * $secondaryForegroundColor: #000;
+ */
+
 $appDestructiveColor: #c00;
 $appDestructiveForegroundColor: #fff;
 $appSuccessColor: #0d0;

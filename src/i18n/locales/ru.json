@@ -47,8 +47,12 @@
   "TestPage": {
     "title": "Test - TrainWizzz!"
   },
+  "SettingsPage": {
+    "title": "Настройки - TrainWizzz!",
+    "description": "Настройки приложения"
+  },
   "WelcomePage": {
-    "title": "Добро пожаловать - Team Tree"
+    "title": "Добро пожаловать - TrainWizzz!"
   },
   "SmallWelcomeText": {
     "content": "<p>Это небольшой иерархический редактор данных. Взгляните на небольшую <infolink>инструкцию</infolink>.\n</p>",
@@ -60,7 +64,12 @@
   },
   "NavLocaleSwitcher": {
     "label": "Сменить язык",
-    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Unknown}}"
+    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Автоматически}}"
+  },
+  "Settings": {},
+  "Themes": {
+    "blue": "Синяя",
+    "brand": "Тема приложения"
   },
   "NavModeToggle": {
     "label": "Переключить тему",

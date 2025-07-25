@@ -41,7 +41,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
       ref={toolbarPortalRef}
       className={cn(
         isDev && '__EditQuestionCard_Toolbar', // DEBUG
-        '__ml-auto __shrink-0 flex flex-wrap gap-2',
+        'flex flex-wrap gap-2',
       )}
     >
       {/* // Example
@@ -93,7 +93,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
     <Card
       className={cn(
         isDev && '__EditQuestionCard', // DEBUG
-        'xl:col-span-2',
+        // 'xl:col-span-2', // ???
         'relative flex flex-1 flex-col overflow-hidden',
         className,
       )}

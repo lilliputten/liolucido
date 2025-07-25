@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Icons } from '@/components/shared/icons';
 import { TTopicLanguageData } from '@/features/topics/types';
 
-import { maxIdLength, maxNameLength, minIdLength, minNameLength } from '../constants';
+import { maxIdLength, maxNameLength, minIdLength, minNameLength } from './constants';
 
 type TFormData = TLanguage;
 
@@ -78,7 +78,7 @@ export const SelectLanguageCustomForm: React.FC<TProps> = (props) => {
   return (
     <div className={cn(className, '__SelectLanguageCustomForm', 'py-2')}>
       <p className="Text mb-4 text-sm text-muted-foreground">
-        Select your own language with a custom (but unique) identifier and name.
+        Select a language with a custom (but unique) identifier and name.
       </p>
       <form onSubmit={onSubmit}>
         <div className="flex w-full flex-col items-center gap-4">
