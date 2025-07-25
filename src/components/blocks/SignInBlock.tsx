@@ -40,7 +40,6 @@ export function SignInBlock(props: TPropsWithClassName) {
           'flex',
           'flex-col',
           'space-y-4',
-          // 'bg-primary-400',
           'px-4',
           'py-8',
           'md:px-16',

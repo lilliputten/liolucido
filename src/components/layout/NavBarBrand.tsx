@@ -56,7 +56,7 @@ export function NavBarBrand(props: NavBarBrandProps) {
         className={cn(
           'font-urban',
           'text-xl',
-          'text-primary-foreground',
+          'text-theme-foreground',
           'font-bold',
           'whitespace-nowrap',
           'overflow-hidden',

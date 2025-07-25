@@ -40,7 +40,7 @@ export function NavUserAccount(props: TNavUserAccountProps) {
           className,
           'rounded-full',
           'transition-all',
-          'text-primary-foreground/80',
+          'text-theme-foreground/80',
           'opacity-100',
           'hover:opacity-80',
         )}
@@ -50,7 +50,7 @@ export function NavUserAccount(props: TNavUserAccountProps) {
           className={cn(
             isDev && '__NavUserAccount_UserAvatar', // DEBUG
             className,
-            'size-8 rounded-full bg-primary-300/25',
+            'size-8 rounded-full bg-theme-300/25',
             isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
             onSidebar && 'flex',
           )}

@@ -33,7 +33,7 @@ export async function updateSettings(settings: TSettings) {
       update,
       create,
     });
-    return updatedSettings; // as TSettings;
+    return updatedSettings as TSettings;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[updateSettings] Caught error', {
