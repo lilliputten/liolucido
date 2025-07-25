@@ -64,7 +64,7 @@ function OAuthSignInButton(props: OAuthSignInButtonProps) {
         isDev && '__SignInModal-button', // DEBUG
         isDev && '__provider-' + provider,
       )}
-      variant="primary"
+      variant="theme"
       rounded="full"
       disabled={isClicked}
       onClick={() => onSignIn()}
