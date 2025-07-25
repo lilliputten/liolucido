@@ -123,12 +123,20 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
   /** Save settings on the server (if user authorized) and locally */
   const updateAndSaveSettings = React.useCallback(
     (settings: TSettings) => {
-      const savePromise = userId ? updateSettings(settings) : Promise.resolve(settings);
-      return savePromise.then(() => {
-        updateLocalSettings(settings);
-        setAndMemoizeSettings(settings);
-        return settings;
+      // Save local data and apply the data first
+      updateLocalSettings(settings);
+      setAndMemoizeSettings(settings);
+      // Then invoke (if authorized) the save procedure on the server
+      if (!userId) {
+        return Promise.resolve(settings);
+      }
+      const savePromise = updateSettings(settings);
+      toast.promise(savePromise, {
+        loading: 'Saving settings...',
+        success: 'Successfully saved settings.',
+        error: 'Can not save settings.',
       });
+      return savePromise;
     },
     [setAndMemoizeSettings, userId, updateLocalSettings],
   );
