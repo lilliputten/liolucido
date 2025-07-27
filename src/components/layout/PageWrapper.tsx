@@ -17,6 +17,7 @@ interface TPageWrapperProps extends TPropsWithChildrenAndClassName {
   scrollable?: boolean;
   limitWidth?: boolean;
   padded?: boolean;
+  xPadded?: boolean;
   vPadded?: boolean;
   layoutType?: TLayoutType;
 }
@@ -29,6 +30,7 @@ export function PageWrapper(props: TPageWrapperProps) {
     scrollable,
     limitWidth,
     padded,
+    xPadded,
     vPadded,
     layoutType = 'clippable',
     innerClassName,
@@ -91,8 +93,8 @@ export function PageWrapper(props: TPageWrapperProps) {
         isDev && '__PageWrapper', // DEBUG
         'flex flex-1 flex-col items-center',
         'overflow-hidden',
-        padded && 'mx-4', // commonXMarginTwStyle,
-        vPadded && 'my-4', // commonYMarginTwStyle,
+        (padded || xPadded) && 'mx-4',
+        (padded || vPadded) && 'my-4',
         className,
       )}
     >

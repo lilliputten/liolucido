@@ -204,6 +204,17 @@ export function EditTopicForm(props: TEditTopicFormProps) {
     [onCancel],
   );
 
+  // Delete Topic Modal
+  const handleDeleteTopic = React.useCallback(() => {
+    const hasTopic = topicsContext.topics.find(({ id }) => id === topic.id);
+    if (hasTopic) {
+      router.push(`${topicsContext.routePath}/delete?id=${topic.id}`);
+    } else {
+      toast.error('The requested topic does not exist.');
+      router.replace(topicsContext.routePath);
+    }
+  }, [router, topicsContext, topic]);
+
   const toolbarPortalRoot = toolbarPortalRef.current;
 
   return (
@@ -242,6 +253,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
             isPending={isPending}
             onCancel={handleCancel}
             onSubmit={handleFormSubmit}
+            handleDeleteTopic={handleDeleteTopic}
           />,
           toolbarPortalRoot,
         )}

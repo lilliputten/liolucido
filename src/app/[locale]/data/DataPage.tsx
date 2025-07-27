@@ -48,7 +48,7 @@ export async function DataPage({ params }: TDataPageProps) {
       innerClassName="w-full"
       scrollable
       limitWidth
-      padded
+      xPadded
     >
       <DemoList count={50} className="w-full" />
     </PageWrapper>

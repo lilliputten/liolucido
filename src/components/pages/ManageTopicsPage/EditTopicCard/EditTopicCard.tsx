@@ -42,11 +42,11 @@ function Title() {
       </Button>
       */}
       <CardTitle className="flex items-center">
-        <span>Edit topic</span>
+        <span>Manage Topic</span>
       </CardTitle>
       {/*
       <CardDescription className="col-span-2 col-start-1 text-balance">
-        Edit topic properties.
+        Manage Topic properties.
       </CardDescription>
       */}
     </div>
