@@ -21,6 +21,7 @@ export function Logo(props: TProps) {
       width={logoSize}
       height={logoSize}
       alt="Logo"
+      priority={false}
     />
   );
 }

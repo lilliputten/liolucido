@@ -25,15 +25,13 @@ export default function NotFoundScreen(props: TNotFoundScreenProps) {
     </>
   );
   return (
-    <>
-      <PageError
-        className={cn(
-          isDev && '__NotFoundScreen', // DEBUG
-          className,
-        )}
-        iconName={iconName}
-        title={titleContent}
-      />
-    </>
+    <PageError
+      className={cn(
+        isDev && '__NotFoundScreen', // DEBUG
+        className,
+      )}
+      iconName={iconName}
+      title={titleContent}
+    />
   );
 }

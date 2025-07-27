@@ -185,21 +185,21 @@ function TopicTableRow(props: TTopicTableRowProps) {
             variant="ghost"
             size="icon"
             className="size-9 shrink-0"
-            onClick={() => handleEditTopic(topic.id)}
-            aria-label="Edit"
-            title="Edit"
-          >
-            <Icons.edit className="size-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-9 shrink-0"
             onClick={() => handleEditQuestions(topic.id)}
             aria-label="Edit Questions"
             title="Edit Questions"
           >
             <Icons.questions className="size-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 shrink-0"
+            onClick={() => handleEditTopic(topic.id)}
+            aria-label="Edit"
+            title="Edit"
+          >
+            <Icons.edit className="size-4" />
           </Button>
           <Button
             variant="ghost"

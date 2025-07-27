@@ -208,7 +208,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
   const handleDeleteTopic = React.useCallback(() => {
     const hasTopic = topicsContext.topics.find(({ id }) => id === topic.id);
     if (hasTopic) {
-      router.push(`${topicsContext.routePath}/delete?id=${topic.id}`);
+      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}`);
     } else {
       toast.error('The requested topic does not exist.');
       router.replace(topicsContext.routePath);

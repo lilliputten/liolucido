@@ -5,16 +5,10 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
-import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Modal } from '@/components/ui/modal';
-import { isDev } from '@/constants';
+import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
 import { TTopic, TTopicId } from '@/features/topics/types';
-
-import { DeleteTopicForm } from './DeleteTopicForm';
 
 interface TDeleteTopicModalProps {
   topicId?: TTopicId;
@@ -34,7 +28,6 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
     [topicId, topics],
   );
   const [isPending, startUpdating] = React.useTransition();
-  const { isMobile } = useMediaQuery();
 
   const confirmDeleteTopic = React.useCallback(
     () =>
@@ -71,6 +64,22 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
   );
 
   return (
+    <ConfirmModal
+      dialogTitle="Confirm delete topic"
+      confirmButtonVariant="destructive"
+      confirmButtonText="Delete"
+      confirmButtonBusyText="Deleting"
+      cancelButtonText="Cancel"
+      handleConfirm={confirmDeleteTopic}
+      handleClose={hideModal}
+      isPending={isPending}
+      isVisible
+    >
+      Are you confirming deleting the topic "{deletingTopic?.name || 'Unknown topic'}"?
+    </ConfirmModal>
+  );
+  /*
+  return (
     <Modal
       isVisible
       hideModal={hideModal}
@@ -95,12 +104,13 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
       <div className="flex flex-col px-8 py-4">
         <DeleteTopicForm
           name={deletingTopic?.name || ''}
-          handleConfirm={confirmDeleteTopic}
           className="p-8"
+          handleConfirm={confirmDeleteTopic}
           handleClose={hideModal}
           isPending={isPending}
         />
       </div>
     </Modal>
   );
+  */
 }

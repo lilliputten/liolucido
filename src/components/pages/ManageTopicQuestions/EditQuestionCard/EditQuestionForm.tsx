@@ -28,10 +28,11 @@ interface TEditQuestionFormProps {
   className?: string;
   onCancel?: () => void;
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
+  handleDeleteQuestion: () => void;
 }
 
 export function EditQuestionForm(props: TEditQuestionFormProps) {
-  const { question, className, onCancel, toolbarPortalRef } = props;
+  const { question, className, onCancel, handleDeleteQuestion, toolbarPortalRef } = props;
   const { setQuestions } = useQuestionsContext();
   const [isPending, startTransition] = React.useTransition();
 
@@ -187,6 +188,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
             isPending={isPending}
             onCancel={handleCancel}
             onSubmit={handleFormSubmit}
+            handleDeleteQuestion={handleDeleteQuestion}
           />,
           toolbarPortalRoot,
         )}

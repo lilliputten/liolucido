@@ -102,7 +102,7 @@ export function SettingsFormActions(props: TProps) {
         isVisible={isReloadConfirmModalVisible}
         isPending={isReLoading}
       >
-        You are confirming the overwriting of the changed data?
+        Are you confirming the overwriting of the changed data?
       </ConfirmModal>
     </>
   );

@@ -17,7 +17,8 @@ export function QuestionsContextProvider({
   children,
   questions: initialQuestions = [],
   routePath,
-  topicRoutePath,
+  topicRootRoutePath,
+  topicsListRoutePath,
   topicId,
   topicName,
 }: QuestionsContextProviderProps) {
@@ -28,11 +29,12 @@ export function QuestionsContextProvider({
       questions,
       setQuestions,
       routePath: routePath as TRoutePath,
-      topicRoutePath: topicRoutePath as TRoutePath,
+      topicsListRoutePath: topicsListRoutePath as TRoutePath,
+      topicRootRoutePath: topicRootRoutePath as TRoutePath,
       topicId,
       topicName,
     }),
-    [questions, routePath, topicRoutePath, topicId, topicName],
+    [questions, routePath, topicRootRoutePath, topicsListRoutePath, topicId, topicName],
   );
 
   return <QuestionsContext.Provider value={questionsContext}>{children}</QuestionsContext.Provider>;
