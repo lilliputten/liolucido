@@ -10,7 +10,6 @@ import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { getTopicQuestions } from '@/features/questions/actions/getTopicQuestions';
 import { TQuestion } from '@/features/questions/types';
 import { getTopic } from '@/features/topics/actions';
-import { TTopicId } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
@@ -42,8 +41,7 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
     params,
   } = props;
   const resolvedParams = await params;
-  const { locale, scope, topicId: id } = resolvedParams;
-  const topicId = id ? (parseInt(id) as TTopicId) : undefined;
+  const { locale, scope, topicId } = resolvedParams;
   const topicRoutePath = topicsRoutes[scope];
   const routePath = `${topicRoutePath}/${topicId}/questions` as TRoutePath;
 

@@ -21,8 +21,7 @@ export default function SelectTopicLanguageModalParallelRoute({
   searchParams,
 }: SelectLanguagePageProps) {
   const { langCode, langName, langCustom } = React.use(searchParams);
-  const { topicId: tipicIdRaw } = React.use(params);
-  const topicId = parseInt(tipicIdRaw);
+  const { topicId } = React.use(params);
   const { topics } = useTopicsContext();
   const topic = topics.find((topic) => topic.id === topicId);
   if (!topic) {
