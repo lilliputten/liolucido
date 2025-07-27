@@ -2,14 +2,17 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 
+import { topicQuestionDeletedEventId } from '../DeleteQuestionModal';
 import { EditQuestionForm } from './EditQuestionForm';
 
 interface TEditQuestionCardProps extends TPropsWithClassName {
@@ -19,21 +22,6 @@ type TChildProps = {
   goBack: () => void;
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
 };
-
-function Title() {
-  return (
-    <div
-      className={cn(
-        isDev && '__EditQuestionCard_Title', // DEBUG
-        'flex flex-1 items-center gap-2',
-      )}
-    >
-      <CardTitle className="flex items-center">
-        <span>Edit question</span>
-      </CardTitle>
-    </div>
-  );
-}
 
 function Toolbar({ toolbarPortalRef }: TChildProps) {
   return (
@@ -56,32 +44,27 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
   );
 }
 
-function Header(props: TChildProps) {
-  return (
-    <CardHeader
-      className={cn(
-        isDev && '__EditQuestionCard_Header', // DEBUG
-        'item-start flex flex-row flex-wrap',
-      )}
-    >
-      <Title />
-      <Toolbar {...props} />
-    </CardHeader>
-  );
-}
+type TMemo = {
+  deleted?: boolean;
+};
 
 export function EditQuestionCard(props: TEditQuestionCardProps) {
+  const memo = React.useMemo<TMemo>(() => ({}), []);
   const { className, questionId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { questions, routePath } = useQuestionsContext();
+  const questionsContext = useQuestionsContext();
+  const { questions, routePath } = questionsContext;
+
   const question: TQuestion | undefined = React.useMemo(
     () => questions.find(({ id }) => id === questionId),
     [questions, questionId],
   );
-  if (!questionId || !question) {
+
+  if (!questionId || (!question && !memo.deleted)) {
     throw new Error('No such question exists');
   }
+
   const goBack = React.useCallback(() => {
     if (window.history.length) {
       router.back();
@@ -89,6 +72,52 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
       router.replace(routePath);
     }
   }, [router, routePath]);
+
+  // Delete Question Modal
+  const handleDeleteQuestion = React.useCallback(() => {
+    const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
+    debugger;
+    if (hasQuestion) {
+      router.push(`${questionsContext.routePath}/delete?questionId=${questionId}`);
+    } else {
+      toast.error('The requested question does not exist.');
+      router.replace(questionsContext.routePath);
+    }
+  }, [router, questionsContext, questionId]);
+
+  // Watch if the question has been deleted
+  React.useEffect(() => {
+    const handleQuestionDeleted = (event: CustomEvent<TQuestion>) => {
+      const { id } = event.detail;
+      // Make sure the event is for this topic
+      if (questionId === id) {
+        const routePath = questionsContext.routePath;
+        /* console.log('[EditQuestionCard:handleQuestionDeleted]', {
+         *   routePath,
+         *   topicQuestionDeletedEventId,
+         *   questionsContext,
+         *   memo,
+         * });
+         */
+        memo.deleted = true;
+        // Move out to the questions list (or just go back with a router?)
+        router.replace(routePath);
+      }
+    };
+    window.addEventListener(topicQuestionDeletedEventId, handleQuestionDeleted as EventListener);
+    return () => {
+      window.removeEventListener(
+        topicQuestionDeletedEventId,
+        handleQuestionDeleted as EventListener,
+      );
+    };
+  }, [memo, questionId, router, questionsContext]);
+
+  if (memo.deleted) {
+    // TODO: Show 'Question has been removed' info?
+    return <PageError iconName="trash" title="The question has been removed" />;
+  }
+
   return (
     <Card
       className={cn(
@@ -98,18 +127,38 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
         className,
       )}
     >
-      <Header goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
+      <CardHeader
+        className={cn(
+          isDev && '__EditQuestionCard_Header', // DEBUG
+          'item-start flex flex-row flex-wrap',
+        )}
+      >
+        <div
+          className={cn(
+            isDev && '__EditQuestionCard_Title', // DEBUG
+            'flex flex-1 items-center gap-2',
+          )}
+        >
+          <CardTitle className="flex items-center">
+            <span>Edit question</span>
+          </CardTitle>
+        </div>
+        <Toolbar {...props} goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
+      </CardHeader>
       <CardContent
         className={cn(
           isDev && '__EditQuestionCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <EditQuestionForm
-          question={question}
-          onCancel={goBack}
-          toolbarPortalRef={toolbarPortalRef}
-        />
+        {question && (
+          <EditQuestionForm
+            question={question}
+            onCancel={goBack}
+            toolbarPortalRef={toolbarPortalRef}
+            handleDeleteQuestion={handleDeleteQuestion}
+          />
+        )}
       </CardContent>
     </Card>
   );

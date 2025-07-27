@@ -26,14 +26,14 @@ export function ManageTopicQuestionsListWrapper(props: TQuestionsListProps) {
   const hasQuestions = !!questions.length;
 
   const router = useRouter();
-  const { topicRoutePath } = useQuestionsContext();
+  const { topicsListRoutePath } = useQuestionsContext();
   const goBack = React.useCallback(() => {
     if (window.history.length) {
       router.back();
     } else {
-      router.replace(topicRoutePath);
+      router.replace(topicsListRoutePath);
     }
-  }, [router, topicRoutePath]);
+  }, [router, topicsListRoutePath]);
 
   return (
     <div

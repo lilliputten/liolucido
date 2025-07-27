@@ -34,8 +34,9 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   const openDeleteQuestionModal = React.useCallback(
     (questionId: TQuestionId) => {
       const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
+      debugger;
       if (hasQuestion) {
-        router.push(`${questionsContext.routePath}/delete?id=${questionId}`);
+        router.push(`${questionsContext.routePath}/delete?questionId=${questionId}`);
       } else {
         toast.error('The requested question does not exist.');
         router.replace(questionsContext.routePath);

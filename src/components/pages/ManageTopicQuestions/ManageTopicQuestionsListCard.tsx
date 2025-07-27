@@ -50,14 +50,14 @@ function Title() {
 function Toolbar(props: TChildProps) {
   const router = useRouter();
   const { handleAddQuestion } = props;
-  const { topicRoutePath } = useQuestionsContext();
+  const { topicsListRoutePath } = useQuestionsContext();
   const goBack = React.useCallback(() => {
     if (window.history.length) {
       router.back();
     } else {
-      router.replace(topicRoutePath);
+      router.replace(topicsListRoutePath);
     }
-  }, [router, topicRoutePath]);
+  }, [router, topicsListRoutePath]);
   return (
     <div
       className={cn(

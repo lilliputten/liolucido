@@ -42,8 +42,9 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
   } = props;
   const resolvedParams = await params;
   const { locale, scope, topicId } = resolvedParams;
-  const topicRoutePath = topicsRoutes[scope];
-  const routePath = `${topicRoutePath}/${topicId}/questions` as TRoutePath;
+  const topicsListRoutePath = topicsRoutes[scope];
+  const topicRootRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
+  const routePath = `${topicsListRoutePath}/${topicId}/questions` as TRoutePath;
 
   if (!topicId) {
     return <PageError error={'Invalid topic ID.'} />;
@@ -72,7 +73,8 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
     <QuestionsContextProvider
       questions={questions}
       routePath={routePath}
-      topicRoutePath={topicRoutePath}
+      topicRootRoutePath={topicRootRoutePath}
+      topicsListRoutePath={topicsListRoutePath}
       topicId={topicId}
       topicName={topic.name}
     >

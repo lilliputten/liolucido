@@ -14,5 +14,6 @@ export default async function EditManageQuestionPage({ params }: EditManageQuest
     return <PageError error={'Invalid question ID.'} />;
   }
 
+  debugger;
   return <EditQuestionCard questionId={questionId} />;
 }

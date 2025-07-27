@@ -35,9 +35,10 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
     (topicId: TTopicId) => {
       const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
       if (hasTopic) {
-        router.push(`${topicsContext.routePath}/delete?id=${topicId}`);
+        router.push(`${topicsContext.routePath}/delete?topicId=${topicId}`);
       } else {
         toast.error('The requested topic does not exist.');
+        debugger;
         router.replace(topicsContext.routePath);
       }
     },

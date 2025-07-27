@@ -1,11 +1,11 @@
-import { ManageTopicsPage } from '@/components/pages/ManageTopicsPage/ManageTopicsPage';
+import { ManageTopicQuestionsPage } from '@/components/pages/ManageTopicQuestions';
 
 interface DeleteTopicPageProps {
-  searchParams: Promise<{ id: string }>;
+  searchParams: Promise<{ questionId: string }>;
 }
 
 export default async function DeleteTopicPage({ searchParams }: DeleteTopicPageProps) {
-  const { id } = await searchParams;
+  const { questionId } = await searchParams;
 
-  return <ManageTopicsPage deleteTopicId={id} />;
+  return <ManageTopicQuestionsPage deleteQuestionId={questionId} />;
 }
