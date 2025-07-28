@@ -18,10 +18,16 @@ interface TQuestionsListProps {
   openAddQuestionModal: () => void;
   openDeleteQuestionModal: (questionId: TQuestionId) => void;
   openEditQuestionCard: (questionId: TQuestionId) => void;
+  openEditAnswersPage: (questionId: TQuestionId) => void;
 }
 
 export function ManageTopicQuestionsListWrapper(props: TQuestionsListProps) {
-  const { openAddQuestionModal, openDeleteQuestionModal, openEditQuestionCard } = props;
+  const {
+    openAddQuestionModal,
+    openDeleteQuestionModal,
+    openEditQuestionCard,
+    openEditAnswersPage,
+  } = props;
   const { questions } = useQuestionsContext();
 
   const hasQuestions = !!questions.length;
@@ -56,6 +62,7 @@ export function ManageTopicQuestionsListWrapper(props: TQuestionsListProps) {
           handleDeleteQuestion={openDeleteQuestionModal}
           handleEditQuestion={openEditQuestionCard}
           handleAddQuestion={openAddQuestionModal}
+          handleEditAnswers={openEditAnswersPage}
         />
       ) : (
         <PageEmpty

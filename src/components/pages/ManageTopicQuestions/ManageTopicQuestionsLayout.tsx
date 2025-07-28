@@ -34,12 +34,7 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
   const routePath = `${topicsListRoutePath}/${topicId}/questions` as TRoutePath;
 
   if (!topicId) {
-    return <PageError error={'Invalid topic ID.'} />;
-  }
-
-  const topic = await getTopic(topicId);
-  if (!topic) {
-    return <PageError error={'Not found a topic for the question.'} />;
+    return <PageError error={'Topic ID not specified.'} />;
   }
 
   const user = await getCurrentUser();
@@ -63,7 +58,6 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
       topicRootRoutePath={topicRootRoutePath}
       topicsListRoutePath={topicsListRoutePath}
       topicId={topicId}
-      topicName={topic.name}
     >
       {children}
       {addQuestionModal}

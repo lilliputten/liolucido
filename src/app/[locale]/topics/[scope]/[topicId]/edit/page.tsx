@@ -22,7 +22,7 @@ export default async function EditManageTopicPage({ params }: TAwaitedProps) {
   const { topicId } = await params;
 
   if (!topicId) {
-    return <PageError error={'Invalid topic ID.'} />;
+    return <PageError error={'Topic ID not specified.'} />;
   }
 
   return (

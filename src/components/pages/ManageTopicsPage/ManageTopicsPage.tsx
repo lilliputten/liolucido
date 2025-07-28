@@ -15,6 +15,7 @@ interface ManageTopicsPageProps extends TAwaitedProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
   editTopicId?: TTopicId;
+  editQuestionsTopicId?: TTopicId;
   from?: string;
 }
 
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 }
 
 export async function ManageTopicsPage(props: ManageTopicsPageProps) {
-  const { showAddModal, deleteTopicId, editTopicId, from, params } = props;
+  const { showAddModal, deleteTopicId, editTopicId, editQuestionsTopicId, from, params } = props;
   const resolvedParams = await params;
   const { locale, scope } = resolvedParams;
   const namespace = topicsNamespaces[scope];
@@ -46,6 +47,7 @@ export async function ManageTopicsPage(props: ManageTopicsPageProps) {
         showAddModal={showAddModal}
         deleteTopicId={deleteTopicId}
         editTopicId={editTopicId}
+        editQuestionsTopicId={editQuestionsTopicId}
         from={from}
       />
     </ManageTopicsPageWrapper>

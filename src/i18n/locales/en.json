@@ -1,7 +1,11 @@
 {
+  "ManageTopicQuestionAnswers": {
+    "title": "Manage Answers",
+    "description": "Answers for the choosen question"
+  },
   "ManageTopicQuestions": {
     "title": "Manage Questions",
-    "description": "Questions for the topic"
+    "description": "Questions for the choosen topic"
   },
   "MyTopicsPage": {
     "title": "My Topics",
