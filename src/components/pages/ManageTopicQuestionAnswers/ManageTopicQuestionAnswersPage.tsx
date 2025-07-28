@@ -10,7 +10,11 @@ import { ManageTopicsPageWrapper } from '../ManageTopicsPage';
 import { PageHeader } from '../shared';
 import { ManageTopicQuestionAnswersPageModalsWrapper } from './ManageTopicQuestionAnswersPageModalsWrapper';
 
-type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId: string }>;
+type TAwaitedProps = TAwaitedLocaleProps<{
+  scope: TTopicsManageScopeId;
+  topicId: string;
+  questionId: string;
+}>;
 
 interface ManageTopicQuestionAnswersPageProps extends TAwaitedProps {
   showAddModal?: boolean;

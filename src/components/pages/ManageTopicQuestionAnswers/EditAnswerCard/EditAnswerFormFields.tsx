@@ -66,7 +66,7 @@ export function EditAnswerFormFields(props: TEditAnswerFormFieldsProps) {
                   {...field}
                 />
               </FormControl>
-              <FormHint>A answer text.</FormHint>
+              <FormHint>An answer text.</FormHint>
               <FormMessage />
             </FormItem>
           )}

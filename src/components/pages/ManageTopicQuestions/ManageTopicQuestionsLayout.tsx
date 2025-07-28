@@ -8,7 +8,6 @@ import { QuestionsContextProvider } from '@/contexts/QuestionsContext';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { getTopicQuestions } from '@/features/questions/actions/getTopicQuestions';
 import { TQuestion } from '@/features/questions/types';
-import { getTopic } from '@/features/topics/actions';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 

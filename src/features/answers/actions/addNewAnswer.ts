@@ -14,33 +14,33 @@ export async function addNewAnswer(newAnswer: TNewAnswer) {
   }
   const user = await getCurrentUser();
   const userId = user?.id;
-  if (!userId) {
-    throw new Error('Undefined user');
-  }
-  if (!newAnswer.text) {
-    throw new Error('Not specified answer text');
-  }
-  if (!newAnswer.questionId) {
-    throw new Error('Not specified answers owner question');
-  }
-  const question = await prisma.question.findUnique({
-    where: { id: newAnswer.questionId },
-  });
-  if (!question) {
-    throw new Error('Not found owner question for the answer');
-  }
-  const topic = await prisma.topic.findUnique({
-    where: { id: question.topicId },
-  });
-  if (!topic) {
-    throw new Error('Not found owner topic for the deleting question');
-  }
-  // Check if the current user is allowed to delete the topic?
-  if (userId !== topic?.userId && user.role !== 'ADMIN') {
-    throw new Error('Current user not allowed to delete the question');
-  }
-
   try {
+    if (!userId) {
+      throw new Error('Undefined user');
+    }
+    if (!newAnswer.text) {
+      throw new Error('Not specified answer text');
+    }
+    if (!newAnswer.questionId) {
+      throw new Error('Not specified answers owner question');
+    }
+    const question = await prisma.question.findUnique({
+      where: { id: newAnswer.questionId },
+    });
+    if (!question) {
+      throw new Error('Not found owner question for the answer');
+    }
+    const topic = await prisma.topic.findUnique({
+      where: { id: question.topicId },
+    });
+    if (!topic) {
+      throw new Error('Not found owner topic for the deleting question');
+    }
+    // Check if the current user is allowed to delete the topic?
+    if (userId !== topic?.userId && user.role !== 'ADMIN') {
+      throw new Error('Current user not allowed to delete the question');
+    }
+
     const data = { ...newAnswer };
     const addedAnswer = await prisma.answer.create({
       data,
