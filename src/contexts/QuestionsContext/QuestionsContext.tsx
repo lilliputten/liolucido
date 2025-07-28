@@ -20,7 +20,6 @@ export function QuestionsContextProvider({
   topicRootRoutePath,
   topicsListRoutePath,
   topicId,
-  topicName,
 }: QuestionsContextProviderProps) {
   const [questions, setQuestions] = React.useState<TQuestion[]>(initialQuestions);
 
@@ -32,9 +31,8 @@ export function QuestionsContextProvider({
       topicsListRoutePath: topicsListRoutePath as TRoutePath,
       topicRootRoutePath: topicRootRoutePath as TRoutePath,
       topicId,
-      topicName,
     }),
-    [questions, routePath, topicRootRoutePath, topicsListRoutePath, topicId, topicName],
+    [questions, routePath, topicRootRoutePath, topicsListRoutePath, topicId],
   );
 
   return <QuestionsContext.Provider value={questionsContext}>{children}</QuestionsContext.Provider>;

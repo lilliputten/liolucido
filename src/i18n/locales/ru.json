@@ -1,7 +1,11 @@
 {
+  "ManageTopicQuestionAnswers": {
+    "title": "Управление ответами",
+    "description": "Ответы для выбранного вопроса"
+  },
   "ManageTopicQuestions": {
-    "title": "Управлять вопросами",
-    "description": "Вопросы в теме"
+    "title": "Управление вопросами",
+    "description": "Вопросы для выбранной темы"
   },
   "MyTopicsPage": {
     "title": "Мои темы",

@@ -9,5 +9,4 @@ export interface QuestionsContextData {
   topicRootRoutePath: TRoutePath;
   topicsListRoutePath: TRoutePath;
   topicId: TTopicId;
-  topicName: string;
 }

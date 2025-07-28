@@ -13,12 +13,13 @@ interface TTopicsListProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
   editTopicId?: TTopicId;
+  editQuestionsTopicId?: TTopicId;
   from?: string;
 }
 
 export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
-  const { showAddModal, deleteTopicId, editTopicId, from } = props;
+  const { showAddModal, deleteTopicId, editTopicId, editQuestionsTopicId, from } = props;
   const topicsContext = useTopicsContext();
 
   // Add Topic Modal
@@ -89,10 +90,11 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
     [router, topicsContext],
   );
   React.useEffect(() => {
-    if (editTopicId) {
-      openEditQuestionsPage(editTopicId);
+    // Use another id (`editQuestionsTopicId`)?
+    if (editQuestionsTopicId) {
+      openEditQuestionsPage(editQuestionsTopicId);
     }
-  }, [editTopicId, openEditQuestionsPage]);
+  }, [editQuestionsTopicId, openEditQuestionsPage]);
 
   return (
     <ManageTopicsListWrapper

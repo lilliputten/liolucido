@@ -12,23 +12,24 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { TNewQuestion, TQuestion } from '@/features/questions/types';
-import { TTopicId } from '@/features/topics/types';
+import { TAnswer, TNewAnswer } from '@/features/answers/types';
+import { TQuestionId } from '@/features/questions/types';
 
 import { maxTextLength, minTextLength } from '../constants';
 
-export type TAddQuestionParams = TNewQuestion;
+export type TAddAnswerParams = TNewAnswer;
 
-export interface TAddQuestionFormProps {
-  handleAddQuestion: (p: TAddQuestionParams) => Promise<unknown>;
+export interface TAddAnswerFormProps {
+  handleAddAnswer: (p: TAddAnswerParams) => Promise<unknown>;
   handleClose?: () => void;
   className?: string;
   isPending?: boolean;
-  topicId: TTopicId;
+  // topicId: TTopicId;
+  questionId: TQuestionId;
 }
 
 export interface TFormData {
-  text: TQuestion['text'];
+  text: TAnswer['text'];
 }
 
 function FormHint({ children }: { children?: React.ReactNode }) {
@@ -38,8 +39,8 @@ function FormHint({ children }: { children?: React.ReactNode }) {
   return <div className="relative text-sm opacity-20">{children}</div>;
 }
 
-export function AddQuestionForm(props: TAddQuestionFormProps) {
-  const { className, handleAddQuestion, handleClose, isPending, topicId } = props;
+export function AddAnswerForm(props: TAddAnswerFormProps) {
+  const { className, handleAddAnswer, handleClose, isPending, questionId } = props;
 
   const formSchema = React.useMemo(
     () =>
@@ -74,8 +75,8 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
 
   const onSubmit = handleSubmit((formData) => {
     const { text } = formData;
-    const newQuestion: TNewQuestion = { text, topicId };
-    handleAddQuestion(newQuestion);
+    const newAnswer: TNewAnswer = { text, questionId };
+    handleAddAnswer(newAnswer);
   });
 
   const onClose = (ev: React.MouseEvent) => {
@@ -95,7 +96,7 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
       <form
         onSubmit={onSubmit}
         className={cn(
-          isDev && '__AddQuestionForm', // DEBUG
+          isDev && '__AddAnswerForm', // DEBUG
           'flex w-full flex-col gap-4',
           className,
         )}
@@ -106,7 +107,7 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-4">
               <Label className="m-0" htmlFor={textKey}>
-                Question Text
+                Answer Text
               </Label>
               <FormControl>
                 <Textarea
@@ -119,7 +120,7 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
                 />
               </FormControl>
               <FormHint>
-                You'll be able to edit it later, as well as other question poroperties.
+                You'll be able to edit it later, as well as other answer poroperties.
               </FormHint>
               <FormMessage />
             </FormItem>

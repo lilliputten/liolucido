@@ -3,25 +3,24 @@ import { getTranslations } from 'next-intl/server';
 import { constructMetadata } from '@/lib/utils';
 import { PageError } from '@/components/shared/PageError';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
-import { TQuestionId } from '@/features/questions/types';
+import { TAnswerId } from '@/features/answers/types';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 import { ManageTopicsPageWrapper } from '../ManageTopicsPage';
 import { PageHeader } from '../shared';
-import { ManageTopicQuestionsPageModalsWrapper } from './ManageTopicQuestionsPageModalsWrapper';
+import { ManageTopicQuestionAnswersPageModalsWrapper } from './ManageTopicQuestionAnswersPageModalsWrapper';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId: string }>;
 
-interface ManageTopicQuestionsPageProps extends TAwaitedProps {
+interface ManageTopicQuestionAnswersPageProps extends TAwaitedProps {
   showAddModal?: boolean;
-  deleteQuestionId?: TQuestionId;
-  editQuestionId?: TQuestionId;
-  editAnswersQuestionId?: TQuestionId;
+  deleteAnswerId?: TAnswerId;
+  editAnswerId?: TAnswerId;
 }
 
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'ManageTopicQuestions' });
+  const t = await getTranslations({ locale, namespace: 'ManageTopicQuestionAnswers' });
   const title = t('title');
   const description = t('description');
   return constructMetadata({
@@ -31,8 +30,8 @@ export async function generateMetadata({ params }: TAwaitedProps) {
   });
 }
 
-export async function ManageTopicQuestionsPage(props: ManageTopicQuestionsPageProps) {
-  const { showAddModal, deleteQuestionId, editQuestionId, editAnswersQuestionId, params } = props;
+export async function ManageTopicQuestionAnswersPage(props: ManageTopicQuestionAnswersPageProps) {
+  const { showAddModal, deleteAnswerId, editAnswerId, params } = props;
 
   const { locale, topicId } = await params;
 
@@ -40,7 +39,7 @@ export async function ManageTopicQuestionsPage(props: ManageTopicQuestionsPagePr
     return <PageError error={'No topic specified.'} />;
   }
 
-  const t = await getTranslations({ locale, namespace: 'ManageTopicQuestions' });
+  const t = await getTranslations({ locale, namespace: 'ManageTopicQuestionAnswers' });
 
   return (
     <ManageTopicsPageWrapper>
@@ -48,11 +47,10 @@ export async function ManageTopicQuestionsPage(props: ManageTopicQuestionsPagePr
         heading={t('title')}
         // text={t('description')}
       />
-      <ManageTopicQuestionsPageModalsWrapper
+      <ManageTopicQuestionAnswersPageModalsWrapper
         showAddModal={showAddModal}
-        deleteQuestionId={deleteQuestionId}
-        editQuestionId={editQuestionId}
-        editAnswersQuestionId={editAnswersQuestionId}
+        deleteAnswerId={deleteAnswerId}
+        editAnswerId={editAnswerId}
         topicId={topicId}
       />
     </ManageTopicsPageWrapper>
