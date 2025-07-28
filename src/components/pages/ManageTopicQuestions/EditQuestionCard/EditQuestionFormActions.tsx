@@ -29,7 +29,13 @@ export function EditQuestionFormActions(props: TProps) {
   return (
     <>
       {!isDirty && (
-        <Button variant="ghost" size="sm" onClick={onCancel} className="gap-2" disabled={isDirty}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onCancel}
+          className="gap-2"
+          disabled={isDirty || !onCancel}
+        >
           <Icons.arrowLeft className="size-4" />
           <span>Back</span>
         </Button>

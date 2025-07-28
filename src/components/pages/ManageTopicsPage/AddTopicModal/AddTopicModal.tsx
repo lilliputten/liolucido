@@ -22,6 +22,7 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
   const hideModal = React.useCallback(() => {
     setVisible(false);
     router.back();
+    // TODO: Add no-history failback
   }, [router]);
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();

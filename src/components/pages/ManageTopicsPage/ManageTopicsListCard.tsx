@@ -29,7 +29,7 @@ const saveScrollHash = getRandomHashString();
 
 interface TManageTopicsListCardProps extends TPropsWithClassName {
   topics: TTopic[];
-  handleDeleteTopic: (topicId: TTopicId) => void;
+  handleDeleteTopic: (topicId: TTopicId, from: string) => void;
   handleEditTopic: (topicId: TTopicId) => void;
   handleEditQuestions: (topicId: TTopicId) => void;
   handleAddTopic: () => void;
@@ -205,7 +205,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             variant="ghost"
             size="icon"
             className="size-9 shrink-0"
-            onClick={() => handleDeleteTopic(topic.id)}
+            onClick={() => handleDeleteTopic(topic.id, 'ManageTopicsListCard')}
             aria-label="Delete"
             title="Delete"
           >

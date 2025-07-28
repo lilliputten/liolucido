@@ -12,7 +12,7 @@ import { ManageTopicsListCard } from './ManageTopicsListCard';
 
 interface TTopicsListProps {
   openAddTopicModal: () => void;
-  openDeleteTopicModal: (topicId: TTopicId) => void;
+  openDeleteTopicModal: (topicId: TTopicId, from: string) => void;
   openEditTopicCard: (topicId: TTopicId) => void;
   openEditQuestionsPage: (topicId: TTopicId) => void;
 }

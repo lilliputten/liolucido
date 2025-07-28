@@ -44,39 +44,39 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
   );
 }
 
-type TMemo = {
-  deleted?: boolean;
-};
-
 export function EditQuestionCard(props: TEditQuestionCardProps) {
-  const memo = React.useMemo<TMemo>(() => ({}), []);
   const { className, questionId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
+  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
+  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
+  const [hasDeleted, setHasDeleted] = React.useState(false);
   const router = useRouter();
   const questionsContext = useQuestionsContext();
-  const { questions, routePath } = questionsContext;
+  const { questions } = questionsContext;
 
   const question: TQuestion | undefined = React.useMemo(
     () => questions.find(({ id }) => id === questionId),
     [questions, questionId],
   );
 
-  if (!questionId || (!question && !memo.deleted)) {
+  if (!questionId || (!question && !hasDeleted)) {
     throw new Error('No such question exists');
   }
 
   const goBack = React.useCallback(() => {
-    if (window.history.length) {
-      router.back();
-    } else {
-      router.replace(routePath);
-    }
-  }, [router, routePath]);
+    const { href } = window.location;
+    router.back();
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        router.push(questionsContext.routePath);
+      }
+    }, 200);
+  }, [router, questionsContext]);
 
   // Delete Question Modal
   const handleDeleteQuestion = React.useCallback(() => {
     const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
-    debugger;
     if (hasQuestion) {
       router.push(`${questionsContext.routePath}/delete?questionId=${questionId}`);
     } else {
@@ -91,17 +91,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
       const { id } = event.detail;
       // Make sure the event is for this topic
       if (questionId === id) {
-        const routePath = questionsContext.routePath;
-        /* console.log('[EditQuestionCard:handleQuestionDeleted]', {
-         *   routePath,
-         *   topicQuestionDeletedEventId,
-         *   questionsContext,
-         *   memo,
-         * });
-         */
-        memo.deleted = true;
-        // Move out to the questions list (or just go back with a router?)
-        router.replace(routePath);
+        setHasDeleted(true);
       }
     };
     window.addEventListener(topicQuestionDeletedEventId, handleQuestionDeleted as EventListener);
@@ -111,9 +101,23 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
         handleQuestionDeleted as EventListener,
       );
     };
-  }, [memo, questionId, router, questionsContext]);
+  }, [questionId, router, questionsContext]);
 
-  if (memo.deleted) {
+  // Effect:hasDeleted
+  React.useEffect(() => {
+    if (hasDeleted) {
+      const { href } = window.location;
+      router.back();
+      setTimeout(() => {
+        // If still on the same page after trying to go back, fallback
+        if (document.visibilityState === 'visible' && href === window.location.href) {
+          router.push(questionsContext.routePath);
+        }
+      }, 200);
+    }
+  }, [hasDeleted, questionsContext, router]);
+
+  if (hasDeleted) {
     // TODO: Show 'Question has been removed' info?
     return <PageError iconName="trash" title="The question has been removed" />;
   }
@@ -122,7 +126,6 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
     <Card
       className={cn(
         isDev && '__EditQuestionCard', // DEBUG
-        // 'xl:col-span-2', // ???
         'relative flex flex-1 flex-col overflow-hidden',
         className,
       )}
@@ -155,7 +158,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
           <EditQuestionForm
             question={question}
             onCancel={goBack}
-            toolbarPortalRef={toolbarPortalRef}
+            toolbarPortalRoot={toolbarPortalRoot}
             handleDeleteQuestion={handleDeleteQuestion}
           />
         )}

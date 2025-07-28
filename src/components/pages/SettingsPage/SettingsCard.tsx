@@ -54,6 +54,8 @@ function Header(props: TChildProps) {
 export function SettingsCard(props: TSettingsCardProps) {
   const { className, userId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
+  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
+  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
   const { settings, ready } = useSettingsContext();
   if (!ready) {
     return <SettingsLoading />;
@@ -74,7 +76,7 @@ export function SettingsCard(props: TSettingsCardProps) {
         )}
       >
         <ScrollArea saveScrollKey="SettingsCard" saveScrollHash={saveScrollHash}>
-          <SettingsForm settings={settings} userId={userId} toolbarPortalRef={toolbarPortalRef} />
+          <SettingsForm settings={settings} userId={userId} toolbarPortalRoot={toolbarPortalRoot} />
         </ScrollArea>
       </CardContent>
     </Card>

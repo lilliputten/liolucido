@@ -14,6 +14,7 @@ import { topicQuestionDeletedEventId } from './constants';
 
 interface TDeleteQuestionModalProps {
   questionId?: TQuestionId;
+  from?: string;
 }
 
 export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
@@ -22,13 +23,18 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
   const [isVisible, setIsVisible] = React.useState(true);
   const questionsContext = useQuestionsContext();
   const { questions } = questionsContext;
-  // const hideModal = React.useCallback(() => router.back(), [router]);
   const hideModal = React.useCallback(() => {
     setIsVisible(false);
+    const { href } = window.location;
     router.back();
-    // const routePath = questionsContext.routePath;
-    // router.replace(routePath);
-  }, [router]);
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        // TODO: To use `from` parameter?
+        router.push(questionsContext.routePath);
+      }
+    }, 200);
+  }, [router, questionsContext]);
   if (!questionId) {
     throw new Error('No question id passed for deletion');
   }
@@ -50,11 +56,6 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
             .then(() => {
               // Hide the modal
               hideModal();
-              /* console.log('[DeleteQuestionModal:handleQuestionDeleted]', {
-               *   topicQuestionDeletedEventId,
-               *   questionsContext,
-               * });
-               */
               // Update data
               questionsContext.setQuestions((questions) =>
                 questions.filter(({ id }) => id != deletingQuestion.id),
@@ -87,18 +88,6 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
   );
 
   const questionName = deletingQuestion && limitString(deletingQuestion.text, 30);
-  React.useEffect(() => {
-    console.log('[DeleteQuestionModal:DEBUG]', {
-      isVisible,
-      questionName,
-      deletingQuestion,
-    });
-  }, [
-    // DEBUG
-    isVisible,
-    questionName,
-    deletingQuestion,
-  ]);
 
   if (!questionName) {
     return null;
