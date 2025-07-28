@@ -14,7 +14,8 @@ export type TTopicId = TTopic['id'];
  * export type TTopicWithoutIds = Omit<TTopic, 'id' | 'userId'>;
  */
 
-export type TNewTopic = Partial<Topic> & Pick<Topic, 'name'>; // TTopicWithoutIds; // { name: TTopic['name']; parentId: TTopic['parentId'] };
+export type TOptionalTopic = Partial<TTopic>;
+export type TNewTopic = Partial<Topic>; // & Pick<Topic, 'name'>; // TTopicWithoutIds; // { name: TTopic['name']; parentId: TTopic['parentId'] };
 
 /*
  * export type TNewOrExistingTopic = TNewTopic & { id?: TTopic['id'] };
