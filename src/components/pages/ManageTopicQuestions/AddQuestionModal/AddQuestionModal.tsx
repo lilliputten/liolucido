@@ -29,6 +29,15 @@ export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
   const questionsContext = useQuestionsContext();
   const { topicId } = questionsContext;
 
+  // Change a browser title
+  React.useEffect(() => {
+    const originalTitle = document.title;
+    document.title = 'Add a Question';
+    return () => {
+      document.title = originalTitle;
+    };
+  }, []);
+
   const handleAddQuestion = React.useCallback(
     (newQuestion: TNewQuestion) => {
       return new Promise((resolve, reject) => {

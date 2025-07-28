@@ -7,7 +7,7 @@ import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import {
   Table,
@@ -156,6 +156,11 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
   const topicsContext = useTopicsContext();
   const questionsContext = useQuestionsContext();
 
+  const topic = React.useMemo(() => {
+    const { topicId } = questionsContext;
+    return topicsContext.topics.find(({ id }) => id === topicId);
+  }, [questionsContext, topicsContext]);
+
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
     const { topicId } = questionsContext;
@@ -170,11 +175,15 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     }
   }, [router, topicsContext, questionsContext]);
 
+  if (!topic) {
+    return null;
+  }
+
   return (
     <Card
       className={cn(
         isDev && '__ManageTopicQuestionsListCard', // DEBUG
-        'xl:col-span-2',
+        // 'xl:col-span-2',
         'relative flex flex-1 flex-col overflow-hidden',
         className,
       )}
@@ -182,20 +191,22 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       <CardHeader
         className={cn(
           isDev && '__ManageTopicQuestionsListCard_Header', // DEBUG
-          'flex flex-row flex-wrap items-start',
+          'flex flex-row flex-wrap items-start gap-4 max-md:flex-col',
         )}
       >
-        <div
+        {/* // UNUSED: Tilte & description
+         <div
           className={cn(
             isDev && '__ManageTopicQuestionsListCard_Title', // DEBUG
             'grid flex-1 gap-2',
           )}
         >
-          <CardTitle>Manage questions</CardTitle>
+          <CardTitle>Manage questions for the topic "{topic.name}"</CardTitle>
           <CardDescription className="text-balance">
             Questions you have added to the profile.
           </CardDescription>
         </div>
+        */}
         <Toolbar handleAddQuestion={handleAddQuestion} handleDeleteTopic={handleDeleteTopic} />
       </CardHeader>
       <CardContent

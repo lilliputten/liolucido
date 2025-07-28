@@ -11,7 +11,7 @@ interface DeleteTopicPageProps {
 
 export default async function DeleteTopicPage({
   searchParams,
-  // params,
+  params,
 }: DeleteTopicPageProps & TAwaitedProps) {
   const { topicId, from } = await searchParams;
   // const { scope } = await params;
@@ -19,5 +19,5 @@ export default async function DeleteTopicPage({
   // NOTE: Don't display a delete topic modal by url request: just redirect to crsp topics list
   // redirect(route);
 
-  return <ManageTopicsPage deleteTopicId={topicId} from={'SERVER:' + from} />;
+  return <ManageTopicsPage deleteTopicId={topicId} from={'SERVER:' + from} params={params} />;
 }

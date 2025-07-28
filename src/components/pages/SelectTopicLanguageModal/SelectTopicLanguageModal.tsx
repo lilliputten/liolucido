@@ -29,6 +29,15 @@ export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) 
   const hideModal = React.useCallback(() => router.back(), [router]);
   const { isMobile } = useMediaQuery();
 
+  // Change a browser title
+  React.useEffect(() => {
+    const originalTitle = document.title;
+    document.title = 'Select a Language';
+    return () => {
+      document.title = originalTitle;
+    };
+  }, []);
+
   const selectLanguage = React.useCallback(
     (selectedLanguage: TTopicLanguageData) => {
       // Dispatch a custom event with the selected language data

@@ -48,7 +48,7 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
     if (deleteTopicId) {
       if (from?.startsWith('SERVER:')) {
         // eslint-disable-next-line no-console
-        console.warn('No url-invoked topics deletions allowed!');
+        console.warn('No url-invoked topic deletions allowed!');
         router.replace(topicsContext.routePath);
       } else {
         openDeleteTopicModal(deleteTopicId, from || 'Unknown_in_ManageTopicsPageModalsWrapper');

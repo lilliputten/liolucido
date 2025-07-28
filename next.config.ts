@@ -46,8 +46,6 @@ $secondaryForegroundColor: ${secondaryForegroundColor};
 $defaultTheme: ${defaultThemeColor};
 $themes: ( ${scssThemes} );
 `;
-// console.log('XXX', scssVariables);
-// process.exit(1);
 
 const nextConfig: NextConfig = {
   sassOptions: {

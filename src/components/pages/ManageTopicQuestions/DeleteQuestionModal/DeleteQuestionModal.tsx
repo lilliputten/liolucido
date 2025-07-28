@@ -44,6 +44,15 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
   );
   const [isPending, startUpdating] = React.useTransition();
 
+  // Change a browser title
+  React.useEffect(() => {
+    const originalTitle = document.title;
+    document.title = 'Delete a Question?';
+    return () => {
+      document.title = originalTitle;
+    };
+  }, []);
+
   const confirmDeleteQuestion = React.useCallback(
     () =>
       new Promise((resolve, reject) => {

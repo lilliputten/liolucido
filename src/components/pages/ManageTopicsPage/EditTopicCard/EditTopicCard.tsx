@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -15,45 +15,13 @@ import { EditTopicForm } from './EditTopicForm';
 interface TEditTopicCardProps extends TPropsWithClassName {
   topicId: TTopicId;
 }
-type TChildProps = /* Omit<TEditTopicCardProps, 'className'> & */ {
+
+type TToolbarProps = /* Omit<TEditTopicCardProps, 'className'> & */ {
   goBack: () => void;
   toolbarPortalRef: React.RefObject<HTMLDivElement>;
 };
 
-function Title() {
-  return (
-    <div
-      className={cn(
-        isDev && '__EditTopicCard_Title', // DEBUG
-        'flex flex-1 items-center gap-2',
-        // 'grid grid-cols-[2em_1fr]',
-      )}
-    >
-      {/*
-      <Button
-        variant="ghost"
-        size="icon"
-        className="size-9 shrink-0 hover:opacity-80"
-        aria-label="Back to the topics list"
-        title="Back to the topics list"
-        onClick={goBack}
-      >
-        <Icons.arrowLeft className="size-4" />
-      </Button>
-      */}
-      <CardTitle className="flex items-center">
-        <span>Manage Topic</span>
-      </CardTitle>
-      {/*
-      <CardDescription className="col-span-2 col-start-1 text-balance">
-        Manage Topic properties.
-      </CardDescription>
-      */}
-    </div>
-  );
-}
-
-function Toolbar({ toolbarPortalRef }: TChildProps) {
+function Toolbar({ toolbarPortalRef }: TToolbarProps) {
   return (
     <div
       ref={toolbarPortalRef}
@@ -71,20 +39,6 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
       </Button>
       */}
     </div>
-  );
-}
-
-function Header(props: TChildProps) {
-  return (
-    <CardHeader
-      className={cn(
-        isDev && '__EditTopicCard_Header', // DEBUG
-        'item-start flex flex-row flex-wrap',
-      )}
-    >
-      <Title />
-      <Toolbar {...props} />
-    </CardHeader>
   );
 }
 
@@ -122,7 +76,26 @@ export function EditTopicCard(props: TEditTopicCardProps) {
         className,
       )}
     >
-      <Header goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
+      <CardHeader
+        className={cn(
+          isDev && '__EditTopicCard_Header', // DEBUG
+          'item-start flex flex-row flex-wrap gap-4',
+        )}
+      >
+        {/* // Title
+        <div
+          className={cn(
+            isDev && '__EditTopicCard_Title', // DEBUG
+            'flex flex-1 items-center gap-4 overflow-hidden',
+          )}
+        >
+          <CardTitle className="flex flex-1 items-center overflow-hidden">
+            <span className="truncate">Manage Topic "{topic.name}"</span>
+          </CardTitle>
+        </div>
+        */}
+        <Toolbar goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
+      </CardHeader>
       <CardContent
         className={cn(
           isDev && '__EditTopicCard_Content', // DEBUG
