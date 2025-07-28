@@ -1,7 +1,4 @@
-import {
-  generateMetadata,
-  ManageTopicQuestionsLayout,
-} from '@/components/pages/ManageTopicQuestions';
+import { ManageTopicQuestionsLayout } from '@/components/pages/ManageTopicQuestions';
 
-export { generateMetadata };
+// export { generateMetadata };
 export default ManageTopicQuestionsLayout;

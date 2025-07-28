@@ -85,9 +85,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
             isDev && '__ViewTopicCard_Toolbar', // DEBUG
             'flex flex-wrap items-center gap-2',
           )}
-        >
-          <p>XXX</p>
-        </div>
+        />
       </CardHeader>
 
       <CardContent

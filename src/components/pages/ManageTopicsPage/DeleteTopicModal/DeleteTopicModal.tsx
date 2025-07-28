@@ -44,6 +44,15 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
   );
   const [isPending, startUpdating] = React.useTransition();
 
+  // Change a browser title
+  React.useEffect(() => {
+    const originalTitle = document.title;
+    document.title = 'Delete a Topic?';
+    return () => {
+      document.title = originalTitle;
+    };
+  }, []);
+
   const confirmDeleteTopic = React.useCallback(
     () =>
       new Promise((resolve, reject) => {

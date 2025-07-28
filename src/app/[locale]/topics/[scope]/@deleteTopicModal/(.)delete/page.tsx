@@ -1,6 +1,12 @@
 import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage';
+import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { TAwaitedLocaleProps } from '@/i18n/types';
 
-interface DeleteTopicModalPageProps {
+type TAwaitedProps = TAwaitedLocaleProps<{
+  scope: TTopicsManageScopeId;
+}>;
+
+interface DeleteTopicModalPageProps extends TAwaitedProps {
   searchParams: Promise<{ topicId?: string; from?: string }>;
 }
 

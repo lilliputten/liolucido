@@ -16,7 +16,7 @@ import { TNewTopic, TTopic } from '@/features/topics/types';
 
 import { AddTopicForm } from './AddTopicForm';
 
-export function AddTopicModal(/* props: TAddTopicModalProps */) {
+export function AddTopicModal() {
   const [isVisible, setVisible] = React.useState(true);
   const router = useRouter();
   const hideModal = React.useCallback(() => {
@@ -28,6 +28,15 @@ export function AddTopicModal(/* props: TAddTopicModalProps */) {
   const { isMobile } = useMediaQuery();
 
   const topicsContext = useTopicsContext();
+
+  // Change a browser title
+  React.useEffect(() => {
+    const originalTitle = document.title;
+    document.title = 'Add a Topic';
+    return () => {
+      document.title = originalTitle;
+    };
+  }, []);
 
   const handleAddTopic = React.useCallback(
     (newTopic: TNewTopic) => {

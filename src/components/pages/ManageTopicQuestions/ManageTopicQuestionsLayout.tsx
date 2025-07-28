@@ -1,9 +1,8 @@
 import { redirect } from 'next/navigation';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 
 import { TRoutePath, welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
-import { constructMetadata } from '@/lib/utils';
 import { PageError } from '@/components/shared/PageError';
 import { QuestionsContextProvider } from '@/contexts/QuestionsContext';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
@@ -20,18 +19,6 @@ type TManageTopicQuestionsLayoutProps = TAwaitedProps & {
   addQuestionModal: React.ReactNode; // slot from @addQuestionModal
   deleteQuestionModal: React.ReactNode; // slot from @deleteQuestionModal
 };
-
-export async function generateMetadata({ params }: TAwaitedProps) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'ManageTopicQuestions' });
-  const title = t('title');
-  const description = t('description');
-  return constructMetadata({
-    locale,
-    title,
-    description,
-  });
-}
 
 export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLayoutProps) {
   const {

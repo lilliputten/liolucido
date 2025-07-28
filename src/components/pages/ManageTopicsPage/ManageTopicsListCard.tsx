@@ -6,7 +6,7 @@ import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -34,23 +34,9 @@ interface TManageTopicsListCardProps extends TPropsWithClassName {
   handleEditQuestions: (topicId: TTopicId) => void;
   handleAddTopic: () => void;
 }
-type TChildProps = Omit<TManageTopicsListCardProps, 'className'>;
+type TToolbarProps = Omit<TManageTopicsListCardProps, 'className'>;
 
-function Title() {
-  return (
-    <div
-      className={cn(
-        isDev && '__ManageTopicsListCard_Title', // DEBUG
-        'grid flex-1 gap-2',
-      )}
-    >
-      <CardTitle>Current topics</CardTitle>
-      <CardDescription className="sr-only text-balance">My own topics.</CardDescription>
-    </div>
-  );
-}
-
-function Toolbar(props: TChildProps) {
+function Toolbar(props: TToolbarProps) {
   const { handleAddTopic } = props;
   return (
     <div
@@ -72,20 +58,6 @@ function Toolbar(props: TChildProps) {
         </span>
       </Button>
     </div>
-  );
-}
-
-function Header(props: TChildProps) {
-  return (
-    <CardHeader
-      className={cn(
-        isDev && '__ManageTopicsListCard_Header', // DEBUG
-        'flex flex-row flex-wrap items-start',
-      )}
-    >
-      <Title />
-      <Toolbar {...props} />
-    </CardHeader>
   );
 }
 
@@ -235,7 +207,25 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
         className,
       )}
     >
-      <Header {...props} />
+      <CardHeader
+        className={cn(
+          isDev && '__ManageTopicsListCard_Header', // DEBUG
+          'flex flex-row flex-wrap items-start',
+        )}
+      >
+        {/* // UNUSED: Title
+         <div
+          className={cn(
+            isDev && '__ManageTopicsListCard_Title', // DEBUG
+            'grid flex-1 gap-2',
+          )}
+        >
+          <CardTitle>Current topics</CardTitle>
+          <CardDescription className="sr-only text-balance">My own topics.</CardDescription>
+        </div>
+         */}
+        <Toolbar {...props} />
+      </CardHeader>
       <CardContent
         className={cn(
           isDev && '__ManageTopicsListCard_Content', // DEBUG
