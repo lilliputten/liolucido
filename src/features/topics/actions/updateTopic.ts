@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
-import { TTopic } from '@/features/topics/types';
+import { TOptionalTopic, TTopic } from '@/features/topics/types';
 
 export async function updateTopic(topic: TTopic) {
   const user = await getCurrentUser();
@@ -25,9 +25,13 @@ export async function updateTopic(topic: TTopic) {
      *   throw new Error('The specified user does not exist.');
      * }
      */
-    const data = { ...topic, userId };
+    const data = { ...topic } as TOptionalTopic;
+    delete data.userId;
+    delete data._count;
+    delete data.createdAt;
+    delete data.updatedAt;
     const updatedTopic = await prisma.topic.update({
-      where: { id: topic.id },
+      where: { id: topic.id, userId },
       data,
     });
 
