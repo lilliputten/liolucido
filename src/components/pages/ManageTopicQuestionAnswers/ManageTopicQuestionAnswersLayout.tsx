@@ -8,7 +8,6 @@ import { AnswersContextProvider } from '@/contexts/AnswersContext';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { getQuestionAnswers } from '@/features/answers/actions/getQuestionAnswers';
 import { TAnswer } from '@/features/answers/types';
-import { getTopic } from '@/features/topics/actions';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
@@ -45,6 +44,10 @@ export async function ManageTopicQuestionAnswersLayout(
     return <PageError error={'Topic ID not specified.'} />;
   }
 
+  if (!questionId) {
+    return <PageError error={'Question ID not specified.'} />;
+  }
+
   const user = await getCurrentUser();
   const userId = user?.id;
   // TODO: Check also if the user really exists in the database>
@@ -56,20 +59,7 @@ export async function ManageTopicQuestionAnswersLayout(
   // Enable static rendering
   setRequestLocale(locale);
 
-  const answersPromise = getQuestionAnswers(questionId);
-  const answers: TAnswer[] = await answersPromise;
-
-  /* console.log('[ManageTopicQuestionAnswersLayout:DEBUG]', {
-   *   answers,
-   *   routePath,
-   *   questionRootRoutePath,
-   *   questionsListRoutePath,
-   *   questionId,
-   *   topicRootRoutePath,
-   *   topicsListRoutePath,
-   *   topicId,
-   * });
-   */
+  const answers: TAnswer[] = await getQuestionAnswers(questionId);
 
   return (
     <AnswersContextProvider

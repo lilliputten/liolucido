@@ -16,7 +16,7 @@ import { TAnswer, TNewAnswer } from '@/features/answers/types';
 
 import { AddAnswerForm } from './AddAnswerForm';
 
-export function AddAnswerModal(/* props: TAddAnswerModalProps */) {
+export function AddAnswerModal() {
   const [isVisible, setVisible] = React.useState(true);
   const router = useRouter();
   const hideModal = React.useCallback(() => {

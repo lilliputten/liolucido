@@ -47,7 +47,7 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
   // Change a browser title
   React.useEffect(() => {
     const originalTitle = document.title;
-    document.title = 'Delete a Answer?';
+    document.title = 'Delete an Answer?';
     return () => {
       document.title = originalTitle;
     };

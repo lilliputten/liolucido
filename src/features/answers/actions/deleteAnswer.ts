@@ -36,9 +36,9 @@ export async function deleteAnswer(answer: TAnswer) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     // TODO: Check if the current user allowed to delete the question?
-    const removedAnswer = await prisma.question.delete({
+    const removedAnswer = await prisma.answer.delete({
       where: {
-        id: question.id,
+        id: answer.id,
       },
     });
     return removedAnswer;

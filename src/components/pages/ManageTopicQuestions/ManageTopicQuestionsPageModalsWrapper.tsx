@@ -86,7 +86,6 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   React.useEffect(() => {
     // Use another id (`editAnswersQuestionId`)?
     if (editAnswersQuestionId) {
-      debugger;
       openEditAnswersPage(editAnswersQuestionId);
     }
   }, [editAnswersQuestionId, openEditAnswersPage]);
