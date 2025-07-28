@@ -10,6 +10,7 @@ import { TQuestionId } from '@/features/questions/types';
 import { ManageTopicQuestionsListWrapper } from './ManageTopicQuestionsListWrapper';
 
 interface TTopicsListProps {
+  topicId: string;
   showAddModal?: boolean;
   deleteQuestionId?: TQuestionId;
   editQuestionId?: TQuestionId;
@@ -17,7 +18,7 @@ interface TTopicsListProps {
 
 export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
-  const { showAddModal, deleteQuestionId, editQuestionId } = props;
+  const { topicId, showAddModal, deleteQuestionId, editQuestionId } = props;
   const questionsContext = useQuestionsContext();
 
   // Add Question Modal
@@ -34,7 +35,6 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   const openDeleteQuestionModal = React.useCallback(
     (questionId: TQuestionId) => {
       const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
-      debugger;
       if (hasQuestion) {
         router.push(`${questionsContext.routePath}/delete?questionId=${questionId}`);
       } else {
@@ -71,6 +71,7 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
 
   return (
     <ManageTopicQuestionsListWrapper
+      topicId={topicId}
       openAddQuestionModal={openAddQuestionModal}
       openDeleteQuestionModal={openDeleteQuestionModal}
       openEditQuestionCard={openEditQuestionCard}

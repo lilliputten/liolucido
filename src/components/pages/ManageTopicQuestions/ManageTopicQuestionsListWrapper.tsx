@@ -14,6 +14,7 @@ import { PageEmpty } from '../shared';
 import { ManageTopicQuestionsListCard } from './ManageTopicQuestionsListCard';
 
 interface TQuestionsListProps {
+  topicId: string;
   openAddQuestionModal: () => void;
   openDeleteQuestionModal: (questionId: TQuestionId) => void;
   openEditQuestionCard: (questionId: TQuestionId) => void;
@@ -26,14 +27,17 @@ export function ManageTopicQuestionsListWrapper(props: TQuestionsListProps) {
   const hasQuestions = !!questions.length;
 
   const router = useRouter();
-  const { topicsListRoutePath } = useQuestionsContext();
+  const questionsContext = useQuestionsContext();
   const goBack = React.useCallback(() => {
-    if (window.history.length) {
-      router.back();
-    } else {
-      router.replace(topicsListRoutePath);
-    }
-  }, [router, topicsListRoutePath]);
+    const { href } = window.location;
+    router.back();
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        router.push(questionsContext.topicsListRoutePath);
+      }
+    }, 200);
+  }, [router, questionsContext]);
 
   return (
     <div

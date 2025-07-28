@@ -6,7 +6,7 @@ import { TAwaitedLocaleProps } from '@/i18n/types';
 type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId }>;
 
 interface DeleteQuestionModalPageProps {
-  searchParams: Promise<{ questionId?: string }>;
+  searchParams: Promise<{ questionId?: string; from?: string }>;
 }
 
 export async function generateMetadata({ params }: TAwaitedProps) {
@@ -25,9 +25,8 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 export default async function DeleteQuestionModalPage({
   searchParams,
 }: DeleteQuestionModalPageProps) {
-  const { questionId } = await searchParams;
+  const { questionId, from } = await searchParams;
   if (questionId) {
-    debugger;
-    return <DeleteQuestionModal questionId={questionId} />;
+    return <DeleteQuestionModal questionId={questionId} from={from} />;
   }
 }

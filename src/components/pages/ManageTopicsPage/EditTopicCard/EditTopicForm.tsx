@@ -32,11 +32,11 @@ interface TEditTopicFormProps {
   topic: TTopic;
   className?: string;
   onCancel?: () => void;
-  toolbarPortalRef: React.RefObject<HTMLDivElement>;
+  toolbarPortalRoot: HTMLDivElement | null;
 }
 
 export function EditTopicForm(props: TEditTopicFormProps) {
-  const { topic, className, onCancel, toolbarPortalRef } = props;
+  const { topic, className, onCancel, toolbarPortalRoot } = props;
   const router = useRouter();
   const topicsContext = useTopicsContext();
   const [isPending, startTransition] = React.useTransition();
@@ -208,14 +208,12 @@ export function EditTopicForm(props: TEditTopicFormProps) {
   const handleDeleteTopic = React.useCallback(() => {
     const hasTopic = topicsContext.topics.find(({ id }) => id === topic.id);
     if (hasTopic) {
-      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}`);
+      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=EditTopicForm`);
     } else {
       toast.error('The requested topic does not exist.');
       router.replace(topicsContext.routePath);
     }
   }, [router, topicsContext, topic]);
-
-  const toolbarPortalRoot = toolbarPortalRef.current;
 
   return (
     <>

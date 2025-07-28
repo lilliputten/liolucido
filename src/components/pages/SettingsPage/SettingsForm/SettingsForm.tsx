@@ -23,12 +23,12 @@ import { TFormData } from './types';
 interface TSettingsFormProps {
   settings: TSettings;
   className?: string;
-  toolbarPortalRef: React.RefObject<HTMLDivElement>;
+  toolbarPortalRoot: HTMLDivElement | null;
   userId?: TDefinedUserId;
 }
 
 export function SettingsForm(props: TSettingsFormProps) {
-  const { settings, className, userId, toolbarPortalRef } = props;
+  const { settings, className, userId, toolbarPortalRoot } = props;
   const { updateAndSaveSettings, inited, userInited } = useSettingsContext();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
@@ -47,14 +47,6 @@ export function SettingsForm(props: TSettingsFormProps) {
 
   // Listen for the select language modal custom event
   React.useEffect(() => {
-    /* // DEBUG
-     * const testPromise = new Promise((resolve) => setTimeout(resolve, 10000));
-     * toast.promise(testPromise, {
-     *   loading: 'Testing...',
-     *   success: 'Successfully tested.',
-     *   error: 'Can not test.',
-     * });
-     */
     const handleLanguageSelected = (event: CustomEvent<TSelectTopicLanguageData>) => {
       const { langCode, langName, langCustom } = event.detail;
       // Update the form fields
@@ -63,14 +55,6 @@ export function SettingsForm(props: TSettingsFormProps) {
       form.setValue('langName', langName, opts);
       form.setValue('langCustom', langCustom, opts);
     };
-    /* // DEBUG: Test theme support
-     * const html = document.body.parentNode as HTMLElement;
-     * html?.classList.add('theme-blue');
-     * const dataset = html?.dataset;
-     * if (dataset) {
-     *   dataset.themeColor = 'blue';
-     * }
-     */
     window.addEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
     return () => {
       window.removeEventListener(selectTopicEventName, handleLanguageSelected as EventListener);
@@ -103,19 +87,6 @@ export function SettingsForm(props: TSettingsFormProps) {
       };
       startTransition(() => {
         const savePromise = updateAndSaveSettings(editedSettings);
-        /* // DEBUG
-         * const savePromise = new Promise<TSettings>((resolve, _reject) => {
-         *   // setTimeout(reject, 1000, 'Demo error!');
-         *   setTimeout(resolve, 1000, editedSettings);
-         * });
-         */
-        /* // NOTE: Toasts are shown in the `SettingsContext`
-         * toast.promise<TSettings>(savePromise, {
-         *   loading: 'Saving settings data...',
-         *   success: 'Successfully saved settings.',
-         *   error: 'Can not save settings data.',
-         * });
-         */
         return savePromise
           .then((updatedSettings) => {
             form.reset(updatedSettings);
@@ -133,8 +104,6 @@ export function SettingsForm(props: TSettingsFormProps) {
   );
 
   const handleCancel = undefined;
-
-  const toolbarPortalRoot = toolbarPortalRef.current;
 
   return (
     <>

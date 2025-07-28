@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
@@ -19,6 +20,7 @@ import {
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
+import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 
 const saveScrollHash = getRandomHashString();
@@ -29,35 +31,26 @@ interface TManageTopicQuestionsListCardProps extends TPropsWithClassName {
   handleEditQuestion: (questionId: TQuestionId) => void;
   handleAddQuestion: () => void;
 }
-type TChildProps = Omit<TManageTopicQuestionsListCardProps, 'className'>;
 
-function Title() {
-  return (
-    <div
-      className={cn(
-        isDev && '__ManageTopicQuestionsListCard_Title', // DEBUG
-        'grid flex-1 gap-2',
-      )}
-    >
-      <CardTitle>Manage questions</CardTitle>
-      <CardDescription className="text-balance">
-        Questions you have added to the profile.
-      </CardDescription>
-    </div>
-  );
+interface TToolbarActionsProps {
+  handleAddQuestion: () => void;
+  handleDeleteTopic?: () => void;
 }
 
-function Toolbar(props: TChildProps) {
+function Toolbar(props: TToolbarActionsProps) {
   const router = useRouter();
-  const { handleAddQuestion } = props;
-  const { topicsListRoutePath } = useQuestionsContext();
+  const { handleAddQuestion, handleDeleteTopic } = props;
+  const questionsContext = useQuestionsContext();
   const goBack = React.useCallback(() => {
-    if (window.history.length) {
-      router.back();
-    } else {
-      router.replace(topicsListRoutePath);
-    }
-  }, [router, topicsListRoutePath]);
+    const { href } = window.location;
+    router.back();
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        router.push(questionsContext.topicRootRoutePath);
+      }
+    }, 200);
+  }, [router, questionsContext]);
   return (
     <div
       className={cn(
@@ -69,6 +62,12 @@ function Toolbar(props: TChildProps) {
         <Icons.arrowLeft className="hidden size-4 sm:block" />
         <span>Back</span>
       </Button>
+      {handleDeleteTopic && (
+        <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
+          <Icons.trash className="size-4" />
+          <span>Delete Topic</span>
+        </Button>
+      )}
       <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
         <Icons.add className="hidden size-4 sm:block" />
         <span>
@@ -76,20 +75,6 @@ function Toolbar(props: TChildProps) {
         </span>
       </Button>
     </div>
-  );
-}
-
-function Header(props: TChildProps) {
-  return (
-    <CardHeader
-      className={cn(
-        isDev && '__ManageTopicQuestionsListCard_Header', // DEBUG
-        'flex flex-row flex-wrap items-start',
-      )}
-    >
-      <Title />
-      <Toolbar {...props} />
-    </CardHeader>
   );
 }
 
@@ -162,9 +147,29 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
 }
 
 export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCardProps) {
-  const { className, questions, handleDeleteQuestion, handleEditQuestion } = props;
+  const { className, questions, handleDeleteQuestion, handleAddQuestion, handleEditQuestion } =
+    props;
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
+
+  const router = useRouter();
+  const topicsContext = useTopicsContext();
+  const questionsContext = useQuestionsContext();
+
+  // Delete Topic Modal
+  const handleDeleteTopic = React.useCallback(() => {
+    const { topicId } = questionsContext;
+    const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
+    if (hasTopic) {
+      router.push(
+        `${topicsContext.routePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`,
+      );
+    } else {
+      toast.error('The requested topic does not exist.');
+      router.replace(topicsContext.routePath);
+    }
+  }, [router, topicsContext, questionsContext]);
+
   return (
     <Card
       className={cn(
@@ -174,7 +179,25 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
         className,
       )}
     >
-      <Header {...props} />
+      <CardHeader
+        className={cn(
+          isDev && '__ManageTopicQuestionsListCard_Header', // DEBUG
+          'flex flex-row flex-wrap items-start',
+        )}
+      >
+        <div
+          className={cn(
+            isDev && '__ManageTopicQuestionsListCard_Title', // DEBUG
+            'grid flex-1 gap-2',
+          )}
+        >
+          <CardTitle>Manage questions</CardTitle>
+          <CardDescription className="text-balance">
+            Questions you have added to the profile.
+          </CardDescription>
+        </div>
+        <Toolbar handleAddQuestion={handleAddQuestion} handleDeleteTopic={handleDeleteTopic} />
+      </CardHeader>
       <CardContent
         className={cn(
           isDev && '__ManageTopicQuestionsListCard_Content', // DEBUG

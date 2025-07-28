@@ -91,8 +91,11 @@ function Header(props: TChildProps) {
 export function EditTopicCard(props: TEditTopicCardProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
+  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
+  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
   const router = useRouter();
-  const { topics, routePath } = useTopicsContext();
+  const topicsContext = useTopicsContext();
+  const { topics } = topicsContext;
   const topic: TTopic | undefined = React.useMemo(
     () => topics.find(({ id }) => id === topicId),
     [topics, topicId],
@@ -101,12 +104,15 @@ export function EditTopicCard(props: TEditTopicCardProps) {
     throw new Error('No such topic exists');
   }
   const goBack = React.useCallback(() => {
-    if (window.history.length) {
-      router.back();
-    } else {
-      router.replace(routePath);
-    }
-  }, [router, routePath]);
+    const { href } = window.location;
+    router.back();
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        router.push(topicsContext.routePath);
+      }
+    }, 200);
+  }, [router, topicsContext]);
   return (
     <Card
       className={cn(
@@ -123,7 +129,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <EditTopicForm topic={topic} onCancel={goBack} toolbarPortalRef={toolbarPortalRef} />
+        <EditTopicForm topic={topic} onCancel={goBack} toolbarPortalRoot={toolbarPortalRoot} />
       </CardContent>
     </Card>
   );
