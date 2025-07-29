@@ -129,6 +129,9 @@ model Topic {
   // A topic name. It's good if it's a unique value.
   name String
 
+  // A topic description. Can be used in questions/answers generation.
+  description String?
+
   // If the topic is public it's available for all the users, not only for you.
   isPublic Boolean? @map("is_public")
 

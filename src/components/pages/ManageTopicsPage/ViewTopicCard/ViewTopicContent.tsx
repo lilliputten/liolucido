@@ -39,7 +39,7 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
               className,
             )}
           >
-            CONTENT
+            Here comes some topic overview and summary.
           </div>
         </ScrollArea>
       </div>

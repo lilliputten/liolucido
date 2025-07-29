@@ -21,7 +21,7 @@ import {
   TSelectTopicLanguageData,
 } from '@/features/topics/types/TSelectTopicLanguageData';
 
-import { maxNameLength, minNameLength } from '../constants';
+import { maxNameLength, maxTextLength, minNameLength, minTextLength } from '../constants';
 import { EditTopicFormActions } from './EditTopicFormActions';
 import { EditTopicFormFields } from './EditTopicFormFields';
 import { TFormData } from './types';
@@ -46,6 +46,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
       z
         .object({
           name: z.string().min(minNameLength).max(maxNameLength),
+          description: z.string().min(minTextLength).max(maxTextLength),
           isPublic: z.boolean(),
           keywords: z.string().optional(),
           langCode: z.string().optional(),
@@ -94,6 +95,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
   const defaultValues: TFormData = React.useMemo(
     () => ({
       name: topic.name || '',
+      description: topic.description || '',
       isPublic: topic.isPublic || false,
       keywords: topic.keywords || '',
       langCode: topic.langCode || '',
@@ -159,6 +161,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
       const editedTopic: TTopic = {
         ...topic,
         name: formData.name,
+        description: formData.description,
         isPublic: formData.isPublic,
         keywords: formData.keywords,
         langCode: formData.langCode,

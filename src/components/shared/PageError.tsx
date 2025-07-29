@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { ErrorLike } from '@/shared/types/errors';
 import { TReactNode } from '@/shared/types/generic';
+import { rootRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { isDev } from '@/constants';
 interface TErrorProps {
   title?: TReactNode;
   extraActions?: TReactNode;
+  ExtraActions?: React.FunctionComponent;
   error?: ErrorLike; // Error & { message?: string };
   reset?: () => void;
   className?: string;
@@ -25,7 +27,15 @@ interface TErrorProps {
 // otherwise you'll get an 'Only plain objects... can be passed...' error.
 
 export function PageError(props: TErrorProps) {
-  const { error, reset, className, title, iconName = 'warning', extraActions } = props;
+  const {
+    error,
+    reset,
+    className,
+    title,
+    iconName = 'warning',
+    extraActions,
+    ExtraActions,
+  } = props;
   const router = useRouter();
   const errText = getErrorText(error);
   React.useEffect(() => {
@@ -56,12 +66,12 @@ export function PageError(props: TErrorProps) {
           {errText}
         </ErrorPlaceHolder.Description>
       )}
-      <div className="mt-2 flex w-full justify-center gap-4">
+      <div className="mt-2 flex w-full flex-wrap justify-center gap-4">
         <Button onClick={() => router.back()} className="flex gap-2">
           <Icons.arrowLeft className="size-4" />
           <span>Go back</span>
         </Button>
-        <Button onClick={() => router.push('/')} className="flex gap-2">
+        <Button onClick={() => router.push(rootRoute)} className="flex gap-2">
           <Icons.home className="size-4" />
           Go home
         </Button>
@@ -72,6 +82,7 @@ export function PageError(props: TErrorProps) {
           </Button>
         )}
         {extraActions}
+        {ExtraActions && <ExtraActions />}
       </div>
     </ErrorPlaceHolder>
   );
