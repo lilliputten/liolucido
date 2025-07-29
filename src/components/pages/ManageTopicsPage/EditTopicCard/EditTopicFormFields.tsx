@@ -10,6 +10,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/f
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TTopic } from '@/features/topics/types';
@@ -50,6 +51,7 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
   const { className, form, selectLanguage } = props;
   // Create unique keys for labels
   const nameKey = React.useId();
+  const descriptionKey = React.useId();
   const isPublicKey = React.useId();
   const keywordsKey = React.useId();
   const langCodeKey = React.useId();
@@ -82,6 +84,29 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
             </FormItem>
           )}
         />
+        {/* description */}
+        <FormField
+          name="description"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={descriptionKey}>Question Description</Label>
+              <FormControl>
+                <Textarea
+                  id={descriptionKey}
+                  className="flex-1"
+                  placeholder="Question Description"
+                  rows={5}
+                  {...field}
+                />
+              </FormControl>
+              <FormHint>
+                A topic description. Could be used in questions and answers generation.
+              </FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           name="isPublic"
           control={form.control}
@@ -107,7 +132,10 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
               <FormControl>
                 <Input id={keywordsKey} type="text" placeholder="Keywords" {...field} />
               </FormControl>
-              <FormHint>An optional list of keywords separated by commas.</FormHint>
+              <FormHint>
+                An optional list of keywords separated by commas. Could be used in questions and
+                answers generation.
+              </FormHint>
               <FormMessage />
             </FormItem>
           )}

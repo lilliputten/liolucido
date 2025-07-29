@@ -54,6 +54,7 @@ export function EditQuestionFormFields(props: TEditQuestionFormFieldsProps) {
   return (
     <div className={cn('flex w-full flex-col gap-6 px-6 py-2 md:flex-row', className)}>
       <FormSection>
+        {/* text */}
         <FormField
           name="text"
           control={form.control}
@@ -69,7 +70,7 @@ export function EditQuestionFormFields(props: TEditQuestionFormFieldsProps) {
                   {...field}
                 />
               </FormControl>
-              <FormHint>A question text.</FormHint>
+              <FormHint>A question Text.</FormHint>
               <FormMessage />
             </FormItem>
           )}
