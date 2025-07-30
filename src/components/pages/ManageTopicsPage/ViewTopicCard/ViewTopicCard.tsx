@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { ViewTopicContent } from './ViewTopicContent';
@@ -66,18 +67,27 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
       <CardHeader
         className={cn(
           isDev && '__ViewTopicCard_Header', // DEBUG
-          'item-start flex flex-row flex-wrap',
+          'item-start flex flex-col gap-4 md:flex-row',
         )}
       >
         <div
           className={cn(
-            isDev && '__ViewTopicCard_Title', // DEBUG
-            'flex flex-1 items-center gap-2',
+            isDev && '__EditTopicCard_TitleWrapper', // DEBUG
+            'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <CardTitle className="flex items-center">
-            <span>Show Topic</span>
-          </CardTitle>
+          <TopicsBreadcrumbs
+            className={cn(
+              isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
+            )}
+            topicId={topicId}
+            inactiveTopic
+          />
+          {/* // UNUSED: Title
+            <CardTitle className="flex flex-1 items-center overflow-hidden">
+              <span className="truncate">Show Topic</span>
+            </CardTitle>
+            */}
         </div>
         <div
           ref={toolbarPortalRef}

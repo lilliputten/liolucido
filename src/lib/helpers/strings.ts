@@ -56,7 +56,7 @@ export function ucFirst(str: string) {
 
 const defaultEllipsis = '…';
 
-export function limitString(str?: string, len?: number, ellipsis: string = defaultEllipsis) {
+export function truncateString(str?: string, len?: number, ellipsis: string = defaultEllipsis) {
   if (!str || !len) {
     return str || '';
   }

@@ -21,6 +21,7 @@ import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useTopicsContext } from '@/contexts/TopicsContext';
+import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 
 const saveScrollHash = getRandomHashString();
@@ -175,10 +176,11 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
   const topicsContext = useTopicsContext();
   const questionsContext = useQuestionsContext();
 
+  const { topicId } = questionsContext;
+
   const topic = React.useMemo(() => {
-    const { topicId } = questionsContext;
     return topicsContext.topics.find(({ id }) => id === topicId);
-  }, [questionsContext, topicsContext]);
+  }, [topicId, topicsContext]);
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
@@ -202,7 +204,6 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     <Card
       className={cn(
         isDev && '__ManageTopicQuestionsListCard', // DEBUG
-        // 'xl:col-span-2',
         'relative flex flex-1 flex-col overflow-hidden',
         className,
       )}
@@ -210,22 +211,29 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       <CardHeader
         className={cn(
           isDev && '__ManageTopicQuestionsListCard_Header', // DEBUG
-          'flex flex-row flex-wrap items-start gap-4 max-md:flex-col',
+          'item-start flex flex-col gap-4 lg:flex-row',
         )}
       >
-        {/* // UNUSED: Tilte & description
-         <div
+        <div
           className={cn(
-            isDev && '__ManageTopicQuestionsListCard_Title', // DEBUG
-            'grid flex-1 gap-2',
+            isDev && '__ManageTopicQuestionsListCard_TitleWrapper', // DEBUG
+            'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <CardTitle>Manage questions for the topic "{topic.name}"</CardTitle>
-          <CardDescription className="text-balance">
-            Questions you have added to the profile.
-          </CardDescription>
+          <QuestionsBreadcrumbs
+            className={cn(
+              isDev && '__ManageTopicQuestionsListCard_Breadcrumbs', // DEBUG
+            )}
+            // questionId={questionId}
+            // inactiveQuestion
+            inactiveQuestions
+          />
+          {/* // UNUSED: Title
+            <CardTitle className="flex flex-1 items-center overflow-hidden">
+              <span className="truncate">Manage Questions</span>
+            </CardTitle>
+            */}
         </div>
-        */}
         <Toolbar handleAddQuestion={handleAddQuestion} handleDeleteTopic={handleDeleteTopic} />
       </CardHeader>
       <CardContent
