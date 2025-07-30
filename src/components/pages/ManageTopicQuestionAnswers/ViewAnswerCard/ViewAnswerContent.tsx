@@ -6,28 +6,28 @@ import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { TQuestion } from '@/features/questions/types';
+import { TAnswer } from '@/features/answers/types';
 
 import {
-  TViewQuestionContentActionsProps,
-  ViewQuestionContentActions,
-} from './ViewQuestionContentActions';
+  TViewAnswerContentActionsProps,
+  ViewAnswerContentActions,
+} from './ViewAnswerContentActions';
 
-interface TViewQuestionContentProps {
-  question: TQuestion;
+interface TViewAnswerContentProps {
+  answer: TAnswer;
   className?: string;
   goBack?: () => void;
-  handleDeleteQuestion: TViewQuestionContentActionsProps['handleDeleteQuestion'];
+  handleDeleteAnswer: TViewAnswerContentActionsProps['handleDeleteAnswer'];
   toolbarPortalRoot: HTMLDivElement | null;
 }
 
-export function ViewQuestionContent(props: TViewQuestionContentProps) {
-  const { question, className, goBack, handleDeleteQuestion, toolbarPortalRoot } = props;
+export function ViewAnswerContent(props: TViewAnswerContentProps) {
+  const { answer, className, goBack, handleDeleteAnswer, toolbarPortalRoot } = props;
   return (
     <>
       <div
         className={cn(
-          isDev && '__ViewQuestionContent', // DEBUG
+          isDev && '__ViewAnswerContent', // DEBUG
           'flex w-full flex-col gap-4 overflow-hidden',
           className,
         )}
@@ -35,22 +35,22 @@ export function ViewQuestionContent(props: TViewQuestionContentProps) {
         <ScrollArea>
           <div
             className={cn(
-              isDev && '__ViewQuestionContent_Stub', // DEBUG
+              isDev && '__ViewAnswerContent_Stub', // DEBUG
               'flex w-full flex-col gap-4 overflow-hidden opacity-50',
               'mx-6',
               className,
             )}
           >
-            Here comes some question overview and summary.
+            Here comes some answer overview and summary.
           </div>
         </ScrollArea>
       </div>
       {toolbarPortalRoot &&
         createPortal(
-          <ViewQuestionContentActions
-            question={question}
+          <ViewAnswerContentActions
+            answer={answer}
             goBack={goBack}
-            handleDeleteQuestion={handleDeleteQuestion}
+            handleDeleteAnswer={handleDeleteAnswer}
           />,
           toolbarPortalRoot,
         )}

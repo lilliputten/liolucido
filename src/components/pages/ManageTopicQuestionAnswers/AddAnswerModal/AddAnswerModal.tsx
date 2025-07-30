@@ -10,6 +10,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
+import { addedAnswerEventName, TAddedAnswerDetail } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { addNewAnswer } from '@/features/answers/actions';
 import { TAnswer, TNewAnswer } from '@/features/answers/types';
@@ -45,7 +46,21 @@ export function AddAnswerModal() {
           const promise = addNewAnswer(newAnswer)
             .then((addedAnswer) => {
               // Update topics list
-              answersContext.setAnswers((answers) => answers.concat(addedAnswer));
+              answersContext.setAnswers((answers) => {
+                const updatedAnswers = answers.concat(addedAnswer);
+                // Dispatch a custom event with the updated answers data
+                const answersCount = updatedAnswers.length;
+                const addedAnswerId = addedAnswer.id;
+                const detail: TAddedAnswerDetail = { questionId, addedAnswerId, answersCount };
+                const event = new CustomEvent<TAddedAnswerDetail>(addedAnswerEventName, {
+                  detail,
+                  bubbles: true,
+                });
+                setTimeout(() => window.dispatchEvent(event), 100);
+                // Return data to update a state
+                return updatedAnswers;
+              });
+              // Resolve data
               resolve(addedAnswer);
               // NOTE: Close or go to the edit page
               setVisible(false);
@@ -70,7 +85,7 @@ export function AddAnswerModal() {
         });
       });
     },
-    [answersContext, router],
+    [answersContext, questionId, router],
   );
 
   return (

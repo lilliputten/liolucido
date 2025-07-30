@@ -61,7 +61,7 @@ export function truncateString(str?: string, len?: number, ellipsis: string = de
     return str || '';
   }
   if (str.length > len) {
-    return str.substring(0, str.length - ellipsis.length) + ellipsis;
+    return str.substring(0, len - ellipsis.length) + ellipsis;
   }
   return str;
 }

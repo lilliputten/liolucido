@@ -72,7 +72,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   const { className, form, selectLanguage } = props;
   // Create unique keys for labels
   const tNavLocaleSwitcher = useTranslations('NavLocaleSwitcher');
-  const showOthersTopicsKey = React.useId();
+  const showOnlyMyTopicsKey = React.useId();
   const localeKey = React.useId();
   const themeColorKey = React.useId();
   const themeKey = React.useId();
@@ -93,21 +93,21 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   return (
     <div className={cn('flex w-full flex-col gap-6 px-6 py-2 md:flex-row', className)}>
       <FormSection>
-        {/* showOthersTopics */}
+        {/* showOnlyMyTopics */}
         <FormField
-          name="showOthersTopics"
+          name="showOnlyMyTopics"
           control={form.control}
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-4">
-              <Label htmlFor={showOthersTopicsKey}>Show all available topics?</Label>
+              <Label htmlFor={showOnlyMyTopicsKey}>Show only my own topics?</Label>
               <FormControl>
                 <Switch
-                  id={showOthersTopicsKey}
+                  id={showOnlyMyTopicsKey}
                   checked={!!field.value}
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
-              <FormHint>Allow show all public topics, not only my own ones.</FormHint>
+              <FormHint>Disable showing all public topics, show only my personal ones.</FormHint>
               <FormMessage />
             </FormItem>
           )}

@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString } from '@/lib/helpers/strings';
+import { getRandomHashString, truncateString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
@@ -19,8 +20,10 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { TUpdatedTopicsCountDetail, updatedTopicsCountEventName } from '@/constants/eventTypes';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { getAllUsersTopics, getThisUserTopics } from '@/features/topics/actions';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersForTopics';
@@ -34,10 +37,51 @@ interface TManageTopicsListCardProps extends TPropsWithClassName {
   handleEditQuestions: (topicId: TTopicId) => void;
   handleAddTopic: () => void;
 }
-type TToolbarProps = Omit<TManageTopicsListCardProps, 'className'>;
+type TToolbarProps = Pick<TManageTopicsListCardProps, 'handleAddTopic'>;
 
 function Toolbar(props: TToolbarProps) {
   const { handleAddTopic } = props;
+  const [isReloading, startReload] = React.useTransition();
+
+  const topicsContext = useTopicsContext();
+
+  const handleReload = React.useCallback(() => {
+    const { manageScope, setTopics } = topicsContext;
+    const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS;
+    const getFunction = isAdminMode ? getAllUsersTopics : getThisUserTopics;
+    startReload(async () => {
+      try {
+        const promise = getFunction();
+        toast.promise(promise, {
+          loading: 'Reloading topics data...',
+          success: 'Topics successfully reloaded',
+          error: 'Error reloading topics.',
+        });
+        const topics = (await promise) || [];
+        setTopics((prevTopics) => {
+          const prevTopicsCount = prevTopics.length;
+          // Dispatch a custom event with the updated topics data
+          const topicsCount = topics.length;
+          if (topicsCount !== prevTopicsCount) {
+            const detail: TUpdatedTopicsCountDetail = { topicsCount };
+            const event = new CustomEvent<TUpdatedTopicsCountDetail>(updatedTopicsCountEventName, {
+              detail,
+              bubbles: true,
+            });
+            setTimeout(() => window.dispatchEvent(event), 100);
+          }
+          return topics;
+        });
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('[ManageTopicsListCard:handleReload] catch', {
+          error,
+        });
+        debugger; // eslint-disable-line no-debugger
+      }
+    });
+  }, [topicsContext]);
+
   return (
     <div
       className={cn(
@@ -45,11 +89,17 @@ function Toolbar(props: TToolbarProps) {
         'flex flex-wrap gap-2',
       )}
     >
-      <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
-        <Link href="#" className="flex items-center gap-2">
-          <Icons.refresh className="hidden size-4 sm:block" />
-          <span>Refresh</span>
-        </Link>
+      <Button
+        variant="ghost"
+        size="sm"
+        className={cn(
+          'flex items-center gap-2 px-4',
+          isReloading && 'pointer-events-none opacity-50',
+        )}
+        onClick={handleReload}
+      >
+        <Icons.refresh className={cn('hidden size-4 sm:block', isReloading && 'animate-spin')} />
+        <span>Reload</span>
       </Button>
       <Button variant="ghost" size="sm" onClick={handleAddTopic} className="flex gap-2 px-4">
         <Icons.add className="hidden size-4 sm:block" />
@@ -65,6 +115,9 @@ function TopicTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
   return (
     <TableHeader>
       <TableRow>
+        <TableHead id="no" className="truncate text-right max-sm:hidden">
+          No
+        </TableHead>
         {isAdminMode && isDev && (
           <TableHead id="topicId" className="truncate max-sm:hidden">
             ID
@@ -94,6 +147,7 @@ function TopicTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
 
 interface TTopicTableRowProps {
   topic: TTopic;
+  idx: number;
   handleDeleteTopic: TManageTopicsListCardProps['handleDeleteTopic'];
   handleEditTopic: TManageTopicsListCardProps['handleEditTopic'];
   handleEditQuestions: TManageTopicsListCardProps['handleEditQuestions'];
@@ -109,13 +163,19 @@ function TopicTableRow(props: TTopicTableRowProps) {
     handleEditQuestions,
     isAdminMode,
     cachedUsers,
+    idx,
   } = props;
   const { id, name, langCode, langName, keywords, userId, _count } = topic;
   const questionsCount = _count?.questions;
   const topicUser = isAdminMode ? cachedUsers[userId] : undefined;
+  const topicsContext = useTopicsContext();
+  const { routePath } = topicsContext;
 
   return (
     <TableRow className="truncate" data-topic-id={id}>
+      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
+        <div className="truncate">{idx + 1}</div>
+      </TableCell>
       {isAdminMode && isDev && (
         <TableCell id="topicId" className="max-w-[8em] truncate max-sm:hidden">
           <div className="truncate">
@@ -125,7 +185,9 @@ function TopicTableRow(props: TTopicTableRowProps) {
         </TableCell>
       )}
       <TableCell id="name" className="max-w-[8em] truncate">
-        <div className="truncate text-lg font-medium">{name}</div>
+        <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
+          {truncateString(name, 40)}
+        </Link>
       </TableCell>
       <TableCell id="questions" className="max-w-[8em] truncate">
         <div className="truncate">
@@ -176,7 +238,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="size-9 shrink-0"
+            className="size-9 shrink-0 text-destructive"
             onClick={() => handleDeleteTopic(topic.id, 'ManageTopicsListCard')}
             aria-label="Delete"
             title="Delete"
@@ -190,7 +252,14 @@ function TopicTableRow(props: TTopicTableRowProps) {
 }
 
 export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
-  const { className, topics, handleDeleteTopic, handleEditTopic, handleEditQuestions } = props;
+  const {
+    className,
+    topics,
+    handleDeleteTopic,
+    handleEditTopic,
+    handleEditQuestions,
+    handleAddTopic,
+  } = props;
   const { manageScope } = useTopicsContext();
   const user = useSessionUser();
   const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';
@@ -224,7 +293,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
           <CardDescription className="sr-only text-balance">My own topics.</CardDescription>
         </div>
          */}
-        <Toolbar {...props} />
+        <Toolbar handleAddTopic={handleAddTopic} />
       </CardHeader>
       <CardContent
         className={cn(
@@ -240,9 +309,10 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
           <Table>
             <TopicTableHeader isAdminMode={isAdminMode} />
             <TableBody>
-              {topics.map((topic) => (
+              {topics.map((topic, idx) => (
                 <TopicTableRow
                   key={topic.id}
+                  idx={idx}
                   topic={topic}
                   handleDeleteTopic={handleDeleteTopic}
                   handleEditTopic={handleEditTopic}

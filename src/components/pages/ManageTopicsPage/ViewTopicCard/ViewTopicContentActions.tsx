@@ -13,10 +13,11 @@ export interface TViewTopicContentActionsProps {
   isPending?: boolean;
   goBack?: (ev: React.MouseEvent) => void;
   handleDeleteTopic: () => void;
+  handleAddQuestion?: () => void;
 }
 
 export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
-  const { topic, goBack, handleDeleteTopic } = props;
+  const { topic, goBack, handleDeleteTopic, handleAddQuestion } = props;
   const router = useRouter();
   const topicsContext = useTopicsContext();
   return (
@@ -43,9 +44,15 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
         <Icons.questions className="size-4" />
         <span>Questions</span>
       </Button>
+      {handleAddQuestion && (
+        <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
+          <Icons.add className="size-4" />
+          Add Question
+        </Button>
+      )}
       <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
         <Icons.trash className="size-4" />
-        <span>Delete</span>
+        <span>Delete Topic</span>
       </Button>
       {/*
       <Button

@@ -95,7 +95,7 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                 <Textarea
                   id={descriptionKey}
                   className="flex-1"
-                  placeholder="Question Description"
+                  placeholder="Topic Description"
                   rows={5}
                   {...field}
                 />
@@ -151,7 +151,7 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
             ]);
             return (
               <FormItem className="flex w-full flex-col gap-4">
-                <Label htmlFor={langCodeKey}>Language</Label>
+                <Label htmlFor={langCodeKey}>Topic Language</Label>
                 <Button
                   id={langCodeKey}
                   variant="outline"

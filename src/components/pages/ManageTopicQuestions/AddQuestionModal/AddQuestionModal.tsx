@@ -10,6 +10,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
+import { addedQuestionEventName, TAddedQuestionDetail } from '@/constants/eventTypes';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { addNewQuestion } from '@/features/questions/actions';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
@@ -45,7 +46,21 @@ export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
           const promise = addNewQuestion(newQuestion)
             .then((addedQuestion) => {
               // Update topics list
-              questionsContext.setQuestions((questions) => questions.concat(addedQuestion));
+              questionsContext.setQuestions((questions) => {
+                const updatedQuestions = questions.concat(addedQuestion);
+                // Dispatch a custom event with the updated questions data
+                const { topicId } = questionsContext;
+                const questionsCount = updatedQuestions.length;
+                const addedQuestionId = addedQuestion.id;
+                const detail: TAddedQuestionDetail = { topicId, addedQuestionId, questionsCount };
+                const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
+                  detail,
+                  bubbles: true,
+                });
+                setTimeout(() => window.dispatchEvent(event), 100);
+                // Return data to update a state
+                return updatedQuestions;
+              });
               resolve(addedQuestion);
               // NOTE: Close or go to the edit page
               setVisible(false);

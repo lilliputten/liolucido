@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { truncateString } from '@/lib/helpers/strings';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
+import { deletedAnswerEventName, TDeletedAnswerDetail } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { deleteAnswer } from '@/features/answers/actions/deleteAnswer';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
@@ -66,11 +67,23 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
               // Hide the modal
               hideModal();
               // Update data
-              answersContext.setAnswers((answers) =>
-                answers.filter(({ id }) => id != deletingAnswer.id),
-              );
+              answersContext.setAnswers((answers) => {
+                const updatedAnswers = answers.filter(({ id }) => id != deletingAnswer.id);
+                // Dispatch a custom event with the updated answers data
+                const { questionId } = answersContext;
+                const answersCount = updatedAnswers.length;
+                const deletedAnswerId = deletingAnswer.id;
+                const detail: TDeletedAnswerDetail = { questionId, deletedAnswerId, answersCount };
+                const event = new CustomEvent<TDeletedAnswerDetail>(deletedAnswerEventName, {
+                  detail,
+                  bubbles: true,
+                });
+                setTimeout(() => window.dispatchEvent(event), 100);
+                // Return data to update a state
+                return updatedAnswers;
+              });
               resolve(deletingAnswer);
-              // Dispatch a custom event with the selected language data
+              // Dispatch an event
               const event = new CustomEvent<TAnswer>(topicAnswerDeletedEventId, {
                 detail: deletingAnswer,
                 bubbles: true,

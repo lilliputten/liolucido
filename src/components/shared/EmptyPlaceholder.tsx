@@ -3,13 +3,24 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/components/shared/icons';
 
-type EmptyPlaceholderProps = React.HTMLAttributes<HTMLDivElement>;
+type EmptyPlaceholderProps = React.HTMLAttributes<HTMLDivElement> & {
+  padded?: boolean;
+  framed?: boolean;
+};
 
-export function EmptyPlaceholder({ className, children, ...props }: EmptyPlaceholderProps) {
+export function EmptyPlaceholder({
+  padded = true,
+  framed = true,
+  className,
+  children,
+  ...props
+}: EmptyPlaceholderProps) {
   return (
     <div
       className={cn(
-        'flex flex-1 items-center justify-center rounded-lg border border-dashed p-8 text-center shadow-sm animate-in fade-in-50',
+        'flex flex-1 items-center justify-center text-center shadow-sm animate-in fade-in-50',
+        padded && 'p-8',
+        framed && 'rounded-lg border border-dashed',
         className,
       )}
       {...props}

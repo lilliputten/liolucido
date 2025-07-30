@@ -6,10 +6,11 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext';
+import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
 
 import { topicAnswerDeletedEventId } from '../DeleteAnswerModal';
@@ -130,18 +131,27 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       <CardHeader
         className={cn(
           isDev && '__EditAnswerCard_Header', // DEBUG
-          'item-start flex flex-row flex-wrap',
+          'item-start flex flex-col gap-4', // lg:flex-row',
         )}
       >
         <div
           className={cn(
-            isDev && '__EditAnswerCard_Title', // DEBUG
-            'flex flex-1 items-center gap-2',
+            isDev && '__EditAnswerCard_TitleWrapper', // DEBUG
+            'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <CardTitle className="flex items-center">
-            <span>Edit answer</span>
+          <AnswersBreadcrumbs
+            className={cn(
+              isDev && '__EditAnswerCard_Breadcrumbs', // DEBUG
+            )}
+            answerId={answerId}
+            // inactiveAnswers
+          />
+          {/* // UNUSED: Tilte & description
+          <CardTitle className="flex flex-1 items-center overflow-hidden">
+            <span className="truncate">Edit answer</span>
           </CardTitle>
+          */}
         </div>
         <Toolbar {...props} goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
       </CardHeader>

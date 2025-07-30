@@ -15,11 +15,13 @@ interface TViewTopicContentProps {
   className?: string;
   goBack?: () => void;
   handleDeleteTopic: TViewTopicContentActionsProps['handleDeleteTopic'];
+  handleAddQuestion?: TViewTopicContentActionsProps['handleAddQuestion'];
   toolbarPortalRoot: HTMLDivElement | null;
 }
 
 export function ViewTopicContent(props: TViewTopicContentProps) {
-  const { topic, className, goBack, handleDeleteTopic, toolbarPortalRoot } = props;
+  const { topic, className, goBack, handleDeleteTopic, handleAddQuestion, toolbarPortalRoot } =
+    props;
   return (
     <>
       <div
@@ -33,7 +35,7 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
           <div
             className={cn(
               isDev && '__ViewTopicContent_Stub', // DEBUG
-              'flex w-full flex-col gap-4 overflow-hidden',
+              'flex w-full flex-col gap-4 overflow-hidden opacity-50',
               'mx-6',
               className,
             )}
@@ -48,6 +50,7 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
             topic={topic}
             goBack={goBack}
             handleDeleteTopic={handleDeleteTopic}
+            handleAddQuestion={handleAddQuestion}
           />,
           toolbarPortalRoot,
         )}

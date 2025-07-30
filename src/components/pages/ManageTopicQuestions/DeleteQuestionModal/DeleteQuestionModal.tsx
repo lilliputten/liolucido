@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { truncateString } from '@/lib/helpers/strings';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
+import { deletedQuestionEventName, TDeletedQuestionDetail } from '@/constants/eventTypes';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { deleteQuestion } from '@/features/questions/actions/deleteQuestion';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
@@ -66,11 +67,27 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
               // Hide the modal
               hideModal();
               // Update data
-              questionsContext.setQuestions((questions) =>
-                questions.filter(({ id }) => id != deletingQuestion.id),
-              );
+              questionsContext.setQuestions((questions) => {
+                const updatedQuestions = questions.filter(({ id }) => id != deletingQuestion.id);
+                // Dispatch a custom event with the updated questions data
+                const { topicId } = questionsContext;
+                const questionsCount = updatedQuestions.length;
+                const deletedQuestionId = deletingQuestion.id;
+                const detail: TDeletedQuestionDetail = {
+                  topicId,
+                  deletedQuestionId,
+                  questionsCount,
+                };
+                const event = new CustomEvent<TDeletedQuestionDetail>(deletedQuestionEventName, {
+                  detail,
+                  bubbles: true,
+                });
+                setTimeout(() => window.dispatchEvent(event), 100);
+                // Return data to update a state
+                return updatedQuestions;
+              });
               resolve(deletingQuestion);
-              // Dispatch a custom event with the selected language data
+              // Dispatch an event
               const event = new CustomEvent<TQuestion>(topicQuestionDeletedEventId, {
                 detail: deletingQuestion,
                 bubbles: true,

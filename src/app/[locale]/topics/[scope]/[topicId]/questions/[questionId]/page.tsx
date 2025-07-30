@@ -16,7 +16,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{
 
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
-  const title = 'Manage Question Page';
+  const title = 'Manage Question';
   return constructMetadata({
     locale,
     title,
@@ -32,7 +32,7 @@ export default async function ViewQuestionPage({ params }: TAwaitedProps) {
 
   return (
     <ManageTopicsPageWrapper>
-      <PageHeader heading={'Manage Question Page'} />
+      <PageHeader heading={'Manage Question'} />
       <ViewQuestionCard
         className={cn(
           isDev && '__page_ViewQuestionPage', // DEBUG

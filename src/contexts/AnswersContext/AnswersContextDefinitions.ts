@@ -13,5 +13,4 @@ export interface AnswersContextData {
   topicsListRoutePath: TRoutePath;
   topicRootRoutePath: TRoutePath;
   topicId: TTopicId;
-  // topicName: string;
 }

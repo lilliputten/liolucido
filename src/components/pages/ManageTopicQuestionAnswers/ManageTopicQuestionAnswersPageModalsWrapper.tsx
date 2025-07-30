@@ -4,13 +4,15 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { cn } from '@/lib/utils';
+import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { TAnswerId } from '@/features/answers/types';
 
-import { ManageTopicQuestionAnswersListWrapper } from './ManageTopicQuestionAnswersListWrapper';
+import { ManageTopicQuestionAnswersListCard } from './ManageTopicQuestionAnswersListCard';
 
 interface TTopicsListProps {
-  topicId: string;
+  // topicId: string;
   showAddModal?: boolean;
   deleteAnswerId?: TAnswerId;
   editAnswerId?: TAnswerId;
@@ -18,7 +20,7 @@ interface TTopicsListProps {
 
 export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
-  const { topicId, showAddModal, deleteAnswerId, editAnswerId } = props;
+  const { showAddModal, deleteAnswerId, editAnswerId } = props;
   const answersContext = useAnswersContext();
 
   // Add Answer Modal
@@ -70,11 +72,15 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
   }, [editAnswerId, openEditAnswerCard]);
 
   return (
-    <ManageTopicQuestionAnswersListWrapper
-      topicId={topicId}
-      openAddAnswerModal={openAddAnswerModal}
-      openDeleteAnswerModal={openDeleteAnswerModal}
-      openEditAnswerCard={openEditAnswerCard}
+    <ManageTopicQuestionAnswersListCard
+      className={cn(
+        isDev && '__ManageTopicQuestionAnswersPageModalsWrapper_Card', // DEBUG
+        'relative flex flex-1 flex-col overflow-hidden',
+      )}
+      // answers={answers}
+      handleDeleteAnswer={openDeleteAnswerModal}
+      handleEditAnswer={openEditAnswerCard}
+      handleAddAnswer={openAddAnswerModal}
     />
   );
 }

@@ -41,11 +41,11 @@ export async function ManageTopicQuestionAnswersLayout(
   const routePath = `${questionRootRoutePath}/answers` as TRoutePath;
 
   if (!topicId) {
-    return <PageError error={'Topic ID not specified.'} />;
+    return <PageError error={'No topic ID specified.'} />;
   }
 
   if (!questionId) {
-    return <PageError error={'Question ID not specified.'} />;
+    return <PageError error={'No question ID specified.'} />;
   }
 
   const user = await getCurrentUser();

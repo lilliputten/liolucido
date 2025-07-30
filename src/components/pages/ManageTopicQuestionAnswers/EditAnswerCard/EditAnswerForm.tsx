@@ -16,7 +16,7 @@ import { useAnswersContext } from '@/contexts/AnswersContext';
 import { updateAnswer } from '@/features/answers/actions';
 import { TAnswer } from '@/features/answers/types';
 
-import { maxNameLength, minNameLength } from '../constants';
+import { maxTextLength, minTextLength } from '../constants';
 import { EditAnswerFormActions } from './EditAnswerFormActions';
 import { EditAnswerFormFields } from './EditAnswerFormFields';
 import { TFormData } from './types';
@@ -39,7 +39,7 @@ export function EditAnswerForm(props: TEditAnswerFormProps) {
   const formSchema = React.useMemo(
     () =>
       z.object({
-        text: z.string().min(minNameLength).max(maxNameLength),
+        text: z.string().min(minTextLength).max(maxTextLength),
         isCorrect: z.boolean().optional(),
         isGenerated: z.boolean().optional(),
       }),

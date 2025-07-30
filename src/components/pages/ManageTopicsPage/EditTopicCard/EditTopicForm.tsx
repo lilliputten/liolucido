@@ -21,7 +21,7 @@ import {
   TSelectTopicLanguageData,
 } from '@/features/topics/types/TSelectTopicLanguageData';
 
-import { maxNameLength, maxTextLength, minNameLength, minTextLength } from '../constants';
+import { maxNameLength, maxTextLength, minNameLength } from '../constants';
 import { EditTopicFormActions } from './EditTopicFormActions';
 import { EditTopicFormFields } from './EditTopicFormFields';
 import { TFormData } from './types';
@@ -46,8 +46,9 @@ export function EditTopicForm(props: TEditTopicFormProps) {
       z
         .object({
           name: z.string().min(minNameLength).max(maxNameLength),
-          description: z.string().min(minTextLength).max(maxTextLength),
-          isPublic: z.boolean(),
+          // NOTE: It's impossible to limit minimal length (min) for optional strings?
+          description: z.string().max(maxTextLength).optional(),
+          isPublic: z.boolean().optional(),
           keywords: z.string().optional(),
           langCode: z.string().optional(),
           langName: z.string().optional(),

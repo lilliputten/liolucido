@@ -48,7 +48,7 @@ export function EditTopicFormActions(props: TProps) {
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
         <Icons.trash className="size-4" />
-        <span>Delete</span>
+        <span>Delete Topic</span>
       </Button>
       <Button
         type="button"
