@@ -54,7 +54,7 @@ export function EditAnswerFormActions(props: TProps) {
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteAnswer} className="gap-2">
         <Icons.trash className="size-4" />
-        <span>Delete</span>
+        <span>Delete Answer</span>
       </Button>
       <Button
         type="button"

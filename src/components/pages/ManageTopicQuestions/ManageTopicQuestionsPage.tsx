@@ -53,7 +53,6 @@ export async function ManageTopicQuestionsPage(props: ManageTopicQuestionsPagePr
         deleteQuestionId={deleteQuestionId}
         editQuestionId={editQuestionId}
         editAnswersQuestionId={editAnswersQuestionId}
-        topicId={topicId}
       />
     </ManageTopicsPageWrapper>
   );

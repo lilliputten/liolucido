@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
@@ -22,26 +22,22 @@ export default function Error({
 }) {
   const questionsContext = useQuestionsContext();
   const { routePath, topicRootRoutePath } = questionsContext;
-  const router = useRouter();
-  const toTopic = () => {
-    router.push(topicRootRoutePath);
-  };
-  const toQuestionsList = () => {
-    router.push(routePath);
-  };
   const extraActions = (
     <>
       {topicRootRoutePath && (
-        <Button onClick={toTopic} className="flex gap-2">
+        <Link
+          href={topicRootRoutePath}
+          className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}
+        >
           <Icons.arrowLeft className="size-4" />
           <span>To the topic</span>
-        </Button>
+        </Link>
       )}
       {routePath && (
-        <Button onClick={toQuestionsList} className="flex gap-2">
+        <Link href={routePath} className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}>
           <Icons.arrowLeft className="size-4" />
           <span>To the questions list</span>
-        </Button>
+        </Link>
       )}
     </>
   );

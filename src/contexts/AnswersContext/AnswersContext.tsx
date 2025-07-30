@@ -23,7 +23,6 @@ export function AnswersContextProvider({
   topicsListRoutePath,
   topicRootRoutePath,
   topicId,
-  // topicName,
 }: AnswersContextProviderProps) {
   const [answers, setAnswers] = React.useState<TAnswer[]>(initialAnswers);
 
@@ -38,7 +37,6 @@ export function AnswersContextProvider({
       topicsListRoutePath: topicsListRoutePath as TRoutePath,
       topicRootRoutePath: topicRootRoutePath as TRoutePath,
       topicId,
-      // topicName,
     }),
     [
       answers,
@@ -49,7 +47,6 @@ export function AnswersContextProvider({
       topicsListRoutePath,
       topicRootRoutePath,
       topicId,
-      // topicName,
     ],
   );
 

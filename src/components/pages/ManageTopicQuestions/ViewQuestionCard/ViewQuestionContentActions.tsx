@@ -45,7 +45,7 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
       </Button>
       <Button variant="destructive" size="sm" onClick={handleDeleteQuestion} className="gap-2">
         <Icons.trash className="size-4" />
-        <span>Delete</span>
+        <span>Delete Question</span>
       </Button>
     </>
   );

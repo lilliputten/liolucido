@@ -1,1 +1,1 @@
-export const deletedTopicEventId = 'deleted-topic';
+// export const deletedTopicEventId = 'deleted-topic';

@@ -6,11 +6,10 @@ import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
+import { deletedTopicEventName, TDeletedTopicDetail } from '@/constants/eventTypes';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
 import { TTopic, TTopicId } from '@/features/topics/types';
-
-import { deletedTopicEventId } from './constants';
 
 interface TDeleteTopicModalProps {
   topicId?: TTopicId;
@@ -64,17 +63,23 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
           }
           const promise = deleteTopic(deletingTopic)
             .then(() => {
-              topicsContext.setTopics((topics) =>
-                topics.filter(({ id }) => id != deletingTopic.id),
-              );
+              topicsContext.setTopics((topics) => {
+                const updatedTopics = topics.filter(({ id }) => id != deletingTopic.id);
+                // Dispatch a custom event with the deleted topic info
+                const detail: TDeletedTopicDetail = {
+                  deletedTopicId: deletingTopic.id,
+                  topicsCount: updatedTopics.length,
+                };
+                const event = new CustomEvent<TDeletedTopicDetail>(deletedTopicEventName, {
+                  detail,
+                  bubbles: true,
+                });
+                setTimeout(() => window.dispatchEvent(event), 100);
+                // Return updated data
+                return updatedTopics;
+              });
               resolve(deletingTopic);
               hideModal();
-              // Dispatch a custom event with the selected language data
-              const event = new CustomEvent<TTopic>(deletedTopicEventId, {
-                detail: deletingTopic,
-                bubbles: true,
-              });
-              window.dispatchEvent(event);
             })
             .catch((error) => {
               // eslint-disable-next-line no-console

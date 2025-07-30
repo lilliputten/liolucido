@@ -37,10 +37,14 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 export async function ManageTopicQuestionAnswersPage(props: ManageTopicQuestionAnswersPageProps) {
   const { showAddModal, deleteAnswerId, editAnswerId, params } = props;
 
-  const { locale, topicId } = await params;
+  const { locale, topicId, questionId } = await params;
 
   if (!topicId) {
-    return <PageError error={'No topic specified.'} />;
+    return <PageError error={'No topic ID specified.'} />;
+  }
+
+  if (!questionId) {
+    return <PageError error={'No question ID specified.'} />;
   }
 
   const t = await getTranslations({ locale, namespace: 'ManageTopicQuestionAnswers' });
@@ -55,7 +59,7 @@ export async function ManageTopicQuestionAnswersPage(props: ManageTopicQuestionA
         showAddModal={showAddModal}
         deleteAnswerId={deleteAnswerId}
         editAnswerId={editAnswerId}
-        topicId={topicId}
+        // topicId={topicId}
       />
     </ManageTopicsPageWrapper>
   );

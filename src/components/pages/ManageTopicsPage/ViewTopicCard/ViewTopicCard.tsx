@@ -46,7 +46,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
-    const hasTopic = topicsContext.topics.find(({ id }) => id === topic.id);
+    const hasTopic = !!topicsContext.topics.find(({ id }) => id === topic.id);
     if (hasTopic) {
       router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=ViewTopicCard`);
     } else {
@@ -54,6 +54,12 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
       router.replace(topicsContext.routePath);
     }
   }, [router, topicsContext, topic]);
+
+  /* // Add Topic Modal
+   * const handleAddQuestion = React.useCallback(() => {
+   *   router.push(`${topicsContext.routePath}/${topic.id}/questions/add`);
+   * }, [router, topicsContext, topic]);
+   */
 
   return (
     <Card
@@ -108,6 +114,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
           topic={topic}
           goBack={goBack}
           handleDeleteTopic={handleDeleteTopic}
+          // handleAddQuestion={handleAddQuestion}
           toolbarPortalRoot={toolbarPortalRoot}
         />
       </CardContent>
