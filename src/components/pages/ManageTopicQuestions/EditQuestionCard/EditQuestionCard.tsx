@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
+import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 
 import { topicQuestionDeletedEventId } from '../DeleteQuestionModal';
@@ -133,18 +134,28 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
       <CardHeader
         className={cn(
           isDev && '__EditQuestionCard_Header', // DEBUG
-          'item-start flex flex-row flex-wrap',
+          'item-start flex flex-col gap-4 lg:flex-row',
         )}
       >
         <div
           className={cn(
-            isDev && '__EditQuestionCard_Title', // DEBUG
-            'flex flex-1 items-center gap-2',
+            isDev && '__ManageTopicQuestionsListCard_TitleWrapper', // DEBUG
+            'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <CardTitle className="flex items-center">
+          <QuestionsBreadcrumbs
+            className={cn(
+              isDev && '__ManageTopicQuestionsListCard_Breadcrumbs', // DEBUG
+            )}
+            questionId={questionId}
+            // inactiveQuestion
+            // inactiveQuestions
+          />
+          {/*
+          <CardTitle className="flex flex-1 items-center">
             <span>Edit question</span>
           </CardTitle>
+          */}
         </div>
         <Toolbar {...props} goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
       </CardHeader>

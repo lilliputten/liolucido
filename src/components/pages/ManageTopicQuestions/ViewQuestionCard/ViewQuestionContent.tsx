@@ -6,25 +6,28 @@ import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { TTopic } from '@/features/topics/types';
+import { TQuestion } from '@/features/questions/types';
 
-import { TViewTopicContentActionsProps, ViewTopicContentActions } from './ViewTopicContentActions';
+import {
+  TViewQuestionContentActionsProps,
+  ViewQuestionContentActions,
+} from './ViewQuestionContentActions';
 
-interface TViewTopicContentProps {
-  topic: TTopic;
+interface TViewQuestionContentProps {
+  question: TQuestion;
   className?: string;
   goBack?: () => void;
-  handleDeleteTopic: TViewTopicContentActionsProps['handleDeleteTopic'];
+  handleDeleteQuestion: TViewQuestionContentActionsProps['handleDeleteQuestion'];
   toolbarPortalRoot: HTMLDivElement | null;
 }
 
-export function ViewTopicContent(props: TViewTopicContentProps) {
-  const { topic, className, goBack, handleDeleteTopic, toolbarPortalRoot } = props;
+export function ViewQuestionContent(props: TViewQuestionContentProps) {
+  const { question, className, goBack, handleDeleteQuestion, toolbarPortalRoot } = props;
   return (
     <>
       <div
         className={cn(
-          isDev && '__ViewTopicContent', // DEBUG
+          isDev && '__ViewQuestionContent', // DEBUG
           'flex w-full flex-col gap-4 overflow-hidden',
           className,
         )}
@@ -32,22 +35,22 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
         <ScrollArea>
           <div
             className={cn(
-              isDev && '__ViewTopicContent_Stub', // DEBUG
+              isDev && '__ViewQuestionContent_Stub', // DEBUG
               'flex w-full flex-col gap-4 overflow-hidden',
               'mx-6',
               className,
             )}
           >
-            Here comes some topic overview and summary.
+            Here comes some question overview and summary.
           </div>
         </ScrollArea>
       </div>
       {toolbarPortalRoot &&
         createPortal(
-          <ViewTopicContentActions
-            topic={topic}
+          <ViewQuestionContentActions
+            question={question}
             goBack={goBack}
-            handleDeleteTopic={handleDeleteTopic}
+            handleDeleteQuestion={handleDeleteQuestion}
           />,
           toolbarPortalRoot,
         )}

@@ -171,27 +171,26 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         answersCountMin: formData.answersCountMin,
         answersCountMax: formData.answersCountMax,
       };
-      startTransition(() => {
+      startTransition(async () => {
         const savePromise = updateTopic(editedTopic);
         toast.promise<unknown>(savePromise, {
           loading: 'Saving the topic data...',
           success: 'Successfully saved the topic',
           error: 'Can not save the topic data.',
         });
-        return savePromise
-          .then((updatedTopic) => {
-            topicsContext.setTopics((topics) => {
-              return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
-            });
-            form.reset(form.getValues());
-          })
-          .catch((error) => {
-            const message = getErrorText(error);
-            // eslint-disable-next-line no-console
-            console.error('[EditTopicForm:handleFormSubmit]', message, {
-              error,
-            });
+        try {
+          const updatedTopic = await savePromise;
+          topicsContext.setTopics((topics) => {
+            return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
           });
+          form.reset(form.getValues());
+        } catch (error) {
+          const message = getErrorText(error);
+          // eslint-disable-next-line no-console
+          console.error('[EditTopicForm:handleFormSubmit]', message, {
+            error,
+          });
+        }
       });
     },
     [form, topicsContext, topic],

@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { EditTopicForm } from './EditTopicForm';
@@ -79,22 +80,23 @@ export function EditTopicCard(props: TEditTopicCardProps) {
       <CardHeader
         className={cn(
           isDev && '__EditTopicCard_Header', // DEBUG
-          'item-start flex flex-row flex-wrap gap-4',
+          'item-start flex flex-col gap-4',
         )}
       >
-        {/* // Title
-        <div
+        <TopicsBreadcrumbs
           className={cn(
-            isDev && '__EditTopicCard_Title', // DEBUG
-            'flex flex-1 items-center gap-4 overflow-hidden',
+            isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
           )}
-        >
+          topicId={topicId}
+        />
+        <div className="item-start flex flex-row flex-wrap gap-4">
+          {/* // Title
           <CardTitle className="flex flex-1 items-center overflow-hidden">
             <span className="truncate">Manage Topic "{topic.name}"</span>
           </CardTitle>
+          */}
+          <Toolbar goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
         </div>
-        */}
-        <Toolbar goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
       </CardHeader>
       <CardContent
         className={cn(
