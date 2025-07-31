@@ -10,7 +10,7 @@ export function ContentSkeleton({ className }: TProps) {
   return (
     <div
       className={cn(
-        isDev && '__ContentSkeleton', // DEBUG
+        isDev && '__SettingsPage_ContentSkeleton', // DEBUG
         'size-full rounded-lg',
         'flex flex-1 flex-col gap-5',
         className,

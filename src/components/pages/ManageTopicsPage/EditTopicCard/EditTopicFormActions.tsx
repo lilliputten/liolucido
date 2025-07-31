@@ -17,10 +17,11 @@ interface TProps {
   onCancel?: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   onSubmit: (data: TFormData) => void;
+  handleDeleteTopic: () => void;
 }
 
 export function EditTopicFormActions(props: TProps) {
-  const { isSubmitEnabled, isPending, onCancel, form, onSubmit } = props;
+  const { isSubmitEnabled, isPending, onCancel, form, onSubmit, handleDeleteTopic } = props;
   const { isDirty } = form.formState;
   const Icon = isPending ? Icons.spinner : Icons.check;
   const buttonText = isPending ? 'Saving' : 'Save';
@@ -45,6 +46,10 @@ export function EditTopicFormActions(props: TProps) {
           <span>Reset changes</span>
         </Button>
       )}
+      <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
+        <Icons.trash className="size-4" />
+        <span>Delete Topic</span>
+      </Button>
       <Button
         type="button"
         size="sm"

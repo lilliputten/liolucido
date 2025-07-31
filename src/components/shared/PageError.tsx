@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { ErrorLike } from '@/shared/types/errors';
 import { TReactNode } from '@/shared/types/generic';
+import { rootRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { isDev } from '@/constants';
 interface TErrorProps {
   title?: TReactNode;
   extraActions?: TReactNode;
+  ExtraActions?: React.FunctionComponent;
   error?: ErrorLike; // Error & { message?: string };
   reset?: () => void;
   className?: string;
@@ -25,9 +27,19 @@ interface TErrorProps {
 // otherwise you'll get an 'Only plain objects... can be passed...' error.
 
 export function PageError(props: TErrorProps) {
-  const { error, reset, className, title, iconName = 'warning', extraActions } = props;
+  const {
+    error,
+    reset,
+    className,
+    title,
+    iconName = 'warning',
+    extraActions,
+    ExtraActions,
+  } = props;
   const router = useRouter();
+
   const errText = getErrorText(error);
+
   React.useEffect(() => {
     if (error) {
       const errText = getErrorText(error);
@@ -38,6 +50,32 @@ export function PageError(props: TErrorProps) {
     }
     // TODO: Log the error to an error reporting service?
   }, [error]);
+
+  const goBack = React.useCallback(() => {
+    const { href } = window.location;
+    // Do a hard reload
+    window.history.back();
+    // router.back();
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        window.location.href = rootRoute;
+      }
+    }, 200);
+  }, []);
+
+  const goHome = React.useCallback(() => {
+    const { href } = window.location;
+    // Do a hard reload
+    // window.location.href = rootRoute;
+    router.push(rootRoute);
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        window.location.href = rootRoute;
+      }
+    }, 200);
+  }, [router]);
 
   return (
     <ErrorPlaceHolder
@@ -56,15 +94,21 @@ export function PageError(props: TErrorProps) {
           {errText}
         </ErrorPlaceHolder.Description>
       )}
-      <div className="mt-2 flex w-full justify-center gap-4">
-        <Button onClick={() => router.back()} className="flex gap-2">
+      <div className="mt-2 flex w-full flex-wrap justify-center gap-4">
+        <Button onClick={goBack} className="flex gap-2">
           <Icons.arrowLeft className="size-4" />
           <span>Go back</span>
         </Button>
-        <Button onClick={() => router.push('/')} className="flex gap-2">
+        <Button onClick={goHome} className="flex gap-2">
           <Icons.home className="size-4" />
           Go home
         </Button>
+        {/*
+        <Link href={rootRoute} className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}>
+          <Icons.home className="size-4" />
+          <span>Go home</span>
+        </Link>
+        */}
         {!!reset && (
           <Button onClick={reset} className="flex gap-2">
             <Icons.refresh className="size-4" />
@@ -72,6 +116,7 @@ export function PageError(props: TErrorProps) {
           </Button>
         )}
         {extraActions}
+        {ExtraActions && <ExtraActions />}
       </div>
     </ErrorPlaceHolder>
   );

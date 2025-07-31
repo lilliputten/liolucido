@@ -1,7 +1,11 @@
 {
+  "ManageTopicQuestionAnswers": {
+    "title": "Управление ответами",
+    "description": "Ответы для выбранного вопроса"
+  },
   "ManageTopicQuestions": {
-    "title": "Вопросы",
-    "description": "Вопросы в теме"
+    "title": "Управление вопросами",
+    "description": "Вопросы для выбранной темы"
   },
   "MyTopicsPage": {
     "title": "Мои темы",
@@ -68,8 +72,29 @@
   },
   "Settings": {},
   "Themes": {
-    "blue": "Синяя",
-    "brand": "Тема приложения"
+    "brand": "Основная",
+    "red": "Красный",
+    "orange": "Оранжевый",
+    "amber": "Янтарь",
+    "yellow": "Желтый",
+    "lime": "Лайм",
+    "green": "Зеленый",
+    "emerald": "Изумруд",
+    "teal": "Чирок",
+    "cyan": "Голубой",
+    "sky": "Небо",
+    "blue": "Синий",
+    "indigo": "Индиго",
+    "violet": "Фиолетовый",
+    "purple": "Фиолетовый",
+    "fuchsia": "Фуксия",
+    "pink": "Розовый",
+    "rose": "Роза",
+    "slate": "Шифер",
+    "gray": "Серый",
+    "zinc": "цинк",
+    "neutral": "Нейтральный",
+    "stone": "Камень"
   },
   "NavModeToggle": {
     "label": "Переключить тему",

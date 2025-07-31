@@ -47,29 +47,30 @@ function FormSection({ children }: TPropsWithChildren) {
 export function EditQuestionFormFields(props: TEditQuestionFormFieldsProps) {
   const { className, form } = props;
   // Create unique keys for labels
-  const nameKey = React.useId();
+  const textKey = React.useId();
   const answersCountRandomKey = React.useId();
   const answersCountMinKey = React.useId();
   const answersCountMaxKey = React.useId();
   return (
     <div className={cn('flex w-full flex-col gap-6 px-6 py-2 md:flex-row', className)}>
       <FormSection>
+        {/* text */}
         <FormField
           name="text"
           control={form.control}
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-4">
-              <Label htmlFor={nameKey}>Topic Name</Label>
+              <Label htmlFor={textKey}>Question Text</Label>
               <FormControl>
                 <Textarea
-                  id={nameKey}
+                  id={textKey}
                   className="flex-1"
-                  placeholder="Question text"
+                  placeholder="Question Text"
                   rows={5}
                   {...field}
                 />
               </FormControl>
-              <FormHint>A question text.</FormHint>
+              <FormHint>A question Text.</FormHint>
               <FormMessage />
             </FormItem>
           )}

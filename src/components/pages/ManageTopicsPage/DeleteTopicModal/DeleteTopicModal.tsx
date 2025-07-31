@@ -5,27 +5,35 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
-import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Modal } from '@/components/ui/modal';
-import { isDev } from '@/constants';
+import { ConfirmModal } from '@/components/modals/ConfirmModal';
+import { deletedTopicEventName, TDeletedTopicDetail } from '@/constants/eventTypes';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
-import { DeleteTopicForm } from './DeleteTopicForm';
-
 interface TDeleteTopicModalProps {
   topicId?: TTopicId;
+  from?: string;
 }
 
 export function DeleteTopicModal(props: TDeleteTopicModalProps) {
   const { topicId } = props;
   const router = useRouter();
-  const { topics, setTopics } = useTopicsContext();
-  const hideModal = React.useCallback(() => router.back(), [router]);
-  // const hideModal = React.useCallback(() => router.replace(routePath), [routePath, router]);
+  const topicsContext = useTopicsContext();
+  const { topics } = topicsContext;
+
+  const hideModal = React.useCallback(() => {
+    const { href } = window.location;
+    router.back();
+    setTimeout(() => {
+      // If still on the same page after trying to go back, fallback
+      if (document.visibilityState === 'visible' && href === window.location.href) {
+        router.push(topicsContext.routePath);
+        // TODO: To use `from` parameter?
+      }
+    }, 200);
+  }, [router, topicsContext]);
+
   if (!topicId) {
     throw new Error('No topic id passed for deletion');
   }
@@ -34,7 +42,15 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
     [topicId, topics],
   );
   const [isPending, startUpdating] = React.useTransition();
-  const { isMobile } = useMediaQuery();
+
+  // Change a browser title
+  React.useEffect(() => {
+    const originalTitle = document.title;
+    document.title = 'Delete a Topic?';
+    return () => {
+      document.title = originalTitle;
+    };
+  }, []);
 
   const confirmDeleteTopic = React.useCallback(
     () =>
@@ -47,7 +63,21 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
           }
           const promise = deleteTopic(deletingTopic)
             .then(() => {
-              setTopics((topics) => topics.filter(({ id }) => id != deletingTopic.id));
+              topicsContext.setTopics((topics) => {
+                const updatedTopics = topics.filter(({ id }) => id != deletingTopic.id);
+                // Dispatch a custom event with the deleted topic info
+                const detail: TDeletedTopicDetail = {
+                  deletedTopicId: deletingTopic.id,
+                  topicsCount: updatedTopics.length,
+                };
+                const event = new CustomEvent<TDeletedTopicDetail>(deletedTopicEventName, {
+                  detail,
+                  bubbles: true,
+                });
+                setTimeout(() => window.dispatchEvent(event), 100);
+                // Return updated data
+                return updatedTopics;
+              });
               resolve(deletingTopic);
               hideModal();
             })
@@ -67,40 +97,28 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
           });
         });
       }),
-    [deletingTopic, hideModal, setTopics],
+    [deletingTopic, hideModal, topicsContext],
   );
 
+  const topicName = deletingTopic?.name;
+
+  if (!topicName) {
+    return null;
+  }
+
   return (
-    <Modal
+    <ConfirmModal
+      dialogTitle="Confirm delete topic"
+      confirmButtonVariant="destructive"
+      confirmButtonText="Delete"
+      confirmButtonBusyText="Deleting"
+      cancelButtonText="Cancel"
+      handleConfirm={confirmDeleteTopic}
+      handleClose={hideModal}
+      isPending={isPending}
       isVisible
-      hideModal={hideModal}
-      className={cn(
-        isDev && '__DeleteTopicModal', // DEBUG
-        'gap-0',
-        isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
-      )}
     >
-      <div
-        className={cn(
-          isDev && '__DeleteTopicModal_Header', // DEBUG
-          !isMobile && 'max-h-[90vh]',
-          'flex flex-col border-b bg-accent px-8 py-4',
-        )}
-      >
-        <DialogTitle className="DialogTitle">Delete Topic?</DialogTitle>
-        <DialogDescription aria-hidden="true" hidden>
-          Delete topic dialog
-        </DialogDescription>
-      </div>
-      <div className="flex flex-col px-8 py-4">
-        <DeleteTopicForm
-          name={deletingTopic?.name || ''}
-          handleConfirm={confirmDeleteTopic}
-          className="p-8"
-          handleClose={hideModal}
-          isPending={isPending}
-        />
-      </div>
-    </Modal>
+      Are you confirming deleting the topic "{topicName}"?
+    </ConfirmModal>
   );
 }

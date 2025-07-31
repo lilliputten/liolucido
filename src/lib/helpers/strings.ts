@@ -53,3 +53,15 @@ export function ucFirst(str: string) {
   const rest = str.substring(1);
   return c.toUpperCase() + rest;
 }
+
+const defaultEllipsis = '…';
+
+export function truncateString(str?: string, len?: number, ellipsis: string = defaultEllipsis) {
+  if (!str || !len) {
+    return str || '';
+  }
+  if (str.length > len) {
+    return str.substring(0, len - ellipsis.length) + ellipsis;
+  }
+  return str;
+}

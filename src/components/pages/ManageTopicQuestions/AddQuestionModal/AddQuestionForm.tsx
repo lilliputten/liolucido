@@ -85,7 +85,7 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
     ev.preventDefault();
   };
 
-  const nameKey = React.useId();
+  const textKey = React.useId();
 
   const Icon = isPending ? Icons.spinner : Icons.check;
   const buttonText = isPending ? 'Adding' : 'Add';
@@ -105,12 +105,12 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
           control={form.control}
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-4">
-              <Label className="m-0" htmlFor={nameKey}>
+              <Label className="m-0" htmlFor={textKey}>
                 Question Text
               </Label>
               <FormControl>
                 <Textarea
-                  id={nameKey}
+                  id={textKey}
                   className="flex-1"
                   placeholder="Text"
                   rows={5}

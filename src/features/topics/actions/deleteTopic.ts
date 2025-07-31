@@ -13,7 +13,7 @@ export async function deleteTopic(topic: TTopic) {
     throw new Error('Undefined user');
   }
   // Check user rights to delete the question...
-  if (userId !== topic.userId || user.role !== 'ADMIN') {
+  if (userId !== topic.userId && user.role !== 'ADMIN') {
     throw new Error('Current user not allowed to delete the topic');
   }
   try {

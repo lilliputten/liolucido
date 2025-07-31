@@ -1,16 +1,13 @@
 import { redirect } from 'next/navigation';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 
 import { TRoutePath, welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
-import { constructMetadata } from '@/lib/utils';
 import { PageError } from '@/components/shared/PageError';
 import { QuestionsContextProvider } from '@/contexts/QuestionsContext';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { getTopicQuestions } from '@/features/questions/actions/getTopicQuestions';
 import { TQuestion } from '@/features/questions/types';
-import { getTopic } from '@/features/topics/actions';
-import { TTopicId } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
@@ -22,18 +19,6 @@ type TManageTopicQuestionsLayoutProps = TAwaitedProps & {
   deleteQuestionModal: React.ReactNode; // slot from @deleteQuestionModal
 };
 
-export async function generateMetadata({ params }: TAwaitedProps) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'ManageTopicQuestions' });
-  const title = t('title');
-  const description = t('description');
-  return constructMetadata({
-    locale,
-    title,
-    description,
-  });
-}
-
 export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLayoutProps) {
   const {
     children,
@@ -42,18 +27,13 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
     params,
   } = props;
   const resolvedParams = await params;
-  const { locale, scope, topicId: id } = resolvedParams;
-  const topicId = id ? (parseInt(id) as TTopicId) : undefined;
-  const topicRoutePath = topicsRoutes[scope];
-  const routePath = `${topicRoutePath}/${topicId}/questions` as TRoutePath;
+  const { locale, scope, topicId } = resolvedParams;
+  const topicsListRoutePath = topicsRoutes[scope];
+  const topicRootRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
+  const routePath = `${topicsListRoutePath}/${topicId}/questions` as TRoutePath;
 
   if (!topicId) {
-    return <PageError error={'Invalid topic ID.'} />;
-  }
-
-  const topic = await getTopic(topicId);
-  if (!topic) {
-    return <PageError error={'Not found a topic for the question.'} />;
+    return <PageError error={'Topic ID not specified.'} />;
   }
 
   const user = await getCurrentUser();
@@ -74,9 +54,9 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
     <QuestionsContextProvider
       questions={questions}
       routePath={routePath}
-      topicRoutePath={topicRoutePath}
+      topicRootRoutePath={topicRootRoutePath}
+      topicsListRoutePath={topicsListRoutePath}
       topicId={topicId}
-      topicName={topic.name}
     >
       {children}
       {addQuestionModal}

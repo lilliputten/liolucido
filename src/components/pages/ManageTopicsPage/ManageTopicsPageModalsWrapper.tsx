@@ -13,11 +13,13 @@ interface TTopicsListProps {
   showAddModal?: boolean;
   deleteTopicId?: TTopicId;
   editTopicId?: TTopicId;
+  editQuestionsTopicId?: TTopicId;
+  from?: string;
 }
 
 export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
-  const { showAddModal, deleteTopicId, editTopicId } = props;
+  const { showAddModal, deleteTopicId, editTopicId, editQuestionsTopicId, from } = props;
   const topicsContext = useTopicsContext();
 
   // Add Topic Modal
@@ -32,10 +34,10 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
 
   // Delete Topic Modal
   const openDeleteTopicModal = React.useCallback(
-    (topicId: TTopicId) => {
+    (topicId: TTopicId, from: string) => {
       const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
       if (hasTopic) {
-        router.push(`${topicsContext.routePath}/delete?id=${topicId}`);
+        router.push(`${topicsContext.routePath}/delete?topicId=${topicId}&from=${from}`);
       } else {
         toast.error('The requested topic does not exist.');
         router.replace(topicsContext.routePath);
@@ -45,9 +47,15 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   );
   React.useEffect(() => {
     if (deleteTopicId) {
-      openDeleteTopicModal(deleteTopicId);
+      if (from?.startsWith('SERVER:')) {
+        // eslint-disable-next-line no-console
+        console.warn('No url-invoked topic deletions allowed!');
+        router.replace(topicsContext.routePath);
+      } else {
+        openDeleteTopicModal(deleteTopicId, from || 'Unknown_in_ManageTopicsPageModalsWrapper');
+      }
     }
-  }, [deleteTopicId, openDeleteTopicModal]);
+  }, [deleteTopicId, router, topicsContext, openDeleteTopicModal, from]);
 
   // Edit Topic Card
   const openEditTopicCard = React.useCallback(
@@ -82,10 +90,11 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
     [router, topicsContext],
   );
   React.useEffect(() => {
-    if (editTopicId) {
-      openEditQuestionsPage(editTopicId);
+    // Use another id (`editQuestionsTopicId`)?
+    if (editQuestionsTopicId) {
+      openEditQuestionsPage(editQuestionsTopicId);
     }
-  }, [editTopicId, openEditQuestionsPage]);
+  }, [editQuestionsTopicId, openEditQuestionsPage]);
 
   return (
     <ManageTopicsListWrapper

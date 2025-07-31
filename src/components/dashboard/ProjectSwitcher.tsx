@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Check, ChevronsUpDown, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -34,7 +34,7 @@ export function ProjectSwitcher({ large = false }: { large?: boolean }) {
     // data: session,
     status,
   } = useSession();
-  const [openPopover, setOpenPopover] = useState(false);
+  const [openPopover, setOpenPopover] = React.useState(false);
 
   if (!projects || status === 'loading') {
     return <ProjectSwitcherPlaceholder />;

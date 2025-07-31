@@ -1,5 +1,7 @@
 'use server';
 
+import { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
@@ -10,14 +12,21 @@ export async function getTopic(id: TTopicId) {
   // Check user rights to delete the question...?
   const user = await getCurrentUser();
   const userId = user?.id;
+  // const isAdmin = user?.role === 'ADMIN';
   try {
     if (isDev) {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
+    const where: Prisma.TopicWhereUniqueInput = {
+      id,
+      /* // TODO: Restrict isPublic if it isn't an admin user?
+       * isPublic: isAdmin ? null : false,
+       */
+    };
     const topic: TTopic | undefined =
       (await prisma.topic.findUnique({
-        where: { id },
+        where,
       })) || undefined;
     if (topic) {
       // Check if the current user is allowed to see the topic?

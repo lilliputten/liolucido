@@ -6,12 +6,14 @@ import { isDev } from '@/constants';
 interface TProps extends TPropsWithChildrenAndClassName {
   inSkeleton?: boolean;
   inError?: boolean;
+  noPadded?: boolean;
 }
 
 export function ManageTopicsPageWrapper(props: TProps) {
   const {
     className,
     children,
+    noPadded,
     // inSkeleton,
     // inError,
   } = props;
@@ -29,8 +31,7 @@ export function ManageTopicsPageWrapper(props: TProps) {
       )}
       // scrollable={!inSkeleton}
       limitWidth
-      padded
-      vPadded
+      padded={!noPadded}
     >
       {children}
     </PageWrapper>

@@ -6,7 +6,7 @@ export interface QuestionsContextData {
   questions: TQuestion[];
   setQuestions: React.Dispatch<React.SetStateAction<TQuestion[]>>;
   routePath: TRoutePath;
-  topicRoutePath: TRoutePath;
+  topicRootRoutePath: TRoutePath;
+  topicsListRoutePath: TRoutePath;
   topicId: TTopicId;
-  topicName: string;
 }

@@ -3,6 +3,7 @@
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
+import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
 import { TTopic } from '../types';
@@ -12,6 +13,11 @@ export async function getAllUsersTopics() {
     if (isDev) {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    const user = await getCurrentUser();
+    const isAdmin = user?.role === 'ADMIN';
+    if (!isAdmin) {
+      throw new Error('Current user is not allowed to retrieve others topics.');
     }
     const include: Prisma.TopicInclude = {
       _count: { select: { questions: true } },

@@ -1,13 +1,23 @@
-import { ManageTopicsPage } from '@/components/pages/ManageTopicsPage/ManageTopicsPage';
-import { TTopicId } from '@/features/topics/types';
+import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import ManageTopicsPage from '../page';
+
+type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId }>;
 
 interface DeleteTopicPageProps {
-  searchParams: Promise<{ id: string }>;
+  searchParams: Promise<{ topicId: string; from?: string }>;
 }
 
-export default async function DeleteTopicPage({ searchParams }: DeleteTopicPageProps) {
-  const { id } = await searchParams;
-  const topicId = id ? (parseInt(id) as TTopicId) : undefined;
+export default async function DeleteTopicPage({
+  searchParams,
+  params,
+}: DeleteTopicPageProps & TAwaitedProps) {
+  const { topicId, from } = await searchParams;
+  // const { scope } = await params;
+  // const route = topicsRoutes[scope];
+  // NOTE: Don't display a delete topic modal by url request: just redirect to crsp topics list
+  // redirect(route);
 
-  return <ManageTopicsPage deleteTopicId={topicId} />;
+  return <ManageTopicsPage deleteTopicId={topicId} from={'SERVER:' + from} params={params} />;
 }

@@ -21,7 +21,7 @@ import {
   TSelectTopicLanguageData,
 } from '@/features/topics/types/TSelectTopicLanguageData';
 
-import { maxNameLength, minNameLength } from '../constants';
+import { maxNameLength, maxTextLength, minNameLength } from '../constants';
 import { EditTopicFormActions } from './EditTopicFormActions';
 import { EditTopicFormFields } from './EditTopicFormFields';
 import { TFormData } from './types';
@@ -32,11 +32,11 @@ interface TEditTopicFormProps {
   topic: TTopic;
   className?: string;
   onCancel?: () => void;
-  toolbarPortalRef: React.RefObject<HTMLDivElement>;
+  toolbarPortalRoot: HTMLDivElement | null;
 }
 
 export function EditTopicForm(props: TEditTopicFormProps) {
-  const { topic, className, onCancel, toolbarPortalRef } = props;
+  const { topic, className, onCancel, toolbarPortalRoot } = props;
   const router = useRouter();
   const topicsContext = useTopicsContext();
   const [isPending, startTransition] = React.useTransition();
@@ -46,7 +46,9 @@ export function EditTopicForm(props: TEditTopicFormProps) {
       z
         .object({
           name: z.string().min(minNameLength).max(maxNameLength),
-          isPublic: z.boolean(),
+          // NOTE: It's impossible to limit minimal length (min) for optional strings?
+          description: z.string().max(maxTextLength).optional(),
+          isPublic: z.boolean().optional(),
           keywords: z.string().optional(),
           langCode: z.string().optional(),
           langName: z.string().optional(),
@@ -94,6 +96,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
   const defaultValues: TFormData = React.useMemo(
     () => ({
       name: topic.name || '',
+      description: topic.description || '',
       isPublic: topic.isPublic || false,
       keywords: topic.keywords || '',
       langCode: topic.langCode || '',
@@ -159,6 +162,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
       const editedTopic: TTopic = {
         ...topic,
         name: formData.name,
+        description: formData.description,
         isPublic: formData.isPublic,
         keywords: formData.keywords,
         langCode: formData.langCode,
@@ -168,27 +172,26 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         answersCountMin: formData.answersCountMin,
         answersCountMax: formData.answersCountMax,
       };
-      startTransition(() => {
+      startTransition(async () => {
         const savePromise = updateTopic(editedTopic);
         toast.promise<unknown>(savePromise, {
           loading: 'Saving the topic data...',
           success: 'Successfully saved the topic',
           error: 'Can not save the topic data.',
         });
-        return savePromise
-          .then((updatedTopic) => {
-            topicsContext.setTopics((topics) => {
-              return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
-            });
-            form.reset(form.getValues());
-          })
-          .catch((error) => {
-            const message = getErrorText(error);
-            // eslint-disable-next-line no-console
-            console.error('[EditTopicForm:handleFormSubmit]', message, {
-              error,
-            });
+        try {
+          const updatedTopic = await savePromise;
+          topicsContext.setTopics((topics) => {
+            return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
           });
+          form.reset(form.getValues());
+        } catch (error) {
+          const message = getErrorText(error);
+          // eslint-disable-next-line no-console
+          console.error('[EditTopicForm:handleFormSubmit]', message, {
+            error,
+          });
+        }
       });
     },
     [form, topicsContext, topic],
@@ -204,7 +207,16 @@ export function EditTopicForm(props: TEditTopicFormProps) {
     [onCancel],
   );
 
-  const toolbarPortalRoot = toolbarPortalRef.current;
+  // Delete Topic Modal
+  const handleDeleteTopic = React.useCallback(() => {
+    const hasTopic = topicsContext.topics.find(({ id }) => id === topic.id);
+    if (hasTopic) {
+      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=EditTopicForm`);
+    } else {
+      toast.error('The requested topic does not exist.');
+      router.replace(topicsContext.routePath);
+    }
+  }, [router, topicsContext, topic]);
 
   return (
     <>
@@ -242,6 +254,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
             isPending={isPending}
             onCancel={handleCancel}
             onSubmit={handleFormSubmit}
+            handleDeleteTopic={handleDeleteTopic}
           />,
           toolbarPortalRoot,
         )}

@@ -1,14 +1,12 @@
 import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage';
-import { TTopicId } from '@/features/topics/types';
 
 interface DeleteTopicModalPageProps {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ topicId?: string; from?: string }>;
 }
 
 export default async function DeleteTopicModalPage({ searchParams }: DeleteTopicModalPageProps) {
-  const { id } = await searchParams;
-  const topicId = id ? (parseInt(id) as TTopicId) : undefined;
+  const { topicId, from } = await searchParams;
   if (topicId) {
-    return <DeleteTopicModal topicId={topicId} />;
+    return <DeleteTopicModal topicId={topicId} from={from} />;
   }
 }

@@ -11,6 +11,7 @@ interface TPageEmptyProps extends TPropsWithClassName {
   buttonTitle?: TReactNode;
   iconName?: TIconsKey;
   buttons?: TReactNode;
+  framed?: boolean;
 }
 
 export function PageEmpty(props: TPageEmptyProps) {
@@ -22,11 +23,12 @@ export function PageEmpty(props: TPageEmptyProps) {
     onButtonClick,
     buttons,
     iconName = 'warning',
+    framed,
   } = props;
   const hasCustomButton = !!(onButtonClick && buttonTitle);
   const hasAnyButtons = !!(buttons || hasCustomButton);
   return (
-    <EmptyPlaceholder className={cn(className, '__PageEmpty')}>
+    <EmptyPlaceholder className={cn(className, '__PageEmpty')} framed={framed}>
       <EmptyPlaceholder.Icon name={iconName} />
       <EmptyPlaceholder.Title>{title}</EmptyPlaceholder.Title>
       <EmptyPlaceholder.Description>{description}</EmptyPlaceholder.Description>

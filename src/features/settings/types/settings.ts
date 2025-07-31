@@ -19,7 +19,7 @@ export const settingsSchema = z.object({
   // theme: z.union(themeUnion).optional(),
   theme: z.string().optional(),
   themeColor: z.string().optional(),
-  showOthersTopics: z.boolean().optional(),
+  showOnlyMyTopics: z.boolean().optional(),
   langCode: z.string().optional(),
   langName: z.string().optional(),
   langCustom: z.boolean().optional(),
