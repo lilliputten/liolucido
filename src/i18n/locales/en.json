@@ -7,6 +7,10 @@
     "title": "Manage Questions",
     "description": "Questions for the choosen topic"
   },
+  "AvailableTopicsPage": {
+    "title": "Available Topics",
+    "description": "Topics avaialble to use"
+  },
   "MyTopicsPage": {
     "title": "My Topics",
     "description": "Topics created by me"
@@ -109,6 +113,7 @@
     "Log out": "Log out"
   },
   "SiteMenu": {
+    "AvailableTopics": "Available Topics",
     "MyTopics": "My Topics",
     "AllTopics": "All Topics",
     "Welcome": "Welcome",

@@ -4,9 +4,9 @@ import { SidebarNavItem } from '@/shared/types/site/NavItem';
 import {
   adminRoute,
   allTopicsRoute,
+  availableTopicsRoute,
   chartsRoute,
   dashboardRoute,
-  dataRoute,
   myTopicsRoute,
   rootRoute,
   settingsRoute,
@@ -33,8 +33,8 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     titleId: 'Application',
     items: [
-      { href: dataRoute, icon: 'Library', titleId: 'Available Topics' },
-      { href: dataRoute, icon: 'Braces', titleId: 'Data' },
+      { href: availableTopicsRoute, icon: 'Library', titleId: 'Available Topics' },
+      { href: availableTopicsRoute, icon: 'Braces', titleId: 'Data' },
       { href: welcomeRoute, icon: 'Hand', titleId: 'Welcome' },
       {
         href: adminRoute,

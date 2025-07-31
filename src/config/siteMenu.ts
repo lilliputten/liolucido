@@ -1,6 +1,6 @@
 import { MainNavItem } from '@/shared/types/site/NavItem';
 
-import { dataRoute, myTopicsRoute, welcomeRoute } from './routesConfig';
+import { availableTopicsRoute, myTopicsRoute, welcomeRoute } from './routesConfig';
 
 export type SiteMenu = {
   mainNav: MainNavItem[];
@@ -16,7 +16,7 @@ export const siteMenu: SiteMenu = {
     },
     {
       titleId: 'Data',
-      href: dataRoute,
+      href: availableTopicsRoute,
       // userRequiredOnly: true,
     },
     {
