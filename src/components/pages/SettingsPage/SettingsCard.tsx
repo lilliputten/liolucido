@@ -32,7 +32,14 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
         'flex flex-wrap gap-2',
       )}
     >
-      {/* TODO: Place other shared buttons here */}
+      {/* TODO: Place other shared buttons here
+      <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
+        <Link href="#" className="flex items-center gap-2">
+          <Icons.check className="hidden size-4 sm:block" />
+          <span>Save</span>
+        </Link>
+      </Button>
+      */}
     </div>
   );
 }
@@ -54,8 +61,6 @@ function Header(props: TChildProps) {
 export function SettingsCard(props: TSettingsCardProps) {
   const { className, userId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
   const { settings, ready } = useSettingsContext();
   if (!ready) {
     return <SettingsLoading />;
@@ -76,7 +81,7 @@ export function SettingsCard(props: TSettingsCardProps) {
         )}
       >
         <ScrollArea saveScrollKey="SettingsCard" saveScrollHash={saveScrollHash}>
-          <SettingsForm settings={settings} userId={userId} toolbarPortalRoot={toolbarPortalRoot} />
+          <SettingsForm settings={settings} userId={userId} toolbarPortalRef={toolbarPortalRef} />
         </ScrollArea>
       </CardContent>
     </Card>

@@ -23,12 +23,12 @@ import { TFormData } from './types';
 interface TSettingsFormProps {
   settings: TSettings;
   className?: string;
-  toolbarPortalRoot: HTMLDivElement | null;
+  toolbarPortalRef: React.RefObject<HTMLDivElement>;
   userId?: TDefinedUserId;
 }
 
 export function SettingsForm(props: TSettingsFormProps) {
-  const { settings, className, userId, toolbarPortalRoot } = props;
+  const { settings, className, userId, toolbarPortalRef } = props;
   const { updateAndSaveSettings, inited, userInited } = useSettingsContext();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
@@ -129,7 +129,7 @@ export function SettingsForm(props: TSettingsFormProps) {
           </ScrollArea>
         </form>
       </Form>
-      {toolbarPortalRoot &&
+      {toolbarPortalRef.current &&
         createPortal(
           <SettingsFormActions
             settings={settings}
@@ -139,7 +139,7 @@ export function SettingsForm(props: TSettingsFormProps) {
             onCancel={handleCancel}
             onSubmit={handleFormSubmit}
           />,
-          toolbarPortalRoot,
+          toolbarPortalRef.current,
         )}
     </>
   );

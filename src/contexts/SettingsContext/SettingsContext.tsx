@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
 import { defaultThemeColor } from '@/config/themeColors';
+import { deleteCookie, setCookie } from '@/lib/helpers/cookies';
 import { removeFalsyValues, removeNullUndefinedValues } from '@/lib/helpers/objects';
 import { useSwitchRouterLocale } from '@/hooks/useSwitchRouterLocale';
 import { getSettings, updateSettings } from '@/features/settings/actions';
@@ -54,14 +55,6 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
   const [userInited, setUserInited] = React.useState(false);
   // const [themeColor, setThemeColor] = React.useState<TThemeColorId>((memo.settings.themeColor || defaultThemeColor) as TThemeColorId);
 
-  const setAndMemoizeSettings = React.useCallback(
-    (settings: TSettings) => {
-      setSettings(settings);
-      memo.settings = settings;
-    },
-    [memo],
-  );
-
   const ready = userId ? userInited : inited;
 
   const { theme, setTheme: setSystemTheme } = useTheme();
@@ -100,6 +93,13 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
   // Set local settings
   const updateLocalSettings = React.useCallback((settings: TSettings) => {
     try {
+      // Set cookie
+      const { themeColor } = settings;
+      if (themeColor) {
+        setCookie('themeColor', themeColor);
+      } else {
+        deleteCookie('themeColor');
+      }
       const settingsData = removeFalsyValues(settings); // { ...settings, userId });
       // Don't store user id locally (but be sure that settings are cleared on logout
       if (settingsData.userId) {
@@ -120,11 +120,19 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
     }
   }, []);
 
+  const setAndMemoizeSettings = React.useCallback(
+    (settings: TSettings) => {
+      setSettings(settings);
+      updateLocalSettings(settings);
+      memo.settings = settings;
+    },
+    [memo, updateLocalSettings],
+  );
+
   /** Save settings on the server (if user authorized) and locally */
   const updateAndSaveSettings = React.useCallback(
     (settings: TSettings) => {
       // Save local data and apply the data first
-      updateLocalSettings(settings);
       setAndMemoizeSettings(settings);
       // Then invoke (if authorized) the save procedure on the server
       if (!userId) {
@@ -138,7 +146,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
       });
       return savePromise;
     },
-    [setAndMemoizeSettings, userId, updateLocalSettings],
+    [setAndMemoizeSettings, userId],
   );
 
   /** Set and save locale */

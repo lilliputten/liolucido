@@ -21,6 +21,8 @@ import {
   CreditCard,
   Dot,
   EllipsisVertical,
+  Eye,
+  EyeOff,
   File,
   FileQuestion,
   FileText,
@@ -55,6 +57,7 @@ import {
   Settings,
   Shield,
   ShieldAlert,
+  ShieldCheck,
   SquareChartGantt,
   SquareDashedKanban,
   SquareLibrary,
@@ -181,6 +184,8 @@ const telegram = ({ ...props }: IconProps) => (
 );
 
 export const Icons = {
+  Eye,
+  EyeOff,
   Braces,
   ChartNoAxesGantt,
   Columns3,
@@ -193,6 +198,7 @@ export const Icons = {
   Rows3,
   Shield,
   ShieldAlert,
+  ShieldCheck,
   SquareChartGantt,
   SquareDashedKanban,
   SquareLibrary,
@@ -221,6 +227,7 @@ export const Icons = {
   google,
   help: HelpCircle,
   home: Home,
+  Languages,
   languages: Languages,
   laptop: Laptop,
   lineChart: LineChart,

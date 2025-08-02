@@ -1,4 +1,5 @@
 import React from 'react';
+import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { NextIntlClientProvider } from 'next-intl';
@@ -55,6 +56,8 @@ async function RootLayout(props: TRootLayoutProps) {
 
   setRequestLocale(locale);
 
+  const cookieStore = await cookies();
+
   // Provide i18n translations
   const messages = await getMessages();
 
@@ -62,8 +65,9 @@ async function RootLayout(props: TRootLayoutProps) {
   const userId = user?.id;
 
   const settings = await getSettings();
-  // TODO: Alternatively, store the color settings in cookies and fetch on the server if no authorized user settings found.
-  const themeColor = settings?.themeColor || defaultThemeColor;
+  // Get theme color from setting or from cookie or get the default value
+  const themeColor =
+    settings?.themeColor || cookieStore.get('themeColor')?.value || defaultThemeColor;
 
   return (
     <html lang={locale} data-theme-color={themeColor} suppressHydrationWarning>

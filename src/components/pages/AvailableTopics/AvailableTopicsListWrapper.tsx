@@ -25,8 +25,8 @@ export function AvailableTopicsListWrapper() {
     return (
       <PageEmpty
         className="size-full flex-1"
-        title="No topics have been created yet"
-        description="You dont have any topics yet. Add any topic to your profile."
+        title="No topics available"
+        description="Change filters to allow displaying public topics (if there are any), or create your own ones."
         buttons={
           <>
             <Button variant="ghost" onClick={goBack} className="flex gap-2">
@@ -38,7 +38,7 @@ export function AvailableTopicsListWrapper() {
               className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}
             >
               <Icons.topics className="size-4" />
-              <span>Manage your own topics</span>
+              <span>Manage or create your own topics</span>
             </Link>
           </>
         }
@@ -46,10 +46,11 @@ export function AvailableTopicsListWrapper() {
     );
   }
 
+  // TODO: Add a toolbar with the "Add topic" toolbar (links to a login page for unauthorized user)
   return (
     <AvailableTopicsList
       className={cn(
-        isDev && '__AvailableTopicsListWrapper_Card', // DEBUG
+        isDev && '__AvailableTopicsList', // DEBUG
         'relative flex flex-1 flex-col overflow-hidden',
       )}
       topics={topics}

@@ -18,7 +18,7 @@ export default function NotFound() {
       limitWidth
     >
       <NotFoundScreen
-        title="Top"
+        title="Page not found"
         className={cn(
           isDev && '__NotFound_Screen', // DEBUG
           'w-full',

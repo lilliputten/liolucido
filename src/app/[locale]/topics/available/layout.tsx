@@ -7,7 +7,7 @@ import {
   topicsRoutes,
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
-import { getThisUserTopics } from '@/features/topics/actions';
+import { getAvailableTopics } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
@@ -29,8 +29,7 @@ export default async function AvailableTopicsLayout(props: TLayoutProps) {
   // Enable static rendering
   setRequestLocale(locale);
 
-  // TODO: getAvailableTopics()
-  const topicsPromise = getThisUserTopics();
+  const topicsPromise = getAvailableTopics({ showOnlyMyTopics: false });
   const topics: TTopic[] = (await topicsPromise) || [];
 
   return (
