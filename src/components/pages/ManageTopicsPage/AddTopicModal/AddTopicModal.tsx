@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
@@ -17,8 +17,8 @@ import { TNewTopic, TTopic } from '@/features/topics/types';
 import { AddTopicForm } from './AddTopicForm';
 
 export function AddTopicModal() {
-  const [isVisible, setVisible] = React.useState(true);
   const router = useRouter();
+  const [isVisible, setVisible] = React.useState(false);
   const hideModal = React.useCallback(() => {
     setVisible(false);
     router.back();
@@ -29,14 +29,22 @@ export function AddTopicModal() {
 
   const topicsContext = useTopicsContext();
 
-  // Change a browser title
+  // Check if we're still on the add route
+  const pathname = usePathname();
+  const isAddRoute = pathname?.endsWith('/add');
+
+  // Check if the modal should be visible
   React.useEffect(() => {
-    const originalTitle = document.title;
-    document.title = 'Add a Topic';
-    return () => {
-      document.title = originalTitle;
-    };
-  }, []);
+    setVisible(isAddRoute);
+    if (isAddRoute) {
+      const originalTitle = document.title;
+      document.title = 'Add a Topic';
+      return () => {
+        setVisible(false);
+        document.title = originalTitle;
+      };
+    }
+  }, [isAddRoute]);
 
   const handleAddTopic = React.useCallback(
     (newTopic: TNewTopic) => {
@@ -47,9 +55,12 @@ export function AddTopicModal() {
               // Update topics list
               topicsContext.setTopics((topics) => topics.concat(addedTopic));
               resolve(addedTopic);
-              // NOTE: Close or go to the edit page
+              // NOTE: Close the modal first
               setVisible(false);
-              router.replace(`${topicsContext.routePath}/${addedTopic.id}/edit`);
+              // Then navigate to the edit page after a short delay to ensure modal is closed
+              setTimeout(() => {
+                router.push(`${topicsContext.routePath}/${addedTopic.id}`);
+              }, 100);
               return addedTopic;
             })
             .catch((error) => {
@@ -58,7 +69,6 @@ export function AddTopicModal() {
                 error,
                 newTopic,
               });
-              debugger; // eslint-disable-line no-debugger
               reject(error);
               throw error;
             });

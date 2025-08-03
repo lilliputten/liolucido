@@ -6,45 +6,63 @@ import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
-import { TTopic } from '../types';
+import { topicsLimit } from '../constants';
+import { TAvailableTopic } from '../types';
 
-interface TOptions {
+interface TParams {
+  skip?: number;
+  take?: number;
   showOnlyMyTopics?: boolean;
+  includeUser?: boolean;
+  includeQuestionsCount?: boolean;
 }
 
-export async function getAvailableTopics(opts: TOptions = {}) {
+export async function getAvailableTopics(params: TParams = {}) {
+  if (isDev) {
+    // DEBUG: Emulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  const {
+    skip = 0,
+    take = topicsLimit,
+    showOnlyMyTopics,
+    includeUser = true,
+    includeQuestionsCount = true,
+  } = params;
   const user = await getCurrentUser();
   const userId = user?.id;
   // const isAdmin = user?.role === 'ADMIN';
+  // No own topics for unauthorized users
+  if (!userId && showOnlyMyTopics) {
+    return [];
+  }
   try {
-    if (isDev) {
-      // DEBUG: Emulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
     const include: Prisma.TopicInclude = {
-      _count: { select: { questions: true } },
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
+      _count: { select: { questions: includeQuestionsCount } },
+      user: includeUser
+        ? {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          }
+        : false,
     };
-    if (!userId && opts.showOnlyMyTopics) {
-      return undefined;
-    }
-    const where: Prisma.TopicWhereInput = opts.showOnlyMyTopics
+    const where: Prisma.TopicWhereInput = showOnlyMyTopics
       ? {
           userId,
         }
       : {
           OR: [{ userId }, { isPublic: true }],
         };
-    const topics: TTopic[] = await prisma.topic.findMany({
+    const args: Prisma.TopicFindManyArgs = {
+      skip,
+      take,
       where,
       include,
-    });
+    };
+    const topics: TAvailableTopic[] = await prisma.topic.findMany(args);
     return topics;
   } catch (error) {
     // eslint-disable-next-line no-console

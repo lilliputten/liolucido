@@ -30,7 +30,7 @@ export default async function AvailableTopicsLayout(props: TLayoutProps) {
   setRequestLocale(locale);
 
   const topicsPromise = getAvailableTopics({ showOnlyMyTopics: false });
-  const topics: TTopic[] = (await topicsPromise) || [];
+  const topics: TTopic[] = await topicsPromise;
 
   return (
     <TopicsContextProvider

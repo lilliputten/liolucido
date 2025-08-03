@@ -72,9 +72,10 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   // Update system theme
   React.useEffect(() => {
-    const thisTheme = settings.theme || defaultTheme;
-    if (ready && theme !== thisTheme) {
-      setSystemTheme(thisTheme);
+    const newTheme = settings.theme || defaultTheme;
+    console.log('[SettingsContext:Effect:Update system theme]', ready, newTheme, theme);
+    if (ready && theme !== newTheme) {
+      setSystemTheme(newTheme);
     }
   }, [ready, theme, settings.theme, setSystemTheme]);
 
@@ -95,6 +96,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
     try {
       // Set cookie
       const { themeColor } = settings;
+      // Set cookie to allow providing a colorTheme value in the layout on SSR if no user has been authorized (and no settings), to avoid content flash
       if (themeColor) {
         setCookie('themeColor', themeColor);
       } else {
@@ -122,6 +124,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   const setAndMemoizeSettings = React.useCallback(
     (settings: TSettings) => {
+      console.log('[SettingsContext:setAndMemoizeSettings]', settings);
       setSettings(settings);
       updateLocalSettings(settings);
       memo.settings = settings;
@@ -162,6 +165,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
   const setTheme = React.useCallback(
     (theme: TSettings['theme'] = defaultTheme) => {
       const updatedSettings = { ...memo.settings, theme };
+      console.log('[SettingsContext:setTheme]', theme);
       return updateAndSaveSettings(updatedSettings);
     },
     [memo, updateAndSaveSettings],

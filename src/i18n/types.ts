@@ -6,3 +6,7 @@ export type TLocaleProps = { params: TLocaleParams };
 // TODO: Define extendable params type (allowing to receive other properties
 export type TAwaitedLocaleParams<T = void> = Promise<TLocaleParams & T>;
 export type TAwaitedLocaleProps<T = void> = { params: TAwaitedLocaleParams<T> };
+
+export const localesRegStr = '(' + localesList.join('|') + ')';
+export const localesRegExp = new RegExp(localesRegStr);
+export const localesPathPrefixRegExp = new RegExp('^/' + localesRegStr + '\\b');

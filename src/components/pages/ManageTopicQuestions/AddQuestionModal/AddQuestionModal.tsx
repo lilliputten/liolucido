@@ -14,11 +14,12 @@ import { addedQuestionEventName, TAddedQuestionDetail } from '@/constants/eventT
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { addNewQuestion } from '@/features/questions/actions';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
+import { usePathname } from '@/i18n/routing';
 
 import { AddQuestionForm } from './AddQuestionForm';
 
 export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
-  const [isVisible, setVisible] = React.useState(true);
+  const [isVisible, setVisible] = React.useState(false);
   const router = useRouter();
   const hideModal = React.useCallback(() => {
     setVisible(false);
@@ -30,14 +31,22 @@ export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
   const questionsContext = useQuestionsContext();
   const { topicId } = questionsContext;
 
-  // Change a browser title
+  // Check if we're still on the add route
+  const pathname = usePathname();
+  const isAddRoute = pathname?.endsWith('/add');
+
+  // Check if the modal should be visible
   React.useEffect(() => {
-    const originalTitle = document.title;
-    document.title = 'Add a Question';
-    return () => {
-      document.title = originalTitle;
-    };
-  }, []);
+    setVisible(isAddRoute);
+    if (isAddRoute) {
+      const originalTitle = document.title;
+      document.title = 'Add a Question';
+      return () => {
+        setVisible(false);
+        document.title = originalTitle;
+      };
+    }
+  }, [isAddRoute]);
 
   const handleAddQuestion = React.useCallback(
     (newQuestion: TNewQuestion) => {
@@ -64,7 +73,7 @@ export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
               resolve(addedQuestion);
               // NOTE: Close or go to the edit page
               setVisible(false);
-              router.replace(`${questionsContext.routePath}/${addedQuestion.id}/edit`);
+              router.replace(`${questionsContext.routePath}/${addedQuestion.id}`);
               return addedQuestion;
             })
             .catch((error) => {

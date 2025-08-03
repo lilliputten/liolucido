@@ -34,7 +34,7 @@ export const sidebarLinks: SidebarNavItem[] = [
     titleId: 'Application',
     items: [
       { href: availableTopicsRoute, icon: 'Library', titleId: 'Available Topics' },
-      { href: availableTopicsRoute, icon: 'Braces', titleId: 'Data' },
+      // { href: availableTopicsRoute, icon: 'Braces', titleId: 'Data' },
       { href: welcomeRoute, icon: 'Hand', titleId: 'Welcome' },
       {
         href: adminRoute,

@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DialogTitle } from '@radix-ui/react-dialog';
@@ -23,6 +23,7 @@ import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
 
 import { DialogDescription } from '../ui/dialog';
 import { NavBarBrand } from './NavBarBrand';
@@ -39,37 +40,41 @@ interface TMobileSheetProps {
 
 const saveScrollHash = getRandomHashString();
 
+type TMemo = { inited?: boolean; restored?: boolean };
+
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
 
-  /* // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
-   * const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
-   *   if (typeof window !== "undefined") {
-   *     const saved = window.localStorage.getItem("sidebarExpanded");
-   *     return saved !== null ? JSON.parse(saved) : true;
-   *   }
-   *   return true;
-   * });
-   * useEffect(() => {
-   *   if (typeof window !== "undefined") {
-   *     window.localStorage.setItem(
-   *       "sidebarExpanded",
-   *       JSON.stringify(isSidebarExpanded),
-   *     );
-   *   }
-   * }, [isSidebarExpanded]);
-   */
+  const memo = React.useMemo<TMemo>(() => ({}), []);
 
   const { isTablet } = useMediaQuery();
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isTablet);
+
+  const [isSidebarExpanded, setIsSidebarExpanded] = React.useState<boolean>(isTablet);
+  React.useEffect(() => {
+    if (memo.inited && typeof window !== 'undefined') {
+      window.localStorage.setItem('sidebarExpanded', JSON.stringify(isSidebarExpanded));
+    }
+  }, [memo, isSidebarExpanded]);
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem('sidebarExpanded');
+      if (saved) {
+        setIsSidebarExpanded(JSON.parse(saved));
+        memo.restored = true;
+      }
+    }
+    memo.inited = true;
+  }, [memo]);
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
   useEffect(() => {
-    setIsSidebarExpanded(!isTablet);
-  }, [isTablet]);
+    if (!memo.restored) {
+      setIsSidebarExpanded(!isTablet);
+    }
+  }, [memo, isTablet]);
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -78,6 +83,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
           isDev && '__DashboardSidebar', // DEBUG
           'bg-theme/10',
         )}
+        suppressHydrationWarning
       >
         <ScrollArea
           saveScrollKey="DashboardSidebar"
@@ -147,6 +153,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     {/* Show sections menu */}
                     {section.items.map((item) => {
                       const Icon = Icons[item.icon || 'arrowRight'];
+                      const isCurrentPath = comparePathsWithoutLocalePrefix(item.href, path);
                       return (
                         item.href && (
                           <Fragment key={`link-fragment-${item.titleId}`}>
@@ -155,10 +162,10 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 key={`link-${item.titleId}`}
                                 href={item.disabled ? '#' : item.href}
                                 className={cn(
-                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme',
-                                  path === item.href
-                                    ? 'bg-muted'
-                                    : 'text-muted-foreground hover:text-theme-foreground',
+                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme hover:text-theme-foreground',
+                                  isCurrentPath
+                                    ? 'bg-theme-500/10 hover:text-theme-foreground'
+                                    : 'text-muted-foreground',
                                   item.disabled &&
                                     'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
                                 )}
@@ -179,8 +186,8 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                     href={item.disabled ? '#' : item.href}
                                     className={cn(
                                       'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-theme',
-                                      path === item.href
-                                        ? 'bg-muted'
+                                      isCurrentPath
+                                        ? 'bg-theme-500/10 hover:text-theme-foreground'
                                         : 'text-muted-foreground hover:text-theme-foreground',
                                       item.disabled &&
                                         'pointer-events-none cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
@@ -263,6 +270,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
             if (!item.href) {
               return null;
             }
+            const isCurrentPath = comparePathsWithoutLocalePrefix(item.href, path);
             return (
               <Fragment key={`link-fragment-${item.titleId}`}>
                 <Link
@@ -274,10 +282,8 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
                   }}
                   href={item.disabled ? '#' : item.href}
                   className={cn(
-                    'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme',
-                    path === item.href
-                      ? 'bg-muted'
-                      : 'text-muted-foreground hover:text-accent-foreground',
+                    'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme hover:text-theme-foreground',
+                    isCurrentPath ? 'bg-theme-500/10' : 'text-muted-foreground',
                     item.disabled &&
                       'pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
                   )}

@@ -9,6 +9,8 @@ import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TAvailableTopic } from '@/features/topics/types';
+import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
+import { usePathname } from '@/i18n/routing';
 
 interface TTopicHeaderOptions {
   showDates?: boolean;
@@ -48,6 +50,17 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   const { routePath } = topicsContext;
   const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
   const topicRoutePath = `${routePath}/${id}`;
+  const pathname = usePathname();
+  const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
+  let nameContent = <>{name}</>;
+  if (!isCurrentTopicRoutePath) {
+    // Do not use a link if it's already on the its page
+    nameContent = (
+      <Link className="flex-1 text-xl font-medium hover:underline" href={topicRoutePath}>
+        {nameContent}
+      </Link>
+    );
+  }
   return (
     <div
       className={cn(
@@ -57,11 +70,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
       )}
     >
       <div id="left-name" className="flex flex-1 flex-col gap-2">
-        <div id="name">
-          <Link className="flex-1 text-xl font-medium" href={topicRoutePath}>
-            {name}
-          </Link>
-        </div>
+        <div id="name">{nameContent}</div>
         {/* TODO: Format descrption text */}
         {showDescription && <div id="description">{description}</div>}
       </div>
