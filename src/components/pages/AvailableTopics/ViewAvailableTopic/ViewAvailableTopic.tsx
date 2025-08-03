@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
@@ -13,6 +12,7 @@ import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumb
 import { TTopic, TTopicId } from '@/features/topics/types';
 
 import { ViewTopicContent } from './ViewTopicContent';
+import { ViewTopicContentActions } from './ViewTopicContentActions';
 
 interface TViewAvailableTopicProps extends TPropsWithClassName {
   topicId: TTopicId;
@@ -21,8 +21,6 @@ interface TViewAvailableTopicProps extends TPropsWithClassName {
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
   const router = useRouter();
   const topicsContext = useTopicsContext();
   const { topics } = topicsContext;
@@ -44,16 +42,17 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
     }, 200);
   }, [router, topicsContext]);
 
-  // Delete Topic Modal
-  const handleDeleteTopic = React.useCallback(() => {
-    const hasTopic = !!topicsContext.topics.find(({ id }) => id === topic.id);
-    if (hasTopic) {
-      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=ViewAvailableTopic`);
-    } else {
-      toast.error('The requested topic does not exist.');
-      router.replace(topicsContext.routePath);
-    }
-  }, [router, topicsContext, topic]);
+  /* // Delete Topic Modal
+   * const handleDeleteTopic = React.useCallback(() => {
+   *   const hasTopic = !!topicsContext.topics.find(({ id }) => id === topic.id);
+   *   if (hasTopic) {
+   *     router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=ViewAvailableTopic`);
+   *   } else {
+   *     toast.error('The requested topic does not exist.');
+   *     router.replace(topicsContext.routePath);
+   *   }
+   * }, [router, topicsContext, topic]);
+   */
 
   /* // Add Topic Modal
    * const handleAddQuestion = React.useCallback(() => {
@@ -101,22 +100,22 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             isDev && '__ViewAvailableTopic_Toolbar', // DEBUG
             'flex flex-wrap items-center gap-2',
           )}
-        />
+        >
+          <ViewTopicContentActions
+            topic={topic}
+            goBack={goBack}
+            // handleDeleteTopic={handleDeleteTopic}
+            // handleAddQuestion={handleAddQuestion}
+          />
+        </div>
       </CardHeader>
-
       <CardContent
         className={cn(
           isDev && '__ViewAvailableTopic_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ViewTopicContent
-          topic={topic}
-          goBack={goBack}
-          handleDeleteTopic={handleDeleteTopic}
-          // handleAddQuestion={handleAddQuestion}
-          toolbarPortalRoot={toolbarPortalRoot}
-        />
+        <ViewTopicContent topic={topic} />
       </CardContent>
     </Card>
   );

@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   BookOpen,
   Braces,
+  CalendarDays,
   ChartNoAxesGantt,
   Check,
   ChevronDown,
@@ -16,6 +17,7 @@ import {
   ChevronRight,
   ChevronUp,
   CircleCheck,
+  CircleUserRound,
   Columns3,
   Copy,
   CreditCard,
@@ -194,7 +196,6 @@ export const Icons = {
   Hand,
   Library,
   MessageCircleQuestion,
-  Pencil,
   Rows3,
   Shield,
   ShieldAlert,
@@ -221,6 +222,7 @@ export const Icons = {
   copy: Copy,
   dashboard: LayoutPanelLeft,
   dot: Dot,
+  Pencil,
   edit: Pencil,
   ellipsis: MoreVertical,
   github,
@@ -257,8 +259,10 @@ export const Icons = {
   trash: Trash,
   twitter,
   user: User,
+  CircleUserRound,
   warning: AlertTriangle,
   yandex,
+  CalendarDays,
 };
 
 export type TIconsKey = keyof typeof Icons;

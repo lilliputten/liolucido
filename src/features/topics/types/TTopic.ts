@@ -1,4 +1,4 @@
-import { Topic } from '@prisma/client';
+import { Topic, User } from '@prisma/client';
 
 import { ExtendNullWithUndefined, ReplaceNullWithUndefined } from '@/lib/ts';
 
@@ -6,6 +6,9 @@ export type TTopic = ExtendNullWithUndefined<Topic> & { _count?: { questions: nu
 export type TTopicReal = ReplaceNullWithUndefined<TTopic>;
 
 export type TTopicId = TTopic['id'];
+
+/** Extended topic, includes some user data */
+export type TAvailableTopic = TTopic & { user?: Pick<User, 'id' | 'name' | 'email'> };
 
 /** New topic shouldn't contain id */
 /*

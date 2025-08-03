@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopic } from '@/features/topics/types';
@@ -18,7 +19,22 @@ export interface TViewTopicContentActionsProps {
 
 export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
   const { topic, goBack, handleDeleteTopic, handleAddQuestion } = props;
-  const router = useRouter();
+  const {
+    id,
+    // userId,
+    // name,
+    // description,
+    // isPublic,
+    // langCode,
+    // langName,
+    // keywords,
+    // createdAt,
+    // updatedAt,
+    _count,
+  } = topic;
+  const questionsCount = _count?.questions;
+  const allowedTraining = !!questionsCount;
+  // const router = useRouter();
   const topicsContext = useTopicsContext();
   return (
     <>
@@ -26,24 +42,29 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
         <Icons.arrowLeft className="size-4" />
         <span>Back</span>
       </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => router.push(`${topicsContext.routePath}/${topic.id}/edit`)}
-        className="gap-2"
+      <Link
+        href={`${topicsContext.routePath}/${topic.id}/edit`}
+        className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
         <Icons.edit className="size-4" />
         <span>Edit</span>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => router.push(`${topicsContext.routePath}/${topic.id}/questions`)}
-        className="gap-2"
+      </Link>
+      <Link
+        href={`${topicsContext.routePath}/${topic.id}/questions`}
+        className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
         <Icons.questions className="size-4" />
         <span>Questions</span>
-      </Button>
+      </Link>
+      {allowedTraining && (
+        <Link
+          href={`/train/topic/${id}`}
+          className={cn(buttonVariants({ variant: 'theme', size: 'sm' }), 'flex gap-2')}
+        >
+          <Icons.arrowRight className="size-4" />
+          <span>Start Training</span>
+        </Link>
+      )}
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
           <Icons.add className="size-4" />
@@ -54,18 +75,6 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
         <Icons.trash className="size-4" />
         <span>Delete Topic</span>
       </Button>
-      {/*
-      <Button
-        type="button"
-        size="sm"
-        variant={isSubmitEnabled ? 'success' : 'disable'}
-        disabled={!isSubmitEnabled}
-        className="gap-2"
-        onClick={handleSubmit}
-      >
-        <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
-      </Button>
-      */}
     </>
   );
 }

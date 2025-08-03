@@ -23,6 +23,13 @@ export async function getAvailableTopics(opts: TOptions = {}) {
     }
     const include: Prisma.TopicInclude = {
       _count: { select: { questions: true } },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
     };
     if (!userId && opts.showOnlyMyTopics) {
       return undefined;

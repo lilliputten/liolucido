@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import { myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
@@ -15,7 +14,7 @@ export interface TViewTopicContentActionsProps {
   topic: TTopic;
   isPending?: boolean;
   goBack?: (ev: React.MouseEvent) => void;
-  handleDeleteTopic: () => void;
+  handleDeleteTopic?: () => void;
   handleAddQuestion?: () => void;
 }
 
@@ -45,16 +44,7 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
   const allowedEdit = isAdminMode || isOwner;
   const questionsCount = _count?.questions;
   const allowedTraining = !!questionsCount;
-  // const topicsContext = useTopicsContext();
-  // const { routePath } = topicsContext;
   const myTopicRoutePath = myTopicsRoute;
-  const router = useRouter();
-  // const topicRoutePath = `${routePath}/${id}`;
-  const trainRoutePath = `/train/topic/${id}`;
-  const startTraining = (ev: React.MouseEvent) => {
-    ev.stopPropagation();
-    router.push(trainRoutePath);
-  };
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
@@ -63,8 +53,7 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
       </Button>
       {allowedTraining && (
         <Link
-          onClick={startTraining}
-          href={trainRoutePath}
+          href={`/train/topic/${id}`}
           className={cn(buttonVariants({ variant: 'theme', size: 'sm' }), 'flex gap-2')}
         >
           <Icons.arrowRight className="size-4" />
@@ -72,28 +61,24 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
         </Link>
       )}
       {allowedEdit && (
-        <>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push(`${myTopicRoutePath}/${topic.id}/edit`)}
-            className="gap-2"
-          >
-            <Icons.edit className="size-4" />
-            <span>Edit</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push(`${myTopicRoutePath}/${topic.id}/questions`)}
-            className="gap-2"
-          >
-            <Icons.questions className="size-4" />
-            <span>Manage Questions</span>
-          </Button>
-        </>
+        <Link
+          href={`${myTopicRoutePath}/${topic.id}`}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
+        >
+          <Icons.edit className="size-4" />
+          <span>Manage Topic</span>
+        </Link>
       )}
       {/* XXX: Extra actins: are they necessary here?
+      {allowedEdit && (
+        <Link
+          href={`${myTopicRoutePath}/${topic.id}/questions`}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
+        >
+          <Icons.questions className="size-4" />
+          <span>Manage Questions</span>
+        </Link>
+      )}
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
           <Icons.add className="size-4" />

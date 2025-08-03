@@ -99,20 +99,29 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
           >
             <div className="flex h-full flex-1 flex-col gap-2">
               <div className="flex h-14 items-center p-4 lg:h-[60px]">
+                {/* DEMO: Switch project/profile/whatever example */}
                 {isSidebarExpanded && <ProjectSwitcher />}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="ml-auto size-9 lg:size-8"
-                  onClick={toggleSidebar}
-                >
-                  {isSidebarExpanded ? (
-                    <PanelLeftClose size={18} className="stroke-muted-foreground" />
-                  ) : (
-                    <PanelRightClose size={18} className="stroke-muted-foreground" />
-                  )}
-                  <span className="sr-only">Toggle Sidebar</span>
-                </Button>
+                <Tooltip key={`tooltip-expand`}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="ml-auto size-9 opacity-50 hover:bg-theme hover:text-theme-foreground hover:opacity-100 lg:size-8"
+                      onClick={toggleSidebar}
+                      // title="Expand panel"
+                    >
+                      {isSidebarExpanded ? (
+                        <PanelLeftClose size={18} />
+                      ) : (
+                        <PanelRightClose size={18} />
+                      )}
+                      <span className="sr-only">Toggle Sidebar</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {isSidebarExpanded ? 'Collapse Panel' : 'Expand Panel'}
+                  </TooltipContent>
+                </Tooltip>
               </div>
 
               <nav
@@ -149,7 +158,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                   'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme',
                                   path === item.href
                                     ? 'bg-muted'
-                                    : 'text-muted-foreground hover:text-accent-foreground',
+                                    : 'text-muted-foreground hover:text-theme-foreground',
                                   item.disabled &&
                                     'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
                                 )}
@@ -172,7 +181,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                       'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-theme',
                                       path === item.href
                                         ? 'bg-muted'
-                                        : 'text-muted-foreground hover:text-accent-foreground',
+                                        : 'text-muted-foreground hover:text-theme-foreground',
                                       item.disabled &&
                                         'pointer-events-none cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
                                     )}
