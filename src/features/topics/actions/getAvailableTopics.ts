@@ -10,14 +10,29 @@ import { topicsLimit } from '../constants';
 import { TAvailableTopic } from '../types';
 
 interface TParams {
+  /** Skip records (start from the nth record), default = 0 */
   skip?: number;
+  /** Amount of records to return, default = {topicsLimit} */
   take?: number;
+  /** Display only current user's topics */
   showOnlyMyTopics?: boolean;
+  /** Unclude compact user info data (name, email) in the `user` property of result object */
   includeUser?: boolean;
+  /** Include related questions count, in `_count: { questions }` */
   includeQuestionsCount?: boolean;
+  /** Sort by parameter, default: `{ createdAt: 'desc' }` */
+  orderBy?: Prisma.TopicFindManyArgs['orderBy'];
 }
 
-export async function getAvailableTopics(params: TParams = {}) {
+interface TGetAvailableTopicsResults {
+  topics: TAvailableTopic[];
+  /** Total records count for these conditions */
+  totalCount: number;
+}
+
+export async function getAvailableTopics(
+  params: TParams = {},
+): Promise<TGetAvailableTopicsResults> {
   if (isDev) {
     // DEBUG: Emulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -28,13 +43,14 @@ export async function getAvailableTopics(params: TParams = {}) {
     showOnlyMyTopics,
     includeUser = true,
     includeQuestionsCount = true,
+    orderBy = { createdAt: 'desc' },
   } = params;
   const user = await getCurrentUser();
   const userId = user?.id;
   // const isAdmin = user?.role === 'ADMIN';
   // No own topics for unauthorized users
   if (!userId && showOnlyMyTopics) {
-    return [];
+    return { topics: [], totalCount: 0 };
   }
   try {
     const include: Prisma.TopicInclude = {
@@ -50,20 +66,23 @@ export async function getAvailableTopics(params: TParams = {}) {
         : false,
     };
     const where: Prisma.TopicWhereInput = showOnlyMyTopics
-      ? {
-          userId,
-        }
-      : {
-          OR: [{ userId }, { isPublic: true }],
-        };
+      ? { userId }
+      : { OR: [{ userId }, { isPublic: true }] };
     const args: Prisma.TopicFindManyArgs = {
       skip,
       take,
       where,
       include,
+      orderBy,
     };
-    const topics: TAvailableTopic[] = await prisma.topic.findMany(args);
-    return topics;
+    const [topics, totalCount] = await prisma.$transaction([
+      prisma.topic.findMany(args),
+      prisma.topic.count({
+        where,
+      }),
+    ]);
+    // const topics: TAvailableTopic[] = await prisma.topic.findMany(args);
+    return { topics, totalCount } satisfies TGetAvailableTopicsResults;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[getAvailableTopics] catch', {

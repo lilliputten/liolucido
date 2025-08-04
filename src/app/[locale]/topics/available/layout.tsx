@@ -8,7 +8,6 @@ import {
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
 import { getAvailableTopics } from '@/features/topics/actions';
-import { TTopic } from '@/features/topics/types';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 type TAwaitedProps = TAwaitedLocaleProps;
@@ -30,11 +29,12 @@ export default async function AvailableTopicsLayout(props: TLayoutProps) {
   setRequestLocale(locale);
 
   const topicsPromise = getAvailableTopics({ showOnlyMyTopics: false });
-  const topics: TTopic[] = await topicsPromise;
+  const { topics, totalCount } = await topicsPromise;
 
   return (
     <TopicsContextProvider
       topics={topics}
+      totalCount={totalCount}
       namespace={namespace}
       manageScope={scope}
       routePath={routePath}

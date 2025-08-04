@@ -4,7 +4,7 @@ import {
   myTopicsRoute,
   TRoutePath,
 } from '@/config/routesConfig';
-import { TTopic } from '@/features/topics/types';
+import { TAvailableTopic } from '@/features/topics/types';
 
 export const TopicsManageScopeIds = {
   AVAILABLE_TOPICS: 'available',
@@ -28,8 +28,10 @@ export const topicsNamespaces: Record<TTopicsManageScopeId, string> = {
 export const defaultTopicsNamespace = topicsNamespaces[TopicsManageScopeIds.MY_TOPICS];
 
 export interface TopicsContextData {
-  topics: TTopic[];
-  setTopics: React.Dispatch<React.SetStateAction<TTopic[]>>;
+  topics: TAvailableTopic[];
+  setTopics: React.Dispatch<React.SetStateAction<TAvailableTopic[]>>;
+  totalCount: number;
+  setTotalCount: (count: number) => void;
   /** Topics type: only user's topics or all topics (for admin) */
   manageScope: TTopicsManageScopeId;
   /** Route for this topics manage context root (depends on `manageScope`) -- the topics list page */

@@ -9,7 +9,7 @@ import {
   TAddedQuestionDetail,
   TDeletedQuestionDetail,
 } from '@/constants/eventTypes';
-import { TTopic } from '@/features/topics/types';
+import { TAvailableTopic } from '@/features/topics/types';
 
 import {
   defaultTopicsManageScope,
@@ -20,18 +20,24 @@ import {
 
 const TopicsContext = React.createContext<TopicsContextData | undefined>(undefined);
 
-interface TopicsContextProviderProps extends Omit<TopicsContextData, 'setTopics'> {
+interface TopicsContextProviderProps
+  extends Omit<TopicsContextData, 'setTopics' | 'totalCount' | 'setTotalCount'> {
   children: React.ReactNode;
+  totalCount?: number;
 }
 
 export function TopicsContextProvider({
   children,
+  totalCount: initialTotalCount,
   topics: initialTopics = [],
   manageScope = defaultTopicsManageScope,
   namespace = defaultTopicsNamespace,
   routePath,
 }: TopicsContextProviderProps) {
-  const [topics, setTopics] = React.useState<TTopic[]>(initialTopics);
+  const [topics, setTopics] = React.useState<TAvailableTopic[]>(initialTopics);
+  const [totalCount, setTotalCount] = React.useState<number>(
+    initialTotalCount ?? initialTopics.length,
+  );
 
   // Listen for the added and deleted question events (taking only topicId and questionsCount data from the event)
   React.useEffect(() => {
@@ -67,11 +73,13 @@ export function TopicsContextProvider({
     () => ({
       topics,
       setTopics,
+      totalCount,
+      setTotalCount,
       namespace,
       manageScope,
       routePath: (routePath || topicsRoutes[manageScope]) as TRoutePath,
     }),
-    [topics, namespace, manageScope, routePath],
+    [topics, totalCount, namespace, manageScope, routePath],
   );
 
   return <TopicsContext.Provider value={topicsContext}>{children}</TopicsContext.Provider>;

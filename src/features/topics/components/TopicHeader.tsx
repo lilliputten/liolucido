@@ -15,6 +15,7 @@ import { usePathname } from '@/i18n/routing';
 interface TTopicHeaderOptions {
   showDates?: boolean;
   showDescription?: boolean;
+  withLink?: boolean;
 }
 interface TTopicHeaderProps {
   topic: TAvailableTopic;
@@ -28,6 +29,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
     // Options...
     showDates,
     showDescription,
+    withLink,
   } = props;
   const format = useFormatter();
   const {
@@ -51,15 +53,17 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
   const topicRoutePath = `${routePath}/${id}`;
   const pathname = usePathname();
-  const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
   let nameContent = <>{name}</>;
-  if (!isCurrentTopicRoutePath) {
-    // Do not use a link if it's already on the its page
-    nameContent = (
-      <Link className="flex-1 text-xl font-medium hover:underline" href={topicRoutePath}>
-        {nameContent}
-      </Link>
-    );
+  if (withLink) {
+    const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
+    if (!isCurrentTopicRoutePath) {
+      // Do not use a link if it's already on the its page
+      nameContent = (
+        <Link className="flex-1 text-xl font-medium hover:underline" href={topicRoutePath}>
+          {nameContent}
+        </Link>
+      );
+    }
   }
   return (
     <div
@@ -69,7 +73,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
         className,
       )}
     >
-      <div id="left-name" className="flex flex-1 flex-col gap-2">
+      <div id="left-name" className="flex flex-1 flex-col gap-2 text-2xl">
         <div id="name">{nameContent}</div>
         {/* TODO: Format descrption text */}
         {showDescription && <div id="description">{description}</div>}

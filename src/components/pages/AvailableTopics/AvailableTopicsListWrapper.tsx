@@ -15,11 +15,11 @@ import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { AvailableTopicsList } from './AvailableTopicsList';
 
 export function AvailableTopicsListWrapper() {
-  const { topics } = useTopicsContext();
+  const { totalCount } = useTopicsContext();
 
   const goBack = useGoBack(rootRoute);
 
-  const hasTopics = !!topics.length;
+  const hasTopics = !!totalCount;
 
   if (!hasTopics) {
     return (
@@ -53,7 +53,6 @@ export function AvailableTopicsListWrapper() {
         isDev && '__AvailableTopicsList', // DEBUG
         'relative flex flex-1 flex-col overflow-hidden',
       )}
-      topics={topics}
     />
   );
 }

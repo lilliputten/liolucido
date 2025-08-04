@@ -12,6 +12,7 @@ interface ScrollAreaExtraProps {
   viewportClassName?: string;
   saveScrollKey?: string;
   saveScrollHash?: string;
+  onScrollEvent?: (ev: Event, node?: HTMLDivElement) => void;
 }
 type ComponentType = React.ForwardRefExoticComponent<
   ScrollAreaPrimitive.ScrollAreaProps & React.RefAttributes<HTMLDivElement>
@@ -33,7 +34,15 @@ const ScrollArea = React.forwardRef<
     'ref'
   >
 >((props, ref) => {
-  const { className, viewportClassName, children, saveScrollKey, saveScrollHash, ...rest } = props;
+  const {
+    className,
+    viewportClassName,
+    children,
+    saveScrollKey,
+    saveScrollHash,
+    onScrollEvent,
+    ...rest
+  } = props;
   const scrollRef = React.useRef<HTMLDivElement>(null);
   /**
    * Save scroll positions if `saveScrollKey` and `saveScrollHash` are provided:
@@ -55,18 +64,11 @@ const ScrollArea = React.forwardRef<
         const hash = unpacked.shift();
         if (hash === saveScrollHash) {
           const [scrollTop = 0, scrollLeft = 0] = unpacked.map((v) => Number(v) || 0);
-          /* console.log('[ScrollArea] Restore scroll', {
-           *   scrollTop,
-           *   scrollLeft,
-           *   saveScrollKey,
-           *   saveScrollHash,
-           * });
-           */
           node.scrollTop = scrollTop;
           node.scrollLeft = scrollLeft;
         }
       }
-      const handleScroll = () => {
+      const handleScroll = (ev: Event) => {
         const { scrollTop, scrollLeft } = node;
         if (!scrollTop && !scrollLeft) {
           sessionStorage.removeItem(saveScrollKeyPrefix + saveScrollKey);
@@ -78,20 +80,16 @@ const ScrollArea = React.forwardRef<
             .replace(finalDelimsReg, '');
           sessionStorage.setItem(saveScrollKeyPrefix + saveScrollKey, packed);
         }
-        /* console.log('[ScrollArea] Save scroll', {
-         *   scrollTop,
-         *   scrollLeft,
-         *   saveScrollKey,
-         *   saveScrollHash,
-         * });
-         */
+        if (onScrollEvent) {
+          onScrollEvent(ev, node);
+        }
       };
       node.addEventListener('scroll', handleScroll);
       return () => {
         node.removeEventListener('scroll', handleScroll);
       };
     }
-  }, [scrollRef, saveScrollKey, saveScrollHash]);
+  }, [scrollRef, saveScrollKey, saveScrollHash, onScrollEvent]);
   return (
     <ScrollAreaPrimitive.Root
       ref={ref}

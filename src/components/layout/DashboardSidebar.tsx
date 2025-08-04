@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DialogTitle } from '@radix-ui/react-dialog';
@@ -70,7 +70,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!memo.restored) {
       setIsSidebarExpanded(!isTablet);
     }
@@ -156,7 +156,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                       const isCurrentPath = comparePathsWithoutLocalePrefix(item.href, path);
                       return (
                         item.href && (
-                          <Fragment key={`link-fragment-${item.titleId}`}>
+                          <React.Fragment key={`link-fragment-${item.titleId}`}>
                             {isSidebarExpanded ? (
                               <Link
                                 key={`link-${item.titleId}`}
@@ -201,7 +201,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 <TooltipContent side="right">{item.titleId}</TooltipContent>
                               </Tooltip>
                             )}
-                          </Fragment>
+                          </React.Fragment>
                         )
                       );
                     })}
@@ -272,7 +272,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
             }
             const isCurrentPath = comparePathsWithoutLocalePrefix(item.href, path);
             return (
-              <Fragment key={`link-fragment-${item.titleId}`}>
+              <React.Fragment key={`link-fragment-${item.titleId}`}>
                 <Link
                   key={`link-${item.titleId}`}
                   onClick={() => {
@@ -296,7 +296,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
                     </Badge>
                   )}
                 </Link>
-              </Fragment>
+              </React.Fragment>
             );
           })}
         </section>

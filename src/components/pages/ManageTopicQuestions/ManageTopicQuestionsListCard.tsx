@@ -61,7 +61,7 @@ function Toolbar(props: TToolbarActionsProps) {
         const promise = getTopicQuestions(topicId);
         toast.promise(promise, {
           loading: 'Reloading questions data...',
-          success: 'Questions successfully reloaded',
+          success: 'Questions successfully reloaded.',
           error: 'Error reloading questions.',
         });
         const questions = (await promise) || [];
