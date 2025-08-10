@@ -14,11 +14,12 @@ import { addedAnswerEventName, TAddedAnswerDetail } from '@/constants/eventTypes
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { addNewAnswer } from '@/features/answers/actions';
 import { TAnswer, TNewAnswer } from '@/features/answers/types';
+import { usePathname } from '@/i18n/routing';
 
 import { AddAnswerForm } from './AddAnswerForm';
 
 export function AddAnswerModal() {
-  const [isVisible, setVisible] = React.useState(true);
+  const [isVisible, setVisible] = React.useState(false);
   const router = useRouter();
   const hideModal = React.useCallback(() => {
     setVisible(false);
@@ -30,14 +31,22 @@ export function AddAnswerModal() {
   const answersContext = useAnswersContext();
   const { questionId } = answersContext;
 
-  // Change a browser title
+  // Check if we're still on the add route
+  const pathname = usePathname();
+  const isAddRoute = pathname?.endsWith('/add');
+
+  // Check if the modal should be visible
   React.useEffect(() => {
-    const originalTitle = document.title;
-    document.title = 'Add a Answer';
-    return () => {
-      document.title = originalTitle;
-    };
-  }, []);
+    setVisible(isAddRoute);
+    if (isAddRoute) {
+      const originalTitle = document.title;
+      document.title = 'Add an Answer';
+      return () => {
+        setVisible(false);
+        document.title = originalTitle;
+      };
+    }
+  }, [isAddRoute]);
 
   const handleAddAnswer = React.useCallback(
     (newAnswer: TNewAnswer) => {
@@ -64,7 +73,7 @@ export function AddAnswerModal() {
               resolve(addedAnswer);
               // NOTE: Close or go to the edit page
               setVisible(false);
-              router.replace(`${answersContext.routePath}/${addedAnswer.id}/edit`);
+              router.replace(`${answersContext.routePath}/${addedAnswer.id}`);
               return addedAnswer;
             })
             .catch((error) => {

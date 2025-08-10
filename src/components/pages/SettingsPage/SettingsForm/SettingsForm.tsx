@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createPortal } from 'react-dom';
 import { useForm } from 'react-hook-form';
 
+import { removeNullUndefinedValues } from '@/lib/helpers/objects';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
@@ -23,13 +24,13 @@ import { TFormData } from './types';
 interface TSettingsFormProps {
   settings: TSettings;
   className?: string;
-  toolbarPortalRoot: HTMLDivElement | null;
+  toolbarPortalRef: React.RefObject<HTMLDivElement>;
   userId?: TDefinedUserId;
 }
 
 export function SettingsForm(props: TSettingsFormProps) {
-  const { settings, className, userId, toolbarPortalRoot } = props;
-  const { updateAndSaveSettings, inited, userInited } = useSettingsContext();
+  const { settings, className, userId, toolbarPortalRef } = props;
+  const { setSettings, updateAndSaveSettings, inited, userInited } = useSettingsContext();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 
@@ -85,11 +86,15 @@ export function SettingsForm(props: TSettingsFormProps) {
         ...settings,
         ...formData,
       };
+      setSettings(editedSettings);
       startTransition(() => {
         const savePromise = updateAndSaveSettings(editedSettings);
         return savePromise
           .then((updatedSettings) => {
-            form.reset(updatedSettings);
+            const settings: TSettings = settingsSchema.parse(
+              removeNullUndefinedValues(updatedSettings),
+            );
+            form.reset(settings);
           })
           .catch((error) => {
             const message = getErrorText(error);
@@ -100,7 +105,7 @@ export function SettingsForm(props: TSettingsFormProps) {
           });
       });
     },
-    [form, updateAndSaveSettings, settings],
+    [form, setSettings, updateAndSaveSettings, settings],
   );
 
   const handleCancel = undefined;
@@ -129,7 +134,7 @@ export function SettingsForm(props: TSettingsFormProps) {
           </ScrollArea>
         </form>
       </Form>
-      {toolbarPortalRoot &&
+      {toolbarPortalRef.current &&
         createPortal(
           <SettingsFormActions
             settings={settings}
@@ -139,7 +144,7 @@ export function SettingsForm(props: TSettingsFormProps) {
             onCancel={handleCancel}
             onSubmit={handleFormSubmit}
           />,
-          toolbarPortalRoot,
+          toolbarPortalRef.current,
         )}
     </>
   );

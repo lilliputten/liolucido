@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
-import { dataRoute, welcomeRoute } from '@/config/routesConfig';
+import { availableTopicsRoute, welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { defaultLocale, TAwaitedLocaleProps } from '@/i18n/types';
@@ -19,6 +19,6 @@ export async function generateMetadata({ params }: TAwaitedLocaleProps) {
 export default async function DefaultRootPage() {
   const prefix = '/' + defaultLocale;
   const user = await getCurrentUser();
-  const route = user ? dataRoute : welcomeRoute;
+  const route = user ? availableTopicsRoute : welcomeRoute;
   redirect(prefix + route);
 }

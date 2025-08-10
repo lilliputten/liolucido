@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { truncateString } from '@/lib/helpers/strings';
+import { truncate } from '@/lib/helpers/strings';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deletedQuestionEventName, TDeletedQuestionDetail } from '@/constants/eventTypes';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
@@ -113,7 +113,7 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
     [deletingQuestion, hideModal, questionsContext],
   );
 
-  const questionName = deletingQuestion && truncateString(deletingQuestion.text, 30);
+  const questionName = deletingQuestion && truncate(deletingQuestion.text, 30);
 
   if (!questionName) {
     return null;

@@ -181,7 +181,6 @@
   }
 
   body {
-    --test: #{$primaryColor};
     @apply bg-background text-foreground;
     font-feature-settings:
       'rlig' 1,
@@ -214,23 +213,48 @@
       rgba(var(--destructiveColorRGB) / 90%) 12px
     );
   }
-}
 
-.text-gradient_brand {
-  background: linear-gradient(
-    15deg,
-    rgba(var(--secondaryColorRGB) / 80%) 0%,
-    var(--primaryColor) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+  .welcome-screen-gradient {
+    // position: relative;
+    overflow: hidden;
+    background: radial-gradient(
+      70% 60% at 40% 60%,
+      rgba(var(--theme-color-500-RGB) / 25%) 0%,
+      rgba(var(--theme-color-500-RGB) / 10%) 100%
+    );
+    &:before {
+      overflow: hidden;
+      position: absolute;
+      left: -75%;
+      right: -75%;
+      top: -75%;
+      bottom: -75%;
+      content: '';
+      transform: rotate(-30deg);
+      background: radial-gradient(
+        50% 20% at 70% 50%,
+        rgba(var(--color-blue-400-RGB) / 20%) 0%,
+        rgba(var(--color-blue-300-RGB) / 2%) 100%
+      );
+    }
+  }
 
-.disabled {
-  pointer-events: none;
-  opacity: 50%;
-  cursor: default;
+  .text-gradient-brand {
+    background: linear-gradient(
+      15deg,
+      rgba(var(--primaryColorRGB) / 80%) 0%,
+      rgb(var(--theme-color-500-RGB)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .disabled {
+    pointer-events: none;
+    opacity: 50%;
+    cursor: default;
+  }
 }
 
 .text-content {
@@ -249,7 +273,7 @@
   h1,
   h2,
   h3 {
-    color: $primaryColor;
+    color: rgb(var(--theme-color-500-RGB));
   }
   h1 {
     font-size: 2rem;
@@ -261,9 +285,10 @@
     font-size: 1.5rem;
   }
   a {
-    color: $primaryColor;
+    color: rgb(var(--theme-color-500-RGB));
     &:hover {
       text-decoration: underline;
+      color: rgb(var(--theme-color-600-RGB));
     }
   }
 }
@@ -281,4 +306,5 @@
 
 // Define themes (from global variables `$themes` and `$defaultTheme`, see definitions in the `src/config/themeColors.ts`)
 @include defineAllThemes($themes, $defaultTheme);
-// @include placeCoreThemeColors();
+// Define all theme colors to use in scss
+@include defineAllColors($themes, $defaultTheme);

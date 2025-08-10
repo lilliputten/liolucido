@@ -1,7 +1,7 @@
 #!/bin/sh
 # vim: ft=sh
 # @desc Config variables (common version -- stored in repository)
-# @changed 2025.06.21, 03:14
+# @changed 2025.08.01, 22:20
 
 if [ -z "$CONFIG_IMPORTED" ]; then
 

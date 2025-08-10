@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString, truncateString } from '@/lib/helpers/strings';
+import { getRandomHashString, truncate } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
@@ -182,7 +182,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
       )}
       <TableCell id="text" className="max-w-[16em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
-          {truncateString(text, 40)}
+          {truncate(text, 40)}
         </Link>
       </TableCell>
       <TableCell id="isCorrect" className="w-[8em]">

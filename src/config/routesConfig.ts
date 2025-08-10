@@ -1,8 +1,8 @@
 export const adminRoute = '/admin';
 export const chartsRoute = '/charts';
 export const dashboardRoute = '/dashboard';
-export const dataRoute = '/data'; // Example
 export const infoRoute = '/info';
+export const availableTopicsRoute = '/topics/available'; // Example
 export const allTopicsRoute = '/topics/all';
 export const myTopicsRoute = '/topics/my';
 export const rootRoute = '/';
@@ -14,7 +14,7 @@ export const pathnames = {
   [adminRoute]: adminRoute,
   [chartsRoute]: chartsRoute,
   [dashboardRoute]: dashboardRoute,
-  [dataRoute]: dataRoute,
+  [availableTopicsRoute]: availableTopicsRoute,
   [infoRoute]: infoRoute,
   [myTopicsRoute]: myTopicsRoute,
   [allTopicsRoute]: allTopicsRoute,

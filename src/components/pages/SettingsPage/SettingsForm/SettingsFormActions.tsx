@@ -9,6 +9,7 @@ import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { Icons } from '@/components/shared/icons';
+import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TSettings } from '@/features/settings/types';
 
@@ -55,11 +56,15 @@ export function SettingsFormActions(props: TProps) {
         </Button>
       )}
       <Button
+        className={cn(
+          isDev && '__SettingsFormActions_SaveButton', // DEBUG
+          'flex gap-2 px-4',
+          isPending && 'disabled opacity-50',
+        )}
         type="button"
         size="sm"
-        variant={isSubmitEnabled ? 'success' : 'disable'}
+        variant={isSubmitEnabled ? 'theme' : 'disable'}
         disabled={!isSubmitEnabled}
-        className={cn('flex gap-2 px-4', isPending && 'disabled opacity-50')}
         onClick={handleSubmit}
       >
         <SaveIcon className={cn('size-4', isPending && 'animate-spin')} />{' '}

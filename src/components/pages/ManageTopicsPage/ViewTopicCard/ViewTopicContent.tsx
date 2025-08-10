@@ -6,12 +6,14 @@ import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { TTopic } from '@/features/topics/types';
+import { TopicHeader } from '@/features/topics/components/TopicHeader';
+import { TopicProperties } from '@/features/topics/components/TopicProperties';
+import { TAvailableTopic } from '@/features/topics/types';
 
 import { TViewTopicContentActionsProps, ViewTopicContentActions } from './ViewTopicContentActions';
 
 interface TViewTopicContentProps {
-  topic: TTopic;
+  topic: TAvailableTopic;
   className?: string;
   goBack?: () => void;
   handleDeleteTopic: TViewTopicContentActionsProps['handleDeleteTopic'];
@@ -35,12 +37,13 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
           <div
             className={cn(
               isDev && '__ViewTopicContent_Stub', // DEBUG
-              'flex w-full flex-col gap-4 overflow-hidden opacity-50',
+              'flex w-full flex-col gap-4 overflow-hidden',
               'mx-6',
               className,
             )}
           >
-            Here comes some topic overview and summary.
+            <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" showDescription />
+            <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
           </div>
         </ScrollArea>
       </div>

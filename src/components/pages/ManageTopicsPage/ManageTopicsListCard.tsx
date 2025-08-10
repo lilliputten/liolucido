@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString, truncateString } from '@/lib/helpers/strings';
+import { getRandomHashString, truncate } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
@@ -186,7 +186,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
       )}
       <TableCell id="name" className="max-w-[8em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
-          {truncateString(name, 40)}
+          {truncate(name, 40)}
         </Link>
       </TableCell>
       <TableCell id="questions" className="max-w-[8em] truncate">
