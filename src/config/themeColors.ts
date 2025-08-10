@@ -29,7 +29,7 @@ interface TThemeColorData {
  * export const themeColorIds = ['brand', 'blue'] as const;
  * export type TThemeColorId = (typeof themeColorIds)[number];
  */
-const predefinedColors: TPredefinedColor[] = [
+export const predefinedColors: TPredefinedColor[] = [
   // See for tailwind color definitions:
   // https://tailwindcss.com/docs/colors
   'red',
@@ -63,10 +63,28 @@ const predefinedColorsData = predefinedColors.reduce(
   {} as Record<TPredefinedColor, TThemeColorData>,
 );
 export const themeColorData: Record<string, TThemeColorData> = {
-  brand: { color: primaryColor, fix: 20 },
+  brand: { color: primaryColor, fix: 18 },
   ...predefinedColorsData,
-  // blue: { color: getPredefinedColor('blue') },
 };
+// Fixes for all the predefined colors
+themeColorData.red.fix = -11;
+themeColorData.orange.fix = -4;
+themeColorData.lime.fix = 3;
+themeColorData.green.fix = 3;
+themeColorData.amber.fix = -4;
+themeColorData.emerald.fix = 8;
+themeColorData.teal.fix = 9;
+themeColorData.cyan.fix = 6;
+themeColorData.sky.fix = -1;
+themeColorData.blue.fix = -11;
+themeColorData.indigo.fix = -15;
+themeColorData.violet.fix = -18;
+themeColorData.purple.fix = -18;
+themeColorData.fuchsia.fix = -13;
+themeColorData.pink.fix = -13;
+themeColorData.rose.fix = -12;
+themeColorData.neutral.fix = 2;
+themeColorData.stone.fix = 2;
 // OPTION 2: Derive the types from the data
 export type TThemeColorId = keyof typeof themeColorData;
 export const themeColorIds = Object.keys(themeColorData) as TThemeColorId[];

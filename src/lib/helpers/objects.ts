@@ -1,3 +1,4 @@
+/** Remove all falsy values from the object */
 export function removeFalsyValues(obj: Record<string, unknown>) {
   Object.keys(obj).forEach((key) => {
     if (!obj[key]) {
@@ -7,6 +8,7 @@ export function removeFalsyValues(obj: Record<string, unknown>) {
   return obj;
 }
 
+/** Remove null or undefined values from the object */
 export function removeNullUndefinedValues(obj: Record<string, unknown>) {
   Object.keys(obj).forEach((key) => {
     if (obj[key] === null || obj[key] === undefined) {

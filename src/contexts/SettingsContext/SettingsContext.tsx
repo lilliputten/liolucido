@@ -73,7 +73,6 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
   // Update system theme
   React.useEffect(() => {
     const newTheme = settings.theme || defaultTheme;
-    console.log('[SettingsContext:Effect:Update system theme]', ready, newTheme, theme);
     if (ready && theme !== newTheme) {
       setSystemTheme(newTheme);
     }
@@ -124,7 +123,6 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   const setAndMemoizeSettings = React.useCallback(
     (settings: TSettings) => {
-      console.log('[SettingsContext:setAndMemoizeSettings]', settings);
       setSettings(settings);
       updateLocalSettings(settings);
       memo.settings = settings;
@@ -137,6 +135,9 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
     (settings: TSettings) => {
       // Save local data and apply the data first
       setAndMemoizeSettings(settings);
+      /* // DEBUG
+       * return new Promise<TSettings>((resolve) => setTimeout(resolve, 3000, settings));
+       */
       // Then invoke (if authorized) the save procedure on the server
       if (!userId) {
         return Promise.resolve(settings);
@@ -165,7 +166,6 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
   const setTheme = React.useCallback(
     (theme: TSettings['theme'] = defaultTheme) => {
       const updatedSettings = { ...memo.settings, theme };
-      console.log('[SettingsContext:setTheme]', theme);
       return updateAndSaveSettings(updatedSettings);
     },
     [memo, updateAndSaveSettings],

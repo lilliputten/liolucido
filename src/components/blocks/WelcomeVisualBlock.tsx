@@ -21,20 +21,19 @@ export function WelcomeVisualBlock(props: TPropsWithClassName) {
       )}
     >
       <Image
-        // priority
         src={svgArt}
         alt="Sign in illustration"
         className={cn(
-          isDev && '__WelcomeVisualBlock:Art', // DEBUG
+          isDev && '__WelcomeVisualBlock_Art', // DEBUG
           'mx-auto mt-4',
-          'sm:max-w-xs',
+          'max-w-lg',
         )}
       />
 
       {/* // XXX: Alternate layout: the art as a background
       <div
         className={cn(
-          isDev && '__WelcomeVisualBlock:Art', // DEBUG
+          isDev && '__WelcomeVisualBlock_Art', // DEBUG
           'bg-contain',
           'bg-center',
           'bg-no-repeat',

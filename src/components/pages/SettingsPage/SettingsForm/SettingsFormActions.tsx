@@ -63,7 +63,7 @@ export function SettingsFormActions(props: TProps) {
         )}
         type="button"
         size="sm"
-        variant={isSubmitEnabled ? 'success' : 'disable'}
+        variant={isSubmitEnabled ? 'theme' : 'disable'}
         disabled={!isSubmitEnabled}
         onClick={handleSubmit}
       >

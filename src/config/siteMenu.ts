@@ -15,7 +15,7 @@ export const siteMenu: SiteMenu = {
       userRequiredOnly: true,
     },
     {
-      titleId: 'Data',
+      titleId: 'AvailableTopics',
       href: availableTopicsRoute,
       // userRequiredOnly: true,
     },

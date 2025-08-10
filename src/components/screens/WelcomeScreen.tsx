@@ -22,17 +22,25 @@ export function WelcomeScreen(props: TPropsWithClassName & { isLoggedUser: boole
       <UseScrollableLayout type="clippable" />
       <div
         className={cn(
-          isDev && '__WelcomeScreen:Info', // DEBUG
-          'flex flex-1 flex-col bg-theme-500/20 lg:overflow-auto',
+          isDev && '__WelcomeScreen_Info', // DEBUG
+          'flex flex-1 flex-col bg-theme-500/10 lg:overflow-auto',
         )}
       >
+        <div
+          className={cn(
+            isDev && '__WelcomeScreen_Gradient', // DEBUG
+            'absolute bottom-0 left-0 right-0 top-0 lg:overflow-hidden',
+            'welcome-screen-gradient',
+            // 'pointer-events-none',
+          )}
+        />
         {/* TODO: Show a bigger page with more content if user is logged (isLoggedUser)? */}
-        <WelcomeVisualBlock />
+        <WelcomeVisualBlock className="z-10" />
       </div>
       {!isLoggedUser && (
         <div
           className={cn(
-            isDev && '__WelcomeScreen:SignIn', // DEBUG
+            isDev && '__WelcomeScreen_SignIn', // DEBUG
             'flex flex-1 flex-col lg:overflow-auto',
           )}
         >

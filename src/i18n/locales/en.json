@@ -63,7 +63,7 @@
     "title": "Welcome"
   },
   "SmallWelcomeText": {
-    "content": "<p>This is a small hierarchical data editor. Take a look at a small <infolink>instruction manual</infolink>.</p>",
+    "content": "<p>This is a small quiz cards' application. Take a look at a brief <infolink>instruction manual</infolink>.</p>",
     "title": "Welcome!"
   },
   "NavAuthButton": {

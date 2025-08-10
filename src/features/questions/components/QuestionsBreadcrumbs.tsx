@@ -4,7 +4,7 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
-import { truncateString } from '@/lib/helpers/strings';
+import { truncate } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
@@ -34,7 +34,7 @@ export function useQuestionsBreadcrumbsItems(props: TQuestionsBreadcrumbsProps) 
     { link: inactiveQuestions ? undefined : routePath, content: 'Questions' },
     !!question && {
       link: inactiveQuestion ? undefined : `${routePath}/${question.id}`,
-      content: truncateString(question.text, 20),
+      content: truncate(question.text, 20),
     },
   ]);
   return [...topicItems, ...items];

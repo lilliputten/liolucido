@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { truncateString } from '@/lib/helpers/strings';
+import { truncate } from '@/lib/helpers/strings';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deletedAnswerEventName, TDeletedAnswerDetail } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
@@ -109,7 +109,7 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
     [deletingAnswer, hideModal, answersContext],
   );
 
-  const answerName = deletingAnswer && truncateString(deletingAnswer.text, 30);
+  const answerName = deletingAnswer && truncate(deletingAnswer.text, 30);
 
   if (!answerName) {
     return null;
