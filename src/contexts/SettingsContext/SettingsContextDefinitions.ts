@@ -11,7 +11,7 @@ export interface SettingsContextData {
   /** Load settings from the server */
   loadSettings: () => Promise<TSettings | undefined>;
   /** Set settings in the context */
-  setSettings: (settings: TSettings) => void; // React.Dispatch<React.SetStateAction<TSettings>>;
+  // setSettings: (settings: TSettings) => void; // React.Dispatch<React.SetStateAction<TSettings>>;
   /** Save settings on the server (if user authorized) and locally */
   updateAndSaveSettings: (settings: TSettings) => Promise<TSettings>; // React.Dispatch<React.SetStateAction<TSettings>>;
   /** Reset locally saved settings (on user logout, as a case) */

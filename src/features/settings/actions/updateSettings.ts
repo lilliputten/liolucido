@@ -10,7 +10,7 @@ import { nulledSettings, TSettings } from '@/features/settings/types';
 export async function updateSettings(settings: TSettings) {
   if (isDev) {
     // DEBUG: Emulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
   const user = await getCurrentUser();
   const userId = user?.id;

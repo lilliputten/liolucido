@@ -324,8 +324,8 @@ export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetPr
 
         {/* TODO: Show menu if collapsed */}
         <div className={cn(isDev && '__DashboardSidebar_ExtraMenu', 'flex gap-2')}>
-          <NavModeToggle onPrimary onSidebar />
-          <NavLocaleSwitcher onPrimary onSidebar />
+          <NavModeToggle onSidebar />
+          <NavLocaleSwitcher onSidebar />
         </div>
 
         {/* User menu */}

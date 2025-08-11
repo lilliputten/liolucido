@@ -32,11 +32,15 @@ export function NavModeToggle(props: TNavModeToggleProps) {
   const {
     theme: currentTheme = defaultSystemTheme,
     themes,
-    // setTheme: setSystemTheme,
+    // setTheme: setAppTheme,
   } = useTheme();
   // const ThemeIcon = systemThemeIcons[currentTheme as TSystemThemeId];
   const { setTheme } = useSettingsContext();
   const t = useTranslations('NavModeToggle');
+  const handleThemeChange = (theme: string) => {
+    // setAppTheme(theme);
+    setTheme(theme);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild aria-label={t('label')}>
@@ -51,9 +55,6 @@ export function NavModeToggle(props: TNavModeToggleProps) {
           )}
           title={t('label')}
         >
-          {/*
-          <ThemeIcon className="transition-all" />
-          */}
           <Icons.sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Icons.moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">{t('label')}</span>
@@ -65,7 +66,7 @@ export function NavModeToggle(props: TNavModeToggleProps) {
           return (
             <DropdownMenuItem
               key={thisTheme}
-              onClick={() => setTheme(thisTheme)}
+              onClick={() => handleThemeChange(thisTheme)}
               disabled={thisTheme === currentTheme}
             >
               {ThemeIcon && <ThemeIcon className="mr-2 size-4" />}

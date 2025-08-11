@@ -68,9 +68,16 @@ async function RootLayout(props: TRootLayoutProps) {
   // Get theme color from setting or from cookie or get the default value
   const themeColor =
     settings?.themeColor || cookieStore.get('themeColor')?.value || defaultThemeColor;
+  // const theme = settings?.theme;
 
   return (
-    <html lang={locale} data-theme-color={themeColor} suppressHydrationWarning>
+    <html
+      lang={locale}
+      data-theme-color={themeColor}
+      // style={{ colorScheme: theme }}
+      // className={theme}
+      suppressHydrationWarning
+    >
       <head>
         {/* // TODO: Set SEO and OG meta tags
         <meta property="og:url" content="https://vanilla-tasks.lilliputten.com/" />
@@ -110,6 +117,7 @@ async function RootLayout(props: TRootLayoutProps) {
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
+              storageKey="app-theme"
             >
               <ModalProvider>
                 {/* NOTE: The toaster should be located before the main content */}
