@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString, truncate } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -254,16 +255,7 @@ export function ManageTopicQuestionAnswersListCard(
     }
   }, [router, questionsContext, answersContext]);
 
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(answersContext.topicsListRoutePath);
-      }
-    }, 200);
-  }, [router, answersContext]);
+  const goBack = useGoBack(answersContext.topicsListRoutePath);
 
   /* // Render nothing if no owner question found
    * if (!question) {

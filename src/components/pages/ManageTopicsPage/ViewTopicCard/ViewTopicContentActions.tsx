@@ -58,7 +58,7 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
       </Link>
       {allowedTraining && (
         <Link
-          href={`/train/topic/${id}`}
+          href={`/topics/available/${id}/workout`}
           className={cn(buttonVariants({ variant: 'theme', size: 'sm' }), 'flex gap-2')}
         >
           <Icons.arrowRight className="size-4" />

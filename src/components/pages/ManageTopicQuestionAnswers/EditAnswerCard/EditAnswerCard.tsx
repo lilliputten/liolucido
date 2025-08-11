@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
@@ -64,16 +65,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     throw new Error('No such answer exists');
   }
 
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(answersContext.routePath);
-      }
-    }, 200);
-  }, [router, answersContext]);
+  const goBack = useGoBack(answersContext.routePath);
 
   // Delete Answer Modal
   const handleDeleteAnswer = React.useCallback(() => {

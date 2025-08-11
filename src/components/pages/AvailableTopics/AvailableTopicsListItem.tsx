@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
@@ -42,11 +42,11 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   const router = useRouter();
   const pathname = usePathname();
   const topicRoutePath = `${routePath}/${id}`;
-  const trainRoutePath = `/train/topic/${id}`;
+  const workoutRoutePath = `/topics/available/${id}/workout`;
   const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
-  const startTraining = (ev: React.MouseEvent) => {
+  const startWorkout = (ev: React.MouseEvent) => {
     ev.stopPropagation();
-    router.push(trainRoutePath);
+    router.push(workoutRoutePath);
   };
   /* const defaultAction = (ev: React.MouseEvent) => {
    *   ev.stopPropagation();
@@ -86,7 +86,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
         <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
         <div id="right-actions" className="flex flex-wrap items-center gap-4">
           {allowedTraining && (
-            <Button variant="theme" onClick={startTraining} className="flex gap-2">
+            <Button variant="theme" onClick={startWorkout} className="flex gap-2">
               <Icons.arrowRight className="size-4" />
               <span>Start Training</span>
             </Button>

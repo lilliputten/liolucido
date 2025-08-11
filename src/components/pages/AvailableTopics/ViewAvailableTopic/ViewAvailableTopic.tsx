@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
@@ -21,7 +21,6 @@ interface TViewAvailableTopicProps extends TPropsWithClassName {
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const topicsContext = useTopicsContext();
   const { topics } = topicsContext;
   const topic: TTopic | undefined = React.useMemo(
@@ -31,16 +30,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   if (!topicId || !topic) {
     throw new Error('No such topic exists');
   }
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(topicsContext.routePath);
-      }
-    }, 200);
-  }, [router, topicsContext]);
+  const goBack = useGoBack(topicsContext.routePath);
 
   /* // Delete Topic Modal
    * const handleDeleteTopic = React.useCallback(() => {

@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 
 import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
@@ -24,19 +24,9 @@ interface TTopicsListProps {
 export function ManageTopicsListWrapper(props: TTopicsListProps) {
   const { openAddTopicModal, openDeleteTopicModal, openEditTopicCard, openEditQuestionsPage } =
     props;
-  const router = useRouter();
   const { topics } = useTopicsContext();
 
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(rootRoute);
-      }
-    }, 200);
-  }, [router]);
+  const goBack = useGoBack(rootRoute);
 
   const hasTopics = !!topics.length;
 

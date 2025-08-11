@@ -1,39 +1,38 @@
-import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
-import { cn } from '@/lib/utils';
-import { PageWrapper } from '@/components/layout/PageWrapper';
+import { cn, constructMetadata } from '@/lib/utils';
+import { AvailableTopicsPageWrapper, ViewAvailableTopic } from '@/components/pages/AvailableTopics';
+import { PageHeader } from '@/components/pages/shared';
+import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
+import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { TAwaitedLocaleProps } from '@/i18n/types';
 
-interface TProps extends TPropsWithChildrenAndClassName {
-  inSkeleton?: boolean;
-  inError?: boolean;
-  noPadded?: boolean;
+type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId: string }>;
+
+export async function generateMetadata({ params }: TAwaitedProps) {
+  const { locale } = await params;
+  const title = 'Workout Topic';
+  return constructMetadata({
+    locale,
+    title,
+  });
 }
 
-export function ManageTopicsPageWrapper(props: TProps) {
-  const {
-    className,
-    children,
-    noPadded,
-    // inSkeleton,
-    // inError,
-  } = props;
+export default async function ViewTopicPage({ params }: TAwaitedProps) {
+  const { topicId } = await params;
+
+  if (!topicId) {
+    return <PageError error={'Not topic specified.'} />;
+  }
+
   return (
-    <PageWrapper
-      id="ManageTopicsPageWrapper"
-      className={cn(
-        isDev && '__ManageTopicsPageWrapper', // DEBUG
-        className,
-      )}
-      innerClassName={cn(
-        isDev && '__ManageTopicsPageWrapper_Inner', // DEBUG
-        'w-full rounded-lg gap-4',
-        // !inError && 'border border-solid border-gray-500/30',
-      )}
-      // scrollable={!inSkeleton}
-      limitWidth
-      padded={!noPadded}
-    >
-      {children}
-    </PageWrapper>
+    <AvailableTopicsPageWrapper>
+      <PageHeader heading={'Workout Topic'} />
+      <ViewAvailableTopic
+        className={cn(
+          isDev && '__page_ViewTopicPage', // DEBUG
+        )}
+        topicId={topicId}
+      />
+    </AvailableTopicsPageWrapper>
   );
 }
