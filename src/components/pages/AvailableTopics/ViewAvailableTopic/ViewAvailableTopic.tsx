@@ -11,8 +11,8 @@ import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';
 
-import { ViewTopicContent } from './ViewTopicContent';
-import { ViewTopicContentActions } from './ViewTopicContentActions';
+import { ViewAvailableTopicContent } from './ViewAvailableTopicContent';
+import { ViewAvailableTopicContentActions } from './ViewAvailableTopicContentActions';
 
 interface TViewAvailableTopicProps extends TPropsWithClassName {
   topicId: TTopicId;
@@ -91,12 +91,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             'flex flex-wrap items-center gap-2',
           )}
         >
-          <ViewTopicContentActions
-            topic={topic}
-            goBack={goBack}
-            // handleDeleteTopic={handleDeleteTopic}
-            // handleAddQuestion={handleAddQuestion}
-          />
+          <ViewAvailableTopicContentActions topic={topic} goBack={goBack} />
         </div>
       </CardHeader>
       <CardContent
@@ -105,7 +100,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ViewTopicContent topic={topic} />
+        <ViewAvailableTopicContent topic={topic} />
       </CardContent>
     </Card>
   );

@@ -58,7 +58,7 @@ const nextConfig: NextConfig = {
     //     'https://03ql4p7l-3000.euw.devtunnels.ms/',
     //   ],
     // },
-    scrollRestoration: true,
+    // scrollRestoration: true,
   },
   compress: !isDev, // In favor of xtunnel (it loses `gzip` header)
   reactStrictMode: true,

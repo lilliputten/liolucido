@@ -10,7 +10,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { TTopic } from '@/features/topics/types';
 
-export interface TViewTopicContentActionsProps {
+export interface TWorkoutTopicContentActionsProps {
   topic: TTopic;
   isPending?: boolean;
   goBack?: (ev: React.MouseEvent) => void;
@@ -18,39 +18,40 @@ export interface TViewTopicContentActionsProps {
   handleAddQuestion?: () => void;
 }
 
-export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
+export function WorkoutTopicContentActions(props: TWorkoutTopicContentActionsProps) {
   const {
-    topic,
+    // topic,
     goBack,
     // handleDeleteTopic,
     // handleAddQuestion,
   } = props;
-  const {
-    id,
-    userId,
-    // name,
-    // description,
-    // isPublic,
-    // langCode,
-    // langName,
-    // keywords,
-    // createdAt,
-    // updatedAt,
-    _count,
-  } = topic;
-  const user = useSessionUser();
-  const isOwner = userId && userId === user?.id;
-  const isAdminMode = user?.role === 'ADMIN';
-  const allowedEdit = isAdminMode || isOwner;
-  const questionsCount = _count?.questions;
-  const allowedTraining = !!questionsCount;
-  const myTopicRoutePath = myTopicsRoute;
+  // const {
+  //   id,
+  //   userId,
+  //   // name,
+  //   // description,
+  //   // isPublic,
+  //   // langCode,
+  //   // langName,
+  //   // keywords,
+  //   // createdAt,
+  //   // updatedAt,
+  //   _count,
+  // } = topic;
+  // const user = useSessionUser();
+  // const isOwner = userId && userId === user?.id;
+  // const isAdminMode = user?.role === 'ADMIN';
+  // const allowedEdit = isAdminMode || isOwner;
+  // const questionsCount = _count?.questions;
+  // const allowedTraining = !!questionsCount;
+  // const myTopicRoutePath = myTopicsRoute;
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
         <Icons.arrowLeft className="size-4" />
         <span>Back</span>
       </Button>
+      {/*
       {allowedTraining && (
         <Link
           href={`/topics/available/${id}/workout`}
@@ -69,6 +70,7 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
           <span>Manage Topic</span>
         </Link>
       )}
+      */}
       {/* XXX: Extra actins: are they necessary here?
       {allowedEdit && (
         <Link

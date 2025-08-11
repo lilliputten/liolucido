@@ -1,25 +1,27 @@
 'use client';
 
 import React from 'react';
+import { useSession } from 'next-auth/react';
 
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
+import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
 
-interface TViewTopicContentProps {
+interface TWorkoutTopicContentProps {
   topic: TAvailableTopic;
   className?: string;
   // toolbarPortalRoot: HTMLDivElement | null;
   // toolbarPortalRef: React.RefObject<HTMLDivElement>;
   // goBack?: () => void;
-  // handleDeleteTopic: TViewTopicContentActionsProps['handleDeleteTopic'];
-  // handleAddQuestion?: TViewTopicContentActionsProps['handleAddQuestion'];
+  // handleDeleteTopic: TWorkoutTopicContentActionsProps['handleDeleteTopic'];
+  // handleAddQuestion?: TWorkoutTopicContentActionsProps['handleAddQuestion'];
 }
 
-export function ViewTopicContent(props: TViewTopicContentProps) {
+export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
   const {
     topic,
     className,
@@ -41,10 +43,20 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
     // updatedAt,
     // _count,
   } = topic;
+
+  const questionsContext = useQuestionsContext();
+  const session = useSession();
+
+  console.log('[WorkoutTopicContent]', {
+    session,
+    topic,
+    questionsContext,
+  });
+
   return (
     <div
       className={cn(
-        isDev && '__ViewTopicContent', // DEBUG
+        isDev && '__WorkoutTopicContent', // DEBUG
         'flex w-full flex-col gap-4 overflow-hidden',
         className,
       )}
@@ -52,20 +64,13 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
       <ScrollArea>
         <div
           className={cn(
-            isDev && '__ViewTopicContent_Scroll', // DEBUG
+            isDev && '__WorkoutTopicContent_Scroll', // DEBUG
             'flex w-full flex-col gap-4 overflow-hidden',
             'mx-6',
             className,
           )}
         >
-          <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" />
-          {!!description && (
-            <div id="description" className="truncate">
-              {/* TODO: Format text */}
-              {description}
-            </div>
-          )}
-          <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
+          CONTENT
         </div>
       </ScrollArea>
     </div>

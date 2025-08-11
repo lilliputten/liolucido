@@ -14,6 +14,7 @@ import { TTopic, TTopicId } from '@/features/topics/types';
 export interface TTopicsBreadcrumbsProps {
   topicId?: TTopicId;
   inactiveTopic?: boolean;
+  lastItem?: TBreadcrumbsItemProps;
 }
 
 export function useTopicsBreadcrumbsItems(props: TTopicsBreadcrumbsProps) {
@@ -36,7 +37,7 @@ export function useTopicsBreadcrumbsItems(props: TTopicsBreadcrumbsProps) {
 }
 
 export function TopicsBreadcrumbs(props: TTopicsBreadcrumbsProps & TPropsWithClassName) {
-  const { className, ...rest } = props;
+  const { className, lastItem, ...rest } = props;
   const items = useTopicsBreadcrumbsItems(rest);
   return (
     <Breadcrumbs
@@ -44,7 +45,7 @@ export function TopicsBreadcrumbs(props: TTopicsBreadcrumbsProps & TPropsWithCla
         isDev && '__TopicsBreadcrumbs', // DEBUG
         className,
       )}
-      items={items}
+      items={lastItem ? items.concat(lastItem) : items}
     />
   );
 }

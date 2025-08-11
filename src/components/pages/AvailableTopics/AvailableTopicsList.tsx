@@ -33,7 +33,6 @@ export function AvailableTopicsList(props: TPropsWithClassName) {
   const isCompletelyLoaded = topics.length >= totalCount;
 
   const memo = React.useMemo<TMemo>(
-    // NOTE:
     () => ({ isCompletelyLoaded, totalCount, topics }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -47,11 +46,6 @@ export function AvailableTopicsList(props: TPropsWithClassName) {
     if (memo.loadingFrom || startPos >= memo.totalCount) {
       return;
     }
-    console.log('[AvailableTopicsList:loadNextData] start', startPos, {
-      prevTopics,
-      startPos,
-      memo,
-    });
     memo.loadingFrom = startPos;
     startLoading(async () => {
       try {
@@ -68,16 +62,6 @@ export function AvailableTopicsList(props: TPropsWithClassName) {
         const topicIds = prevTopics.map(({ id }) => id);
         // DEBUG: Check if there are duplicated records (???)
         const dubbedTopics = topics.filter(({ id }) => topicIds.includes(id));
-        console.log('[AvailableTopicsList:loadNextData] done', startPos, {
-          topicIds,
-          dubbedTopics,
-          topics,
-          prevTopics,
-          totalCount,
-          startPos,
-          topicsLimit,
-          memo,
-        });
         if (dubbedTopics.length) {
           // eslint-disable-next-line no-console
           console.warn('[AvailableTopicsList:loadNextData] Duplicated topics has been loaded', {
@@ -130,11 +114,6 @@ export function AvailableTopicsList(props: TPropsWithClassName) {
     const containerBottom = containerNode.getBoundingClientRect().bottom;
     const extraGap = window.innerHeight / 2;
     const scrollIsPossible = containerBottom <= scrollBottom + extraGap;
-    /* console.log('[AvailableTopicsList:checkIfScrolledToTheEnd]', scrollIsPossible, {
-     *   scrollBottom,
-     *   containerBottom,
-     * });
-     */
     if (scrollIsPossible) {
       loadNextData();
     }

@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// vim: fdm=indent
 
 // See for `DATABASE_URL` parameter in the environment for the sqlite file location (under the `prisma` folder).
 
@@ -67,9 +66,10 @@ model User {
 
   topics Topic[] // Owned topics
 
-  UserTopic    UserTopic[]
-  UserQuestion UserQuestion[]
-  userSettings UserSettings?
+  UserTopic        UserTopic[]
+  UserTopicWorkout UserTopicWorkout[]
+  UserQuestion     UserQuestion[]
+  userSettings     UserSettings?
 
   @@map("users")
 }
@@ -156,7 +156,8 @@ model Topic {
 
   questions Question[] // Questions in this topic
 
-  UserTopic UserTopic[]
+  UserTopic        UserTopic[]
+  UserTopicWorkout UserTopicWorkout[]
 
   @@index([userId])
   @@map("topics")
@@ -230,6 +231,26 @@ model UserTopic {
 
   @@id([userId, topicId])
   @@map("user_topics")
+}
+
+model UserTopicWorkout {
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  topicId String @map("topic_id")
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  // Ordered list of question IDs as JSON array
+  questionsOrder String @map("questions_order") // JSON array of question IDs
+
+  finished Boolean?
+  // test     String?
+
+  @@id([userId, topicId])
+  @@map("user_topic_workouts")
 }
 
 model UserQuestion {
