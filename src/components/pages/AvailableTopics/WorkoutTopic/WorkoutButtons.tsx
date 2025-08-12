@@ -2,20 +2,12 @@
 
 import React from 'react';
 
-import { useWorkout } from '@/hooks/useWorkout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TQuestion } from '@/features/questions/types';
-import { TAvailableTopic } from '@/features/topics/types';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
 
-interface WorkoutButtonsProps {
-  topic: TAvailableTopic;
-  questions: TQuestion[];
-}
-
-export function WorkoutButtons({ topic, questions }: WorkoutButtonsProps) {
-  const questionIds = questions?.map((q) => q.id) || [];
-  const { workout, pending, createWorkout, restartWorkout } = useWorkout(topic.id, questionIds);
+export function WorkoutButtons() {
+  const { workout, pending, createWorkout, restartWorkout } = useWorkoutContext();
 
   const handleCreateWorkout = () => {
     createWorkout();
@@ -47,7 +39,7 @@ export function WorkoutButtons({ topic, questions }: WorkoutButtonsProps) {
   if (!workout) {
     return (
       <div className="flex flex-col gap-4">
-        <p className="text-sm text-muted-foreground">No workout found for this topic.</p>
+        <p className="text-sm text-muted-foreground">No active workout found.</p>
         <Button onClick={handleCreateWorkout} className="w-fit" disabled={pending}>
           Start New Workout
         </Button>

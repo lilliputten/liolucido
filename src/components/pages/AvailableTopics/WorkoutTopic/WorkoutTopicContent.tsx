@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
+import { WorkoutContextProvider } from '@/contexts/WorkoutContext';
 import { TAvailableTopic } from '@/features/topics/types';
 
 import { WorkoutButtons } from './WorkoutButtons';
@@ -37,7 +38,12 @@ export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
             className,
           )}
         >
-          <WorkoutButtons topic={topic} questions={questionsContext.questions} />
+          <WorkoutContextProvider
+            topic={topic}
+            questionIds={questionsContext.questions?.map((q) => q.id) || []}
+          >
+            <WorkoutButtons />
+          </WorkoutContextProvider>
         </div>
       </ScrollArea>
     </div>
