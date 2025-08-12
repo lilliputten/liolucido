@@ -1,5 +1,6 @@
-import { User } from '@prisma/client';
 import { User as SessionUser } from 'next-auth';
+
+import { User } from '@/generated/prisma';
 
 export type TUser = User;
 export type TSessionUser = SessionUser;

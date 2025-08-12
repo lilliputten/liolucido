@@ -1,6 +1,5 @@
-import { Question } from '@prisma/client';
-
 import { ExtendNullWithUndefined, ReplaceNullWithUndefined } from '@/lib/ts';
+import { Question } from '@/generated/prisma';
 
 export type TQuestion = ExtendNullWithUndefined<Question> & { _count?: { answers: number } };
 export type TQuestionReal = ReplaceNullWithUndefined<Question>;

@@ -2,11 +2,11 @@
 
 // See for `DATABASE_URL` parameter in the environment for the sqlite file location (under the `prisma` folder).
 
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
 generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
   provider = "zod-prisma-types"
   output   = "../src/generated/prisma"
 }
@@ -248,12 +248,11 @@ model UserTopicWorkout {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  // Ordered list of question IDs as JSON array
-  questionsOrder String? @map("questions_order") // JSON array of question IDs
-  stepIndex      Int?    @map("step_index")
+  questionsOrder  String? @map("questions_order") // Question IDs, separated by space
+  questionResults String? @map("question_results") // Answer results correct=1, incorrect=0, separated by space, in the order corresponding to `questionsOrder`
+  stepIndex       Int?    @map("step_index") // Current question
 
   finished Boolean?
-  // test     String?
 
   @@id([userId, topicId])
   @@map("user_topic_workouts")
