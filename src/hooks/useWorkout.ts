@@ -9,6 +9,7 @@ export function useWorkout(topicId: string, questionIds: string[] = []) {
   const [workout, setWorkout] = React.useState<TWorkoutData | null>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+  const [activeWorkout, setActiveWorkout] = React.useState(false);
   const user = useSessionUser();
 
   const shuffleQuestions = React.useCallback((ids: string[]) => {
@@ -107,7 +108,7 @@ export function useWorkout(topicId: string, questionIds: string[] = []) {
 
     startTransition(async () => {
       const questionsOrder = shuffleQuestions(questionIds);
-      const updatedWorkout = { ...workout, questionsOrder, finished: false };
+      const updatedWorkout = { ...workout, questionsOrder, finished: false, stepIndex: 0 };
 
       if (user?.id) {
         // Update on server
@@ -115,7 +116,7 @@ export function useWorkout(topicId: string, questionIds: string[] = []) {
           const response = await fetch(`/api/workouts/${topicId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ questionsOrder, finished: false }),
+            body: JSON.stringify(updatedWorkout),
           });
           if (response.ok) {
             const data = await response.json();
@@ -137,12 +138,60 @@ export function useWorkout(topicId: string, questionIds: string[] = []) {
     fetchWorkout();
   }, [fetchWorkout]);
 
+  const saveQuestionResultAndGoTheTheNext = React.useCallback(
+    (result: string) => {
+      if (!workout) return;
+
+      startTransition(async () => {
+        const currentResults = workout.questionResults || '';
+        const newResults = currentResults ? `${currentResults} ${result}` : result;
+        const newStepIndex = (workout.stepIndex || 0) + 1;
+
+        const updatedWorkout = {
+          ...workout,
+          questionResults: newResults,
+          stepIndex: newStepIndex,
+        };
+
+        if (user?.id) {
+          // Update on server
+          try {
+            const response = await fetch(`/api/workouts/${topicId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                questionResults: newResults,
+                stepIndex: newStepIndex,
+              }),
+            });
+            if (response.ok) {
+              const data = await response.json();
+              setWorkout(data);
+            }
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Failed to update workout step:', error);
+          }
+        } else if (typeof localStorage === 'object') {
+          // Update localStorage
+          localStorage.setItem(`workout-${topicId}`, JSON.stringify(updatedWorkout));
+          setWorkout(updatedWorkout);
+        }
+      });
+    },
+    [topicId, user?.id, workout, startTransition],
+  );
+
   return {
+    topicId,
     workout,
     pending: isPending || !initialized,
+    activeWorkout,
+    setActiveWorkout,
     createWorkout,
     deleteWorkout,
     restartWorkout,
+    saveQuestionResultAndGoTheTheNext,
     refetch: fetchWorkout,
   };
 }

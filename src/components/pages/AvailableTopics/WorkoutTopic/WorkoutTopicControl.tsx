@@ -6,26 +6,28 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 
-export function WorkoutButtons() {
+interface TProps {
+  startWorkout: () => void;
+}
+
+export function WorkoutTopicControl(props: TProps) {
+  const { startWorkout } = props;
   const { workout, pending, createWorkout, restartWorkout } = useWorkoutContext();
 
   const handleCreateWorkout = () => {
     createWorkout();
   };
 
-  const handleResumeWorkout = () => {
-    // TODO: Navigate to workout page
-    console.log('[WorkoutButtons:handleResumeWorkout] Resume workout:', workout);
-    debugger;
-  };
+  /*
+   * const router = useRouter();
+   * const handleResumeWorkout = () => {
+   *   router.push(`/topics/available/${topicId}/workout/go`);
+   * };
+   */
 
   const handleRestartWorkout = () => {
     restartWorkout();
   };
-
-  React.useEffect(() => {
-    console.log('[eorkoutButtons] DEBUG', pending);
-  }, [pending]);
 
   if (pending) {
     return (
@@ -53,11 +55,11 @@ export function WorkoutButtons() {
         {workout.finished
           ? 'The workout is completed'
           : workout.stepIndex
-            ? 'Your workout is in progress'
+            ? 'Your workout is in progress' // TODO: Show the progress
             : 'The workout is ready to start'}
       </p>
       <div className="flex gap-2">
-        <Button onClick={handleResumeWorkout} variant="default">
+        <Button onClick={startWorkout} variant="default">
           {workout.finished
             ? 'Review Workout'
             : workout.stepIndex

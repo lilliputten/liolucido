@@ -71,6 +71,7 @@ export function PageError(props: TErrorProps) {
     <ErrorPlaceHolder
       className={cn(
         isDev && '__PageError', // DEBUG
+        'm-6 overflow-auto',
         className,
       )}
     >

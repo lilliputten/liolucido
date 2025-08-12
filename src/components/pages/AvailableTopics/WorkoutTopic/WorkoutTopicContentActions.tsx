@@ -1,9 +1,12 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
+import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TTopic } from '@/features/topics/types';
 
 export interface TWorkoutTopicContentActionsProps {
@@ -12,16 +15,46 @@ export interface TWorkoutTopicContentActionsProps {
 }
 
 export function WorkoutTopicContentActions(props: TWorkoutTopicContentActionsProps) {
-  const {
-    // topic,
-    goBack,
-  } = props;
+  const { topic, goBack } = props;
+  const user = useSessionUser();
+  const { workout, activeWorkout } = useWorkoutContext();
+
+  const isOwner = user?.id === topic.userId;
+
+  const currentQuestionId = React.useMemo(() => {
+    if (!workout?.questionsOrder) return null;
+    const questionsOrder = workout.questionsOrder.split(' ');
+    const currentIndex = workout.stepIndex || 0;
+    return questionsOrder[currentIndex] || null;
+  }, [workout?.questionsOrder, workout?.stepIndex]);
+
   return (
     <>
-      <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
+      <Button variant="ghost" size="sm" onClick={goBack} className="flex gap-2" disabled={!goBack}>
         <Icons.arrowLeft className="size-4" />
         <span>Back</span>
       </Button>
+      {isOwner && (
+        <>
+          <Button variant="ghost" size="sm">
+            <Link href={`/topics/my/${topic.id}`} className="flex gap-2">
+              <Icons.edit className="size-4" />
+              <span>Manage Topic</span>
+            </Link>
+          </Button>
+          {activeWorkout && currentQuestionId && (
+            <Button variant="ghost" size="sm">
+              <Link
+                href={`/topics/my/${topic.id}/questions/${currentQuestionId}`}
+                className="flex gap-2"
+              >
+                <Icons.questions className="size-4" />
+                <span>Manage Question</span>
+              </Link>
+            </Button>
+          )}
+        </>
+      )}
     </>
   );
 }

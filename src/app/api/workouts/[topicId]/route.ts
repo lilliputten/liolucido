@@ -7,10 +7,10 @@ import { UserTopicWorkoutSchema } from '@/generated/prisma';
 
 const updateWorkoutSchema = UserTopicWorkoutSchema.omit({
   userId: true,
-  // topicId: true,
+  topicId: true,
   createdAt: true,
   updatedAt: true,
-});
+}).partial();
 
 /** GET /api/workouts/[topicId] - Get specific workout */
 export async function GET(

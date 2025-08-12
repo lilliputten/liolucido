@@ -33,20 +33,6 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
   if (!topicId || !topic) {
     throw new Error('No such topic exists');
   }
-  // const {
-  //   // id,
-  //   // userId,
-  //   // user,
-  //   // name,
-  //   description,
-  //   // isPublic,
-  //   // langCode,
-  //   // langName,
-  //   // keywords,
-  //   // createdAt,
-  //   // updatedAt,
-  //   // _count,
-  // } = topic;
 
   return (
     <Card

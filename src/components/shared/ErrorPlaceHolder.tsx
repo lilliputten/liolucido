@@ -21,7 +21,8 @@ export function ErrorPlaceHolder({
     >
       <div
         className={cn(
-          'flex max-w-[420px] flex-col items-center gap-6 text-center',
+          'flex flex-col items-center gap-6 text-center',
+          // 'max-w-[420px]',
           containerClassName,
         )}
       >

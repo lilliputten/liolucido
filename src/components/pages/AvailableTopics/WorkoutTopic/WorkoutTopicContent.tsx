@@ -4,12 +4,12 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { WorkoutQuestionContainer } from '@/components/pages/AvailableTopics/WorkoutQuestion';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { WorkoutContextProvider } from '@/contexts/WorkoutContext';
 import { TAvailableTopic } from '@/features/topics/types';
 
-import { WorkoutButtons } from './WorkoutButtons';
+import { WorkoutTopicControl } from './WorkoutTopicControl';
 
 interface TWorkoutTopicContentProps {
   topic: TAvailableTopic;
@@ -17,9 +17,8 @@ interface TWorkoutTopicContentProps {
 }
 
 export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
-  const { topic, className } = props;
-
-  const questionsContext = useQuestionsContext();
+  const { className } = props;
+  const { activeWorkout, setActiveWorkout } = useWorkoutContext();
 
   return (
     <div
@@ -38,12 +37,11 @@ export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
             className,
           )}
         >
-          <WorkoutContextProvider
-            topic={topic}
-            questionIds={questionsContext.questions?.map((q) => q.id) || []}
-          >
-            <WorkoutButtons />
-          </WorkoutContextProvider>
+          {activeWorkout ? (
+            <WorkoutQuestionContainer />
+          ) : (
+            <WorkoutTopicControl startWorkout={() => setActiveWorkout(true)} />
+          )}
         </div>
       </ScrollArea>
     </div>
