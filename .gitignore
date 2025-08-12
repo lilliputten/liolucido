@@ -41,7 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.contentlayer
+# Misc
+/.contentlayer
+/certificates
+/prisma/.data
+/src/generated/prisma
 
 # Temporariy, swap & ignored files
 /bin
@@ -57,7 +61,3 @@ next-env.d.ts
 *.zip
 *.tgz
 *.log
-
-# Misc
-/certificates
-/prisma/.data

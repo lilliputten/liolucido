@@ -3,10 +3,13 @@ import { z } from 'zod';
 
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { UserTopicWorkoutSchema } from '@/generated/prisma';
 
-const updateWorkoutSchema = z.object({
-  questionsOrder: z.string().optional(),
-  // finished: z.boolean().optional(),
+const updateWorkoutSchema = UserTopicWorkoutSchema.omit({
+  userId: true,
+  // topicId: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 /** GET /api/workouts/[topicId] - Get specific workout */

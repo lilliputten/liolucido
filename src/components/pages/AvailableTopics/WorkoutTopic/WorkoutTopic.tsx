@@ -90,12 +90,7 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
                 'flex flex-wrap items-center gap-2',
               )}
             >
-              <WorkoutTopicContentActions
-                topic={topic}
-                goBack={goBack}
-                // handleDeleteTopic={handleDeleteTopic}
-                // handleAddQuestion={handleAddQuestion}
-              />
+              <WorkoutTopicContentActions topic={topic} goBack={goBack} />
             </div>
           </div>
           <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" showDescription />

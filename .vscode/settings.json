@@ -1,6 +1,7 @@
 {
-  "search.excludeFolders": ["dist", ".git", "node_modules", ".venv"],
+  "search.excludeFolders": [".next", "dist", ".git", "node_modules", ".venv"],
   "search.exclude": {
+    "src/generated": true,
     "*.session": true,
     "tsconfig.tsbuildinfo": true,
     "pnpm-lock.yaml": true,
