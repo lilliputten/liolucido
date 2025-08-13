@@ -51,7 +51,7 @@ export function SettingsFormActions(props: TProps) {
           disabled={isDirty}
           onClick={onCancel}
         >
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4" />
           <span>Back</span>
         </Button>
       )}

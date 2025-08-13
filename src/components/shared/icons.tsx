@@ -12,6 +12,7 @@ import {
   CalendarDays,
   ChartNoAxesGantt,
   Check,
+  CheckIcon,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -28,6 +29,7 @@ import {
   File,
   FileQuestion,
   FileText,
+  Flag,
   FolderKanban,
   Hand,
   HelpCircle,
@@ -68,6 +70,7 @@ import {
   Trash,
   User,
   X,
+  XIcon,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -206,8 +209,8 @@ export const Icons = {
   Tags,
   add: Plus,
   allTopics: SquareLibrary,
-  arrowLeft: ArrowLeft,
-  arrowRight: ArrowRight,
+  ArrowLeft,
+  ArrowRight,
   arrowUpRight: ArrowUpRight,
   billing: CreditCard,
   bookOpen: BookOpen,
@@ -263,6 +266,9 @@ export const Icons = {
   warning: AlertTriangle,
   yandex,
   CalendarDays,
+  Flag,
+  CheckIcon,
+  XIcon,
 };
 
 export type TIconsKey = keyof typeof Icons;

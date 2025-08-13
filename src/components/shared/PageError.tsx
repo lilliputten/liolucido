@@ -87,7 +87,7 @@ export function PageError(props: TErrorProps) {
       )}
       <div className="mt-2 flex w-full flex-wrap justify-center gap-4">
         <Button onClick={goBack} className="flex gap-2">
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4" />
           <span>Go back</span>
         </Button>
         <Button onClick={goHome} className="flex gap-2">

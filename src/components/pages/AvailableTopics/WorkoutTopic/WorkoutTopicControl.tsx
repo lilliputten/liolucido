@@ -12,22 +12,7 @@ interface TProps {
 
 export function WorkoutTopicControl(props: TProps) {
   const { startWorkout } = props;
-  const { workout, pending, createWorkout, restartWorkout } = useWorkoutContext();
-
-  const handleCreateWorkout = () => {
-    createWorkout();
-  };
-
-  /*
-   * const router = useRouter();
-   * const handleResumeWorkout = () => {
-   *   router.push(`/topics/available/${topicId}/workout/go`);
-   * };
-   */
-
-  const handleRestartWorkout = () => {
-    restartWorkout();
-  };
+  const { workout, pending, createWorkout } = useWorkoutContext();
 
   if (pending) {
     return (
@@ -42,7 +27,7 @@ export function WorkoutTopicControl(props: TProps) {
     return (
       <div className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">No active workout found.</p>
-        <Button onClick={handleCreateWorkout} className="w-fit" disabled={pending}>
+        <Button onClick={createWorkout} className="w-fit" disabled={pending}>
           Start New Workout
         </Button>
       </div>
@@ -54,23 +39,27 @@ export function WorkoutTopicControl(props: TProps) {
       <p className="text-sm text-muted-foreground">
         {workout.finished
           ? 'The workout is completed'
-          : workout.stepIndex
+          : workout.started
             ? 'Your workout is in progress' // TODO: Show the progress
             : 'The workout is ready to start'}
       </p>
       <div className="flex gap-2">
-        <Button onClick={startWorkout} variant="default">
+        <Button
+          data-testid="__WorkoutTopicControl_Start_Button"
+          onClick={startWorkout}
+          variant="default"
+        >
           {workout.finished
-            ? 'Review Workout'
-            : workout.stepIndex
+            ? 'Restart Workout'
+            : workout.started
               ? 'Resume Workout'
               : 'Start Workout'}
         </Button>
-        {!!workout.stepIndex && (
-          <Button onClick={handleRestartWorkout} variant="outline">
+        {/*!!workout.stepIndex && (
+          <Button onClick={startWorkout} variant="outline">
             Restart Workout
           </Button>
-        )}
+        )*/}
       </div>
     </div>
   );

@@ -1,197 +1,254 @@
 import React from 'react';
+import { toast } from 'sonner';
 
 import { isDev } from '@/constants';
 import { TWorkoutData } from '@/features/workouts/types';
 
 import { useSessionUser } from './useSessionUser';
 
+const _shuffleQuestionsStr = (ids: string[]) => {
+  return [...ids].sort(() => Math.random() - 0.5).join(' ');
+};
+
+// TODO: Move to helpers
+function safeJsonParse<T = unknown>(data: string, defaultValue: T) {
+  try {
+    return JSON.parse(data);
+  } catch {
+    return defaultValue;
+  }
+}
+
 export function useWorkout(topicId: string, questionIds: string[] = []) {
   const [workout, setWorkout] = React.useState<TWorkoutData | null>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
-  const [activeWorkout, setActiveWorkout] = React.useState(false);
   const user = useSessionUser();
 
-  const shuffleQuestions = React.useCallback((ids: string[]) => {
-    return [...ids].sort(() => Math.random() - 0.5).join(' ');
-  }, []);
+  // const memo = React.useMemo<TMemo>(() => ({}), []);
+  // memo.topicId = topicId;
 
-  const fetchWorkout = React.useCallback(() => {
-    startTransition(async () => {
-      if (isDev) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
+  /** Helper function to save the workout data to the server or local storage */
+  const _updateWorkoutData = React.useCallback(
+    async (data: Partial<TWorkoutData>, method: 'POST' | 'PUT' | 'DELETE' = 'PUT') => {
+      const isDelete = method === 'DELETE';
+      const isNew = method === 'POST';
       if (user?.id) {
-        // Fetch from server for authenticated user
         try {
-          const response = await fetch(`/api/workouts/${topicId}`);
-          if (response.ok) {
-            const data = await response.json();
-            setWorkout(data);
-          } else {
+          const url = isNew ? '/api/workouts' : `/api/workouts/${topicId}`;
+          const response = await fetch(url, {
+            method,
+            headers: !isDelete ? { 'Content-Type': 'application/json' } : {},
+            body: !isDelete ? JSON.stringify(isNew ? { topicId, ...data } : data) : undefined,
+          });
+          if (response.ok && !isDelete) {
+            const result = await response.json();
+            setWorkout(result);
+            return result;
+          } else if (isDelete) {
             setWorkout(null);
           }
         } catch (error) {
+          const msg = 'Failed to save workout data';
           // eslint-disable-next-line no-console
-          console.error('Failed to fetch workout:', error);
-          setWorkout(null);
+          console.error(msg, error);
+          debugger; // eslint-disable-line no-debugger
+          toast.error(msg);
         }
       } else if (typeof localStorage === 'object') {
-        // Fetch from localStorage for unauthenticated user
-        try {
-          const stored = localStorage.getItem(`workout-${topicId}`);
-          if (stored) {
-            const data = JSON.parse(stored);
-            setWorkout(data);
-          } else {
-            setWorkout(null);
-          }
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to parse workout from localStorage:', error);
+        if (isDelete) {
+          localStorage.removeItem(`workout-${topicId}`);
           setWorkout(null);
+        } else {
+          const updatedWorkout = workout ? { ...workout, ...data } : data;
+          localStorage.setItem(`workout-${topicId}`, JSON.stringify(updatedWorkout));
+          setWorkout(updatedWorkout as TWorkoutData);
+          return updatedWorkout;
         }
       }
-      setInitialized(true);
+    },
+    [topicId, user?.id, workout],
+  );
+
+  /** Retrieve workout data from the server or local storage.
+   * In case of authentificated user, will be invoked twice, 'cause the session user will be initialized with a delay.
+   */
+  const fetchWorkout = React.useCallback(() => {
+    const userId = user?.id;
+    return new Promise<void>((resolve) => {
+      if (!topicId) {
+        // ???
+        return resolve();
+      }
+      startTransition(async () => {
+        if (isDev) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+        if (userId) {
+          // Fetch from server for authenticated user
+          try {
+            const response = await fetch(`/api/workouts/${topicId}`);
+            if (response.ok) {
+              const data = await response.json();
+              setWorkout(data);
+            } else {
+              setWorkout(null);
+            }
+          } catch (error) {
+            const msg = 'Failed to fetch workout';
+            // eslint-disable-next-line no-console
+            console.error(msg, error);
+            debugger; // eslint-disable-line no-debugger
+            setWorkout(null);
+            toast.error(msg);
+          }
+        } else if (typeof localStorage === 'object') {
+          // Fetch from localStorage for unauthenticated user
+          try {
+            const stored = localStorage.getItem(`workout-${topicId}`);
+            if (stored) {
+              const data = JSON.parse(stored);
+              setWorkout(data);
+            } else {
+              setWorkout(null);
+            }
+          } catch (error) {
+            const msg = 'Failed to parse workout from local storage';
+            // eslint-disable-next-line no-console
+            console.error(msg, error);
+            debugger; // eslint-disable-line no-debugger
+            setWorkout(null);
+            // toast.error(msg);
+          }
+        }
+        setInitialized(true);
+        resolve();
+      });
     });
-  }, [topicId, user?.id, startTransition]);
+  }, [topicId, user?.id]);
 
   const createWorkout = React.useCallback(() => {
-    startTransition(async () => {
-      const questionsOrder = shuffleQuestions(questionIds);
-      const workoutData: TWorkoutData = { questionsOrder, finished: false };
-
-      if (user?.id) {
-        // Save to server
-        try {
-          const response = await fetch('/api/workouts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ topicId, questionsOrder }),
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setWorkout(data);
-          }
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to create workout:', error);
-        }
-      } else if (typeof localStorage === 'object') {
-        // Save to localStorage
-        localStorage.setItem(`workout-${topicId}`, JSON.stringify(workoutData));
-        setWorkout(workoutData);
-      }
+    return new Promise<void>((resolve) => {
+      if (!workout) return resolve();
+      startTransition(async () => {
+        const questionsOrder = _shuffleQuestionsStr(questionIds);
+        await _updateWorkoutData({ questionsOrder, finished: false }, 'POST');
+        resolve();
+      });
     });
-  }, [topicId, user?.id, shuffleQuestions, questionIds, startTransition]);
+  }, [workout, questionIds, _updateWorkoutData]);
 
   const deleteWorkout = React.useCallback(() => {
-    startTransition(async () => {
-      if (user?.id) {
-        // Delete from server
-        try {
-          await fetch(`/api/workouts/${topicId}`, { method: 'DELETE' });
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to delete workout:', error);
-        }
-      } else if (typeof localStorage === 'object') {
-        // Remove from localStorage
-        localStorage.removeItem(`workout-${topicId}`);
-      }
-      setWorkout(null);
+    return new Promise<void>((resolve) => {
+      if (!workout) return resolve();
+      startTransition(async () => {
+        await _updateWorkoutData({}, 'DELETE');
+        resolve();
+      });
     });
-  }, [topicId, user?.id, startTransition]);
+  }, [workout, _updateWorkoutData]);
 
-  const restartWorkout = React.useCallback(() => {
-    if (!workout) return;
+  const goPrevQuestion = React.useCallback(() => {
+    return new Promise<void>((resolve) => {
+      if (!workout || !workout.stepIndex) return resolve();
+      startTransition(async () => {
+        const newStepIndex = workout.stepIndex ? workout.stepIndex - 1 : 0;
+        await _updateWorkoutData({
+          stepIndex: newStepIndex,
+        });
+        resolve();
+      });
+    });
+  }, [workout, _updateWorkoutData]);
 
-    startTransition(async () => {
-      const questionsOrder = shuffleQuestions(questionIds);
-      const updatedWorkout = { ...workout, questionsOrder, finished: false, stepIndex: 0 };
+  const goNextQuestion = React.useCallback(() => {
+    return new Promise<void>((resolve) => {
+      if (!workout) return resolve();
+      startTransition(async () => {
+        const newStepIndex = (workout.stepIndex || 0) + 1;
+        const finished = newStepIndex >= questionIds.length;
+        await _updateWorkoutData({
+          stepIndex: finished ? 0 : newStepIndex,
+          finished,
+        });
+        resolve();
+      });
+    });
+  }, [workout, _updateWorkoutData, questionIds.length]);
 
-      if (user?.id) {
-        // Update on server
-        try {
-          const response = await fetch(`/api/workouts/${topicId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedWorkout),
+  const saveResult = React.useCallback(
+    (result: boolean | undefined) => {
+      return new Promise<void>((resolve) => {
+        if (!workout) return resolve();
+        startTransition(async () => {
+          const currentResults = workout.questionResults || '[]';
+          const resultsList = safeJsonParse(currentResults, []);
+          resultsList[workout.stepIndex || 0] = result == undefined ? null : Number(result);
+          const newResults = JSON.stringify(resultsList);
+          await _updateWorkoutData({
+            questionResults: newResults,
           });
-          if (response.ok) {
-            const data = await response.json();
-            setWorkout(data);
-          }
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to restart workout:', error);
-        }
-      } else if (typeof localStorage === 'object') {
-        // Update localStorage
-        localStorage.setItem(`workout-${topicId}`, JSON.stringify(updatedWorkout));
-        setWorkout(updatedWorkout);
-      }
+          resolve();
+        });
+      });
+    },
+    [workout, _updateWorkoutData],
+  );
+
+  const saveResultAndGoNext = React.useCallback(
+    (result: boolean | undefined) => {
+      return new Promise<void>((resolve) => {
+        if (!workout) return resolve();
+        startTransition(async () => {
+          await saveResult(result);
+          await goNextQuestion();
+          resolve();
+        });
+      });
+    },
+    [workout, saveResult, goNextQuestion],
+  );
+
+  const startWorkout = React.useCallback(() => {
+    return new Promise<void>((resolve) => {
+      if (!workout) return resolve();
+      startTransition(async () => {
+        await _updateWorkoutData({
+          started: true,
+          finished: false,
+          stepIndex: 0,
+          questionResults: '',
+        });
+        resolve();
+      });
     });
-  }, [topicId, user?.id, workout, shuffleQuestions, questionIds, startTransition]);
+  }, [workout, _updateWorkoutData]);
+
+  const finishWorkout = React.useCallback(() => {
+    return new Promise<void>((resolve) => {
+      if (!workout) return resolve();
+      startTransition(async () => {
+        await _updateWorkoutData({ started: false, finished: true });
+        resolve();
+      });
+    });
+  }, [workout, _updateWorkoutData]);
 
   React.useEffect(() => {
     fetchWorkout();
   }, [fetchWorkout]);
 
-  const saveQuestionResultAndGoTheTheNext = React.useCallback(
-    (result: string) => {
-      if (!workout) return;
-
-      startTransition(async () => {
-        const currentResults = workout.questionResults || '';
-        const newResults = currentResults ? `${currentResults} ${result}` : result;
-        const newStepIndex = (workout.stepIndex || 0) + 1;
-
-        const updatedWorkout = {
-          ...workout,
-          questionResults: newResults,
-          stepIndex: newStepIndex,
-        };
-
-        if (user?.id) {
-          // Update on server
-          try {
-            const response = await fetch(`/api/workouts/${topicId}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                questionResults: newResults,
-                stepIndex: newStepIndex,
-              }),
-            });
-            if (response.ok) {
-              const data = await response.json();
-              setWorkout(data);
-            }
-          } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error('Failed to update workout step:', error);
-          }
-        } else if (typeof localStorage === 'object') {
-          // Update localStorage
-          localStorage.setItem(`workout-${topicId}`, JSON.stringify(updatedWorkout));
-          setWorkout(updatedWorkout);
-        }
-      });
-    },
-    [topicId, user?.id, workout, startTransition],
-  );
-
   return {
     topicId,
     workout,
     pending: isPending || !initialized,
-    activeWorkout,
-    setActiveWorkout,
     createWorkout,
     deleteWorkout,
-    restartWorkout,
-    saveQuestionResultAndGoTheTheNext,
-    refetch: fetchWorkout,
+    startWorkout,
+    finishWorkout,
+    saveResult,
+    saveResultAndGoNext,
+    goPrevQuestion,
+    goNextQuestion,
   };
 }

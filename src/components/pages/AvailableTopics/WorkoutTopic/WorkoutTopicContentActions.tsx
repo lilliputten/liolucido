@@ -17,7 +17,7 @@ export interface TWorkoutTopicContentActionsProps {
 export function WorkoutTopicContentActions(props: TWorkoutTopicContentActionsProps) {
   const { topic, goBack } = props;
   const user = useSessionUser();
-  const { workout, activeWorkout } = useWorkoutContext();
+  const { workout } = useWorkoutContext();
 
   const isOwner = user?.id === topic.userId;
 
@@ -31,7 +31,7 @@ export function WorkoutTopicContentActions(props: TWorkoutTopicContentActionsPro
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="flex gap-2" disabled={!goBack}>
-        <Icons.arrowLeft className="size-4" />
+        <Icons.ArrowLeft className="size-4" />
         <span>Back</span>
       </Button>
       {isOwner && (
@@ -42,7 +42,7 @@ export function WorkoutTopicContentActions(props: TWorkoutTopicContentActionsPro
               <span>Manage Topic</span>
             </Link>
           </Button>
-          {activeWorkout && currentQuestionId && (
+          {workout?.started && !workout.finished && currentQuestionId && (
             <Button variant="ghost" size="sm">
               <Link
                 href={`/topics/my/${topic.id}/questions/${currentQuestionId}`}

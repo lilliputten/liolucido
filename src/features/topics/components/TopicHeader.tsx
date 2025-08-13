@@ -69,14 +69,16 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
     <div
       className={cn(
         isDev && '__TopicHeader', // DEBUG
-        'flex flex-row gap-2',
+        'flex flex-row gap-3',
         className,
       )}
     >
-      <div id="left-name" className="flex flex-1 flex-col gap-2 text-2xl">
-        <div id="name">{nameContent}</div>
+      <div id="left-name" className="flex flex-1 flex-col gap-2">
+        <div id="name" className="text-2xl">
+          {nameContent}
+        </div>
         {/* TODO: Format descrption text */}
-        {showDescription && <div id="description">{description}</div>}
+        {showDescription && !!description && <div id="description">{description}</div>}
       </div>
       <div id="right-tools" className="!mt-0 flex items-center gap-4 text-xs opacity-50">
         {isOwner && (

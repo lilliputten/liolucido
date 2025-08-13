@@ -22,7 +22,7 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
-        <Icons.arrowLeft className="size-4" />
+        <Icons.ArrowLeft className="size-4" />
         <span>Back</span>
       </Button>
       <Button

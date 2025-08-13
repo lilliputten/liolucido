@@ -41,7 +41,7 @@ export function ViewAvailableTopicContentActions(props: TViewAvailableTopicConte
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
-        <Icons.arrowLeft className="size-4" />
+        <Icons.ArrowLeft className="size-4" />
         <span>Back</span>
       </Button>
       {allowedTraining && (
@@ -49,7 +49,7 @@ export function ViewAvailableTopicContentActions(props: TViewAvailableTopicConte
           href={`/topics/available/${id}/workout`}
           className={cn(buttonVariants({ variant: 'theme', size: 'sm' }), 'flex gap-2')}
         >
-          <Icons.arrowRight className="size-4" />
+          <Icons.ArrowRight className="size-4" />
           <span>Start Training</span>
         </Link>
       )}

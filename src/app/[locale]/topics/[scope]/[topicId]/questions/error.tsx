@@ -29,13 +29,13 @@ export default function Error({
           href={topicRootRoutePath}
           className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}
         >
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4" />
           <span>To the topic</span>
         </Link>
       )}
       {routePath && (
         <Link href={routePath} className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}>
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4" />
           <span>To the questions list</span>
         </Link>
       )}

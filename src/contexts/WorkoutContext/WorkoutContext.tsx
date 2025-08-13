@@ -22,9 +22,7 @@ export function WorkoutContextProvider({
 }: WorkoutContextProviderProps) {
   const workoutData = useWorkout(topic.id, questionIds);
 
-  const contextValue = React.useMemo(() => workoutData, [workoutData]);
-
-  return <WorkoutContext.Provider value={contextValue}>{children}</WorkoutContext.Provider>;
+  return <WorkoutContext.Provider value={workoutData}>{children}</WorkoutContext.Provider>;
 }
 
 export function useWorkoutContext() {

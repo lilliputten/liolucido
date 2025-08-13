@@ -36,7 +36,7 @@ export function EditAnswerFormActions(props: TProps) {
           className="gap-2"
           disabled={isDirty || !onCancel}
         >
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4" />
           <span>Back</span>
         </Button>
       )}

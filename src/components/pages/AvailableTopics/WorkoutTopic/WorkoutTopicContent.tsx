@@ -5,8 +5,8 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WorkoutQuestionContainer } from '@/components/pages/AvailableTopics/WorkoutQuestion';
-import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { isDev } from '@/constants';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TAvailableTopic } from '@/features/topics/types';
 
 import { WorkoutTopicControl } from './WorkoutTopicControl';
@@ -18,7 +18,7 @@ interface TWorkoutTopicContentProps {
 
 export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
   const { className } = props;
-  const { activeWorkout, setActiveWorkout } = useWorkoutContext();
+  const { workout, startWorkout } = useWorkoutContext();
 
   return (
     <div
@@ -37,10 +37,10 @@ export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
             className,
           )}
         >
-          {activeWorkout ? (
+          {workout?.started && !workout?.finished ? (
             <WorkoutQuestionContainer />
           ) : (
-            <WorkoutTopicControl startWorkout={() => setActiveWorkout(true)} />
+            <WorkoutTopicControl startWorkout={startWorkout} />
           )}
         </div>
       </ScrollArea>

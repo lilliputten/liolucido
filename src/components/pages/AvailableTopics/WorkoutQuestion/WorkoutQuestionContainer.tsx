@@ -8,13 +8,29 @@ import { TAnswerData } from '@/features/answers/types';
 
 import { WorkoutQuestion } from './WorkoutQuestion';
 
+interface TMemo {
+  nextPageTimerHandler?: ReturnType<typeof setTimeout>;
+}
+
 export function WorkoutQuestionContainer() {
-  const { workout, saveQuestionResultAndGoTheTheNext } = useWorkoutContext();
+  const {
+    workout,
+    saveResultAndGoNext,
+    saveResult,
+    finishWorkout,
+    goNextQuestion,
+    goPrevQuestion,
+  } = useWorkoutContext();
   const { questions } = useQuestionsContext();
   const [answers, setAnswers] = React.useState<TAnswerData[]>([]);
   const [isPending, startTransition] = React.useTransition();
   const [selectedAnswerId, setSelectedAnswerId] = React.useState<string>();
-  const [showResults, setShowResults] = React.useState(false);
+
+  React.useEffect(() => {
+    setSelectedAnswerId(undefined);
+  }, [workout?.stepIndex]);
+
+  const memo = React.useMemo<TMemo>(() => ({}), []);
 
   const currentQuestionId = React.useMemo(() => {
     if (!workout?.questionsOrder) return null;
@@ -47,39 +63,49 @@ export function WorkoutQuestionContainer() {
     });
   }, [question, startTransition]);
 
-  const handleAnswerSelect = React.useCallback(
-    (answerId: string, isCorrect: boolean) => {
+  const goToTheNextQuestion = React.useCallback(() => {
+    if (memo.nextPageTimerHandler) {
+      clearTimeout(memo.nextPageTimerHandler);
+      memo.nextPageTimerHandler = undefined;
+    }
+    // setSelectedAnswerId(undefined);
+    goNextQuestion();
+  }, [memo, goNextQuestion]);
+
+  const goToThePrevQuestion = React.useCallback(() => {
+    goPrevQuestion();
+    // setSelectedAnswerId(undefined);
+  }, [goPrevQuestion]);
+
+  const onAnswerSelect = React.useCallback(
+    (answerId: string) => {
       setSelectedAnswerId(answerId);
-      setShowResults(true);
-
-      // Update workout with result and move to next question
-      const result = isCorrect ? '1' : '0';
-      saveQuestionResultAndGoTheTheNext(result);
-
-      // Auto-advance after delay
-      setTimeout(() => {
-        setShowResults(false);
-        setSelectedAnswerId(undefined);
-      }, 1500);
+      const answer = answers.find(({ id }) => id === answerId);
+      if (answer) {
+        const { isCorrect } = answer;
+        // Update workout with result and move to next question
+        saveResult(isCorrect);
+        // Auto-advance after delay
+        if (isCorrect) {
+          memo.nextPageTimerHandler = setTimeout(goToTheNextQuestion, 2000);
+        }
+      }
     },
-    [saveQuestionResultAndGoTheTheNext],
+    [memo, answers, goToTheNextQuestion, saveResult],
   );
 
-  const handleSkip = React.useCallback(() => {
-    // Update workout with skip result and move to next question
-    saveQuestionResultAndGoTheTheNext?.('0');
-  }, [saveQuestionResultAndGoTheTheNext]);
+  const onSkip = React.useCallback(() => {
+    // Update workout with false result and move to next question
+    saveResultAndGoNext(undefined);
+  }, [saveResultAndGoNext]);
 
   if (isPending) {
-    return <div className="p-6">Loading question...</div>;
+    // TODO: Add a skeleton with a rough card view
+    return <div className="p-6">Loading question data...</div>;
   }
 
   if (!workout) {
     return <div className="p-6">No active workout found.</div>;
-  }
-
-  if (!question) {
-    return <div className="p-6">Question not found.</div>;
   }
 
   const questionsOrder = (workout.questionsOrder || '').split(' ');
@@ -88,14 +114,16 @@ export function WorkoutQuestionContainer() {
 
   return (
     <WorkoutQuestion
-      questionText={question.text}
+      questionText={question?.text || ''}
       answers={answers}
       currentStep={currentStep}
       totalSteps={totalSteps}
-      onAnswerSelect={handleAnswerSelect}
-      onSkip={handleSkip}
+      onAnswerSelect={onAnswerSelect}
+      onSkip={onSkip}
+      onFinish={finishWorkout}
+      onContinue={goToTheNextQuestion}
+      goPrevQuestion={goToThePrevQuestion}
       selectedAnswerId={selectedAnswerId}
-      showResults={showResults}
     />
   );
 }

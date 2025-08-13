@@ -87,7 +87,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
         <div id="right-actions" className="flex flex-wrap items-center gap-4">
           {allowedTraining && (
             <Button variant="theme" onClick={startWorkout} className="flex gap-2">
-              <Icons.arrowRight className="size-4" />
+              <Icons.ArrowRight className="size-4" />
               <span>Start Training</span>
             </Button>
           )}

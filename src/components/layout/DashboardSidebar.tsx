@@ -152,7 +152,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     )}
                     {/* Show sections menu */}
                     {section.items.map((item) => {
-                      const Icon = Icons[item.icon || 'arrowRight'];
+                      const Icon = Icons[item.icon || 'ArrowRight'];
                       const isCurrentPath = comparePathsWithoutLocalePrefix(item.href, path);
                       return (
                         item.href && (
@@ -266,7 +266,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
         <section key={section.titleId} className="flex flex-col gap-0.5">
           <p className="mb-4 text-xs uppercase text-muted-foreground">{section.titleId}</p>
           {section.items.map((item) => {
-            const Icon = Icons[item.icon || 'arrowRight'];
+            const Icon = Icons[item.icon || 'ArrowRight'];
             if (!item.href) {
               return null;
             }

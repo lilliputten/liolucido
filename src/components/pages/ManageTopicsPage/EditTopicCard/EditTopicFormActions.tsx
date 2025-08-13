@@ -30,7 +30,7 @@ export function EditTopicFormActions(props: TProps) {
     <>
       {!isDirty && (
         <Button variant="ghost" size="sm" onClick={onCancel} className="gap-2" disabled={isDirty}>
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4" />
           <span>Back</span>
         </Button>
       )}

@@ -30,7 +30,7 @@ export function AvailableTopicsListWrapper() {
         buttons={
           <>
             <Button variant="ghost" onClick={goBack} className="flex gap-2">
-              <Icons.arrowLeft className="size-4" />
+              <Icons.ArrowLeft className="size-4" />
               Go Back
             </Button>
             <Link

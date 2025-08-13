@@ -96,7 +96,7 @@ function Toolbar(props: TToolbarActionsProps) {
       )}
     >
       <Button variant="ghost" size="sm" className="flex gap-2 px-4" onClick={goBack}>
-        <Icons.arrowLeft className="hidden size-4 sm:block" />
+        <Icons.ArrowLeft className="hidden size-4 sm:block" />
         <span>Back</span>
       </Button>
       <Button
@@ -341,7 +341,7 @@ export function ManageTopicQuestionAnswersListCard(
               <>
                 {/*
                 <Button variant="ghost" onClick={goBack} className="flex gap-2">
-                  <Icons.arrowLeft className="size-4" />
+                  <Icons.ArrowLeft className="size-4" />
                   Go Back
                 </Button>
                 */}

@@ -248,11 +248,12 @@ model UserTopicWorkout {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  questionsOrder  String? @map("questions_order") // Question IDs, separated by space
-  questionResults String? @map("question_results") // Answer results correct=1, incorrect=0, separated by space, in the order corresponding to `questionsOrder`
-  stepIndex       Int?    @map("step_index") // Current question
+  questionsOrder  String @default("") @map("questions_order") // Question IDs, separated by space
+  questionResults String @default("") @map("question_results") // Answer results correct=1, incorrect=0, separated by space, in the order corresponding to `questionsOrder`
+  stepIndex       Int    @default(0) @map("step_index") // Current question
 
-  finished Boolean?
+  started  Boolean @default(false)
+  finished Boolean @default(false)
 
   @@id([userId, topicId])
   @@map("user_topic_workouts")

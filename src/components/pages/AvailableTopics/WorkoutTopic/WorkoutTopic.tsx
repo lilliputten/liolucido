@@ -7,7 +7,9 @@ import { cn } from '@/lib/utils';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
+import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
@@ -25,6 +27,8 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const topicsContext = useTopicsContext();
   const { topics } = topicsContext;
+  const questionsContext = useQuestionsContext();
+  const { workout } = useWorkoutContext();
   const topic: TTopic | undefined = React.useMemo(
     () => topics.find(({ id }) => id === topicId),
     [topics, topicId],
@@ -67,7 +71,11 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
                 'flex-1',
               )}
               topicId={topicId}
-              lastItem={{ content: 'Workout' }}
+              lastItem={{
+                content: 'Workout',
+                link:
+                  workout?.started && !workout?.finished ? questionsContext.routePath : undefined,
+              }}
             />
             <div
               ref={toolbarPortalRef}
