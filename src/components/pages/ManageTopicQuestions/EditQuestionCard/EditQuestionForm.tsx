@@ -14,9 +14,9 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { updateQuestion } from '@/features/questions/actions';
-import { TQuestion } from '@/features/questions/types';
+import { TQuestion, TQuestionData } from '@/features/questions/types';
 
-import { maxNameLength, minNameLength } from '../constants';
+import { maxTextLength, minTextLength } from '../constants';
 import { EditQuestionFormActions } from './EditQuestionFormActions';
 import { EditQuestionFormFields } from './EditQuestionFormFields';
 import { TFormData } from './types';
@@ -40,7 +40,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
     () =>
       z
         .object({
-          text: z.string().min(minNameLength).max(maxNameLength),
+          text: z.string().min(minTextLength).max(maxTextLength),
           answersCountRandom: z.boolean().optional(),
           answersCountMin: z.union([z.string().optional(), z.number()]),
           answersCountMax: z.union([z.string().optional(), z.number()]),
@@ -106,8 +106,9 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
 
   const handleFormSubmit = React.useCallback(
     (formData: TFormData) => {
-      const editedQuestion: TQuestion = {
-        ...question,
+      const editedQuestion: TQuestionData = {
+        id: question.id,
+        topicId: question.topicId,
         text: formData.text,
         answersCountRandom: formData.answersCountRandom,
         answersCountMin: formData.answersCountMin,

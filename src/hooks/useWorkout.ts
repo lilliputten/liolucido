@@ -2,6 +2,7 @@ import React from 'react';
 import { toast } from 'sonner';
 
 import { isDev } from '@/constants';
+import { TTopic } from '@/features/topics/types';
 import { TWorkoutData } from '@/features/workouts/types';
 
 import { useSessionUser } from './useSessionUser';
@@ -19,7 +20,8 @@ function safeJsonParse<T = unknown>(data: string, defaultValue: T) {
   }
 }
 
-export function useWorkout(topicId: string, questionIds: string[] = []) {
+export function useWorkout(topic: TTopic, questionIds: string[] = []) {
+  const topicId = topic.id;
   const [workout, setWorkout] = React.useState<TWorkoutData | null>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
@@ -36,13 +38,32 @@ export function useWorkout(topicId: string, questionIds: string[] = []) {
       if (user?.id) {
         try {
           const url = isNew ? '/api/workouts' : `/api/workouts/${topicId}`;
-          const response = await fetch(url, {
+          const requestData = isDelete ? undefined : isNew ? { topicId, ...data } : data;
+          const requestInit: RequestInit = {
             method,
             headers: !isDelete ? { 'Content-Type': 'application/json' } : {},
-            body: !isDelete ? JSON.stringify(isNew ? { topicId, ...data } : data) : undefined,
-          });
-          if (response.ok && !isDelete) {
-            const result = await response.json();
+            body: requestData != undefined ? JSON.stringify(requestData) : undefined,
+          };
+          const res = await fetch(url, requestInit);
+          const body = await res.text();
+          if (!res.ok) {
+            const error = new Error('Cannot update a workout data on the server');
+            // prettier-ignore
+            console.warn('[useWorkout:_updateWorkoutData]', error.message, { // eslint-disable-line no-console
+              error,
+              body,
+              res,
+              requestInit,
+              url,
+              isNew,
+              isDelete,
+              data,
+              method,
+            });
+            toast.error(error.message);
+            debugger; // eslint-disable-line no-debugger
+          } else if (!isDelete) {
+            const result = safeJsonParse(body, null);
             setWorkout(result);
             return result;
           } else if (isDelete) {
@@ -129,14 +150,14 @@ export function useWorkout(topicId: string, questionIds: string[] = []) {
 
   const createWorkout = React.useCallback(() => {
     return new Promise<void>((resolve) => {
-      if (!workout) return resolve();
+      // if (!workout) return resolve();
       startTransition(async () => {
         const questionsOrder = _shuffleQuestionsStr(questionIds);
         await _updateWorkoutData({ questionsOrder, finished: false }, 'POST');
         resolve();
       });
     });
-  }, [workout, questionIds, _updateWorkoutData]);
+  }, [questionIds, _updateWorkoutData]);
 
   const deleteWorkout = React.useCallback(() => {
     return new Promise<void>((resolve) => {
@@ -240,6 +261,7 @@ export function useWorkout(topicId: string, questionIds: string[] = []) {
 
   return {
     topicId,
+    topic,
     workout,
     pending: isPending || !initialized,
     createWorkout,

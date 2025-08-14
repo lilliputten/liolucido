@@ -20,7 +20,7 @@ export function WorkoutContextProvider({
   topic,
   questionIds,
 }: WorkoutContextProviderProps) {
-  const workoutData = useWorkout(topic.id, questionIds);
+  const workoutData = useWorkout(topic, questionIds);
 
   return <WorkoutContext.Provider value={workoutData}>{children}</WorkoutContext.Provider>;
 }

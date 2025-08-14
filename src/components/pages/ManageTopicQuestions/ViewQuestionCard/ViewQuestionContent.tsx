@@ -12,6 +12,7 @@ import {
   TViewQuestionContentActionsProps,
   ViewQuestionContentActions,
 } from './ViewQuestionContentActions';
+import { ViewQuestionContentSummary } from './ViewQuestionContentSummary';
 
 interface TViewQuestionContentProps {
   question: TQuestion;
@@ -33,16 +34,7 @@ export function ViewQuestionContent(props: TViewQuestionContentProps) {
         )}
       >
         <ScrollArea>
-          <div
-            className={cn(
-              isDev && '__ViewQuestionContent_Stub', // DEBUG
-              'flex w-full flex-col gap-4 overflow-hidden opacity-50',
-              'mx-6',
-              className,
-            )}
-          >
-            Here comes some question overview and summary.
-          </div>
+          <ViewQuestionContentSummary question={question} />
         </ScrollArea>
       </div>
       {toolbarPortalRoot &&

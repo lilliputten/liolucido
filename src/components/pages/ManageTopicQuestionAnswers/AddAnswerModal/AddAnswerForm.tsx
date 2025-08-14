@@ -9,7 +9,9 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TAnswer, TNewAnswer } from '@/features/answers/types';
@@ -24,12 +26,12 @@ export interface TAddAnswerFormProps {
   handleClose?: () => void;
   className?: string;
   isPending?: boolean;
-  // topicId: TTopicId;
   questionId: TQuestionId;
 }
 
 export interface TFormData {
   text: TAnswer['text'];
+  isCorrect: TAnswer['isCorrect'];
 }
 
 function FormHint({ children }: { children?: React.ReactNode }) {
@@ -46,6 +48,7 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
     () =>
       z.object({
         text: z.string().min(minTextLength).max(maxTextLength),
+        isCorrect: z.boolean(),
       }),
     [],
   );
@@ -53,6 +56,7 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
   const defaultValues: TFormData = React.useMemo(() => {
     return {
       text: '',
+      isCorrect: false,
     };
   }, []);
 
@@ -74,8 +78,8 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
   const onSubmit = handleSubmit((formData) => {
-    const { text } = formData;
-    const newAnswer: TNewAnswer = { text, questionId };
+    const { text, isCorrect } = formData;
+    const newAnswer: TNewAnswer = { text, isCorrect, questionId };
     handleAddAnswer(newAnswer);
   });
 
@@ -87,6 +91,7 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
   };
 
   const textKey = React.useId();
+  const isCorrectKey = React.useId();
 
   const Icon = isPending ? Icons.spinner : Icons.check;
   const buttonText = isPending ? 'Adding' : 'Add';
@@ -120,8 +125,30 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
                 />
               </FormControl>
               <FormHint>
-                You'll be able to edit it later, as well as other answer poroperties.
+                You'll be able to edit it later, as well as other answer poroperties.{' '}
+                <MarkdownHint />
               </FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="isCorrect"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label className="m-0" htmlFor={isCorrectKey}>
+                Is the answer correct?
+              </Label>
+              <FormControl>
+                <Switch
+                  id={isCorrectKey}
+                  checked={!!field.value}
+                  onCheckedChange={field.onChange}
+                  className="data-[state=checked]:bg-green-500"
+                />
+              </FormControl>
+              <FormHint>Each question should have one or a few correct answers.</FormHint>
               <FormMessage />
             </FormItem>
           )}

@@ -21,6 +21,11 @@ export default async function WorkoutLayout({ children, params }: WorkoutLayoutP
 
   const questions = await getTopicQuestions(topicId);
   const questionIds = questions.map((q) => q.id);
+  // NOTE: It's possible to move the `WorkoutContextProvider` into the client
+  // component and use the questions list form the upstreaming
+  // `QuestionsContextProvider`, which is created in the
+  // `src/components/pages/AvailableTopics/WorkoutTopic/WorkoutTopicLayout.tsx`
+  // module.
 
   return (
     <WorkoutContextProvider topic={topic} questionIds={questionIds}>

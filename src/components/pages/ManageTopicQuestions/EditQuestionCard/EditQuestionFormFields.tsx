@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
 
@@ -70,7 +71,9 @@ export function EditQuestionFormFields(props: TEditQuestionFormFieldsProps) {
                   {...field}
                 />
               </FormControl>
-              <FormHint>A question Text.</FormHint>
+              <FormHint>
+                A question Text. <MarkdownHint />
+              </FormHint>
               <FormMessage />
             </FormItem>
           )}

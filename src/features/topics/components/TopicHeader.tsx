@@ -5,6 +5,7 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
+import { Markdown } from '@/components/ui/Markdown';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
@@ -69,16 +70,20 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
     <div
       className={cn(
         isDev && '__TopicHeader', // DEBUG
-        'flex flex-row gap-3',
+        'flex flex-row gap-4',
         className,
       )}
     >
-      <div id="left-name" className="flex flex-1 flex-col gap-2">
+      <div id="left-name" className="flex flex-1 flex-col gap-4">
         <div id="name" className="text-2xl">
           {nameContent}
         </div>
         {/* TODO: Format descrption text */}
-        {showDescription && !!description && <div id="description">{description}</div>}
+        {showDescription && !!description && (
+          <div id="description">
+            <Markdown>{description}</Markdown>
+          </div>
+        )}
       </div>
       <div id="right-tools" className="!mt-0 flex items-center gap-4 text-xs opacity-50">
         {isOwner && (

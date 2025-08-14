@@ -9,6 +9,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/f
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { isDev } from '@/constants';
 import { TAnswer } from '@/features/answers/types';
 
@@ -68,8 +69,7 @@ export function EditAnswerFormFields(props: TEditAnswerFormFieldsProps) {
                 />
               </FormControl>
               <FormHint>
-                An answer text. It's a plain text: no tags or other formattings allowed. To break
-                paragraphs, use a double line break.
+                An answer text. <MarkdownHint />
               </FormHint>
               <FormMessage />
             </FormItem>

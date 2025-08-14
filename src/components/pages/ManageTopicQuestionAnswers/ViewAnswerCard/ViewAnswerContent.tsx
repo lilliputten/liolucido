@@ -12,6 +12,7 @@ import {
   TViewAnswerContentActionsProps,
   ViewAnswerContentActions,
 } from './ViewAnswerContentActions';
+import { ViewAnswerContentSummary } from './ViewAnswerContentSummary';
 
 interface TViewAnswerContentProps {
   answer: TAnswer;
@@ -33,16 +34,7 @@ export function ViewAnswerContent(props: TViewAnswerContentProps) {
         )}
       >
         <ScrollArea>
-          <div
-            className={cn(
-              isDev && '__ViewAnswerContent_Stub', // DEBUG
-              'flex w-full flex-col gap-4 overflow-hidden opacity-50',
-              'mx-6',
-              className,
-            )}
-          >
-            Here comes some answer overview and summary.
-          </div>
+          <ViewAnswerContentSummary answer={answer} />
         </ScrollArea>
       </div>
       {toolbarPortalRoot &&

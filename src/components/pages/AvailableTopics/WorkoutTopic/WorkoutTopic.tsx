@@ -8,12 +8,11 @@ import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TTopicId } from '@/features/topics/types';
 
 import { WorkoutTopicContent } from './WorkoutTopicContent';
 import { WorkoutTopicContentActions } from './WorkoutTopicContentActions';
@@ -25,15 +24,9 @@ interface TWorkoutTopicProps extends TPropsWithClassName {
 export function WorkoutTopic(props: TWorkoutTopicProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const topicsContext = useTopicsContext();
-  const { topics } = topicsContext;
   const questionsContext = useQuestionsContext();
-  const { workout } = useWorkoutContext();
-  const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
-  );
-  const goBack = useGoBack(topicsContext.routePath);
+  const { topic, workout } = useWorkoutContext();
+  const goBack = useGoBack(`/topics/available/${topicId}`); // topicsContext.routePath);
   if (!topicId || !topic) {
     throw new Error('No such topic exists');
   }
@@ -56,7 +49,7 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
         <div
           className={cn(
             isDev && '__EditTopicCard_TitleWrapper', // DEBUG
-            'flex flex-1 flex-col justify-center gap-2',
+            'flex flex-1 flex-col justify-center gap-4',
           )}
         >
           <div

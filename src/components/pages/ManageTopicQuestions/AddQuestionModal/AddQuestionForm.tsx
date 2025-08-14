@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
@@ -119,7 +120,8 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
                 />
               </FormControl>
               <FormHint>
-                You'll be able to edit it later, as well as other question poroperties.
+                You'll be able to edit it later, as well as other question poroperties.{' '}
+                <MarkdownHint />
               </FormHint>
               <FormMessage />
             </FormItem>

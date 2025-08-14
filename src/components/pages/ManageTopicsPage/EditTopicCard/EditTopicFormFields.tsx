@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TTopic } from '@/features/topics/types';
@@ -101,7 +102,8 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                 />
               </FormControl>
               <FormHint>
-                A topic description. Could be used in questions and answers generation.
+                A topic description. Could be used in questions and answers generation.{' '}
+                <MarkdownHint />
               </FormHint>
               <FormMessage />
             </FormItem>

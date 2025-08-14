@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString, truncate } from '@/lib/helpers/strings';
+import { truncateMarkdown } from '@/lib/helpers/markdown';
+import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useGoBack } from '@/hooks/useGoBack';
 import { useSessionUser } from '@/hooks/useSessionUser';
@@ -194,7 +195,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
       )}
       <TableCell id="text" className="max-w-[12em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
-          {truncate(text, 40)}
+          {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
       <TableCell id="answers" className="max-w-[8em] truncate">

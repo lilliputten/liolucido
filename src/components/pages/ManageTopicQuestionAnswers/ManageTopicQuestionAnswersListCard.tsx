@@ -4,13 +4,15 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString, truncate } from '@/lib/helpers/strings';
+import { truncateMarkdown } from '@/lib/helpers/markdown';
+import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useGoBack } from '@/hooks/useGoBack';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Switch } from '@/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -24,7 +26,7 @@ import { isDev } from '@/constants';
 import { TUpdatedAnswersCountDetail, updatedQuestionsCountEventName } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { getQuestionAnswers } from '@/features/answers/actions';
+import { getQuestionAnswers, updateAnswer } from '@/features/answers/actions';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
 
@@ -168,6 +170,27 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
   const { id, text, isCorrect, isGenerated } = answer;
   const answersContext = useAnswersContext();
   const { routePath } = answersContext;
+  const [isPending, startTransition] = React.useTransition();
+
+  const handleToggleCorrect = React.useCallback(
+    (checked: boolean) => {
+      startTransition(async () => {
+        try {
+          await updateAnswer({ ...answer, isCorrect: checked });
+          answersContext.setAnswers((prev) =>
+            prev.map((a) => (a.id === answer.id ? { ...a, isCorrect: checked } : a)),
+          );
+          toast.success(`Answer marked as ${checked ? 'correct' : 'incorrect'}`);
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to update answer:', error);
+          debugger; // eslint-disable-line no-debugger
+          toast.error('Failed to update answer');
+        }
+      });
+    },
+    [answer, answersContext],
+  );
   return (
     <TableRow className="truncate" data-answer-id={id}>
       <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
@@ -183,11 +206,16 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
       )}
       <TableCell id="text" className="max-w-[16em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
-          {truncate(text, 40)}
+          {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
       <TableCell id="isCorrect" className="w-[8em]">
-        {isCorrect && <Icons.CircleCheck className="stroke-green-500" />}
+        <Switch
+          checked={isCorrect}
+          onCheckedChange={handleToggleCorrect}
+          disabled={isPending}
+          className="data-[state=checked]:bg-green-500"
+        />
       </TableCell>
       <TableCell id="isGenerated" className="w-[8em]">
         {isGenerated && <Icons.CircleCheck className="stroke-blue-500" />}

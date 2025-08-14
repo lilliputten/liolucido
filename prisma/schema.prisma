@@ -134,7 +134,7 @@ model Topic {
   // A topic name. It's good if it's a unique value.
   name String
 
-  // A topic description. Can be used in questions/answers generation.
+  // A topic description. Can be used in questions/answers generation. Is a markdown text.
   description String?
 
   // If the topic is public it's available for all the users, not only for you.
@@ -173,7 +173,7 @@ model Question {
   // id Int @id @default(autoincrement())
   id String @id @default(cuid())
 
-  // Custom text
+  // Custom markdown text
   text String
 
   answersCountRandom Boolean? @map("answers_count_random")
@@ -202,7 +202,7 @@ model Answer {
   isCorrect   Boolean @default(false) @map("is_correct")
   isGenerated Boolean @default(false) @map("is_generated")
 
-  // Custom text
+  // Custom markdown text
   text String
 
   // answersCountRandom Boolean? @map("answers_count_random")
