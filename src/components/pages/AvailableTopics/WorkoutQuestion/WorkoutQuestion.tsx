@@ -119,6 +119,21 @@ export function WorkoutQuestion({
 
       {/* Buttons */}
       <div className="mt-6 flex justify-center gap-2">
+        {/* Back Button */}
+        {currentStep > 1 && (
+          <Button
+            data-testid="__WorkoutQuestion_Skip_Button"
+            className={cn(
+              'gap-2',
+              // selectedAnswerId && 'disabled',
+            )}
+            variant="outline"
+            onClick={goPrevQuestion}
+          >
+            <Icons.ArrowLeft className="size-5 opacity-50" />
+            Back
+          </Button>
+        )}
         {selectedAnswerId ? (
           <Button
             data-testid="__WorkoutQuestion_Skip_Button"
@@ -131,17 +146,6 @@ export function WorkoutQuestion({
           </Button>
         ) : (
           <>
-            {currentStep > 1 && (
-              <Button
-                data-testid="__WorkoutQuestion_Skip_Button"
-                className={cn('gap-2', selectedAnswerId && 'disabled')}
-                variant="outline"
-                onClick={goPrevQuestion}
-              >
-                <Icons.ArrowLeft className="size-5 opacity-50" />
-                Back
-              </Button>
-            )}
             {/* Skip Button */}
             {!selectedAnswerId /* && currentStep < totalSteps */ && (
               <Button
@@ -154,18 +158,21 @@ export function WorkoutQuestion({
                 Skip
               </Button>
             )}
-            {/* Finish Button */}
-            <Button
-              data-testid="__WorkoutQuestion_Finish_Button"
-              className={cn('gap-2', selectedAnswerId && 'disabled')}
-              variant="outline"
-              onClick={onFinish}
-            >
-              <Icons.Flag className="size-5 opacity-50" />
-              Finish
-            </Button>
           </>
         )}
+        {/* Finish Button */}
+        <Button
+          data-testid="__WorkoutQuestion_Finish_Button"
+          className={cn(
+            'gap-2',
+            // selectedAnswerId && 'disabled',
+          )}
+          variant="outline"
+          onClick={onFinish}
+        >
+          <Icons.Flag className="size-5 opacity-50" />
+          Finish
+        </Button>
       </div>
     </div>
   );

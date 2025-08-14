@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TAnswerData } from '@/features/answers/types';
@@ -100,8 +101,22 @@ export function WorkoutQuestionContainer() {
   }, [saveResultAndGoNext]);
 
   if (isPending) {
-    // TODO: Add a skeleton with a rough card view
-    return <div className="p-6">Loading question data...</div>;
+    return (
+      <div className="flex flex-col gap-6 py-4">
+        <Skeleton className="h-6 w-1/4" />
+        <Skeleton className="h-8 w-full" />
+        <div className="space-y-2">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-20 w-full" />
+          ))}
+        </div>
+        <div className="flex justify-center gap-4">
+          <Skeleton className="h-10 w-40" />
+          <Skeleton className="h-10 w-20" />
+          <Skeleton className="h-10 w-20" />
+        </div>
+      </div>
+    );
   }
 
   if (!workout) {

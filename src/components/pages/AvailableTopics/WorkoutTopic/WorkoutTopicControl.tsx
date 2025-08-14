@@ -38,9 +38,9 @@ export function WorkoutTopicControl(props: TProps) {
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
         {workout.finished
-          ? 'The workout is completed'
+          ? 'The workout is completed (the stats will be shown here)' // TODO: Show statistics
           : workout.started
-            ? 'Your workout is in progress' // TODO: Show the progress
+            ? 'Your workout is in progress (the progress will be shown here)' // TODO: Show the progress
             : 'The workout is ready to start'}
       </p>
       <div className="flex gap-2">
