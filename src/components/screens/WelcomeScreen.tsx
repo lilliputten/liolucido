@@ -23,7 +23,7 @@ export function WelcomeScreen(props: TPropsWithClassName & { isLoggedUser: boole
       <div
         className={cn(
           isDev && '__WelcomeScreen_Info', // DEBUG
-          'flex flex-1 flex-col bg-theme-500/10 lg:overflow-auto',
+          'relative flex flex-1 flex-col bg-theme-500/10 lg:overflow-auto',
         )}
       >
         <div
