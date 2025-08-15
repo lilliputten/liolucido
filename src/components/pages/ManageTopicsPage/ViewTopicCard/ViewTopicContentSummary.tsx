@@ -8,7 +8,7 @@ import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Badge } from '@/components/ui/badge';
-import { Markdown } from '@/components/ui/Markdown';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
@@ -34,7 +34,7 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
         <div data-testid="__Section_TopicDescription" className="flex flex-col gap-4">
           <h3 className="text-lg font-semibold">Description</h3>
           <div className="rounded-lg bg-slate-500/10 p-4">
-            <Markdown>{topic.description}</Markdown>
+            <MarkdownText>{topic.description}</MarkdownText>
           </div>
         </div>
       )}
@@ -43,7 +43,18 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
       <div data-testid="__Section_Properties" className="flex flex-col gap-4">
         <h3 className="text-lg font-semibold">Properties</h3>
         <div className="flex flex-wrap gap-2">
-          <Badge variant={topic.isPublic ? 'default' : 'secondary'}>
+          {!!topic._count?.questions && (
+            <Link href={`${topicsContext.routePath}/${topic.id}/questions`}>
+              <Badge
+                variant="default"
+                className="cursor-pointer bg-theme-500 hover:bg-theme-500/80"
+              >
+                <Icons.questions className="mr-1 size-3" />
+                Questions: {topic._count.questions}
+              </Badge>
+            </Link>
+          )}
+          <Badge variant={topic.isPublic ? 'success' : 'secondary'}>
             {topic.isPublic ? (
               <Icons.Eye className="mr-1 size-3" />
             ) : (
@@ -57,16 +68,8 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
               {topic.langName} {topic.langCode && `(${topic.langCode})`}
             </Badge>
           )}
-          {!!topic._count?.questions && (
-            <Link href={`${topicsContext.routePath}/${topic.id}/questions`}>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-secondary/80">
-                <Icons.questions className="mr-1 size-3" />
-                Questions: {topic._count.questions}
-              </Badge>
-            </Link>
-          )}
           {(topic.answersCountRandom || (topic.answersCountMin && topic.answersCountMax)) && (
-            <Badge variant="outline" className="border-blue-500 text-blue-500">
+            <Badge variant="outline">
               <Icons.Hash className="mr-1 size-3" />
               {topic.answersCountRandom ? 'Random' : ''}
               {topic.answersCountRandom && topic.answersCountMin && topic.answersCountMax

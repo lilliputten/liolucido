@@ -6,12 +6,15 @@ import remarkGfm from 'remark-gfm';
 
 import { cn } from '@/lib/utils';
 
+import { Icons } from '../shared/icons';
+
 interface MarkdownProps {
   children: string;
   className?: string;
+  omitLinks?: boolean;
 }
 
-export function Markdown({ children, className }: MarkdownProps) {
+export function MarkdownText({ children, className, omitLinks }: MarkdownProps) {
   return (
     <div
       className={cn(
@@ -32,16 +35,24 @@ export function Markdown({ children, className }: MarkdownProps) {
         remarkPlugins={[remarkGfm]}
         components={{
           // Customize link behavior
-          a: ({ href, children, ...props }) => (
-            <a
-              href={href}
-              target={href?.startsWith('http') ? '_blank' : undefined}
-              rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-              {...props}
-            >
-              {children}
-            </a>
-          ),
+          a: ({ href, children, ...props }) => {
+            if (omitLinks) {
+              return children;
+            }
+            const isHttp = href?.startsWith('http');
+            return (
+              <a
+                href={href}
+                target={isHttp ? '_blank' : undefined}
+                rel={isHttp ? 'noopener noreferrer' : undefined}
+                {...props}
+                className="inline-flex items-center gap-1"
+              >
+                {children}
+                {isHttp && <Icons.ExternalLink className="opcaity-50 size-3" />}
+              </a>
+            );
+          },
         }}
       >
         {children}

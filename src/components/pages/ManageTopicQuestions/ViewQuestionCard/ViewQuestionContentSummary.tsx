@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Markdown } from '@/components/ui/Markdown';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
@@ -39,7 +39,7 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
       <div data-testid="__Section_QuestionText" className="flex flex-col gap-4">
         <h3 className="text-lg font-semibold">Question Text</h3>
         <div className="rounded-lg bg-slate-500/10 p-4">
-          <Markdown>{question.text}</Markdown>
+          <MarkdownText>{question.text}</MarkdownText>
         </div>
       </div>
 

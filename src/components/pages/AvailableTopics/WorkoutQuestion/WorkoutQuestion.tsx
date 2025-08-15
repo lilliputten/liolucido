@@ -4,7 +4,7 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Markdown } from '@/components/ui/Markdown';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Progress } from '@/components/ui/progress';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
@@ -61,7 +61,7 @@ export function WorkoutQuestion({
       {/* Question */}
       <div data-testid="__WorkoutQuestion_Question" className="space-y-4">
         <div className="text-xl font-semibold">
-          <Markdown>{questionText}</Markdown>
+          <MarkdownText>{questionText}</MarkdownText>
         </div>
         {/* Answers */}
         <div
@@ -104,7 +104,7 @@ export function WorkoutQuestion({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <Markdown>{answer.text}</Markdown>
+                    <MarkdownText>{answer.text}</MarkdownText>
                   </div>
                   {!!selectedAnswerId && (
                     <div className="ml-2 flex-shrink-0">

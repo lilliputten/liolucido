@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { cn } from '@/lib/utils';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
@@ -61,8 +62,7 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
           <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" />
           {!!description && (
             <div id="description" className="truncate">
-              {/* TODO: Format text */}
-              {description}
+              <MarkdownText>{description}</MarkdownText>
             </div>
           )}
           <TopicProperties topic={topic} className="flex-1 text-sm" showDates />

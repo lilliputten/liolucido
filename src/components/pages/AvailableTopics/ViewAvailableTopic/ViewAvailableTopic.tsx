@@ -9,27 +9,19 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TTopic } from '@/features/topics/types';
 
 import { ViewAvailableTopicContent } from './ViewAvailableTopicContent';
 import { ViewAvailableTopicContentActions } from './ViewAvailableTopicContentActions';
 
 interface TViewAvailableTopicProps extends TPropsWithClassName {
-  topicId: TTopicId;
+  topic: TTopic;
 }
 
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
-  const { className, topicId } = props;
+  const { className, topic } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const topicsContext = useTopicsContext();
-  const { topics } = topicsContext;
-  const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
-  );
-  if (!topicId || !topic) {
-    throw new Error('No such topic exists');
-  }
   const goBack = useGoBack(topicsContext.routePath);
 
   /* // Delete Topic Modal
@@ -75,7 +67,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}
-            topicId={topicId}
+            topicId={topic.id}
             inactiveTopic
           />
           {/* // UNUSED: Title

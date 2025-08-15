@@ -5,7 +5,7 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
 import { useSessionUser } from '@/hooks/useSessionUser';
-import { Markdown } from '@/components/ui/Markdown';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
@@ -81,7 +81,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
         {/* TODO: Format descrption text */}
         {showDescription && !!description && (
           <div id="description">
-            <Markdown>{description}</Markdown>
+            <MarkdownText>{description}</MarkdownText>
           </div>
         )}
       </div>
