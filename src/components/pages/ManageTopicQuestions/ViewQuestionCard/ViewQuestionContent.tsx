@@ -19,11 +19,19 @@ interface TViewQuestionContentProps {
   className?: string;
   goBack?: () => void;
   handleDeleteQuestion: TViewQuestionContentActionsProps['handleDeleteQuestion'];
+  handleAddQuestion?: TViewQuestionContentActionsProps['handleAddQuestion'];
   toolbarPortalRoot: HTMLDivElement | null;
 }
 
 export function ViewQuestionContent(props: TViewQuestionContentProps) {
-  const { question, className, goBack, handleDeleteQuestion, toolbarPortalRoot } = props;
+  const {
+    question,
+    className,
+    goBack,
+    handleDeleteQuestion,
+    handleAddQuestion,
+    toolbarPortalRoot,
+  } = props;
   return (
     <>
       <div
@@ -43,6 +51,7 @@ export function ViewQuestionContent(props: TViewQuestionContentProps) {
             question={question}
             goBack={goBack}
             handleDeleteQuestion={handleDeleteQuestion}
+            handleAddQuestion={handleAddQuestion}
           />,
           toolbarPortalRoot,
         )}

@@ -36,6 +36,11 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
   }
   const goBack = useGoBack(answersContext.routePath);
 
+  // Add Answer Modal
+  const handleAddAnswer = React.useCallback(() => {
+    router.push(`${answersContext.routePath}/add`);
+  }, [router, answersContext]);
+
   // Delete Answer Modal
   const handleDeleteAnswer = React.useCallback(() => {
     const hasAnswer = answersContext.answers.find(({ id }) => id === answer.id);
@@ -100,6 +105,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
           answer={answer}
           goBack={goBack}
           handleDeleteAnswer={handleDeleteAnswer}
+          handleAddAnswer={handleAddAnswer}
           toolbarPortalRoot={toolbarPortalRoot}
         />
       </CardContent>

@@ -375,7 +375,7 @@ export function ManageTopicQuestionAnswersListCard(
                 */}
                 <Button onClick={handleAddAnswer} className="flex gap-2">
                   <Icons.add className="size-4" />
-                  Add Answer
+                  Add New Answer
                 </Button>
               </>
             }

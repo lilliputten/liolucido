@@ -19,11 +19,13 @@ interface TViewAnswerContentProps {
   className?: string;
   goBack?: () => void;
   handleDeleteAnswer: TViewAnswerContentActionsProps['handleDeleteAnswer'];
+  handleAddAnswer?: TViewAnswerContentActionsProps['handleAddAnswer'];
   toolbarPortalRoot: HTMLDivElement | null;
 }
 
 export function ViewAnswerContent(props: TViewAnswerContentProps) {
-  const { answer, className, goBack, handleDeleteAnswer, toolbarPortalRoot } = props;
+  const { answer, className, goBack, handleDeleteAnswer, handleAddAnswer, toolbarPortalRoot } =
+    props;
   return (
     <>
       <div
@@ -43,6 +45,7 @@ export function ViewAnswerContent(props: TViewAnswerContentProps) {
             answer={answer}
             goBack={goBack}
             handleDeleteAnswer={handleDeleteAnswer}
+            handleAddAnswer={handleAddAnswer}
           />,
           toolbarPortalRoot,
         )}

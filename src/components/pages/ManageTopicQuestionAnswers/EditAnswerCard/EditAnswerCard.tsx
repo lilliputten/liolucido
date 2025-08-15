@@ -67,6 +67,11 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
 
   const goBack = useGoBack(answersContext.routePath);
 
+  // Add Answer Modal
+  const handleAddAnswer = React.useCallback(() => {
+    router.push(`${answersContext.routePath}/add`);
+  }, [router, answersContext]);
+
   // Delete Answer Modal
   const handleDeleteAnswer = React.useCallback(() => {
     const hasAnswer = answersContext.answers.find(({ id }) => id === answerId);
@@ -159,6 +164,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
             onCancel={goBack}
             toolbarPortalRoot={toolbarPortalRoot}
             handleDeleteAnswer={handleDeleteAnswer}
+            handleAddAnswer={handleAddAnswer}
           />
         )}
       </CardContent>

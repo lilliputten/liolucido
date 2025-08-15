@@ -18,10 +18,19 @@ interface TProps {
   form: UseFormReturn<TFormData>;
   onSubmit: (data: TFormData) => void;
   handleDeleteQuestion: () => void;
+  handleAddQuestion?: () => void;
 }
 
 export function EditQuestionFormActions(props: TProps) {
-  const { isSubmitEnabled, isPending, onCancel, handleDeleteQuestion, form, onSubmit } = props;
+  const {
+    isSubmitEnabled,
+    isPending,
+    onCancel,
+    handleDeleteQuestion,
+    handleAddQuestion,
+    form,
+    onSubmit,
+  } = props;
   const { isDirty } = form.formState;
   const Icon = isPending ? Icons.spinner : Icons.check;
   const buttonText = isPending ? 'Saving' : 'Save';
@@ -36,7 +45,7 @@ export function EditQuestionFormActions(props: TProps) {
           className="gap-2"
           disabled={isDirty || !onCancel}
         >
-          <Icons.ArrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4 opacity-50" />
           <span>Back</span>
         </Button>
       )}
@@ -48,13 +57,25 @@ export function EditQuestionFormActions(props: TProps) {
           className="gap-2"
           disabled={!isDirty}
         >
-          <Icons.close className="size-4" />
-          <span>Reset changes</span>
+          <Icons.close className="size-4 opacity-50" />
+          <span>
+            Reset <span className="hidden sm:inline-flex">changes</span>
+          </span>
+        </Button>
+      )}
+      {handleAddQuestion && (
+        <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
+          <Icons.add className="size-4 opacity-50" />
+          <span>
+            Add <span className="hidden sm:inline-flex">New Question</span>
+          </span>
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteQuestion} className="gap-2">
-        <Icons.trash className="size-4" />
-        <span>Delete Question</span>
+        <Icons.trash className="size-4 opacity-50" />
+        <span>
+          Delete <span className="hidden sm:inline-flex">Question</span>
+        </span>
       </Button>
       <Button
         type="button"

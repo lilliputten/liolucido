@@ -9,6 +9,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/f
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { isDev } from '@/constants';
 import { TAnswer } from '@/features/answers/types';
@@ -22,13 +23,6 @@ interface TEditAnswerFormFieldsProps {
   onCancel?: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   className?: string;
-}
-
-function FormHint({ children }: { children?: React.ReactNode }) {
-  if (!children) {
-    return null;
-  }
-  return <div className="relative text-sm opacity-20">{children}</div>;
 }
 
 function FormSection({ children }: TPropsWithChildren) {

@@ -32,9 +32,14 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
     [questions, questionId],
   );
   if (!questionId || !question) {
-    throw new Error('No such question exists');
+    throw new Error(`No such question exists: ${questionId}`);
   }
   const goBack = useGoBack(questionsContext.routePath);
+
+  // Add Question Modal
+  const handleAddQuestion = React.useCallback(() => {
+    router.push(`${questionsContext.routePath}/add`);
+  }, [router, questionsContext]);
 
   // Delete Question Modal
   const handleDeleteQuestion = React.useCallback(() => {
@@ -102,6 +107,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
           question={question}
           goBack={goBack}
           handleDeleteQuestion={handleDeleteQuestion}
+          handleAddQuestion={handleAddQuestion}
           toolbarPortalRoot={toolbarPortalRoot}
         />
       </CardContent>

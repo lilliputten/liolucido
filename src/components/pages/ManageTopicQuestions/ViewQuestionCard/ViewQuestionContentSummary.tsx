@@ -47,30 +47,21 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
       <div data-testid="__Section_Properties" className="flex flex-col gap-4">
         <h3 className="text-lg font-semibold">Properties</h3>
         <div className="flex flex-wrap gap-2">
-          {(question.answersCountRandom ||
-            (question.answersCountMin && question.answersCountMax)) && (
-            <Badge variant="outline" className="border-blue-500 text-blue-500">
-              <Icons.Hash className="mr-1 size-3" />
-              {question.answersCountRandom ? 'Random' : ''}
-              {question.answersCountRandom && question.answersCountMin && question.answersCountMax
-                ? ' '
-                : ''}
-              {question.answersCountMin && question.answersCountMax
-                ? `Answers: ${question.answersCountMin}-${question.answersCountMax}`
-                : question.answersCountRandom
-                  ? 'Answers Count'
-                  : ''}
-            </Badge>
-          )}
           {!!question._count?.answers && (
             <Link
               href={`${topicsContext.routePath}/${question.topicId}/questions/${question.id}/answers`}
             >
               <Badge variant="secondary" className="cursor-pointer hover:bg-secondary/80">
-                <Icons.messages className="mr-1 size-3" />
+                <Icons.messages className="opcity-50 mr-1 size-3" />
                 Answers: {question._count.answers}
               </Badge>
             </Link>
+          )}
+          {question.answersCountRandom && question.answersCountMin && question.answersCountMax && (
+            <Badge variant="secondary" className="border-blue-500 text-blue-500">
+              <Icons.Hash className="mr-1 size-3 opacity-50" />
+              Random Answers: {question.answersCountMin}-{question.answersCountMax}
+            </Badge>
           )}
         </div>
       </div>
@@ -88,7 +79,7 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
                   href={`${topicsContext.routePath}/${topic.id}`}
                   className="flex items-center gap-2"
                 >
-                  <Icons.edit className="size-3" />
+                  <Icons.edit className="size-3 opacity-50" />
                   <span>Manage Topic</span>
                 </Link>
               </Button>

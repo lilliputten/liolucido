@@ -67,6 +67,11 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
 
   const goBack = useGoBack(questionsContext.routePath);
 
+  // Add Question Modal
+  const handleAddQuestion = React.useCallback(() => {
+    router.push(`${questionsContext.routePath}/add`);
+  }, [router, questionsContext]);
+
   // Delete Question Modal
   const handleDeleteQuestion = React.useCallback(() => {
     const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
@@ -163,6 +168,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
             onCancel={goBack}
             toolbarPortalRoot={toolbarPortalRoot}
             handleDeleteQuestion={handleDeleteQuestion}
+            handleAddQuestion={handleAddQuestion}
           />
         )}
       </CardContent>

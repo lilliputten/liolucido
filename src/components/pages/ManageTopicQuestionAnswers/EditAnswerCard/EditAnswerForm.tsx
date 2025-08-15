@@ -29,10 +29,12 @@ interface TEditAnswerFormProps {
   onCancel?: () => void;
   toolbarPortalRoot: HTMLDivElement | null;
   handleDeleteAnswer: () => void;
+  handleAddAnswer: () => void;
 }
 
 export function EditAnswerForm(props: TEditAnswerFormProps) {
-  const { answer, className, onCancel, handleDeleteAnswer, toolbarPortalRoot } = props;
+  const { answer, className, onCancel, handleDeleteAnswer, handleAddAnswer, toolbarPortalRoot } =
+    props;
   const { setAnswers } = useAnswersContext();
   const [isPending, startTransition] = React.useTransition();
 
@@ -150,6 +152,7 @@ export function EditAnswerForm(props: TEditAnswerFormProps) {
             onCancel={handleCancel}
             onSubmit={handleFormSubmit}
             handleDeleteAnswer={handleDeleteAnswer}
+            handleAddAnswer={handleAddAnswer}
           />,
           toolbarPortalRoot,
         )}

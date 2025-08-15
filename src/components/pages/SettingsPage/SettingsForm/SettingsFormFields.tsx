@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { FormHint } from '@/components/blocks/FormHint';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TSettings } from '@/features/settings/types';
@@ -46,13 +47,6 @@ interface TSettingsFormFieldsProps {
   form: UseFormReturn<TFormData>;
   className?: string;
   selectLanguage: (ev: React.MouseEvent) => void;
-}
-
-function FormHint({ children }: { children?: React.ReactNode }) {
-  if (!children) {
-    return null;
-  }
-  return <div className="relative text-sm opacity-20">{children}</div>;
 }
 
 function FormSection({ children }: TPropsWithChildren) {

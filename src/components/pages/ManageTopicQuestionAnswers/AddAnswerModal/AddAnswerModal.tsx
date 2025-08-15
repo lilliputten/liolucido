@@ -114,9 +114,9 @@ export function AddAnswerModal() {
           'flex flex-col border-b bg-accent px-8 py-4',
         )}
       >
-        <DialogTitle className="DialogTitle">Add Answer</DialogTitle>
+        <DialogTitle className="DialogTitle">Add New Answer</DialogTitle>
         <DialogDescription aria-hidden="true" hidden>
-          Add answer dialog
+          Add Answer Dialog
         </DialogDescription>
       </div>
       <div className="flex flex-col px-8 py-4">

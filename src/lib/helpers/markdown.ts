@@ -44,17 +44,17 @@ export function truncateMarkdown(
   len?: number,
   ellipsis: string = defaultEllipsis,
 ): string {
-  if (!markdown || !len) {
+  if (!markdown || !markdown.trim().length) {
     return markdown || '';
   }
 
-  // If the original markdown is shorter than the limit, return as-is
-  if (markdown.length <= len) {
-    return markdown;
-  }
-
   // Convert to plain text first to check if we need complex processing
-  const plainText = stripMarkdown(markdown);
+  const plainText = stripMarkdown(markdown.trim());
+
+  // If the original markdown is shorter than the limit, return as-is
+  if (!len || plainText.length <= len) {
+    return plainText;
+  }
 
   // If plain text is short enough, use it
   if (plainText.length <= len) {

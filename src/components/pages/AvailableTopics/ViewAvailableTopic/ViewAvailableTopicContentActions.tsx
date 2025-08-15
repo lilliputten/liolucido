@@ -62,37 +62,6 @@ export function ViewAvailableTopicContentActions(props: TViewAvailableTopicConte
           <span>Manage Topic</span>
         </Link>
       )}
-      {/* XXX: Extra actins: are they necessary here?
-      {allowedEdit && (
-        <Link
-          href={`${myTopicRoutePath}/${topic.id}/questions`}
-          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
-        >
-          <Icons.questions className="size-4" />
-          <span>Manage Questions</span>
-        </Link>
-      )}
-      {handleAddQuestion && (
-        <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
-          <Icons.add className="size-4" />
-          Add Question
-        </Button>
-      )}
-      <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
-        <Icons.trash className="size-4" />
-        <span>Delete Topic</span>
-      </Button>
-      <Button
-        type="button"
-        size="sm"
-        variant={isSubmitEnabled ? 'success' : 'disable'}
-        disabled={!isSubmitEnabled}
-        className="gap-2"
-        onClick={handleSubmit}
-      >
-        <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
-      </Button>
-      */}
     </>
   );
 }

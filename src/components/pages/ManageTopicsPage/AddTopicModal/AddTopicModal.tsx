@@ -102,7 +102,7 @@ export function AddTopicModal() {
       >
         <DialogTitle className="DialogTitle">Add Topic</DialogTitle>
         <DialogDescription aria-hidden="true" hidden>
-          Add topic dialog
+          Add Topic Dialog
         </DialogDescription>
       </div>
       <div className="flex flex-col px-8 py-4">

@@ -68,7 +68,7 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
           <Icons.add className="size-4" />
-          Add Question
+          Add New Question
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">

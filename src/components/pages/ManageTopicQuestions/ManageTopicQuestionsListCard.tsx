@@ -369,7 +369,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
                 */}
                 <Button onClick={handleAddQuestion} className="flex gap-2">
                   <Icons.add className="size-4" />
-                  Add Question
+                  Add New Question
                 </Button>
               </>
             }

@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
@@ -32,13 +33,6 @@ export interface TAddAnswerFormProps {
 export interface TFormData {
   text: TAnswer['text'];
   isCorrect: TAnswer['isCorrect'];
-}
-
-function FormHint({ children }: { children?: React.ReactNode }) {
-  if (!children) {
-    return null;
-  }
-  return <div className="relative text-sm opacity-20">{children}</div>;
 }
 
 export function AddAnswerForm(props: TAddAnswerFormProps) {
