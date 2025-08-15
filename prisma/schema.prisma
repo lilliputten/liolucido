@@ -221,23 +221,6 @@ model Answer {
 
 // Relations
 
-model UserTopic {
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  topicId String @map("topic_id")
-  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  favorite Boolean @default(false)
-  passed   Boolean @default(false)
-
-  @@id([userId, topicId])
-  @@map("user_topics")
-}
-
 model UserTopicWorkout {
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -259,6 +242,25 @@ model UserTopicWorkout {
   @@map("user_topic_workouts")
 }
 
+// UNUSED
+model UserTopic {
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  topicId String @map("topic_id")
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  favorite Boolean @default(false)
+  passed   Boolean @default(false)
+
+  @@id([userId, topicId])
+  @@map("user_topics")
+}
+
+// UNUSED
 model UserQuestion {
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
