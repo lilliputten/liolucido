@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';

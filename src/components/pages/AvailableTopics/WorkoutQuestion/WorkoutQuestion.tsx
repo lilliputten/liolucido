@@ -102,7 +102,7 @@ export function WorkoutQuestion({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <MarkdownText>{answer.text}</MarkdownText>
+                    <MarkdownText omitLinks>{answer.text}</MarkdownText>
                   </div>
                   {!!selectedAnswerId && (
                     <div className="ml-2 flex-shrink-0">

@@ -6,6 +6,8 @@ import { TNewQuestion } from '@/features/questions/types';
 
 import { TQuestion } from '../types';
 
+/* TODO: To broadcast a client message to refresh topics data, including other tabs? */
+
 export async function addNewQuestion(newQuestion: TNewQuestion) {
   try {
     if (isDev) {

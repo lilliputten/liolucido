@@ -66,6 +66,7 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
             </div>
           )}
           <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
+          {/* TODO: Show statistics, existed workout etc */}
         </div>
       </ScrollArea>
     </div>

@@ -24,9 +24,13 @@ export async function getTopic(id: TTopicId) {
        * isPublic: isAdmin ? null : false,
        */
     };
+    const include: Prisma.TopicInclude = {
+      _count: { select: { questions: true } },
+    };
     const topic: TTopic | undefined =
       (await prisma.topic.findUnique({
         where,
+        include,
       })) || undefined;
     if (topic) {
       // Check if the current user is allowed to see the topic?

@@ -5,6 +5,8 @@ import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
 
+/* TODO: To broadcast a client message to refresh topics data, including other tabs? */
+
 export async function deleteQuestion(question: TQuestion) {
   // Check user rights to delete the question...?
   const user = await getCurrentUser();

@@ -26,14 +26,6 @@ export function WorkoutQuestionContainer() {
   const [answers, setAnswers] = React.useState<TAnswerData[]>([]);
   const [isPending, startTransition] = React.useTransition();
   const [selectedAnswerId, setSelectedAnswerId] = React.useState<string>();
-  if (workout?.questionsOrder?.length !== questions.length) {
-    console.warn('[WorkoutQuestionContainer] Different questions size', {
-      workout,
-      'workout.questionsOrder': workout?.questionsOrder,
-      questions,
-    });
-    debugger;
-  }
 
   React.useEffect(() => {
     setSelectedAnswerId(undefined);
@@ -113,15 +105,15 @@ export function WorkoutQuestionContainer() {
       <div className="flex flex-col gap-6 py-4">
         <Skeleton className="h-6 w-1/4" />
         <Skeleton className="h-8 w-full" />
-        <div className="space-y-2">
-          {[...Array(3)].map((_, i) => (
+        <div className="grid gap-4 py-4 md:grid-cols-2">
+          {[...Array(2)].map((_, i) => (
             <Skeleton key={i} className="h-20 w-full" />
           ))}
         </div>
         <div className="flex justify-center gap-4">
-          <Skeleton className="h-10 w-40" />
-          <Skeleton className="h-10 w-20" />
-          <Skeleton className="h-10 w-20" />
+          {[...Array(2)].map((_, i) => (
+            <Skeleton key={i} className="h-10 w-20" />
+          ))}
         </div>
       </div>
     );

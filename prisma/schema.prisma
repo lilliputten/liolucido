@@ -249,7 +249,7 @@ model UserTopicWorkout {
   updatedAt DateTime @default(now()) @map("updated_at")
 
   questionsOrder  String @default("") @map("questions_order") // Question IDs, separated by space
-  questionResults String @default("") @map("question_results") // Answer results correct=1, incorrect=0, separated by space, in the order corresponding to `questionsOrder`
+  questionResults String @default("") @map("question_results") // Answer results (correct=1, incorrect=0), packed as a JSON array (`[A,B,...]`), in the order corresponding to `questionsOrder`
   stepIndex       Int    @default(0) @map("step_index") // Current question
 
   started  Boolean @default(false)
