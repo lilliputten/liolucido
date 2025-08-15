@@ -106,13 +106,13 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
         <h3 className="text-lg font-semibold">Timeline</h3>
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
-            <Icons.CalendarDays className="size-4 opacity-50" />
+            <Icons.CalendarDays className="hidden size-4 opacity-50 sm:flex" />
             <span className="opacity-50">Created:</span>
             <span>{getFormattedRelativeDate(format, question.createdAt)}</span>
           </div>
           {!!compareDates(question.updatedAt, question.createdAt) && (
             <div className="flex items-center gap-2">
-              <Icons.edit className="size-4 opacity-50" />
+              <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
               <span className="opacity-50">Modified:</span>
               <span>{getFormattedRelativeDate(format, question.updatedAt)}</span>
             </div>
@@ -126,13 +126,13 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
         <div className="flex items-center gap-2 text-sm">
           {isOwner ? (
             <>
-              <Icons.ShieldCheck className="size-4 opacity-50" />
+              <Icons.ShieldCheck className="hidden size-4 opacity-50 sm:flex" />
               <span>You're the author</span>
             </>
           ) : (
             topic?.user && (
               <>
-                <Icons.user className="size-4 opacity-50" />
+                <Icons.user className="hidden size-4 opacity-50 sm:flex" />
                 <span className="opacity-50">Topic created by:</span>
                 <span>{topic.user?.name || topic.user?.email || 'Unknown'}</span>
               </>

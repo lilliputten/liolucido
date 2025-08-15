@@ -63,11 +63,11 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
                 isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
                 'flex-1',
               )}
+              topic={topic}
               topicId={topicId}
               lastItem={{
                 content: 'Workout',
-                link:
-                  workout?.started && !workout?.finished ? questionsContext.routePath : undefined,
+                // link: workout?.started && !workout?.finished ? questionsContext.routePath : undefined,
               }}
             />
             <div

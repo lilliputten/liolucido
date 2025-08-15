@@ -31,14 +31,14 @@ export function WorkoutTopicContentActions(props: TWorkoutTopicContentActionsPro
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="flex gap-2" disabled={!goBack}>
-        <Icons.ArrowLeft className="size-4" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       {isOwner && (
         <>
           <Button variant="ghost" size="sm">
             <Link href={`/topics/my/${topic.id}`} className="flex gap-2">
-              <Icons.edit className="size-4" />
+              <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
               <span>Manage Topic</span>
             </Link>
           </Button>
@@ -48,7 +48,7 @@ export function WorkoutTopicContentActions(props: TWorkoutTopicContentActionsPro
                 href={`/topics/my/${topic.id}/questions/${currentQuestionId}`}
                 className="flex gap-2"
               >
-                <Icons.questions className="size-4" />
+                <Icons.questions className="hidden size-4 opacity-50 sm:flex" />
                 <span>Manage Question</span>
               </Link>
             </Button>

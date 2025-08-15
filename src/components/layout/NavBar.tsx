@@ -1,6 +1,5 @@
 'use client';
 
-import { Menu } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { siteMenu } from '@/config/siteMenu';
@@ -14,6 +13,8 @@ import { NavModeToggle } from '@/components/layout/NavModeToggle';
 import { isDev } from '@/constants';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
+
+import { Icons } from '../shared/icons';
 
 interface NavBarProps {
   large?: boolean;
@@ -143,7 +144,7 @@ export function NavBar(props: NavBarProps) {
             open && 'opacity-50 hover:bg-theme-400',
           )}
         >
-          <Menu className="size-5 text-theme-foreground" />
+          <Icons.Menu className="size-5 text-theme-foreground" />
         </button>
       </div>
     </header>

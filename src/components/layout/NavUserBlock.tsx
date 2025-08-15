@@ -1,6 +1,5 @@
 'use client';
 
-import { LayoutDashboard, LogOut, Settings } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
@@ -146,7 +145,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
                 'disabled', // UNUSED
               )}
             >
-              <LayoutDashboard className="size-4" />
+              <Icons.LayoutDashboard className="size-4" />
               <p className="text-sm">{t('Dashboard')}</p>
             </Link>
           </MenuItem>
@@ -159,7 +158,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
                 // 'disabled', // UNUSED
               )}
             >
-              <Settings className="size-4" />
+              <Icons.settings className="size-4" />
               <p className="text-sm">{t('Settings')}</p>
             </Link>
           </MenuItem>
@@ -179,7 +178,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
         }}
       >
         <div className="flex items-center space-x-2.5">
-          <LogOut className="size-4" />
+          <Icons.LogOut className="size-4" />
           <p className="text-sm">{t('Log out')}</p>
         </div>
       </MenuItem>

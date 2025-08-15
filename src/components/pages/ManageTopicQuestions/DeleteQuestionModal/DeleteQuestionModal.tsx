@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { truncate } from '@/lib/helpers/strings';
+import { truncateMarkdown } from '@/lib/helpers';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deletedQuestionEventName, TDeletedQuestionDetail } from '@/constants/eventTypes';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
@@ -113,7 +113,7 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
     [deletingQuestion, hideModal, questionsContext],
   );
 
-  const questionName = deletingQuestion && truncate(deletingQuestion.text, 30);
+  const questionName = deletingQuestion && truncateMarkdown(deletingQuestion.text, 30);
 
   if (!questionName) {
     return null;
@@ -131,7 +131,7 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
       isPending={isPending}
       isVisible={isVisible}
     >
-      Are you confirming deleting the question "{questionName}"?
+      Do you confirm deleting the question "{questionName}"?
     </ConfirmModal>
   );
 }

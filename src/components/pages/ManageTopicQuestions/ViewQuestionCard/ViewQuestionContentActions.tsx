@@ -23,7 +23,7 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
-        <Icons.ArrowLeft className="size-4 opacity-50" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Button
@@ -32,7 +32,7 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
         onClick={() => router.push(`${questionsContext.routePath}/${question.id}/edit`)}
         className="gap-2"
       >
-        <Icons.edit className="size-4 opacity-50" />
+        <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
         <span>Edit</span>
       </Button>
       <Button
@@ -41,19 +41,19 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
         onClick={() => router.push(`${questionsContext.routePath}/${question.id}/answers`)}
         className="gap-2"
       >
-        <Icons.answers className="size-4 opacity-50" />
+        <Icons.answers className="hidden size-4 opacity-50 sm:flex" />
         <span>Answers</span>
       </Button>
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
-          <Icons.add className="hidden size-4 opacity-50 sm:block" />
+          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Question</span>
           </span>
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteQuestion} className="gap-2">
-        <Icons.trash className="size-4 opacity-50" />
+        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
         <span>Delete Question</span>
       </Button>
     </>

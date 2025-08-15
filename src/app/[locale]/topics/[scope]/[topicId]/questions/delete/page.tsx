@@ -1,11 +1,15 @@
 import { ManageTopicQuestionsPage } from '@/components/pages/ManageTopicQuestions';
+import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { TAwaitedLocaleProps } from '@/i18n/types';
 
-interface DeleteTopicPageProps {
+type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId: string }>;
+
+interface DeleteTopicPageProps extends TAwaitedProps {
   searchParams: Promise<{ questionId: string }>;
 }
 
-export default async function DeleteTopicPage({ searchParams }: DeleteTopicPageProps) {
+export default async function DeleteTopicPage({ searchParams, params }: DeleteTopicPageProps) {
   const { questionId } = await searchParams;
 
-  return <ManageTopicQuestionsPage deleteQuestionId={questionId} />;
+  return <ManageTopicQuestionsPage params={params} deleteQuestionId={questionId} />;
 }

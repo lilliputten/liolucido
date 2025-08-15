@@ -36,7 +36,7 @@ export function PageEmpty(props: TPageEmptyProps) {
         <div className="flex w-full justify-center gap-4">
           {hasCustomButton && (
             <Button onClick={onButtonClick} className="flex gap-2">
-              <Icons.add className="size-4" />
+              <Icons.add className="hidden size-4 opacity-50 sm:flex" />
               {buttonTitle}
             </Button>
           )}

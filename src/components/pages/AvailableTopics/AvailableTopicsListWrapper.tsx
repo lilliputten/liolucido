@@ -30,14 +30,14 @@ export function AvailableTopicsListWrapper() {
         buttons={
           <>
             <Button variant="ghost" onClick={goBack} className="flex gap-2">
-              <Icons.ArrowLeft className="size-4" />
+              <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
               Go Back
             </Button>
             <Link
               href={myTopicsRoute}
               className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}
             >
-              <Icons.topics className="size-4" />
+              <Icons.topics className="hidden size-4 opacity-50 sm:flex" />
               <span>Manage or create your own topics</span>
             </Link>
           </>

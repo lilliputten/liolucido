@@ -45,7 +45,7 @@ export function EditQuestionFormActions(props: TProps) {
           className="gap-2"
           disabled={isDirty || !onCancel}
         >
-          <Icons.ArrowLeft className="size-4 opacity-50" />
+          <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
           <span>Back</span>
         </Button>
       )}
@@ -57,7 +57,7 @@ export function EditQuestionFormActions(props: TProps) {
           className="gap-2"
           disabled={!isDirty}
         >
-          <Icons.close className="size-4 opacity-50" />
+          <Icons.close className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Reset <span className="hidden sm:inline-flex">changes</span>
           </span>
@@ -65,14 +65,14 @@ export function EditQuestionFormActions(props: TProps) {
       )}
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
-          <Icons.add className="size-4 opacity-50" />
+          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Question</span>
           </span>
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteQuestion} className="gap-2">
-        <Icons.trash className="size-4 opacity-50" />
+        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Delete <span className="hidden sm:inline-flex">Question</span>
         </span>

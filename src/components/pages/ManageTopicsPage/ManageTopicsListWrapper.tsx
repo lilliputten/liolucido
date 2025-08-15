@@ -60,11 +60,11 @@ export function ManageTopicsListWrapper(props: TTopicsListProps) {
           buttons={
             <>
               <Button variant="ghost" onClick={goBack} className="flex gap-2">
-                <Icons.ArrowLeft className="size-4" />
+                <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
                 Go Back
               </Button>
               <Button onClick={openAddTopicModal} className="flex gap-2">
-                <Icons.topics className="size-4" />
+                <Icons.topics className="hidden size-4 opacity-50 sm:flex" />
                 Add Topic
               </Button>
             </>

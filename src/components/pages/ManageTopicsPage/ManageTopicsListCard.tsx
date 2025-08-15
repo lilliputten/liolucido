@@ -98,11 +98,13 @@ function Toolbar(props: TToolbarProps) {
         )}
         onClick={handleReload}
       >
-        <Icons.refresh className={cn('hidden size-4 sm:block', isReloading && 'animate-spin')} />
+        <Icons.refresh
+          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+        />
         <span>Reload</span>
       </Button>
       <Button variant="ghost" size="sm" onClick={handleAddTopic} className="flex gap-2 px-4">
-        <Icons.add className="hidden size-4 sm:block" />
+        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Topic</span>
         </span>
@@ -233,7 +235,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Edit"
             title="Edit"
           >
-            <Icons.edit className="size-4" />
+            <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
           </Button>
           <Button
             variant="ghost"
@@ -243,7 +245,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Delete"
             title="Delete"
           >
-            <Icons.trash className="size-4" />
+            <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
           </Button>
         </div>
       </TableCell>

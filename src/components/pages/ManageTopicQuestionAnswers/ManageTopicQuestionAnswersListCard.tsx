@@ -98,7 +98,7 @@ function Toolbar(props: TToolbarActionsProps) {
       )}
     >
       <Button variant="ghost" size="sm" className="flex gap-2 px-4" onClick={goBack}>
-        <Icons.ArrowLeft className="hidden size-4 sm:block" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Button
@@ -110,19 +110,13 @@ function Toolbar(props: TToolbarActionsProps) {
         )}
         onClick={handleReload}
       >
-        <Icons.refresh className={cn('hidden size-4 sm:block', isReloading && 'animate-spin')} />
+        <Icons.refresh
+          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+        />
         <span>Reload</span>
       </Button>
-      {/*
-      {handleDeleteQuestion && (
-        <Button variant="destructive" size="sm" onClick={handleDeleteQuestion} className="gap-2">
-          <Icons.trash className="size-4" />
-          <span>Delete Question</span>
-        </Button>
-      )}
-      */}
       <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2 px-4">
-        <Icons.add className="hidden size-4 sm:block" />
+        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Answer</span>
         </span>
@@ -146,10 +140,10 @@ function AnswerTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
         <TableHead id="text" className="truncate">
           Answer Text
         </TableHead>
-        <TableHead id="isCorrect" className="truncate">
+        <TableHead id="isCorrect" className="truncate max-sm:hidden">
           Correct
         </TableHead>
-        <TableHead id="isGenerated" className="truncate">
+        <TableHead id="isGenerated" className="truncate max-sm:hidden">
           Generated
         </TableHead>
       </TableRow>
@@ -204,12 +198,12 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           </div>
         </TableCell>
       )}
-      <TableCell id="text" className="max-w-[16em] truncate">
+      <TableCell id="text" className="max-w-[20em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
           {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
-      <TableCell id="isCorrect" className="w-[8em]">
+      <TableCell id="isCorrect" className="w-[8em] max-sm:hidden">
         <Switch
           checked={isCorrect}
           onCheckedChange={handleToggleCorrect}
@@ -217,7 +211,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           className="data-[state=checked]:bg-green-500"
         />
       </TableCell>
-      <TableCell id="isGenerated" className="w-[8em]">
+      <TableCell id="isGenerated" className="w-[8em] max-sm:hidden">
         {isGenerated && <Icons.CircleCheck className="stroke-blue-500" />}
       </TableCell>
       <TableCell id="actions" className="w-[2em] text-right">
@@ -369,12 +363,12 @@ export function ManageTopicQuestionAnswersListCard(
               <>
                 {/*
                 <Button variant="ghost" onClick={goBack} className="flex gap-2">
-                  <Icons.ArrowLeft className="size-4" />
+                  <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
                   Go Back
                 </Button>
                 */}
                 <Button onClick={handleAddAnswer} className="flex gap-2">
-                  <Icons.add className="size-4" />
+                  <Icons.add className="hidden size-4 opacity-50 sm:flex" />
                   Add New Answer
                 </Button>
               </>

@@ -288,9 +288,6 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                     </span>
                   )}
                   {langCode && <Icons.close onClick={resetLang} className="size-4" />}
-                  {/*
-                  <Icons.languages className="size-4" />
-                  */}
                 </Button>
                 <FormHint>
                   Specify a language if you want to see the topics only for this specific language.

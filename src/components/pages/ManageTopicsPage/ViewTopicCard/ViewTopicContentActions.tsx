@@ -39,21 +39,21 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
-        <Icons.ArrowLeft className="size-4" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Link
         href={`${topicsContext.routePath}/${topic.id}/edit`}
         className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
-        <Icons.edit className="size-4" />
+        <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
         <span>Edit</span>
       </Link>
       <Link
         href={`${topicsContext.routePath}/${topic.id}/questions`}
         className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
-        <Icons.questions className="size-4" />
+        <Icons.questions className="hidden size-4 opacity-50 sm:flex" />
         <span>Questions</span>
       </Link>
       {allowedTraining && (
@@ -61,18 +61,18 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
           href={`/topics/available/${id}/workout`}
           className={cn(buttonVariants({ variant: 'theme', size: 'sm' }), 'flex gap-2')}
         >
-          <Icons.ArrowRight className="size-4" />
+          <Icons.ArrowRight className="hidden size-4 opacity-50 sm:flex" />
           <span>Start Training</span>
         </Link>
       )}
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
-          <Icons.add className="size-4" />
+          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
           Add New Question
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
-        <Icons.trash className="size-4" />
+        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
         <span>Delete Topic</span>
       </Button>
     </>

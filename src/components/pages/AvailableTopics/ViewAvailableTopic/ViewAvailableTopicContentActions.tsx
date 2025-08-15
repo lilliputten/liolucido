@@ -41,7 +41,7 @@ export function ViewAvailableTopicContentActions(props: TViewAvailableTopicConte
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
-        <Icons.ArrowLeft className="size-4" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       {allowedTraining && (
@@ -49,7 +49,7 @@ export function ViewAvailableTopicContentActions(props: TViewAvailableTopicConte
           href={`/topics/available/${id}/workout`}
           className={cn(buttonVariants({ variant: 'theme', size: 'sm' }), 'flex gap-2')}
         >
-          <Icons.ArrowRight className="size-4" />
+          <Icons.ArrowRight className="hidden size-4 opacity-50 sm:flex" />
           <span>Start Training</span>
         </Link>
       )}
@@ -58,7 +58,7 @@ export function ViewAvailableTopicContentActions(props: TViewAvailableTopicConte
           href={`${myTopicRoutePath}/${topic.id}`}
           className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
         >
-          <Icons.edit className="size-4" />
+          <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
           <span>Manage Topic</span>
         </Link>
       )}

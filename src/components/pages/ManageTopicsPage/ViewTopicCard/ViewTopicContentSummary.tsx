@@ -71,7 +71,7 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
           {topic.answersCountRandom && topic.answersCountMin && topic.answersCountMax && (
             <Badge variant="secondary">
               <Icons.Hash className="mr-1 size-3 opacity-50" />
-              Random Answers: ${topic.answersCountMin}-${topic.answersCountMax}
+              Random Answers: {topic.answersCountMin}-{topic.answersCountMax}
             </Badge>
           )}
         </div>
@@ -81,13 +81,16 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
       {topic.keywords && (
         <div data-testid="__Section_Keywords" className="flex flex-col gap-4">
           <h3 className="text-lg font-semibold">Keywords</h3>
-          <div className="flex flex-wrap gap-2">
-            {topic.keywords.split(',').map((keyword, idx) => (
-              <Badge key={idx} variant="outline" className="text-xs">
-                {/* <Icons.Tags className="mr-1 size-3 opacity-50" /> */}
-                {keyword.trim()}
-              </Badge>
-            ))}
+          <div className="flex flex-wrap gap-1">
+            {topic.keywords
+              .split(',')
+              .filter(Boolean)
+              .map((keyword, idx) => (
+                <span key={idx} className="rounded-sm bg-theme-300/10 px-2 text-sm">
+                  {/* <Icons.Tags className="mr-1 size-3 opacity-50" /> */}
+                  {keyword.trim()}
+                </span>
+              ))}
           </div>
         </div>
       )}

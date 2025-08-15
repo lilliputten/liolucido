@@ -159,7 +159,7 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
             <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
           </Button>
           <Button variant="ghost" onClick={onClose} className="gap-2">
-            <Icons.close className="size-4" />
+            <Icons.close className="hidden size-4 opacity-50 sm:flex" />
             <span>Cancel</span>
           </Button>
         </div>

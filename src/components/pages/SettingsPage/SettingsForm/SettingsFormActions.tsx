@@ -51,7 +51,7 @@ export function SettingsFormActions(props: TProps) {
           disabled={isDirty}
           onClick={onCancel}
         >
-          <Icons.ArrowLeft className="size-4" />
+          <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
           <span>Back</span>
         </Button>
       )}
@@ -92,7 +92,7 @@ export function SettingsFormActions(props: TProps) {
           className="flex gap-2 px-4"
           disabled={!isDirty}
         >
-          <Icons.close className="size-4" />
+          <Icons.close className="hidden size-4 opacity-50 sm:flex" />
           <span>Reset changes</span>
         </Button>
       )}

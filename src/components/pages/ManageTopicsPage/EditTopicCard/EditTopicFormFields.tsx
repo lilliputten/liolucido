@@ -168,9 +168,6 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                     </span>
                   )}
                   {langCode && <Icons.close onClick={resetLang} className="size-4" />}
-                  {/*
-                  <Icons.languages className="size-4" />
-                  */}
                 </Button>
                 <FormHint>An optional predefined or custom language for the topic.</FormHint>
                 <FormMessage />

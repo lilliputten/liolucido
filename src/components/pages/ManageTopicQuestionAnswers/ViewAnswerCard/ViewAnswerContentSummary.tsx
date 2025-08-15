@@ -65,7 +65,7 @@ export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
             {answer.isCorrect ? 'Correct' : 'Incorrect'}
           </Badge>
           {answer.isGenerated && (
-            <Badge variant="outline" className="border-blue-500 text-blue-500">
+            <Badge variant="outline" className="border-slate-500 text-slate-500">
               <Icons.Bot className="mr-1 h-3 w-3" />
               AI Generated
             </Badge>

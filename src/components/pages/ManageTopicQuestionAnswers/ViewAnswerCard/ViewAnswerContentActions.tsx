@@ -23,7 +23,7 @@ export function ViewAnswerContentActions(props: TViewAnswerContentActionsProps) 
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
-        <Icons.ArrowLeft className="size-4 opacity-50" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Button
@@ -32,19 +32,19 @@ export function ViewAnswerContentActions(props: TViewAnswerContentActionsProps) 
         onClick={() => router.push(`${answersContext.routePath}/${answer.id}/edit`)}
         className="gap-2"
       >
-        <Icons.edit className="size-4 opacity-50" />
+        <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
         <span>Edit</span>
       </Button>
       {handleAddAnswer && (
         <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2 px-4">
-          <Icons.add className="size-4 opacity-50" />
+          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Answer</span>
           </span>
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteAnswer} className="gap-2">
-        <Icons.trash className="size-4 opacity-50" />
+        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Delete <span className="hidden sm:inline-flex">Answer</span>
         </span>

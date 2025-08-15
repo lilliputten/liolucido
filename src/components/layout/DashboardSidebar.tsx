@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { PanelLeftClose, PanelRightClose } from 'lucide-react';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
 import { SidebarNavItem } from '@/shared/types/site/NavItem';
@@ -117,9 +116,9 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                       // title="Expand panel"
                     >
                       {isSidebarExpanded ? (
-                        <PanelLeftClose size={18} />
+                        <Icons.PanelLeftClose size={18} />
                       ) : (
-                        <PanelRightClose size={18} />
+                        <Icons.PanelRightClose size={18} />
                       )}
                       <span className="sr-only">Toggle Sidebar</span>
                     </Button>

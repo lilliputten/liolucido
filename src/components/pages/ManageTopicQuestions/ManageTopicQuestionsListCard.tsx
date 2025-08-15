@@ -102,7 +102,7 @@ function Toolbar(props: TToolbarActionsProps) {
       )}
     >
       <Button variant="ghost" size="sm" className="flex gap-2 px-4" onClick={goBack}>
-        <Icons.ArrowLeft className="hidden size-4 sm:block" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Button
@@ -114,19 +114,13 @@ function Toolbar(props: TToolbarActionsProps) {
         )}
         onClick={handleReload}
       >
-        <Icons.refresh className={cn('hidden size-4 sm:block', isReloading && 'animate-spin')} />
+        <Icons.refresh
+          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+        />
         <span>Reload</span>
       </Button>
-      {/*
-      {handleDeleteTopic && (
-        <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
-          <Icons.trash className="size-4" />
-          <span>Delete Topic</span>
-        </Button>
-      )}
-      */}
       <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
-        <Icons.add className="hidden size-4 sm:block" />
+        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Question</span>
         </span>
@@ -207,7 +201,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
           )}
         </div>
       </TableCell>
-      <TableCell className="w-[2em] text-right">
+      <TableCell id="actions" className="w-[2em] text-right">
         <div className="flex justify-end gap-1">
           <Button
             variant="ghost"
@@ -363,12 +357,12 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
               <>
                 {/*
                 <Button onClick={goBack} className="flex gap-2">
-                  <Icons.ArrowLeft className="size-4" />
+                  <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
                   Go Back
                 </Button>
                 */}
                 <Button onClick={handleAddQuestion} className="flex gap-2">
-                  <Icons.add className="size-4" />
+                  <Icons.add className="hidden size-4 opacity-50 sm:flex" />
                   Add New Question
                 </Button>
               </>
