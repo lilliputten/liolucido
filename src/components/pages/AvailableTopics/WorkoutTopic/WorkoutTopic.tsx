@@ -24,8 +24,7 @@ interface TWorkoutTopicProps extends TPropsWithClassName {
 export function WorkoutTopic(props: TWorkoutTopicProps) {
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const questionsContext = useQuestionsContext();
-  const { topic, workout } = useWorkoutContext();
+  const { topic } = useWorkoutContext();
   const goBack = useGoBack(`/topics/available/${topicId}`); // topicsContext.routePath);
   if (!topicId || !topic) {
     throw new Error('No such topic exists');

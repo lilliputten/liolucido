@@ -26,12 +26,14 @@ export function WorkoutQuestionContainer() {
   const [answers, setAnswers] = React.useState<TAnswerData[]>([]);
   const [isPending, startTransition] = React.useTransition();
   const [selectedAnswerId, setSelectedAnswerId] = React.useState<string>();
-  console.log('[WorkoutQuestionContainer]', {
-    workout,
-    'workout.questionsOrder': workout?.questionsOrder,
-    questions,
-  });
-  debugger;
+  if (workout?.questionsOrder?.length !== questions.length) {
+    console.warn('[WorkoutQuestionContainer] Different questions size', {
+      workout,
+      'workout.questionsOrder': workout?.questionsOrder,
+      questions,
+    });
+    debugger;
+  }
 
   React.useEffect(() => {
     setSelectedAnswerId(undefined);

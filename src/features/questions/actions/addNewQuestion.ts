@@ -22,11 +22,38 @@ export async function addNewQuestion(newQuestion: TNewQuestion) {
     if (!newQuestion.text) {
       throw new Error('Not specified question name');
     }
-    const data = { ...newQuestion };
-    const addedQuestion = await prisma.question.create({
-      data,
+    const result = await prisma.$transaction(async (tx) => {
+      const data = { ...newQuestion };
+      const addedQuestion = await tx.question.create({
+        data,
+      });
+
+      // Update UserTopicWorkout questionsOrder for all users with this topic
+      const workouts = await tx.userTopicWorkout.findMany({
+        where: { topicId: newQuestion.topicId },
+      });
+
+      for (const workout of workouts) {
+        const currentOrder = workout.questionsOrder || '';
+        const newOrder = currentOrder ? `${currentOrder} ${addedQuestion.id}` : addedQuestion.id;
+
+        await tx.userTopicWorkout.update({
+          where: {
+            userId_topicId: {
+              userId: workout.userId,
+              topicId: workout.topicId,
+            },
+          },
+          data: {
+            questionsOrder: newOrder,
+          },
+        });
+      }
+
+      return addedQuestion;
     });
-    return addedQuestion as TQuestion;
+
+    return result as TQuestion;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[addNewQuestion] catch', {
