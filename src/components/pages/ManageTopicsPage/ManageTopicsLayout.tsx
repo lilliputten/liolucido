@@ -67,12 +67,6 @@ export async function ManageTopicsLayout(props: TManageTopicsLayoutProps) {
   const topicsPromise = isAdminMode ? getAllUsersTopics() : getThisUserTopics();
   const topics: TTopic[] = (await topicsPromise) || [];
 
-  // @ts-expect-error: Type
-  const addTopicModalChildren = addTopicModal?.props?.children;
-  console.log('[ManageTopicsLayout]', {
-    addTopicModalChildren,
-  });
-
   return (
     <TopicsContextProvider
       topics={topics}

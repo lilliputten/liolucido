@@ -1,0 +1,49 @@
+'use client';
+
+import React from 'react';
+
+import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/ScrollArea';
+import { WorkoutQuestionContainer } from '@/components/pages/AvailableTopics/WorkoutQuestion';
+import { isDev } from '@/constants';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
+import { TAvailableTopic } from '@/features/topics/types';
+
+import { WorkoutTopicControl } from './WorkoutTopicControl';
+
+interface TWorkoutTopicContentProps {
+  topic: TAvailableTopic;
+  className?: string;
+}
+
+export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
+  const { className } = props;
+  const { workout, startWorkout } = useWorkoutContext();
+
+  return (
+    <div
+      className={cn(
+        isDev && '__WorkoutTopicContent', // DEBUG
+        'flex w-full flex-col gap-4 overflow-hidden',
+        className,
+      )}
+    >
+      <ScrollArea>
+        <div
+          className={cn(
+            isDev && '__WorkoutTopicContent_Scroll', // DEBUG
+            'flex w-full flex-col gap-4',
+            'mx-6',
+            className,
+          )}
+        >
+          {workout?.started && !workout?.finished ? (
+            <WorkoutQuestionContainer />
+          ) : (
+            <WorkoutTopicControl startWorkout={startWorkout} />
+          )}
+        </div>
+      </ScrollArea>
+    </div>
+  );
+}

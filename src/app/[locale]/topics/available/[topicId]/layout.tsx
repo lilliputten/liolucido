@@ -1,3 +1,3 @@
-export default function TopicLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
-}
+import { WorkoutTopicLayout } from '@/components/pages/AvailableTopics/WorkoutTopic/WorkoutTopicLayout';
+
+export default WorkoutTopicLayout;

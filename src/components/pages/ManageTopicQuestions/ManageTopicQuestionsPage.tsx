@@ -34,7 +34,8 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 export async function ManageTopicQuestionsPage(props: ManageTopicQuestionsPageProps) {
   const { showAddModal, deleteQuestionId, editQuestionId, editAnswersQuestionId, params } = props;
 
-  const { locale, topicId } = await params;
+  const resolvedParams = await params;
+  const { locale, topicId } = resolvedParams;
 
   if (!topicId) {
     return <PageError error={'No topic specified.'} />;

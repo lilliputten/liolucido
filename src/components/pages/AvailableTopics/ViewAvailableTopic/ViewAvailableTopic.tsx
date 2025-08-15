@@ -1,46 +1,28 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TTopic } from '@/features/topics/types';
 
-import { ViewTopicContent } from './ViewTopicContent';
-import { ViewTopicContentActions } from './ViewTopicContentActions';
+import { ViewAvailableTopicContent } from './ViewAvailableTopicContent';
+import { ViewAvailableTopicContentActions } from './ViewAvailableTopicContentActions';
 
 interface TViewAvailableTopicProps extends TPropsWithClassName {
-  topicId: TTopicId;
+  topic: TTopic;
 }
 
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
-  const { className, topicId } = props;
+  const { className, topic } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const topicsContext = useTopicsContext();
-  const { topics } = topicsContext;
-  const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
-  );
-  if (!topicId || !topic) {
-    throw new Error('No such topic exists');
-  }
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(topicsContext.routePath);
-      }
-    }, 200);
-  }, [router, topicsContext]);
+  const goBack = useGoBack(topicsContext.routePath);
 
   /* // Delete Topic Modal
    * const handleDeleteTopic = React.useCallback(() => {
@@ -85,7 +67,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}
-            topicId={topicId}
+            topicId={topic.id}
             inactiveTopic
           />
           {/* // UNUSED: Title
@@ -101,12 +83,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             'flex flex-wrap items-center gap-2',
           )}
         >
-          <ViewTopicContentActions
-            topic={topic}
-            goBack={goBack}
-            // handleDeleteTopic={handleDeleteTopic}
-            // handleAddQuestion={handleAddQuestion}
-          />
+          <ViewAvailableTopicContentActions topic={topic} goBack={goBack} />
         </div>
       </CardHeader>
       <CardContent
@@ -115,7 +92,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ViewTopicContent topic={topic} />
+        <ViewAvailableTopicContent topic={topic} />
       </CardContent>
     </Card>
   );

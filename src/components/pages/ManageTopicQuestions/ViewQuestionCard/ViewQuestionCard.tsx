@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
@@ -31,17 +32,13 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
     [questions, questionId],
   );
   if (!questionId || !question) {
-    throw new Error('No such question exists');
+    throw new Error(`No such question exists: ${questionId}`);
   }
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(questionsContext.routePath);
-      }
-    }, 200);
+  const goBack = useGoBack(questionsContext.routePath);
+
+  // Add Question Modal
+  const handleAddQuestion = React.useCallback(() => {
+    router.push(`${questionsContext.routePath}/add`);
   }, [router, questionsContext]);
 
   // Delete Question Modal
@@ -110,6 +107,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
           question={question}
           goBack={goBack}
           handleDeleteQuestion={handleDeleteQuestion}
+          handleAddQuestion={handleAddQuestion}
           toolbarPortalRoot={toolbarPortalRoot}
         />
       </CardContent>

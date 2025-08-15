@@ -1,9 +1,7 @@
-dist
 node_modules
 .next
-build
 .contentlayer
 pnpm-lock.yaml
-assets/
+src/generated
 
 **/*.mdx

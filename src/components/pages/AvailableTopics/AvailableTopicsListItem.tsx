@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
@@ -42,11 +43,11 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   const router = useRouter();
   const pathname = usePathname();
   const topicRoutePath = `${routePath}/${id}`;
-  const trainRoutePath = `/train/topic/${id}`;
+  const workoutRoutePath = `/topics/available/${id}/workout`;
   const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
-  const startTraining = (ev: React.MouseEvent) => {
+  const startWorkout = (ev: React.MouseEvent) => {
     ev.stopPropagation();
-    router.push(trainRoutePath);
+    router.push(workoutRoutePath);
   };
   /* const defaultAction = (ev: React.MouseEvent) => {
    *   ev.stopPropagation();
@@ -67,27 +68,26 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
       {!!description && (
         <CardContent
           className={cn(
-            isDev && '__AvailableTopicsList_TopicItem_CardContent', // DEBUG
+            isDev && '__AvailableTopicsList_TopicItem_CardContent_Description', // DEBUG
             'flex flex-1 flex-col',
           )}
         >
           <div id="description">
-            {/* TODO: Format text */}
-            {description}
+            <MarkdownText omitLinks>{description}</MarkdownText>
           </div>
         </CardContent>
       )}
       <CardContent
         className={cn(
-          isDev && '__AvailableTopicsList_TopicItem_CardContent', // DEBUG
+          isDev && '__AvailableTopicsList_TopicItem_CardContent_Properties', // DEBUG
           'flex flex-1 flex-wrap gap-4 text-xs md:items-end',
         )}
       >
         <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
         <div id="right-actions" className="flex flex-wrap items-center gap-4">
           {allowedTraining && (
-            <Button variant="theme" onClick={startTraining} className="flex gap-2">
-              <Icons.arrowRight className="size-4" />
+            <Button variant="theme" onClick={startWorkout} className="flex gap-2">
+              <Icons.ArrowRight className="hidden size-4 opacity-50 sm:flex" />
               <span>Start Training</span>
             </Button>
           )}

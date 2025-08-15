@@ -51,7 +51,7 @@ export function NavUserAuthButton(props: TNavAuthButtonProps) {
           onClick={() => setShowSignInModal(true)}
         >
           <span>{t('sign-in')}</span>
-          <Icons.arrowRight className="size-4" />
+          <Icons.ArrowRight className="size-4" />
         </Button>
       )}
     </div>

@@ -44,8 +44,10 @@ function getLocalSettings() {
 const defaultTheme = 'system';
 
 type TMemo = {
+  inited?: boolean;
   settings: TSettings;
   loadingPromise?: Promise<TSettings | undefined>;
+  setAppTheme?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export function SettingsContextProvider({ children, userId }: SettingsContextProviderProps) {
@@ -57,10 +59,21 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   const ready = userId ? userInited : inited;
 
-  const { theme, setTheme: setSystemTheme } = useTheme();
+  const themeContext = useTheme();
+  memo.setAppTheme = themeContext.setTheme;
 
   const { switchRouterLocale } = useSwitchRouterLocale();
   const locale = useLocale();
+
+  const updateThemeForNewSettings = React.useCallback(
+    (settings: TSettings, force?: boolean) => {
+      const isThemeChanged = force || memo.settings.theme !== settings.theme;
+      if (isThemeChanged && settings.theme) {
+        memo.setAppTheme?.(settings.theme);
+      }
+    },
+    [memo],
+  );
 
   // Update system locale
   React.useEffect(() => {
@@ -69,14 +82,6 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
       switchRouterLocale(thisLocale);
     }
   }, [ready, locale, settings.locale, switchRouterLocale]);
-
-  // Update system theme
-  React.useEffect(() => {
-    const newTheme = settings.theme || defaultTheme;
-    if (ready && theme !== newTheme) {
-      setSystemTheme(newTheme);
-    }
-  }, [ready, theme, settings.theme, setSystemTheme]);
 
   // Update theme color
   React.useEffect(() => {
@@ -125,9 +130,10 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
     (settings: TSettings) => {
       setSettings(settings);
       updateLocalSettings(settings);
+      updateThemeForNewSettings(settings);
       memo.settings = settings;
     },
-    [memo, updateLocalSettings],
+    [memo, updateThemeForNewSettings, updateLocalSettings],
   );
 
   /** Save settings on the server (if user authorized) and locally */
@@ -135,14 +141,29 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
     (settings: TSettings) => {
       // Save local data and apply the data first
       setAndMemoizeSettings(settings);
-      /* // DEBUG
-       * return new Promise<TSettings>((resolve) => setTimeout(resolve, 3000, settings));
-       */
       // Then invoke (if authorized) the save procedure on the server
       if (!userId) {
         return Promise.resolve(settings);
       }
+      /* // DEBUG
+       * return new Promise<TSettings>((resolve) => setTimeout(resolve, 3000, settings));
+       */
       const savePromise = updateSettings(settings);
+      /* // ALT: Using api route
+       * const savePromise = fetch('/api/settings', {
+       *   method: 'PUT',
+       *   headers: { 'Content-Type': 'application/json' },
+       *   body: JSON.stringify(settings),
+       * }).then((res) => {
+       *   console.log('[SettingsContext:updateAndSaveSettings] done', {
+       *     res,
+       *   });
+       *   if (!res.ok) {
+       *     throw new Error(`HTTP ${res.status}`);
+       *   }
+       *   return res.json();
+       * });
+       */
       toast.promise(savePromise, {
         loading: 'Saving settings...',
         success: 'Successfully saved settings.',
@@ -165,6 +186,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
   /** Set and save theme */
   const setTheme = React.useCallback(
     (theme: TSettings['theme'] = defaultTheme) => {
+      // memo.setAppTheme?.(theme);
       const updatedSettings = { ...memo.settings, theme };
       return updateAndSaveSettings(updatedSettings);
     },
@@ -216,15 +238,18 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   // Load settings on initialization
   React.useEffect(() => {
-    // Restore settings from a local storage, if presented (be careful about sensitive data)
-    const settings: TSettings | undefined = getLocalSettings();
-    if (settings) {
-      setAndMemoizeSettings(settings);
+    if (!memo.inited) {
+      // Restore settings from a local storage, if presented (be careful about sensitive data)
+      const settings: TSettings | undefined = getLocalSettings();
+      if (settings) {
+        setAndMemoizeSettings(settings);
+      }
+      // Get user data from server, if there is an authentificated user
+      setInited(true);
+      memo.inited = true;
+      loadSettings();
     }
-    // Get user data from server, if there is an authentificated user
-    setInited(true);
-    loadSettings();
-  }, [setAndMemoizeSettings, userId, loadSettings]);
+  }, [memo, setAndMemoizeSettings, userId, loadSettings]);
 
   const settingsContext = React.useMemo<SettingsContextData>(
     () => ({
@@ -232,7 +257,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
       settings,
       setLocale,
       setTheme,
-      setSettings: setAndMemoizeSettings,
+      // setSettings: setAndMemoizeSettings,
       loadSettings,
       updateAndSaveSettings,
       resetLocalSettings,
@@ -245,7 +270,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
       settings,
       setLocale,
       setTheme,
-      setAndMemoizeSettings,
+      // setAndMemoizeSettings,
       loadSettings,
       updateAndSaveSettings,
       resetLocalSettings,

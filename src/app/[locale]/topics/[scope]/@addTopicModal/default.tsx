@@ -10,7 +10,7 @@ export default function AddTopicModalDefault() {
 
   // Only render the modal if we're on the /add route
   const checkAdd = '/add';
-  const isAddRoute = pathname?.endsWith('/add');
+  const isAddRoute = pathname?.endsWith(checkAdd);
 
   if (isAddRoute) {
     // A path without final '/add'

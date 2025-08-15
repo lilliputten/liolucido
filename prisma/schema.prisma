@@ -1,10 +1,14 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// vim: fdm=indent
 
 // See for `DATABASE_URL` parameter in the environment for the sqlite file location (under the `prisma` folder).
 
 generator client {
   provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "zod-prisma-types"
+  output   = "../src/generated/prisma"
 }
 
 // provider = "sqlite" | "postgresql", see 'prisma-switch.mjs'
@@ -67,9 +71,10 @@ model User {
 
   topics Topic[] // Owned topics
 
-  UserTopic    UserTopic[]
-  UserQuestion UserQuestion[]
-  userSettings UserSettings?
+  UserTopic        UserTopic[]
+  UserTopicWorkout UserTopicWorkout[]
+  UserQuestion     UserQuestion[]
+  userSettings     UserSettings?
 
   @@map("users")
 }
@@ -129,7 +134,7 @@ model Topic {
   // A topic name. It's good if it's a unique value.
   name String
 
-  // A topic description. Can be used in questions/answers generation.
+  // A topic description. Can be used in questions/answers generation. Is a markdown text.
   description String?
 
   // If the topic is public it's available for all the users, not only for you.
@@ -156,7 +161,8 @@ model Topic {
 
   questions Question[] // Questions in this topic
 
-  UserTopic UserTopic[]
+  UserTopic        UserTopic[]
+  UserTopicWorkout UserTopicWorkout[]
 
   @@index([userId])
   @@map("topics")
@@ -167,7 +173,7 @@ model Question {
   // id Int @id @default(autoincrement())
   id String @id @default(cuid())
 
-  // Custom text
+  // Custom markdown text
   text String
 
   answersCountRandom Boolean? @map("answers_count_random")
@@ -196,7 +202,7 @@ model Answer {
   isCorrect   Boolean @default(false) @map("is_correct")
   isGenerated Boolean @default(false) @map("is_generated")
 
-  // Custom text
+  // Custom markdown text
   text String
 
   // answersCountRandom Boolean? @map("answers_count_random")
@@ -215,6 +221,28 @@ model Answer {
 
 // Relations
 
+model UserTopicWorkout {
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  topicId String @map("topic_id")
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  questionsOrder  String @default("") @map("questions_order") // Question IDs, separated by space
+  questionResults String @default("") @map("question_results") // Answer results (correct=1, incorrect=0), packed as a JSON array (`[A,B,...]`), in the order corresponding to `questionsOrder`
+  stepIndex       Int    @default(0) @map("step_index") // Current question
+
+  started  Boolean @default(false)
+  finished Boolean @default(false)
+
+  @@id([userId, topicId])
+  @@map("user_topic_workouts")
+}
+
+// UNUSED
 model UserTopic {
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -232,6 +260,7 @@ model UserTopic {
   @@map("user_topics")
 }
 
+// UNUSED
 model UserQuestion {
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

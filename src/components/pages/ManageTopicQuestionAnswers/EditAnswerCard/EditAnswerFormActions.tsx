@@ -18,10 +18,19 @@ interface TProps {
   form: UseFormReturn<TFormData>;
   onSubmit: (data: TFormData) => void;
   handleDeleteAnswer: () => void;
+  handleAddAnswer?: () => void;
 }
 
 export function EditAnswerFormActions(props: TProps) {
-  const { isSubmitEnabled, isPending, onCancel, handleDeleteAnswer, form, onSubmit } = props;
+  const {
+    isSubmitEnabled,
+    isPending,
+    onCancel,
+    handleDeleteAnswer,
+    handleAddAnswer,
+    form,
+    onSubmit,
+  } = props;
   const { isDirty } = form.formState;
   const Icon = isPending ? Icons.spinner : Icons.check;
   const buttonText = isPending ? 'Saving' : 'Save';
@@ -36,7 +45,7 @@ export function EditAnswerFormActions(props: TProps) {
           className="gap-2"
           disabled={isDirty || !onCancel}
         >
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
           <span>Back</span>
         </Button>
       )}
@@ -48,12 +57,20 @@ export function EditAnswerFormActions(props: TProps) {
           className="gap-2"
           disabled={!isDirty}
         >
-          <Icons.close className="size-4" />
+          <Icons.close className="hidden size-4 opacity-50 sm:flex" />
           <span>Reset changes</span>
         </Button>
       )}
+      {handleAddAnswer && (
+        <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2 px-4">
+          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <span>
+            Add <span className="hidden sm:inline-flex">New Answer</span>
+          </span>
+        </Button>
+      )}
       <Button variant="destructive" size="sm" onClick={handleDeleteAnswer} className="gap-2">
-        <Icons.trash className="size-4" />
+        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
         <span>Delete Answer</span>
       </Button>
       <Button

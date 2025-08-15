@@ -118,7 +118,7 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
       isPending={isPending}
       isVisible
     >
-      Are you confirming deleting the topic "{topicName}"?
+      Do you confirm deleting the topic "{topicName}"?
     </ConfirmModal>
   );
 }

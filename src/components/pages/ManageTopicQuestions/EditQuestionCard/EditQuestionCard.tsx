@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
@@ -64,15 +65,11 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
     throw new Error('No such question exists');
   }
 
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(questionsContext.routePath);
-      }
-    }, 200);
+  const goBack = useGoBack(questionsContext.routePath);
+
+  // Add Question Modal
+  const handleAddQuestion = React.useCallback(() => {
+    router.push(`${questionsContext.routePath}/add`);
   }, [router, questionsContext]);
 
   // Delete Question Modal
@@ -171,6 +168,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
             onCancel={goBack}
             toolbarPortalRoot={toolbarPortalRoot}
             handleDeleteQuestion={handleDeleteQuestion}
+            handleAddQuestion={handleAddQuestion}
           />
         )}
       </CardContent>

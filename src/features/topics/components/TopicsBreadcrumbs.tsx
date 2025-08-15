@@ -13,30 +13,32 @@ import { TTopic, TTopicId } from '@/features/topics/types';
 
 export interface TTopicsBreadcrumbsProps {
   topicId?: TTopicId;
+  topic?: TTopic;
   inactiveTopic?: boolean;
+  lastItem?: TBreadcrumbsItemProps;
 }
 
 export function useTopicsBreadcrumbsItems(props: TTopicsBreadcrumbsProps) {
-  const { topicId, inactiveTopic } = props;
+  const { topicId, topic, inactiveTopic } = props;
   const topicsContext = useTopicsContext();
   const { topics, routePath, namespace } = topicsContext;
   const t = useTranslations(namespace);
-  const topic: TTopic | undefined = React.useMemo(
-    () => (topicId ? topics.find(({ id }) => id === topicId) : undefined),
-    [topics, topicId],
+  const usedTopic: TTopic | undefined = React.useMemo(
+    () => topic || (topicId ? topics.find(({ id }) => id === topicId) : undefined),
+    [topic, topics, topicId],
   );
   const items = filterOutEmpties<TBreadcrumbsItemProps>([
     { link: routePath, content: t('title') },
-    !!topic && {
-      link: inactiveTopic ? undefined : `${routePath}/${topic.id}`,
-      content: topic.name,
+    !!usedTopic && {
+      link: inactiveTopic ? undefined : `${routePath}/${usedTopic.id}`,
+      content: usedTopic.name,
     },
   ]);
   return items;
 }
 
 export function TopicsBreadcrumbs(props: TTopicsBreadcrumbsProps & TPropsWithClassName) {
-  const { className, ...rest } = props;
+  const { className, lastItem, ...rest } = props;
   const items = useTopicsBreadcrumbsItems(rest);
   return (
     <Breadcrumbs
@@ -44,7 +46,7 @@ export function TopicsBreadcrumbs(props: TTopicsBreadcrumbsProps & TPropsWithCla
         isDev && '__TopicsBreadcrumbs', // DEBUG
         className,
       )}
-      items={items}
+      items={lastItem ? items.concat(lastItem) : items}
     />
   );
 }

@@ -3,23 +3,24 @@
 import React from 'react';
 
 import { cn } from '@/lib/utils';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
 
-interface TViewTopicContentProps {
+interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;
   className?: string;
   // toolbarPortalRoot: HTMLDivElement | null;
   // toolbarPortalRef: React.RefObject<HTMLDivElement>;
   // goBack?: () => void;
-  // handleDeleteTopic: TViewTopicContentActionsProps['handleDeleteTopic'];
-  // handleAddQuestion?: TViewTopicContentActionsProps['handleAddQuestion'];
+  // handleDeleteTopic: TViewAvailableTopicContentActionsProps['handleDeleteTopic'];
+  // handleAddQuestion?: TViewAvailableTopicContentActionsProps['handleAddQuestion'];
 }
 
-export function ViewTopicContent(props: TViewTopicContentProps) {
+export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const {
     topic,
     className,
@@ -44,7 +45,7 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
   return (
     <div
       className={cn(
-        isDev && '__ViewTopicContent', // DEBUG
+        isDev && '__ViewAvailableTopicContent', // DEBUG
         'flex w-full flex-col gap-4 overflow-hidden',
         className,
       )}
@@ -52,7 +53,7 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
       <ScrollArea>
         <div
           className={cn(
-            isDev && '__ViewTopicContent_Scroll', // DEBUG
+            isDev && '__ViewAvailableTopicContent_Scroll', // DEBUG
             'flex w-full flex-col gap-4 overflow-hidden',
             'mx-6',
             className,
@@ -61,11 +62,11 @@ export function ViewTopicContent(props: TViewTopicContentProps) {
           <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" />
           {!!description && (
             <div id="description" className="truncate">
-              {/* TODO: Format text */}
-              {description}
+              <MarkdownText>{description}</MarkdownText>
             </div>
           )}
           <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
+          {/* TODO: Show statistics, existed workout etc */}
         </div>
       </ScrollArea>
     </div>

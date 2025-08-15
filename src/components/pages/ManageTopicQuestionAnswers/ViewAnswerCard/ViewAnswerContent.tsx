@@ -12,17 +12,20 @@ import {
   TViewAnswerContentActionsProps,
   ViewAnswerContentActions,
 } from './ViewAnswerContentActions';
+import { ViewAnswerContentSummary } from './ViewAnswerContentSummary';
 
 interface TViewAnswerContentProps {
   answer: TAnswer;
   className?: string;
   goBack?: () => void;
   handleDeleteAnswer: TViewAnswerContentActionsProps['handleDeleteAnswer'];
+  handleAddAnswer?: TViewAnswerContentActionsProps['handleAddAnswer'];
   toolbarPortalRoot: HTMLDivElement | null;
 }
 
 export function ViewAnswerContent(props: TViewAnswerContentProps) {
-  const { answer, className, goBack, handleDeleteAnswer, toolbarPortalRoot } = props;
+  const { answer, className, goBack, handleDeleteAnswer, handleAddAnswer, toolbarPortalRoot } =
+    props;
   return (
     <>
       <div
@@ -33,16 +36,7 @@ export function ViewAnswerContent(props: TViewAnswerContentProps) {
         )}
       >
         <ScrollArea>
-          <div
-            className={cn(
-              isDev && '__ViewAnswerContent_Stub', // DEBUG
-              'flex w-full flex-col gap-4 overflow-hidden opacity-50',
-              'mx-6',
-              className,
-            )}
-          >
-            Here comes some answer overview and summary.
-          </div>
+          <ViewAnswerContentSummary answer={answer} />
         </ScrollArea>
       </div>
       {toolbarPortalRoot &&
@@ -51,6 +45,7 @@ export function ViewAnswerContent(props: TViewAnswerContentProps) {
             answer={answer}
             goBack={goBack}
             handleDeleteAnswer={handleDeleteAnswer}
+            handleAddAnswer={handleAddAnswer}
           />,
           toolbarPortalRoot,
         )}

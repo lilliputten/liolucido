@@ -4,12 +4,15 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString, truncate } from '@/lib/helpers/strings';
+import { truncateMarkdown } from '@/lib/helpers/markdown';
+import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Switch } from '@/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -23,7 +26,7 @@ import { isDev } from '@/constants';
 import { TUpdatedAnswersCountDetail, updatedQuestionsCountEventName } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { getQuestionAnswers } from '@/features/answers/actions';
+import { getQuestionAnswers, updateAnswer } from '@/features/answers/actions';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
 
@@ -95,7 +98,7 @@ function Toolbar(props: TToolbarActionsProps) {
       )}
     >
       <Button variant="ghost" size="sm" className="flex gap-2 px-4" onClick={goBack}>
-        <Icons.arrowLeft className="hidden size-4 sm:block" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Button
@@ -107,19 +110,13 @@ function Toolbar(props: TToolbarActionsProps) {
         )}
         onClick={handleReload}
       >
-        <Icons.refresh className={cn('hidden size-4 sm:block', isReloading && 'animate-spin')} />
+        <Icons.refresh
+          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+        />
         <span>Reload</span>
       </Button>
-      {/*
-      {handleDeleteQuestion && (
-        <Button variant="destructive" size="sm" onClick={handleDeleteQuestion} className="gap-2">
-          <Icons.trash className="size-4" />
-          <span>Delete Question</span>
-        </Button>
-      )}
-      */}
       <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2 px-4">
-        <Icons.add className="hidden size-4 sm:block" />
+        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Answer</span>
         </span>
@@ -143,10 +140,10 @@ function AnswerTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
         <TableHead id="text" className="truncate">
           Answer Text
         </TableHead>
-        <TableHead id="isCorrect" className="truncate">
+        <TableHead id="isCorrect" className="truncate max-sm:hidden">
           Correct
         </TableHead>
-        <TableHead id="isGenerated" className="truncate">
+        <TableHead id="isGenerated" className="truncate max-sm:hidden">
           Generated
         </TableHead>
       </TableRow>
@@ -167,6 +164,27 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
   const { id, text, isCorrect, isGenerated } = answer;
   const answersContext = useAnswersContext();
   const { routePath } = answersContext;
+  const [isPending, startTransition] = React.useTransition();
+
+  const handleToggleCorrect = React.useCallback(
+    (checked: boolean) => {
+      startTransition(async () => {
+        try {
+          await updateAnswer({ ...answer, isCorrect: checked });
+          answersContext.setAnswers((prev) =>
+            prev.map((a) => (a.id === answer.id ? { ...a, isCorrect: checked } : a)),
+          );
+          toast.success(`Answer marked as ${checked ? 'correct' : 'incorrect'}`);
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to update answer:', error);
+          debugger; // eslint-disable-line no-debugger
+          toast.error('Failed to update answer');
+        }
+      });
+    },
+    [answer, answersContext],
+  );
   return (
     <TableRow className="truncate" data-answer-id={id}>
       <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
@@ -180,15 +198,20 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           </div>
         </TableCell>
       )}
-      <TableCell id="text" className="max-w-[16em] truncate">
+      <TableCell id="text" className="max-w-[20em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
-          {truncate(text, 40)}
+          {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
-      <TableCell id="isCorrect" className="w-[8em]">
-        {isCorrect && <Icons.CircleCheck className="stroke-green-500" />}
+      <TableCell id="isCorrect" className="w-[8em] max-sm:hidden">
+        <Switch
+          checked={isCorrect}
+          onCheckedChange={handleToggleCorrect}
+          disabled={isPending}
+          className="data-[state=checked]:bg-green-500"
+        />
       </TableCell>
-      <TableCell id="isGenerated" className="w-[8em]">
+      <TableCell id="isGenerated" className="w-[8em] max-sm:hidden">
         {isGenerated && <Icons.CircleCheck className="stroke-blue-500" />}
       </TableCell>
       <TableCell id="actions" className="w-[2em] text-right">
@@ -254,16 +277,7 @@ export function ManageTopicQuestionAnswersListCard(
     }
   }, [router, questionsContext, answersContext]);
 
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(answersContext.topicsListRoutePath);
-      }
-    }, 200);
-  }, [router, answersContext]);
+  const goBack = useGoBack(answersContext.topicsListRoutePath);
 
   /* // Render nothing if no owner question found
    * if (!question) {
@@ -349,13 +363,13 @@ export function ManageTopicQuestionAnswersListCard(
               <>
                 {/*
                 <Button variant="ghost" onClick={goBack} className="flex gap-2">
-                  <Icons.arrowLeft className="size-4" />
+                  <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
                   Go Back
                 </Button>
                 */}
                 <Button onClick={handleAddAnswer} className="flex gap-2">
-                  <Icons.add className="size-4" />
-                  Add Answer
+                  <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+                  Add New Answer
                 </Button>
               </>
             }

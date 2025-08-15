@@ -1,5 +1,3 @@
-import localFont from 'next/font/local';
-
 import {
   // @see node_modules/next/dist/compiled/@next/font/dist/google/index.d.ts
   Inter,
@@ -12,6 +10,7 @@ import {
   // Rubik_Mono_One,
   // Russo_One,
 } from 'next/font/google';
+import localFont from 'next/font/local';
 
 export const fontDefault = Inter({
   subsets: ['latin', 'cyrillic'],

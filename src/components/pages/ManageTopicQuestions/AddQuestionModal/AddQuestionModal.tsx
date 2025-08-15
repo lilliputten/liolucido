@@ -114,7 +114,7 @@ export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
           'flex flex-col border-b bg-accent px-8 py-4',
         )}
       >
-        <DialogTitle className="DialogTitle">Add Question</DialogTitle>
+        <DialogTitle className="DialogTitle">Add New Question</DialogTitle>
         <DialogDescription aria-hidden="true" hidden>
           Add question dialog
         </DialogDescription>

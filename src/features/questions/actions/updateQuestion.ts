@@ -3,9 +3,9 @@
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
-import { TQuestion } from '@/features/questions/types';
+import { TQuestion, TQuestionData } from '@/features/questions/types';
 
-export async function updateQuestion(question: TQuestion) {
+export async function updateQuestion(question: TQuestionData) {
   if (isDev) {
     // DEBUG: Emulate network delay
     await new Promise((resolve) => setTimeout(resolve, 2000));

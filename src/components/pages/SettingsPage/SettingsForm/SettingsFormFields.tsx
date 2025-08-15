@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { FormHint } from '@/components/blocks/FormHint';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TSettings } from '@/features/settings/types';
@@ -46,13 +47,6 @@ interface TSettingsFormFieldsProps {
   form: UseFormReturn<TFormData>;
   className?: string;
   selectLanguage: (ev: React.MouseEvent) => void;
-}
-
-function FormHint({ children }: { children?: React.ReactNode }) {
-  if (!children) {
-    return null;
-  }
-  return <div className="relative text-sm opacity-20">{children}</div>;
 }
 
 function FormSection({ children }: TPropsWithChildren) {
@@ -294,9 +288,6 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                     </span>
                   )}
                   {langCode && <Icons.close onClick={resetLang} className="size-4" />}
-                  {/*
-                  <Icons.languages className="size-4" />
-                  */}
                 </Button>
                 <FormHint>
                   Specify a language if you want to see the topics only for this specific language.

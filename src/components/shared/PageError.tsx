@@ -8,6 +8,7 @@ import { TReactNode } from '@/shared/types/generic';
 import { rootRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Button } from '@/components/ui/button';
 import { ErrorPlaceHolder } from '@/components/shared/ErrorPlaceHolder';
 import { Icons, TIconsKey } from '@/components/shared/icons';
@@ -51,18 +52,7 @@ export function PageError(props: TErrorProps) {
     // TODO: Log the error to an error reporting service?
   }, [error]);
 
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    // Do a hard reload
-    window.history.back();
-    // router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        window.location.href = rootRoute;
-      }
-    }, 200);
-  }, []);
+  const goBack = useGoBack(rootRoute);
 
   const goHome = React.useCallback(() => {
     const { href } = window.location;
@@ -81,6 +71,7 @@ export function PageError(props: TErrorProps) {
     <ErrorPlaceHolder
       className={cn(
         isDev && '__PageError', // DEBUG
+        'm-6 overflow-auto',
         className,
       )}
     >
@@ -96,7 +87,7 @@ export function PageError(props: TErrorProps) {
       )}
       <div className="mt-2 flex w-full flex-wrap justify-center gap-4">
         <Button onClick={goBack} className="flex gap-2">
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="size-4" />
           <span>Go back</span>
         </Button>
         <Button onClick={goHome} className="flex gap-2">

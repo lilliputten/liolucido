@@ -23,7 +23,7 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   const { showAddModal, deleteQuestionId, editQuestionId, editAnswersQuestionId } = props;
   const questionsContext = useQuestionsContext();
 
-  // Add Question Modal
+  // Add New Question Modal
   const openAddQuestionModal = React.useCallback(() => {
     router.push(questionsContext.routePath + '/add');
   }, [router, questionsContext]);
@@ -31,7 +31,7 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
     if (showAddModal) {
       openAddQuestionModal();
     }
-  }, [showAddModal, openAddQuestionModal, questionsContext]);
+  }, [showAddModal, openAddQuestionModal]);
 
   // Delete Question Modal
   const openDeleteQuestionModal = React.useCallback(

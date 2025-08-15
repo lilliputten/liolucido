@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { FormHint } from '@/components/blocks/FormHint';
+import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TTopic } from '@/features/topics/types';
@@ -25,13 +27,6 @@ interface TEditTopicFormFieldsProps {
   form: UseFormReturn<TFormData>;
   className?: string;
   selectLanguage: (ev: React.MouseEvent) => void;
-}
-
-function FormHint({ children }: { children?: React.ReactNode }) {
-  if (!children) {
-    return null;
-  }
-  return <div className="relative text-sm opacity-20">{children}</div>;
 }
 
 function FormSection({ children }: TPropsWithChildren) {
@@ -101,7 +96,8 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                 />
               </FormControl>
               <FormHint>
-                A topic description. Could be used in questions and answers generation.
+                A topic description. Could be used in questions and answers generation.{' '}
+                <MarkdownHint />
               </FormHint>
               <FormMessage />
             </FormItem>
@@ -172,9 +168,6 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                     </span>
                   )}
                   {langCode && <Icons.close onClick={resetLang} className="size-4" />}
-                  {/*
-                  <Icons.languages className="size-4" />
-                  */}
                 </Button>
                 <FormHint>An optional predefined or custom language for the topic.</FormHint>
                 <FormMessage />

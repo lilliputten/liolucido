@@ -46,6 +46,7 @@ export default [
       // Ignore `.gitignore` specified fiels etc...
       ...readGitignoreFiles({ cwd: __dirname }),
       '.next/**',
+      'src/generated/prisma/**',
     ],
   },
 

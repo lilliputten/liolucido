@@ -12,17 +12,26 @@ import {
   TViewQuestionContentActionsProps,
   ViewQuestionContentActions,
 } from './ViewQuestionContentActions';
+import { ViewQuestionContentSummary } from './ViewQuestionContentSummary';
 
 interface TViewQuestionContentProps {
   question: TQuestion;
   className?: string;
   goBack?: () => void;
   handleDeleteQuestion: TViewQuestionContentActionsProps['handleDeleteQuestion'];
+  handleAddQuestion?: TViewQuestionContentActionsProps['handleAddQuestion'];
   toolbarPortalRoot: HTMLDivElement | null;
 }
 
 export function ViewQuestionContent(props: TViewQuestionContentProps) {
-  const { question, className, goBack, handleDeleteQuestion, toolbarPortalRoot } = props;
+  const {
+    question,
+    className,
+    goBack,
+    handleDeleteQuestion,
+    handleAddQuestion,
+    toolbarPortalRoot,
+  } = props;
   return (
     <>
       <div
@@ -33,16 +42,7 @@ export function ViewQuestionContent(props: TViewQuestionContentProps) {
         )}
       >
         <ScrollArea>
-          <div
-            className={cn(
-              isDev && '__ViewQuestionContent_Stub', // DEBUG
-              'flex w-full flex-col gap-4 overflow-hidden opacity-50',
-              'mx-6',
-              className,
-            )}
-          >
-            Here comes some question overview and summary.
-          </div>
+          <ViewQuestionContentSummary question={question} />
         </ScrollArea>
       </div>
       {toolbarPortalRoot &&
@@ -51,6 +51,7 @@ export function ViewQuestionContent(props: TViewQuestionContentProps) {
             question={question}
             goBack={goBack}
             handleDeleteQuestion={handleDeleteQuestion}
+            handleAddQuestion={handleAddQuestion}
           />,
           toolbarPortalRoot,
         )}

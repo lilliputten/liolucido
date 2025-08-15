@@ -30,7 +30,7 @@ export function EditTopicFormActions(props: TProps) {
     <>
       {!isDirty && (
         <Button variant="ghost" size="sm" onClick={onCancel} className="gap-2" disabled={isDirty}>
-          <Icons.arrowLeft className="size-4" />
+          <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
           <span>Back</span>
         </Button>
       )}
@@ -42,12 +42,12 @@ export function EditTopicFormActions(props: TProps) {
           className="gap-2"
           disabled={!isDirty}
         >
-          <Icons.close className="size-4" />
+          <Icons.close className="hidden size-4 opacity-50 sm:flex" />
           <span>Reset changes</span>
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
-        <Icons.trash className="size-4" />
+        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
         <span>Delete Topic</span>
       </Button>
       <Button

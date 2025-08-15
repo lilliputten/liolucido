@@ -13,16 +13,17 @@ export interface TViewAnswerContentActionsProps {
   isPending?: boolean;
   goBack?: (ev: React.MouseEvent) => void;
   handleDeleteAnswer: () => void;
+  handleAddAnswer?: () => void;
 }
 
 export function ViewAnswerContentActions(props: TViewAnswerContentActionsProps) {
-  const { answer, goBack, handleDeleteAnswer } = props;
+  const { answer, goBack, handleDeleteAnswer, handleAddAnswer } = props;
   const router = useRouter();
   const answersContext = useAnswersContext();
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
-        <Icons.arrowLeft className="size-4" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Button
@@ -31,12 +32,22 @@ export function ViewAnswerContentActions(props: TViewAnswerContentActionsProps) 
         onClick={() => router.push(`${answersContext.routePath}/${answer.id}/edit`)}
         className="gap-2"
       >
-        <Icons.edit className="size-4" />
+        <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
         <span>Edit</span>
       </Button>
+      {handleAddAnswer && (
+        <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2 px-4">
+          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <span>
+            Add <span className="hidden sm:inline-flex">New Answer</span>
+          </span>
+        </Button>
+      )}
       <Button variant="destructive" size="sm" onClick={handleDeleteAnswer} className="gap-2">
-        <Icons.trash className="size-4" />
-        <span>Delete Answer</span>
+        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+        <span>
+          Delete <span className="hidden sm:inline-flex">Answer</span>
+        </span>
       </Button>
     </>
   );

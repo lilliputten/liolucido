@@ -4,8 +4,10 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString, truncate } from '@/lib/helpers/strings';
+import { truncateMarkdown } from '@/lib/helpers/markdown';
+import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -100,7 +102,7 @@ function Toolbar(props: TToolbarActionsProps) {
       )}
     >
       <Button variant="ghost" size="sm" className="flex gap-2 px-4" onClick={goBack}>
-        <Icons.arrowLeft className="hidden size-4 sm:block" />
+        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
       <Button
@@ -112,19 +114,13 @@ function Toolbar(props: TToolbarActionsProps) {
         )}
         onClick={handleReload}
       >
-        <Icons.refresh className={cn('hidden size-4 sm:block', isReloading && 'animate-spin')} />
+        <Icons.refresh
+          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+        />
         <span>Reload</span>
       </Button>
-      {/*
-      {handleDeleteTopic && (
-        <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
-          <Icons.trash className="size-4" />
-          <span>Delete Topic</span>
-        </Button>
-      )}
-      */}
       <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
-        <Icons.add className="hidden size-4 sm:block" />
+        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Question</span>
         </span>
@@ -193,7 +189,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
       )}
       <TableCell id="text" className="max-w-[12em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
-          {truncate(text, 40)}
+          {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
       <TableCell id="answers" className="max-w-[8em] truncate">
@@ -205,7 +201,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
           )}
         </div>
       </TableCell>
-      <TableCell className="w-[2em] text-right">
+      <TableCell id="actions" className="w-[2em] text-right">
         <div className="flex justify-end gap-1">
           <Button
             variant="ghost"
@@ -265,16 +261,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
    * }, [questionsContext.topicId, topicsContext]);
    */
 
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(questionsContext.topicsListRoutePath);
-      }
-    }, 200);
-  }, [router, questionsContext]);
+  const goBack = useGoBack(questionsContext.topicsListRoutePath);
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
@@ -370,13 +357,13 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
               <>
                 {/*
                 <Button onClick={goBack} className="flex gap-2">
-                  <Icons.arrowLeft className="size-4" />
+                  <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
                   Go Back
                 </Button>
                 */}
                 <Button onClick={handleAddQuestion} className="flex gap-2">
-                  <Icons.add className="size-4" />
-                  Add Question
+                  <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+                  Add New Question
                 </Button>
               </>
             }

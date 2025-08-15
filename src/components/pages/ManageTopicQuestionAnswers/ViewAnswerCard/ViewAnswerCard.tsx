@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext/AnswersContext';
@@ -33,15 +34,11 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
   if (!answerId || !answer) {
     throw new Error('No such answer exists');
   }
-  const goBack = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(answersContext.routePath);
-      }
-    }, 200);
+  const goBack = useGoBack(answersContext.routePath);
+
+  // Add Answer Modal
+  const handleAddAnswer = React.useCallback(() => {
+    router.push(`${answersContext.routePath}/add`);
   }, [router, answersContext]);
 
   // Delete Answer Modal
@@ -108,6 +105,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
           answer={answer}
           goBack={goBack}
           handleDeleteAnswer={handleDeleteAnswer}
+          handleAddAnswer={handleAddAnswer}
           toolbarPortalRoot={toolbarPortalRoot}
         />
       </CardContent>

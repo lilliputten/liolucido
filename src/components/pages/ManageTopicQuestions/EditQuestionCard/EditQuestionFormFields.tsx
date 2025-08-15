@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { FormHint } from '@/components/blocks/FormHint';
+import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
 
@@ -22,13 +24,6 @@ interface TEditQuestionFormFieldsProps {
   onCancel?: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   className?: string;
-}
-
-function FormHint({ children }: { children?: React.ReactNode }) {
-  if (!children) {
-    return null;
-  }
-  return <div className="relative text-sm opacity-20">{children}</div>;
 }
 
 function FormSection({ children }: TPropsWithChildren) {
@@ -70,7 +65,9 @@ export function EditQuestionFormFields(props: TEditQuestionFormFieldsProps) {
                   {...field}
                 />
               </FormControl>
-              <FormHint>A question Text.</FormHint>
+              <FormHint>
+                A question Text. <MarkdownHint />
+              </FormHint>
               <FormMessage />
             </FormItem>
           )}

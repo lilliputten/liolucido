@@ -5,6 +5,8 @@ import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
 
+/* TODO: To broadcast a client message to refresh topics data, including other tabs? */
+
 export async function deleteQuestion(question: TQuestion) {
   // Check user rights to delete the question...?
   const user = await getCurrentUser();
@@ -28,12 +30,57 @@ export async function deleteQuestion(question: TQuestion) {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    // TODO: Check if the current user allowed to delete the question?
-    const removedQuestion = await prisma.question.delete({
-      where: {
-        id: question.id,
-      },
+
+    const removedQuestion = await prisma.$transaction(async (tx) => {
+      // Update UserTopicWorkout before deleting the question
+      const workouts = await tx.userTopicWorkout.findMany({
+        where: { topicId: question.topicId },
+      });
+
+      for (const workout of workouts) {
+        const questionsOrder = (workout.questionsOrder || '').split(' ').filter(Boolean);
+        const questionResults = workout.questionResults ? JSON.parse(workout.questionResults) : [];
+        const questionIndex = questionsOrder.indexOf(question.id);
+
+        if (questionIndex !== -1) {
+          // Remove question from order
+          questionsOrder.splice(questionIndex, 1);
+
+          // Remove corresponding result
+          if (questionResults.length > questionIndex) {
+            questionResults.splice(questionIndex, 1);
+          }
+
+          // Adjust stepIndex if needed
+          let newStepIndex = workout.stepIndex;
+          if (questionIndex < workout.stepIndex) {
+            newStepIndex = Math.max(0, workout.stepIndex - 1);
+          }
+
+          await tx.userTopicWorkout.update({
+            where: {
+              userId_topicId: {
+                userId: workout.userId,
+                topicId: workout.topicId,
+              },
+            },
+            data: {
+              questionsOrder: questionsOrder.join(' '),
+              questionResults: JSON.stringify(questionResults),
+              stepIndex: newStepIndex,
+            },
+          });
+        }
+      }
+
+      // TODO: Check if the current user allowed to delete the question?
+      return await tx.question.delete({
+        where: {
+          id: question.id,
+        },
+      });
     });
+
     return removedQuestion;
   } catch (error) {
     // eslint-disable-next-line no-console

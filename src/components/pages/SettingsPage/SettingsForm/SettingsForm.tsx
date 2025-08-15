@@ -30,7 +30,7 @@ interface TSettingsFormProps {
 
 export function SettingsForm(props: TSettingsFormProps) {
   const { settings, className, userId, toolbarPortalRef } = props;
-  const { setSettings, updateAndSaveSettings, inited, userInited } = useSettingsContext();
+  const { updateAndSaveSettings, inited, userInited } = useSettingsContext();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 
@@ -86,7 +86,6 @@ export function SettingsForm(props: TSettingsFormProps) {
         ...settings,
         ...formData,
       };
-      setSettings(editedSettings);
       startTransition(() => {
         const savePromise = updateAndSaveSettings(editedSettings);
         return savePromise
@@ -105,7 +104,7 @@ export function SettingsForm(props: TSettingsFormProps) {
           });
       });
     },
-    [form, setSettings, updateAndSaveSettings, settings],
+    [form, updateAndSaveSettings, settings],
   );
 
   const handleCancel = undefined;
