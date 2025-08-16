@@ -1,7 +1,27 @@
 import ms from 'ms';
-import { useFormatter } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 
 import { defaultLocale, TLocale } from '@/i18n/types';
+
+/* // TODO: Translations:
+ *
+ * See translation approach in ``formatSecondsDuration`.
+ *
+ * You'll need to add these keys to your messages file (to be able to use `useTranslations('duration')`):
+ *
+ * ```
+ * {
+ *   "duration": {
+ *     "days": "d",
+ *     "hours": "h",
+ *     "minutes": "m",
+ *     "seconds": "s"
+ *   }
+ * }
+ * ```
+ */
+
+type TIntlTranslator = (key: string) => string;
 
 const minDateLimit = 1000 * 60;
 const hourDateLimit = minDateLimit * 60;
@@ -103,3 +123,24 @@ export const timeAgo = (timestamp: Date, timeOnly?: boolean): string => {
   }
   return `${ms(Date.now() - new Date(timestamp).getTime())}${timeOnly ? '' : ' ago'}`;
 };
+
+export function formatSecondsDuration(seconds: number = 0, t?: TIntlTranslator): string {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const parts: string[] = [];
+  if (days > 0) parts.push(`${days}${t?.('duration.days') || 'd'}`);
+  if (hours > 0) parts.push(`${hours}${t?.('duration.hours') || 'h'}`);
+  if (minutes > 0) parts.push(`${minutes}${t?.('duration.minutes') || 'm'}`);
+  if (remainingSeconds > 0 || parts.length === 0)
+    parts.push(`${remainingSeconds}${t?.('duration.seconds') || 's'}`);
+
+  return parts.join(' ');
+}
+
+export function useFormattedDuration(seconds: number) {
+  const t = useTranslations('duration');
+  return formatSecondsDuration(seconds, (key) => t(key.split('.')[1]));
+}

@@ -1,5 +1,4 @@
 // This file should only be used in server components
-// 'use server';
 
 import { z } from 'zod';
 
@@ -14,7 +13,6 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   NEXTAUTH_URL: z.string().url().optional(),
   RESEND_API_KEY: z.string().min(1),
-  // NEXT_PUBLIC_USER_REQUIRED: z.enum(['true', 'false']).transform((v) => v === 'true'), // z.boolean(),
   YANDEX_CLIENT_ID: z.string().min(1),
   YANDEX_CLIENT_SECRET: z.string().min(1),
 });

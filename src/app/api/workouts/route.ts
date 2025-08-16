@@ -28,6 +28,15 @@ export async function POST(request: NextRequest) {
       stepIndex: 0,
       started: false,
       finished: false,
+      currentRatio: 0, // Current ratio (if finished)
+      currentTime: 0, // Current time remained to finish, in seconds (if finished)
+      correctAnswers: 0, // Current correct answers count (if finished)
+      selectedAnswerId: '', // Answer for the current question. If defined then consider that user already chosen the answer but hasn't went to the next question (show the choice and suggest to go further)
+      totalRounds: 0, // Total rounds for this workout
+      allRatios: '', // All score ratios through all rounds, json packed list of ints (percent)
+      allTimes: '', // All score times through all rounds, in seconds, json packed list of ints (seconds)
+      averageRatio: 0, // Average score ratio through all rounds, percent
+      averageTime: 0, // Average score time through all rounds, in seconds
       ...body,
     };
     const newWorkoutData = createWorkoutSchema.parse(rawData);

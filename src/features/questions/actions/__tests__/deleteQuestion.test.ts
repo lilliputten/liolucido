@@ -63,9 +63,9 @@ describe('deleteQuestion UserTopicWorkout updates', () => {
           if (questionResults.length > questionIndex) {
             questionResults.splice(questionIndex, 1);
           }
-          let newStepIndex = workout.stepIndex;
-          if (questionIndex < workout.stepIndex) {
-            newStepIndex = Math.max(0, workout.stepIndex - 1);
+          let newStepIndex = workout.stepIndex || 0;
+          if (questionIndex < newStepIndex) {
+            newStepIndex = Math.max(0, newStepIndex - 1);
           }
 
           await jestPrisma.userTopicWorkout.update({
@@ -170,9 +170,9 @@ describe('deleteQuestion UserTopicWorkout updates', () => {
           if (questionResults.length > questionIndex) {
             questionResults.splice(questionIndex, 1);
           }
-          let newStepIndex = workout.stepIndex;
-          if (questionIndex < workout.stepIndex) {
-            newStepIndex = Math.max(0, workout.stepIndex - 1);
+          let newStepIndex = workout.stepIndex || 0;
+          if (questionIndex < newStepIndex) {
+            newStepIndex = Math.max(0, newStepIndex - 1);
           }
 
           await jestPrisma.userTopicWorkout.update({

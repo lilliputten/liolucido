@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { useFormatter } from 'next-intl';
 
+import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
@@ -11,6 +13,7 @@ interface TProps {
 }
 
 export function WorkoutTopicControl(props: TProps) {
+  const format = useFormatter();
   const { startWorkout } = props;
   const { workout, pending, createWorkout } = useWorkoutContext();
 
@@ -38,10 +41,10 @@ export function WorkoutTopicControl(props: TProps) {
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
         {workout.finished
-          ? 'The workout is completed (the stats will be shown here)' // TODO: Show statistics
+          ? `The workout is completed ${getFormattedRelativeDate(format, workout.finishedAt)} in ${formatSecondsDuration(workout.currentTime)} with a ratio of ${workout.currentRatio}% (${workout.correctAnswers} of ${workout.questionsCount} correct answers).`
           : workout.started
             ? 'Your workout is in progress (the progress will be shown here)' // TODO: Show the progress
-            : 'The workout is ready to start'}
+            : `The workout has been created ${getFormattedRelativeDate(format, workout.startedAt)} and now is ready to start`}
       </p>
       <div className="flex gap-2">
         <Button
