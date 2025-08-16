@@ -8,6 +8,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { APIError } from '@/shared/types/api';
+import { handleServerAction } from '@/lib/api';
+import { invalidateReactQueryKeys } from '@/lib/data';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
@@ -173,24 +176,38 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         answersCountMax: formData.answersCountMax,
       };
       startTransition(async () => {
-        const savePromise = updateTopic(editedTopic);
-        toast.promise<unknown>(savePromise, {
+        const savePromise = handleServerAction(updateTopic(editedTopic), {
+          onInvalidateKeys: invalidateReactQueryKeys,
+          debugDetails: {
+            initiator: 'EditTopicForm',
+            action: 'updateTopic',
+            topicId: editedTopic.id,
+          },
+        });
+        toast.promise(savePromise, {
           loading: 'Saving the topic data...',
           success: 'Successfully saved the topic',
           error: 'Can not save the topic data.',
         });
         try {
-          const updatedTopic = await savePromise;
-          topicsContext.setTopics((topics) => {
-            return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
-          });
-          form.reset(form.getValues());
+          const result = await savePromise;
+          if (result.ok && result.data) {
+            const updatedTopic = result.data;
+            topicsContext.setTopics((topics) => {
+              return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
+            });
+            form.reset(form.getValues());
+          }
         } catch (error) {
-          const message = getErrorText(error);
+          const details = error instanceof APIError ? error.details : null;
+          const message = 'Cannot save topic data';
           // eslint-disable-next-line no-console
-          console.error('[EditTopicForm:handleFormSubmit]', message, {
+          console.error('[EditTopicForm]', message, {
+            details,
             error,
+            topicId: editedTopic.id,
           });
+          debugger; // eslint-disable-line no-debugger
         }
       });
     },

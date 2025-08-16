@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { APIError } from '@/shared/types/api';
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { handleServerAction } from '@/lib/api';
+import { invalidateReactQueryKeys } from '@/lib/data';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
@@ -60,13 +63,15 @@ function Toolbar(props: TToolbarActionsProps) {
     const { topicId, setQuestions } = questionsContext;
     startReload(async () => {
       try {
-        const promise = getTopicQuestions(topicId);
-        toast.promise(promise, {
-          loading: 'Reloading questions data...',
-          success: 'Questions successfully reloaded.',
-          error: 'Error reloading questions.',
+        const result = await handleServerAction(getTopicQuestions(topicId), {
+          onInvalidateKeys: invalidateReactQueryKeys,
+          debugDetails: {
+            initiator: 'Toolbar',
+            action: 'getTopicQuestions',
+            topicId,
+          },
         });
-        const questions = (await promise) || [];
+        const questions = result.ok && result.data ? result.data : [];
         setQuestions((prevQuestions) => {
           const prevQuestionsCount = prevQuestions.length;
           // Dispatch a custom event with the updated questions data
@@ -85,11 +90,17 @@ function Toolbar(props: TToolbarActionsProps) {
           return questions;
         });
       } catch (error) {
+        const details = error instanceof APIError ? error.details : null;
+        const message = 'Cannot reload questions data';
         // eslint-disable-next-line no-console
-        console.error('[ManageTopicQuestionsListCard:handleReload] catch', {
+        console.error('[Toolbar]', message, {
+          details,
           error,
+          topicId,
+          action: 'getTopicQuestions',
         });
         debugger; // eslint-disable-line no-debugger
+        toast.error(message);
       }
     });
   }, [questionsContext]);

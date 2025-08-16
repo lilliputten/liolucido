@@ -4,6 +4,9 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { APIError } from '@/shared/types/api';
+import { handleServerAction } from '@/lib/api';
+import { invalidateReactQueryKeys } from '@/lib/data';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -52,41 +55,56 @@ export function AddAnswerModal() {
     (newAnswer: TNewAnswer) => {
       return new Promise((resolve, reject) => {
         return startUpdating(() => {
-          const promise = addNewAnswer(newAnswer)
-            .then((addedAnswer) => {
-              // Update topics list
-              answersContext.setAnswers((answers) => {
-                const updatedAnswers = answers.concat(addedAnswer);
-                // Dispatch a custom event with the updated answers data
-                const answersCount = updatedAnswers.length;
-                const addedAnswerId = addedAnswer.id;
-                const detail: TAddedAnswerDetail = { questionId, addedAnswerId, answersCount };
-                const event = new CustomEvent<TAddedAnswerDetail>(addedAnswerEventName, {
-                  detail,
-                  bubbles: true,
+          const promise = handleServerAction(addNewAnswer(newAnswer), {
+            onInvalidateKeys: invalidateReactQueryKeys,
+            debugDetails: {
+              initiator: 'AddAnswerModal',
+              action: 'addNewAnswer',
+              questionId,
+            },
+          })
+            .then((result) => {
+              if (result.ok && result.data) {
+                const addedAnswer = result.data;
+                // Update topics list
+                answersContext.setAnswers((answers) => {
+                  const updatedAnswers = answers.concat(addedAnswer);
+                  // Dispatch a custom event with the updated answers data
+                  const answersCount = updatedAnswers.length;
+                  const addedAnswerId = addedAnswer.id;
+                  const detail: TAddedAnswerDetail = { questionId, addedAnswerId, answersCount };
+                  const event = new CustomEvent<TAddedAnswerDetail>(addedAnswerEventName, {
+                    detail,
+                    bubbles: true,
+                  });
+                  setTimeout(() => window.dispatchEvent(event), 100);
+                  // Return data to update a state
+                  return updatedAnswers;
                 });
-                setTimeout(() => window.dispatchEvent(event), 100);
-                // Return data to update a state
-                return updatedAnswers;
-              });
-              // Resolve data
-              resolve(addedAnswer);
-              // NOTE: Close or go to the edit page
-              setVisible(false);
-              router.replace(`${answersContext.routePath}/${addedAnswer.id}`);
-              return addedAnswer;
+                // Resolve data
+                resolve(addedAnswer);
+                // NOTE: Close or go to the edit page
+                setVisible(false);
+                router.replace(`${answersContext.routePath}/${addedAnswer.id}`);
+                return addedAnswer;
+              } else {
+                reject(new Error('Failed to create answer'));
+              }
             })
             .catch((error) => {
+              const details = error instanceof APIError ? error.details : null;
+              const message = 'Cannot create answer';
               // eslint-disable-next-line no-console
-              console.error('[AddAnswerModal:handleAddAnswer:catch]', getErrorText(error), {
+              console.error('[AddAnswerModal]', message, {
+                details,
                 error,
                 newAnswer,
+                questionId,
               });
               debugger; // eslint-disable-line no-debugger
               reject(error);
-              throw error;
             });
-          toast.promise<TAnswer>(promise, {
+          toast.promise(promise, {
             loading: 'Creating a new answer...',
             success: 'Successfully created a new answer.',
             error: 'Can not create a new answer',

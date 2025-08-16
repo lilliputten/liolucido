@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { APIError } from '@/shared/types/api';
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { handleServerAction } from '@/lib/api';
+import { invalidateReactQueryKeys } from '@/lib/data';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
@@ -62,7 +65,8 @@ function Toolbar(props: TToolbarActionsProps) {
           success: 'Answers successfully reloaded',
           error: 'Error reloading answers.',
         });
-        const answers = (await promise) || [];
+        const result = await promise;
+        const answers = result.ok && result.data ? result.data : [];
         setAnswers((prevAnswers) => {
           const prevAnswersCount = prevAnswers.length;
           // Dispatch a custom event with the updated answers data
@@ -81,11 +85,17 @@ function Toolbar(props: TToolbarActionsProps) {
           return answers;
         });
       } catch (error) {
+        const details = error instanceof APIError ? error.details : null;
+        const message = 'Cannot reload answers data';
         // eslint-disable-next-line no-console
-        console.error('[ManageTopicQuestionAnswersListCard:handleReload] catch', {
+        console.error('[Toolbar]', message, {
+          details,
           error,
+          questionId,
+          action: 'getQuestionAnswers',
         });
         debugger; // eslint-disable-line no-debugger
+        toast.error(message);
       }
     });
   }, [answersContext]);
@@ -170,16 +180,32 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
     (checked: boolean) => {
       startTransition(async () => {
         try {
-          await updateAnswer({ ...answer, isCorrect: checked });
-          answersContext.setAnswers((prev) =>
-            prev.map((a) => (a.id === answer.id ? { ...a, isCorrect: checked } : a)),
-          );
-          toast.success(`Answer marked as ${checked ? 'correct' : 'incorrect'}`);
+          const result = await handleServerAction(updateAnswer({ ...answer, isCorrect: checked }), {
+            onInvalidateKeys: invalidateReactQueryKeys,
+            debugDetails: {
+              initiator: 'AnswerTableRow',
+              action: 'updateAnswer',
+              answerId: answer.id,
+            },
+          });
+
+          if (result.ok && result.data) {
+            answersContext.setAnswers((prev) =>
+              prev.map((a) => (a.id === answer.id ? { ...a, isCorrect: checked } : a)),
+            );
+          }
         } catch (error) {
+          const details = error instanceof APIError ? error.details : null;
+          const message = 'Cannot update answer status';
           // eslint-disable-next-line no-console
-          console.error('Failed to update answer:', error);
+          console.error('[AnswerTableRow]', message, {
+            details,
+            error,
+            answerId: answer.id,
+            action: 'updateAnswer',
+          });
           debugger; // eslint-disable-line no-debugger
-          toast.error('Failed to update answer');
+          toast.error(message);
         }
       });
     },

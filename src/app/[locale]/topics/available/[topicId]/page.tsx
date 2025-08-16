@@ -27,10 +27,11 @@ export default async function ViewTopicPage({ params }: TAwaitedProps) {
     return <PageError error={'Not topic specified.'} />;
   }
 
-  const topic = await getTopic(topicId);
-  if (!topic) {
+  const topicResult = await getTopic(topicId);
+  if (!topicResult.ok || !topicResult.data) {
     notFound();
   }
+  const topic = topicResult.data;
 
   return (
     <AvailableTopicsPageWrapper>

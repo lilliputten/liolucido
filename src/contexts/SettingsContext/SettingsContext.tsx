@@ -138,12 +138,12 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   /** Save settings on the server (if user authorized) and locally */
   const updateAndSaveSettings = React.useCallback(
-    (settings: TSettings) => {
+    async (settings: TSettings) => {
       // Save local data and apply the data first
       setAndMemoizeSettings(settings);
       // Then invoke (if authorized) the save procedure on the server
       if (!userId) {
-        return Promise.resolve(settings);
+        return { ok: true, data: settings } as const;
       }
       /* // DEBUG
        * return new Promise<TSettings>((resolve) => setTimeout(resolve, 3000, settings));
@@ -164,11 +164,14 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
        *   return res.json();
        * });
        */
-      toast.promise(savePromise, {
-        loading: 'Saving settings...',
-        success: 'Successfully saved settings.',
-        error: 'Can not save settings.',
-      });
+      toast.promise(
+        savePromise.then((r) => (r.ok && r.data ? r.data : settings)),
+        {
+          loading: 'Saving settings...',
+          success: 'Successfully saved settings.',
+          error: 'Can not save settings.',
+        },
+      );
       return savePromise;
     },
     [setAndMemoizeSettings, userId],
@@ -176,19 +179,21 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   /** Set and save locale */
   const setLocale = React.useCallback(
-    (locale: TSettings['locale'] = defaultLocale) => {
+    async (locale: TSettings['locale'] = defaultLocale) => {
       const updatedSettings = { ...memo.settings, locale };
-      return updateAndSaveSettings(updatedSettings);
+      const result = await updateAndSaveSettings(updatedSettings);
+      return result.ok && result.data ? result.data : updatedSettings;
     },
     [memo, updateAndSaveSettings],
   );
 
   /** Set and save theme */
   const setTheme = React.useCallback(
-    (theme: TSettings['theme'] = defaultTheme) => {
+    async (theme: TSettings['theme'] = defaultTheme) => {
       // memo.setAppTheme?.(theme);
       const updatedSettings = { ...memo.settings, theme };
-      return updateAndSaveSettings(updatedSettings);
+      const result = await updateAndSaveSettings(updatedSettings);
+      return result.ok && result.data ? result.data : updatedSettings;
     },
     [memo, updateAndSaveSettings],
   );

@@ -1,5 +1,6 @@
 'use server';
 
+import { TApiResponse } from '@/shared/types/api';
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
@@ -7,7 +8,9 @@ import { TQuestionId } from '@/features/questions/types';
 
 import { TAnswer } from '../types';
 
-export async function getQuestionAnswers(questionId: TQuestionId) {
+export async function getQuestionAnswers(
+  questionId: TQuestionId,
+): Promise<TApiResponse<TAnswer[]>> {
   // Check user rights to delete the answer...?
   const user = await getCurrentUser();
   const userId = user?.id;
@@ -17,16 +20,37 @@ export async function getQuestionAnswers(questionId: TQuestionId) {
       where: { id: questionId },
     });
     if (!question) {
-      throw new Error(`Not found owner question (${questionId}).`);
+      return {
+        data: null,
+        ok: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: `Question not found (${questionId})`,
+        },
+      };
     }
     const topic = await prisma.topic.findUnique({
       where: { id: question.topicId },
     });
     if (!topic) {
-      throw new Error('Not found owner topic for the answer');
+      return {
+        data: null,
+        ok: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Topic not found',
+        },
+      };
     }
     if (!topic.isPublic && userId !== topic?.userId && user?.role !== 'ADMIN') {
-      throw new Error('Current user is not allowed to access the topic answers');
+      return {
+        data: null,
+        ok: false,
+        error: {
+          code: 'FORBIDDEN',
+          message: 'Not allowed to access these answers',
+        },
+      };
     }
 
     if (isDev) {
@@ -36,13 +60,30 @@ export async function getQuestionAnswers(questionId: TQuestionId) {
     const answers: TAnswer[] = await prisma.answer.findMany({
       where: { questionId },
     });
-    return answers;
+
+    return {
+      data: answers,
+      ok: true,
+      // TODO: Add invalidation keys for React Query
+      // invalidateKeys: [`question-${questionId}-answers`],
+      // TODO: Add service messages for client display
+      // messages: [{ type: 'info', message: `Loaded ${answers.length} answers` }],
+    };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[getQuestionAnswers] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger
-    throw error;
+
+    return {
+      data: null,
+      ok: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to fetch answers',
+        details: { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
   }
 }

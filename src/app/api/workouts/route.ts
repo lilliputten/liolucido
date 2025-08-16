@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { TApiResponse } from '@/shared/types/api';
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { UserTopicWorkoutSchema } from '@/generated/prisma';
@@ -19,7 +20,15 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser();
     if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required',
+        },
+      };
+      return NextResponse.json(response, { status: 401 });
     }
     const body = await request.json();
     const rawData: TCreateWorkout = {
@@ -43,14 +52,35 @@ export async function POST(request: NextRequest) {
     const workout = await prisma.userTopicWorkout.create({
       data: { ...newWorkoutData, userId: user.id },
     });
-    return NextResponse.json(workout, { status: 201 });
+
+    const response: TApiResponse<typeof workout> = {
+      data: workout,
+      ok: true,
+      // TODO: Add invalidation keys for React Query
+      // invalidateKeys: ['workouts', `topic-${workout.topicId}-workouts`],
+      // TODO: Add service messages for client display
+      // messages: [{ type: 'success', message: 'Workout created successfully' }],
+    };
+
+    return NextResponse.json(response, { status: 201 });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[API /workouts POST]', error);
     debugger; // eslint-disable-line no-debugger
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 400 });
-    }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: error instanceof z.ZodError ? 'VALIDATION_ERROR' : 'INTERNAL_ERROR',
+        message: error instanceof z.ZodError ? 'Invalid workout data' : 'Failed to create workout',
+        details:
+          error instanceof z.ZodError
+            ? { errors: error.errors }
+            : { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
+
+    return NextResponse.json(response, { status: error instanceof z.ZodError ? 400 : 500 });
   }
 }

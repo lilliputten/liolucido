@@ -47,8 +47,11 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
   // Enable static rendering
   setRequestLocale(locale);
 
-  const questionsPromise = getTopicQuestions(topicId);
-  const questions: TQuestion[] = await questionsPromise;
+  const questionsResult = await getTopicQuestions(topicId);
+  if (!questionsResult.ok || !questionsResult.data) {
+    return <PageError error={'Failed to load questions for this topic.'} />;
+  }
+  const questions: TQuestion[] = questionsResult.data;
 
   return (
     <QuestionsContextProvider

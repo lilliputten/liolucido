@@ -7,6 +7,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
+import { APIError } from '@/shared/types/api';
+import { handleServerAction } from '@/lib/api';
+import { invalidateReactQueryKeys } from '@/lib/data';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
@@ -123,27 +126,41 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
         answersCountMax: formData.answersCountMax,
       };
       startTransition(() => {
-        const savePromise = updateQuestion(editedQuestion);
-        toast.promise<unknown>(savePromise, {
+        const savePromise = handleServerAction(updateQuestion(editedQuestion), {
+          onInvalidateKeys: invalidateReactQueryKeys,
+          debugDetails: {
+            initiator: 'EditQuestionForm',
+            action: 'updateQuestion',
+            questionId: editedQuestion.id,
+          },
+        });
+        toast.promise(savePromise, {
           loading: 'Saving the question data...',
           success: 'Successfully saved the question',
           error: 'Can not save the question data.',
         });
         return savePromise
-          .then((updatedQuestion) => {
-            setQuestions((questions) => {
-              return questions.map((question) =>
-                question.id === updatedQuestion.id ? updatedQuestion : question,
-              );
-            });
-            form.reset(form.getValues());
+          .then((result) => {
+            if (result.ok && result.data) {
+              const updatedQuestion = result.data;
+              setQuestions((questions) => {
+                return questions.map((question) =>
+                  question.id === updatedQuestion.id ? updatedQuestion : question,
+                );
+              });
+              form.reset(form.getValues());
+            }
           })
           .catch((error) => {
-            const message = getErrorText(error);
+            const details = error instanceof APIError ? error.details : null;
+            const message = 'Cannot save question data';
             // eslint-disable-next-line no-console
-            console.error('[EditQuestionForm:handleFormSubmit]', message, {
+            console.error('[EditQuestionForm]', message, {
+              details,
               error,
+              questionId: editedQuestion.id,
             });
+            debugger; // eslint-disable-line no-debugger
           });
       });
     },

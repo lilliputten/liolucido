@@ -59,7 +59,11 @@ export async function ManageTopicQuestionAnswersLayout(
   // Enable static rendering
   setRequestLocale(locale);
 
-  const answers: TAnswer[] = await getQuestionAnswers(questionId);
+  const answersResult = await getQuestionAnswers(questionId);
+  if (!answersResult.ok || !answersResult.data) {
+    return <PageError error={'Failed to load answers for this question.'} />;
+  }
+  const answers: TAnswer[] = answersResult.data;
 
   return (
     <AnswersContextProvider

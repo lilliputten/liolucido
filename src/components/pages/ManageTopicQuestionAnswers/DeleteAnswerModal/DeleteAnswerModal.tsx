@@ -4,6 +4,9 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { APIError } from '@/shared/types/api';
+import { handleServerAction } from '@/lib/api';
+import { invalidateReactQueryKeys } from '@/lib/data';
 import { truncateMarkdown } from '@/lib/helpers';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deletedAnswerEventName, TDeletedAnswerDetail } from '@/constants/eventTypes';
@@ -62,42 +65,61 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
             reject(new Error('No answer to delete provided'));
             return;
           }
-          const promise = deleteAnswer(deletingAnswer)
-            .then(() => {
-              // Hide the modal
-              hideModal();
-              // Update data
-              answersContext.setAnswers((answers) => {
-                const updatedAnswers = answers.filter(({ id }) => id != deletingAnswer.id);
-                // Dispatch a custom event with the updated answers data
-                const { questionId } = answersContext;
-                const answersCount = updatedAnswers.length;
-                const deletedAnswerId = deletingAnswer.id;
-                const detail: TDeletedAnswerDetail = { questionId, deletedAnswerId, answersCount };
-                const event = new CustomEvent<TDeletedAnswerDetail>(deletedAnswerEventName, {
-                  detail,
+          const promise = handleServerAction(deleteAnswer(deletingAnswer), {
+            onInvalidateKeys: invalidateReactQueryKeys,
+            debugDetails: {
+              initiator: 'DeleteAnswerModal',
+              action: 'deleteAnswer',
+              answerId: deletingAnswer.id,
+            },
+          })
+            .then((result) => {
+              if (result.ok && result.data) {
+                // Hide the modal
+                hideModal();
+                // Update data
+                answersContext.setAnswers((answers) => {
+                  const updatedAnswers = answers.filter(({ id }) => id != deletingAnswer.id);
+                  // Dispatch a custom event with the updated answers data
+                  const { questionId } = answersContext;
+                  const answersCount = updatedAnswers.length;
+                  const deletedAnswerId = deletingAnswer.id;
+                  const detail: TDeletedAnswerDetail = {
+                    questionId,
+                    deletedAnswerId,
+                    answersCount,
+                  };
+                  const event = new CustomEvent<TDeletedAnswerDetail>(deletedAnswerEventName, {
+                    detail,
+                    bubbles: true,
+                  });
+                  setTimeout(() => window.dispatchEvent(event), 100);
+                  // Return data to update a state
+                  return updatedAnswers;
+                });
+                resolve(deletingAnswer);
+                // Dispatch an event
+                const event = new CustomEvent<TAnswer>(topicAnswerDeletedEventId, {
+                  detail: deletingAnswer,
                   bubbles: true,
                 });
-                setTimeout(() => window.dispatchEvent(event), 100);
-                // Return data to update a state
-                return updatedAnswers;
-              });
-              resolve(deletingAnswer);
-              // Dispatch an event
-              const event = new CustomEvent<TAnswer>(topicAnswerDeletedEventId, {
-                detail: deletingAnswer,
-                bubbles: true,
-              });
-              window.dispatchEvent(event);
+                window.dispatchEvent(event);
+              } else {
+                reject(new Error('Failed to delete answer'));
+              }
             })
             .catch((error) => {
+              const details = error instanceof APIError ? error.details : null;
+              const message = 'Cannot delete answer';
               // eslint-disable-next-line no-console
-              console.error('[DeleteAnswerModal:confirmDeleteAnswer:catch]', {
+              console.error('[DeleteAnswerModal]', message, {
+                details,
                 error,
+                answerId: deletingAnswer.id,
+                action: 'deleteAnswer',
               });
               debugger; // eslint-disable-line no-debugger
               reject(error);
-              throw error;
             });
           toast.promise(promise, {
             loading: 'Deleting the answer...',
