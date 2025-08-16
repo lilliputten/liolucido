@@ -71,9 +71,9 @@ model User {
 
   topics Topic[] // Owned topics
 
-  UserTopic        UserTopic[]
+  // UserQuestion     UserQuestion[]
+  // UserTopic        UserTopic[]
   UserTopicWorkout UserTopicWorkout[]
-  UserQuestion     UserQuestion[]
   userSettings     UserSettings?
 
   @@map("users")
@@ -161,7 +161,7 @@ model Topic {
 
   questions Question[] // Questions in this topic
 
-  UserTopic        UserTopic[]
+  // UserTopic        UserTopic[]
   UserTopicWorkout UserTopicWorkout[]
 
   @@index([userId])
@@ -188,7 +188,7 @@ model Question {
 
   answers Answer[] // Answers for this question
 
-  UserQuestion UserQuestion[]
+  // UserQuestion UserQuestion[]
 
   @@index([topicId])
   @@map("questions")
@@ -228,12 +228,29 @@ model UserTopicWorkout {
   topicId String @map("topic_id")
   topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
+  // favorite Boolean? // TODO: Allow adding dd to the favorites list
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  questionsOrder  String @default("") @map("questions_order") // Question IDs, separated by space
-  questionResults String @default("") @map("question_results") // Answer results (correct=1, incorrect=0), packed as a JSON array (`[A,B,...]`), in the order corresponding to `questionsOrder`
-  stepIndex       Int    @default(0) @map("step_index") // Current question
+  startedAt  DateTime? @map("started_at")
+  finishedAt DateTime? @map("finished_at")
+
+  questionsCount   Int?    @map("questions_count") // Questions count
+  questionsOrder   String? @map("questions_order") // Question IDs, separated by space
+  questionResults  String? @map("question_results") // Answer results (correct=1, incorrect=0), packed as a JSON array (`[A,B,...]`), in the order corresponding to `questionsOrder`
+  stepIndex        Int?    @map("step_index") // Current question
+  selectedAnswerId String? @map("selected_answer_id") // Answer for the current question. If defined then consider that user already chosen the answer but hasn't went to the next question (show the choice and suggest to go further)
+
+  currentRatio   Int? @map("current_ratio") // Current ratio (if finished), percent (if finished)
+  currentTime    Int? @map("current_time") // Current time remained to finish, in seconds (if finished)
+  correctAnswers Int? @map("correct_answers") // Current correct answers count (if finished)
+
+  totalRounds  Int    @default(0) @map("total_rounds") // Total rounds for this workout
+  allRatios    String @default("") @map("all_ratios") // All score ratios through all rounds, json packed list of ints (percent)
+  allTimes     String @default("") @map("all_times") // All score times through all rounds, in seconds, json packed list of ints (seconds)
+  averageRatio Int    @default(0) @map("average_ratio") // Average score ratio through all rounds, percent
+  averageTime  Int    @default(0) @map("average_time") // Average score time through all rounds, in seconds
 
   started  Boolean @default(false)
   finished Boolean @default(false)
@@ -242,38 +259,38 @@ model UserTopicWorkout {
   @@map("user_topic_workouts")
 }
 
-// UNUSED
-model UserTopic {
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  topicId String @map("topic_id")
-  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  favorite Boolean @default(false)
-  passed   Boolean @default(false)
-
-  @@id([userId, topicId])
-  @@map("user_topics")
-}
-
-// UNUSED
-model UserQuestion {
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  questionId String   @map("question_id")
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  answered Boolean @default(false)
-  repeat   Boolean @default(false)
-
-  @@id([userId, questionId])
-  @@map("user_questions")
-}
+// // UNUSED: See `userAndTopicRelation.test.ts.UNUSED`
+// model UserTopic {
+//   userId String @map("user_id")
+//   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+//
+//   topicId String @map("topic_id")
+//   topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+//
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @default(now()) @map("updated_at")
+//
+//   favorite Boolean @default(false)
+//   passed   Boolean @default(false)
+//
+//   @@id([userId, topicId])
+//   @@map("user_topics")
+// }
+//
+// // UNUSED
+// model UserQuestion {
+//   userId String @map("user_id")
+//   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+//
+//   questionId String   @map("question_id")
+//   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+//
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @default(now()) @map("updated_at")
+//
+//   answered Boolean @default(false)
+//   repeat   Boolean @default(false)
+//
+//   @@id([userId, questionId])
+//   @@map("user_questions")
+// }

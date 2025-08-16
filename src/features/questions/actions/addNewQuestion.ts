@@ -35,6 +35,7 @@ export async function addNewQuestion(newQuestion: TNewQuestion) {
         where: { topicId: newQuestion.topicId },
       });
 
+      // TODO: Use Promise.all to update all the affected workouts simultaneously
       for (const workout of workouts) {
         const currentOrder = workout.questionsOrder || '';
         const newOrder = currentOrder ? `${currentOrder} ${addedQuestion.id}` : addedQuestion.id;
@@ -47,6 +48,7 @@ export async function addNewQuestion(newQuestion: TNewQuestion) {
             },
           },
           data: {
+            questionsCount: (workout.questionsCount || 0) + 1,
             questionsOrder: newOrder,
           },
         });

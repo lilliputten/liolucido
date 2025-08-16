@@ -38,10 +38,13 @@ export function WorkoutQuestion({
   goPrevQuestion,
   selectedAnswerId,
 }: WorkoutQuestionProps) {
-  const progress = ((currentStep - 1) / totalSteps) * 100;
+  const progressStep = selectedAnswerId ? currentStep : currentStep - 1;
+  const progress = (progressStep / totalSteps) * 100;
 
   const isSelectedCorrect =
     !!selectedAnswerId && answers.find(({ id }) => id === selectedAnswerId)?.isCorrect;
+
+  const isFinished = currentStep >= totalSteps;
 
   return (
     <div data-testid="__WorkoutQuestion" className="flex flex-col gap-6">
@@ -53,7 +56,7 @@ export function WorkoutQuestion({
           </span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <Progress value={progress} className="h-2 bg-theme-500/20" />
+        <Progress value={progress} className="h-2 bg-theme-500/20 transition" />
       </div>
 
       {/* Question */}
@@ -137,40 +140,42 @@ export function WorkoutQuestion({
             Back
           </Button>
         )}
-        {selectedAnswerId ? (
-          <Button
-            data-testid="__WorkoutQuestion_Skip_Button"
-            className={cn(isSelectedCorrect && 'animate-pulse', 'gap-2')}
-            variant="theme"
-            onClick={onContinue}
-          >
-            <Icons.ArrowRight className="size-5 opacity-50" />
-            Continue
-          </Button>
-        ) : (
-          <>
-            {/* Skip Button */}
-            {!selectedAnswerId /* && currentStep < totalSteps */ && (
-              <Button
-                data-testid="__WorkoutQuestion_Skip_Button"
-                className="gap-2"
-                variant="outline"
-                onClick={onSkip}
-              >
-                <Icons.ArrowRight className="size-5 opacity-50" />
-                Skip
-              </Button>
-            )}
-          </>
-        )}
+        {!isFinished &&
+          (selectedAnswerId ? (
+            <Button
+              data-testid="__WorkoutQuestion_Skip_Button"
+              className={cn(isSelectedCorrect && 'animate-pulse', 'gap-2')}
+              variant="theme"
+              onClick={onContinue}
+            >
+              <Icons.ArrowRight className="size-5 opacity-50" />
+              Continue
+            </Button>
+          ) : (
+            <>
+              {/* Skip Button */}
+              {!selectedAnswerId /* && currentStep < totalSteps */ && (
+                <Button
+                  data-testid="__WorkoutQuestion_Skip_Button"
+                  className="gap-2"
+                  variant="outline"
+                  onClick={onSkip}
+                >
+                  <Icons.ArrowRight className="size-5 opacity-50" />
+                  Skip
+                </Button>
+              )}
+            </>
+          ))}
         {/* Finish Button */}
         <Button
           data-testid="__WorkoutQuestion_Finish_Button"
           className={cn(
             'gap-2',
+            isFinished && selectedAnswerId && isSelectedCorrect && 'animate-pulse',
             // selectedAnswerId && 'disabled',
           )}
-          variant="outline"
+          variant={isFinished && selectedAnswerId ? 'theme' : 'outline'}
           onClick={onFinish}
         >
           <Icons.Flag className="size-5 opacity-50" />

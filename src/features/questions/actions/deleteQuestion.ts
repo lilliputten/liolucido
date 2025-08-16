@@ -37,8 +37,9 @@ export async function deleteQuestion(question: TQuestion) {
         where: { topicId: question.topicId },
       });
 
+      // TODO: Use Promise.all to update all the affected workouts simultaneously
       for (const workout of workouts) {
-        const questionsOrder = (workout.questionsOrder || '').split(' ').filter(Boolean);
+        const questionsOrder = (workout.questionsOrder || '').split(' ');
         const questionResults = workout.questionResults ? JSON.parse(workout.questionResults) : [];
         const questionIndex = questionsOrder.indexOf(question.id);
 
@@ -52,9 +53,9 @@ export async function deleteQuestion(question: TQuestion) {
           }
 
           // Adjust stepIndex if needed
-          let newStepIndex = workout.stepIndex;
-          if (questionIndex < workout.stepIndex) {
-            newStepIndex = Math.max(0, workout.stepIndex - 1);
+          let newStepIndex = workout.stepIndex || 0;
+          if (questionIndex < newStepIndex) {
+            newStepIndex = Math.max(0, newStepIndex - 1);
           }
 
           await tx.userTopicWorkout.update({
@@ -66,6 +67,7 @@ export async function deleteQuestion(question: TQuestion) {
             },
             data: {
               questionsOrder: questionsOrder.join(' '),
+              questionsCount: questionsOrder.length,
               questionResults: JSON.stringify(questionResults),
               stepIndex: newStepIndex,
             },

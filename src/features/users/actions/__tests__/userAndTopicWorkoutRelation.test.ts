@@ -1,0 +1,83 @@
+import { Topic, User, UserTopicWorkout } from '@prisma/client';
+
+import { prisma } from '@/lib/db';
+import { getErrorText } from '@/lib/helpers/strings';
+
+test('should create relation and remove it if topic removed', async () => {
+  const users: User[] = [];
+  const topics: Topic[] = [];
+  const userTopicWorkouts: UserTopicWorkout[] = [];
+  try {
+    // Create users...
+    const user1: User = await prisma.user.create({
+      data: { name: 'User for userAndTopicRelation.test' },
+    });
+    const userId = user1.id;
+    users.push(user1);
+    // Create parent records...
+    const topic1 = await prisma.topic.create({
+      data: { name: 'Test topic 1 for user ' + userId, userId },
+    });
+    topics.push(topic1);
+    // Create a user-topic relation record
+    const userTopicWorkout1 = await prisma.userTopicWorkout.create({
+      data: {
+        userId,
+        topicId: topic1.id,
+        totalRounds: 0, // Total rounds for this workout
+        allRatios: '', // All score ratios through all rounds, json packed list of ints (percent)
+        allTimes: '', // All score times through all rounds, in seconds, json packed list of ints (seconds)
+        averageRatio: 0, // Average score ratio through all rounds, percent
+        averageTime: 0, // Average score time through all rounds, in seconds
+      },
+    });
+    userTopicWorkouts.push(userTopicWorkout1);
+    /* // EXAMPLE: Remove user's topic workout directly
+     * const removedUserTopicWorkout = await prisma.userTopicWorkout.delete({
+     *   where: {
+     *     userId_topicId: {
+     *       userId,
+     *       topicId,
+     *     },
+     *   },
+     * });
+     */
+    // Remove topic
+    await prisma.topic.delete({
+      where: {
+        id: topic1.id,
+      },
+    });
+    // Find user's topics again
+    const foundUserTopicWorkouts = await prisma.userTopicWorkout.findMany({
+      where: { userId },
+    });
+    // Should find nothing
+    expect(foundUserTopicWorkouts.length).toBe(0);
+  } catch (error) {
+    const nextText = 'Test error';
+    const errorMessage = getErrorText(error);
+    const nextMessage = [nextText, errorMessage].filter(Boolean).join(': ');
+    const nextError = new Error(nextMessage);
+    // eslint-disable-next-line no-console
+    console.error('[userAndTopicRelation.test]', nextMessage, {
+      nextError,
+      errorMessage,
+      error,
+    });
+    debugger; // eslint-disable-line no-debugger
+    // NOTE: Re-throw the error
+    throw nextError;
+  } finally {
+    // Clean up...
+    await prisma.userTopicWorkout.deleteMany({
+      where: {
+        OR: userTopicWorkouts.map(({ userId, topicId }) => ({
+          AND: [{ userId }, { topicId }],
+        })),
+      },
+    });
+    await prisma.topic.deleteMany({ where: { id: { in: topics.map(({ id }) => id) } } });
+    await prisma.user.deleteMany({ where: { id: { in: users.map(({ id }) => id) } } });
+  }
+});

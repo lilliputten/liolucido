@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TAnswerData } from '@/features/answers/types';
@@ -18,6 +19,7 @@ export function WorkoutQuestionContainer() {
     workout,
     saveResultAndGoNext,
     saveResult,
+    saveAnswer,
     finishWorkout,
     goNextQuestion,
     goPrevQuestion,
@@ -25,25 +27,40 @@ export function WorkoutQuestionContainer() {
   const { questions } = useQuestionsContext();
   const [answers, setAnswers] = React.useState<TAnswerData[]>([]);
   const [isPending, startTransition] = React.useTransition();
-  const [selectedAnswerId, setSelectedAnswerId] = React.useState<string>();
-
-  React.useEffect(() => {
-    setSelectedAnswerId(undefined);
-  }, [workout?.stepIndex]);
+  const selectedAnswerId = workout?.selectedAnswerId;
 
   const memo = React.useMemo<TMemo>(() => ({}), []);
 
-  const currentQuestionId = React.useMemo(() => {
-    if (!workout?.questionsOrder) return null;
-    const questionsOrder = workout.questionsOrder.split(' ');
-    const currentIndex = workout.stepIndex || 0;
-    return questionsOrder[currentIndex] || null;
-  }, [workout?.questionsOrder, workout?.stepIndex]);
+  // Prepare data...
+  const questionsOrder = React.useMemo(
+    () => (workout?.questionsOrder || '').split(' '),
+    [workout?.questionsOrder],
+  );
+  const totalSteps = questionsOrder.length;
+  const stepIndex = workout?.stepIndex || 0;
+  const currentStep = stepIndex + 1;
+  const questionId = questionsOrder[stepIndex];
+  const isExceed = currentStep > totalSteps;
+
+  React.useEffect(() => {
+    if (isExceed) {
+      const error = new Error(
+        `The step index (${currentStep}) exceeds the total steps count (${totalSteps})`,
+      );
+      // eslint-disable-next-line no-console
+      console.warn('[WorkoutQuestionContainer]', error, {
+        totalSteps,
+        currentStep,
+        workout,
+      });
+      finishWorkout();
+    }
+  }, [finishWorkout, isExceed, currentStep, totalSteps, workout]);
 
   const question = React.useMemo(() => {
-    if (!currentQuestionId || !questions) return null;
-    return questions.find((q) => q.id === currentQuestionId) || null;
-  }, [currentQuestionId, questions]);
+    if (!questionId || !questions) return null;
+    return questions.find((q) => q.id === questionId);
+  }, [questionId, questions]);
 
   // Fetch answers
   React.useEffect(() => {
@@ -69,22 +86,20 @@ export function WorkoutQuestionContainer() {
       clearTimeout(memo.nextPageTimerHandler);
       memo.nextPageTimerHandler = undefined;
     }
-    // setSelectedAnswerId(undefined);
     goNextQuestion();
   }, [memo, goNextQuestion]);
 
   const goToThePrevQuestion = React.useCallback(() => {
     goPrevQuestion();
-    // setSelectedAnswerId(undefined);
   }, [goPrevQuestion]);
 
   const onAnswerSelect = React.useCallback(
     (answerId: string) => {
-      setSelectedAnswerId(answerId);
       const answer = answers.find(({ id }) => id === answerId);
       if (answer) {
         const { isCorrect } = answer;
         // Update workout with result and move to next question
+        saveAnswer(answerId);
         saveResult(isCorrect);
         // Auto-advance after delay
         if (isCorrect) {
@@ -92,7 +107,7 @@ export function WorkoutQuestionContainer() {
         }
       }
     },
-    [memo, answers, goToTheNextQuestion, saveResult],
+    [memo, answers, goToTheNextQuestion, saveResult, saveAnswer],
   );
 
   const onSkip = React.useCallback(() => {
@@ -107,7 +122,7 @@ export function WorkoutQuestionContainer() {
         <Skeleton className="h-8 w-full" />
         <div className="grid gap-4 py-4 md:grid-cols-2">
           {[...Array(2)].map((_, i) => (
-            <Skeleton key={i} className="h-20 w-full" />
+            <Skeleton key={i} className="h-15 w-full" />
           ))}
         </div>
         <div className="flex justify-center gap-4">
@@ -120,12 +135,45 @@ export function WorkoutQuestionContainer() {
   }
 
   if (!workout) {
-    return <div className="p-6">No active workout found.</div>;
+    return <div className="py-6">No active workout found.</div>;
   }
 
-  const questionsOrder = (workout.questionsOrder || '').split(' ');
-  const currentStep = (workout.stepIndex || 0) + 1;
-  const totalSteps = questionsOrder.length;
+  function PutDevDebugInfo() {
+    if (isDev) {
+      return (
+        <div className="flex flex-col gap-2 text-xs opacity-50">
+          <div>
+            <span className="opacity-50">Questions order is:</span> {questionsOrder.join(' ')}
+          </div>
+          <div>
+            <span className="opacity-50">Step:</span> {currentStep} / {totalSteps}
+          </div>
+        </div>
+      );
+    }
+  }
+
+  if (isExceed) {
+    return (
+      <div className="flex flex-col gap-3 py-6">
+        <div>The workout has been (suddenly) finished.</div>
+        <PutDevDebugInfo />
+      </div>
+    );
+  }
+
+  if (!questionId) {
+    return (
+      <div className="flex flex-col gap-3 py-6">
+        <div>Cannot get current question id from questions order.</div>
+        <PutDevDebugInfo />
+      </div>
+    );
+  }
+
+  if (!question) {
+    return <div className="py-6">Not found question ({questionId}).</div>;
+  }
 
   return (
     <WorkoutQuestion

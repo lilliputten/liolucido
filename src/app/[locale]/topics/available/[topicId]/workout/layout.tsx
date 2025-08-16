@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { getCurrentUser } from '@/lib/session';
 import { WorkoutContextProvider } from '@/contexts/WorkoutContext';
 import { getTopicQuestions } from '@/features/questions/actions';
 import { getTopic } from '@/features/topics/actions';
@@ -13,6 +14,9 @@ interface WorkoutLayoutProps extends TAwaitedProps {
 
 export default async function WorkoutLayout({ children, params }: WorkoutLayoutProps) {
   const { topicId } = await params;
+
+  const user = await getCurrentUser();
+  const userId = user?.id;
 
   const topic = await getTopic(topicId);
   if (!topic) {
@@ -28,7 +32,7 @@ export default async function WorkoutLayout({ children, params }: WorkoutLayoutP
   // module.
 
   return (
-    <WorkoutContextProvider topic={topic} questionIds={questionIds}>
+    <WorkoutContextProvider userId={userId} topic={topic} questionIds={questionIds}>
       {children}
     </WorkoutContextProvider>
   );
