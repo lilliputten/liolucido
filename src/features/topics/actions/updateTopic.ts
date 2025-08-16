@@ -1,12 +1,11 @@
 'use server';
 
-import { TApiResponse } from '@/shared/types/api';
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 import { TOptionalTopic, TTopic } from '@/features/topics/types';
 
-export async function updateTopic(topic: TTopic): Promise<TApiResponse<TTopic>> {
+export async function updateTopic(topic: TTopic) {
   const user = await getCurrentUser();
   const userId = user?.id;
   try {
@@ -15,24 +14,10 @@ export async function updateTopic(topic: TTopic): Promise<TApiResponse<TTopic>> 
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
     if (!userId) {
-      return {
-        data: null,
-        ok: false,
-        error: {
-          code: 'UNAUTHORIZED',
-          message: 'Authentication required',
-        },
-      };
+      throw new Error('Got undefined user');
     }
     if (!topic.name) {
-      return {
-        data: null,
-        ok: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Topic name is required',
-        },
-      };
+      throw new Error('Not specified topic name');
     }
     /* NOTE: Ensure if the user exists (should be checked on the page load)
      * const isUserExists = await checkIfUserExists(userId);
@@ -50,29 +35,13 @@ export async function updateTopic(topic: TTopic): Promise<TApiResponse<TTopic>> 
       data,
     });
 
-    return {
-      data: updatedTopic as TTopic,
-      ok: true,
-      // TODO: Add invalidation keys for React Query
-      // invalidateKeys: ['topics', `topic-${topic.id}`, `user-${userId}-topics`],
-      // TODO: Add service messages for client display
-      // messages: [{ type: 'success', message: 'Topic updated successfully' }],
-    };
+    return updatedTopic as TTopic;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[updateTopic] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger
-
-    return {
-      data: null,
-      ok: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Failed to update topic',
-        details: { error: error instanceof Error ? error.message : String(error) },
-      },
-    };
+    throw error;
   }
 }

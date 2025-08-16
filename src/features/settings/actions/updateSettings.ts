@@ -2,13 +2,12 @@
 
 import { Prisma } from '@prisma/client';
 
-import { TApiResponse } from '@/shared/types/api';
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 import { nulledSettings, TSettings } from '@/features/settings/types';
 
-export async function updateSettings(settings: TSettings): Promise<TApiResponse<TSettings>> {
+export async function updateSettings(settings: TSettings) {
   if (isDev) {
     // DEBUG: Emulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -16,14 +15,7 @@ export async function updateSettings(settings: TSettings): Promise<TApiResponse<
   const user = await getCurrentUser();
   const userId = user?.id;
   if (!userId) {
-    return {
-      data: null,
-      ok: false,
-      error: {
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required',
-      },
-    };
+    throw new Error('Got undefined user');
   }
   // NOTE: Don't pass userId to `create`
   const { userId: _, ...settingsForCreate } = { ...nulledSettings, ...settings };
@@ -41,15 +33,7 @@ export async function updateSettings(settings: TSettings): Promise<TApiResponse<
       update,
       create,
     });
-
-    return {
-      data: updatedSettings as TSettings,
-      ok: true,
-      // TODO: Add invalidation keys for React Query
-      // invalidateKeys: ['settings', `user-${userId}-settings`],
-      // TODO: Add service messages for client display
-      // messages: [{ type: 'success', message: 'Settings updated successfully' }],
-    };
+    return updatedSettings as TSettings;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[updateSettings] Caught error', {
@@ -60,15 +44,6 @@ export async function updateSettings(settings: TSettings): Promise<TApiResponse<
       userId,
     });
     debugger; // eslint-disable-line no-debugger
-
-    return {
-      data: null,
-      ok: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Failed to update settings',
-        details: { error: error instanceof Error ? error.message : String(error) },
-      },
-    };
+    throw error;
   }
 }

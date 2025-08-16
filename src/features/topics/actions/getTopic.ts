@@ -2,14 +2,13 @@
 
 import { Prisma } from '@prisma/client';
 
-import { TApiResponse } from '@/shared/types/api';
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
 import { TTopic, TTopicId } from '../types';
 
-export async function getTopic(id: TTopicId): Promise<TApiResponse<TTopic | null>> {
+export async function getTopic(id: TTopicId) {
   // Check user rights to delete the question...?
   const user = await getCurrentUser();
   const userId = user?.id;
@@ -36,39 +35,16 @@ export async function getTopic(id: TTopicId): Promise<TApiResponse<TTopic | null
     if (topic) {
       // Check if the current user is allowed to see the topic?
       if (!topic.isPublic && userId !== topic?.userId && user?.role !== 'ADMIN') {
-        return {
-          data: null,
-          ok: false,
-          error: {
-            code: 'FORBIDDEN',
-            message: 'Not allowed to access this topic',
-          },
-        };
+        throw new Error('Current user is not allowed to access the topic');
       }
     }
-    return {
-      data: topic || null,
-      ok: true,
-      // TODO: Add invalidation keys for React Query
-      // invalidateKeys: [`topic-${id}`],
-      // TODO: Add service messages for client display
-      // messages: topic ? [] : [{ type: 'info', message: 'Topic not found' }],
-    };
+    return topic;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[getTopic] catch', {
       error,
     });
     debugger; // eslint-disable-line no-debugger
-
-    return {
-      data: null,
-      ok: false,
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Failed to fetch topic',
-        details: { error: error instanceof Error ? error.message : String(error) },
-      },
-    };
+    throw error;
   }
 }
