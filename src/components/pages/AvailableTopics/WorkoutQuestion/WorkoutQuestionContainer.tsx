@@ -47,12 +47,12 @@ export function WorkoutQuestionContainer() {
       const error = new Error(
         `The step index (${currentStep}) exceeds the total steps count (${totalSteps})`,
       );
+      // eslint-disable-next-line no-console
       console.warn('[WorkoutQuestionContainer]', error, {
         totalSteps,
         currentStep,
         workout,
       });
-      debugger;
       finishWorkout();
     }
   }, [finishWorkout, isExceed, currentStep, totalSteps, workout]);

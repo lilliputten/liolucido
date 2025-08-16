@@ -45,7 +45,6 @@ export function WorkoutQuestion({
     !!selectedAnswerId && answers.find(({ id }) => id === selectedAnswerId)?.isCorrect;
 
   const isFinished = currentStep >= totalSteps;
-  console.log('XXX', isFinished);
 
   return (
     <div data-testid="__WorkoutQuestion" className="flex flex-col gap-6">

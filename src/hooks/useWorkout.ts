@@ -1,7 +1,6 @@
 import React from 'react';
 import { toast } from 'sonner';
 
-import { getObjectDiff } from '@/lib/helpers';
 import { safeJsonParse } from '@/lib/helpers/json';
 import { isDev } from '@/constants';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -104,7 +103,6 @@ export function useWorkout(
       if (workout?.finishedAt && typeof workout.finishedAt === 'string') {
         workout.finishedAt = new Date(workout.finishedAt);
       }
-      console.log('[useWorkout:fetchWorkout]', workout);
       // Prevent Updated workout effect
       memo.workout = workout;
       // Store workout data
@@ -130,7 +128,7 @@ export function useWorkout(
       const userId = memo.userId;
       const isDelete = method === 'DELETE';
       const isNew = method === 'POST';
-      const isUpdate = method === 'PUT';
+      // const isUpdate = method === 'PUT';
       return new Promise<TWorkoutData | null>((resolve, reject) => {
         if (!topicId) {
           return resolve(null);
@@ -148,16 +146,17 @@ export function useWorkout(
                 headers: !isDelete ? { 'Content-Type': 'application/json' } : {},
                 body: requestData != undefined ? JSON.stringify(requestData) : undefined,
               };
-              console.log('[useWorkout:storeData]', method, {
-                data,
-                requestData,
-                isDelete,
-                isNew,
-                isUpdate,
-                requestInit,
-                url,
-                memo,
-              });
+              /* console.log('[useWorkout:storeData]', method, {
+               *   data,
+               *   requestData,
+               *   isDelete,
+               *   isNew,
+               *   isUpdate,
+               *   requestInit,
+               *   url,
+               *   memo,
+               * });
+               */
               // debugger;
               const res = await fetch(url, requestInit);
               const body = await res.text();
@@ -237,14 +236,15 @@ export function useWorkout(
     if (prevWorkout !== workout) {
       /** PUT=Update, POST=Create, DELETE=Delete */
       const method: TMethod = !workout ? 'DELETE' : !prevWorkout ? 'POST' : 'PUT';
-      // DEBUG
-      const __diff = getObjectDiff(prevWorkout as object, workout as object);
-      console.log('[useWorkout:Effect: Updated workout]', method, {
-        __diff,
-        prevWorkout,
-        workout,
-        memo,
-      });
+      /* // DEBUG
+       * const __diff = getObjectDiff(prevWorkout as object, workout as object);
+       * console.log('[useWorkout:Effect: Updated workout]', method, {
+       *   __diff,
+       *   prevWorkout,
+       *   workout,
+       *   memo,
+       * });
+       */
       // debugger;
       updateWorkout(workout, method);
     }
@@ -274,17 +274,11 @@ export function useWorkout(
         startedAt: now,
         finishedAt: now,
       };
-      console.log('[useWorkout:createWorkout]', {
-        questionsOrder,
-        update,
-        memo,
-      });
       return { ...workout, ...update } as TWorkoutData;
     });
   }, [memo]);
 
   const deleteWorkout = React.useCallback(() => {
-    console.log('[useWorkout:deleteWorkout]');
     setWorkout(null);
   }, []);
 
@@ -338,10 +332,11 @@ export function useWorkout(
         averageRatio,
         averageTime,
       };
-      console.log('[useWorkout:finishWorkout]', {
-        update,
-        memo,
-      });
+      /* console.log('[useWorkout:finishWorkout]', {
+       *   update,
+       *   memo,
+       * });
+       */
       return { ...workout, ...update };
     });
   }, [memo]);
@@ -354,9 +349,6 @@ export function useWorkout(
         selectedAnswerId: '',
         finishedAt: new Date(),
       };
-      console.log('[useWorkout:goPrevQuestion]', {
-        update,
-      });
       return { ...workout, ...update } as TWorkoutData;
     });
   }, []);
@@ -374,9 +366,6 @@ export function useWorkout(
         selectedAnswerId: '',
         finishedAt: new Date(),
       };
-      console.log('[useWorkout:goNextQuestion]', {
-        update,
-      });
       return { ...workout, ...update } as TWorkoutData;
     });
   }, [finishWorkout, memo]);
@@ -390,10 +379,6 @@ export function useWorkout(
       resultsList[idx] = resultVal;
       const correctAnswers = resultsList.filter(Boolean).length;
       const questionResults = JSON.stringify(resultsList);
-      console.log('[useWorkout:saveResult]', {
-        result,
-        questionResults,
-      });
       return {
         ...workout,
         questionResults,
@@ -409,14 +394,12 @@ export function useWorkout(
         selectedAnswerId: selectedAnswerId || '',
         finishedAt: new Date(),
       };
-      console.log('[useWorkout:saveAnswer]', update);
       return { ...workout, ...update } as TWorkoutData;
     });
   }, []);
 
   const saveResultAndGoNext = React.useCallback(
     (result: boolean | undefined) => {
-      console.log('[useWorkout:saveResultAndGoNext]', result);
       saveResult(result);
       goNextQuestion();
     },
@@ -437,7 +420,6 @@ export function useWorkout(
       currentTime: 0, // Current time remained to finish, in seconds (if finished)
       correctAnswers: 0, // Current correct answers count (if finished)
     };
-    console.log('[useWorkout:startWorkout]', update);
     setWorkout(
       (workout) =>
         ({
