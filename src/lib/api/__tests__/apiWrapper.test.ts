@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-import { ApiResponse } from '@/shared/types/api';
+import { TApiResponse } from '@/shared/types/api';
 
 import { handleApiResponse, handleServerAction } from '../apiWrapper';
 
@@ -187,7 +187,7 @@ describe('handleServerAction', () => {
   });
 
   it('handles successful server action', async () => {
-    const apiResponse: ApiResponse<{ id: string }> = {
+    const apiResponse: TApiResponse<{ id: string }> = {
       data: { id: '1' },
       ok: true,
     };
@@ -201,7 +201,7 @@ describe('handleServerAction', () => {
   });
 
   it('handles server action with error', async () => {
-    const apiResponse: ApiResponse<null> = {
+    const apiResponse: TApiResponse<null> = {
       data: null,
       ok: false,
       error: {
@@ -225,7 +225,7 @@ describe('handleServerAction', () => {
   });
 
   it('processes invalidation keys and messages', async () => {
-    const apiResponse: ApiResponse<{ id: string }> = {
+    const apiResponse: TApiResponse<{ id: string }> = {
       data: { id: '1' },
       ok: true,
       invalidateKeys: ['topics', 'topic-1'],

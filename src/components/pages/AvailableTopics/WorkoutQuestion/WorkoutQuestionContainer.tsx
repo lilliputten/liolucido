@@ -1,7 +1,10 @@
 'use client';
 
 import React from 'react';
+import { toast } from 'sonner';
 
+import { APIError } from '@/shared/types/api';
+import { handleApiResponse } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
@@ -66,17 +69,34 @@ export function WorkoutQuestionContainer() {
   React.useEffect(() => {
     if (!question) return;
     startTransition(async () => {
-      // Fetch answers
+      const url = `/api/questions/${question.id}/answers`;
       try {
-        const answersResponse = await fetch(`/api/questions/${question.id}/answers`);
-        if (answersResponse.ok) {
-          const answersData = await answersResponse.json();
-          setAnswers(answersData);
+        const result = await handleApiResponse<TAnswerData[]>(fetch(url), {
+          debugDetails: { initiator: 'WorkoutQuestionContainer', url },
+          onInvalidateKeys: (keys) => {
+            // TODO: Integrate with React Query
+            // queryClient.invalidateQueries({ queryKey: keys });
+            // eslint-disable-next-line no-console
+            console.log('[WorkoutQuestionContainer] Invalidate keys:', keys);
+          },
+        });
+        if (result.ok && result.data) {
+          setAnswers(result.data);
+        } else {
+          setAnswers([]);
         }
       } catch (error) {
+        const details = error instanceof APIError ? error.details : null;
+        const message = 'Cannot load answers data';
         // eslint-disable-next-line no-console
-        console.error('Failed to fetch answers:', error);
+        console.error('[WorkoutQuestionContainer]', message, {
+          details,
+          error,
+          url,
+        });
         debugger; // eslint-disable-line no-debugger
+        setAnswers([]);
+        toast.error(message);
       }
     });
   }, [question, startTransition]);
