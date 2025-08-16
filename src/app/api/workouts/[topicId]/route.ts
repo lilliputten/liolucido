@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { TApiResponse } from '@/shared/types/api';
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { UserTopicWorkoutSchema } from '@/generated/prisma';
@@ -20,7 +21,15 @@ export async function GET(
   try {
     const user = await getCurrentUser();
     if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required',
+        },
+      };
+      return NextResponse.json(response, { status: 401 });
     }
 
     const { topicId } = await params;
@@ -35,14 +44,43 @@ export async function GET(
     });
 
     if (!workout) {
-      return NextResponse.json({ error: 'Workout not found' }, { status: 404 });
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Workout not found',
+        },
+      };
+      return NextResponse.json(response, { status: 404 });
     }
 
-    return NextResponse.json(workout);
+    const response: TApiResponse<typeof workout> = {
+      data: workout,
+      ok: true,
+      // TODO: Add invalidation keys for React Query
+      // invalidateKeys: [`workout-${topicId}`, `user-${user.id}-workouts`],
+      // TODO: Add service messages for client display
+      // messages: [{ type: 'info', message: 'Workout loaded successfully' }],
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[API /workouts/[topicId] GET]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    debugger; // eslint-disable-line no-debugger
+
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to fetch workout',
+        details: { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
+
+    return NextResponse.json(response, { status: 500 });
   }
 }
 
@@ -54,7 +92,15 @@ export async function PUT(
   try {
     const user = await getCurrentUser();
     if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required',
+        },
+      };
+      return NextResponse.json(response, { status: 401 });
     }
 
     const { topicId } = await params;
@@ -71,16 +117,35 @@ export async function PUT(
       data: updateData,
     });
 
-    return NextResponse.json(workout);
+    const response: TApiResponse<typeof workout> = {
+      data: workout,
+      ok: true,
+      // TODO: Add invalidation keys for React Query
+      // invalidateKeys: [`workout-${topicId}`, `user-${user.id}-workouts`],
+      // TODO: Add service messages for client display
+      // messages: [{ type: 'success', message: 'Workout updated successfully' }],
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[API /workouts/[topicId] PUT]', error);
+    debugger; // eslint-disable-line no-debugger
 
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 400 });
-    }
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: error instanceof z.ZodError ? 'VALIDATION_ERROR' : 'INTERNAL_ERROR',
+        message: error instanceof z.ZodError ? 'Invalid workout data' : 'Failed to update workout',
+        details:
+          error instanceof z.ZodError
+            ? { errors: error.errors }
+            : { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
 
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(response, { status: error instanceof z.ZodError ? 400 : 500 });
   }
 }
 
@@ -92,7 +157,15 @@ export async function DELETE(
   try {
     const user = await getCurrentUser();
     if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required',
+        },
+      };
+      return NextResponse.json(response, { status: 401 });
     }
 
     const { topicId } = await params;
@@ -106,10 +179,31 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ success: true });
+    const response: TApiResponse<{ success: boolean }> = {
+      data: { success: true },
+      ok: true,
+      // TODO: Add invalidation keys for React Query
+      // invalidateKeys: [`workout-${topicId}`, `user-${user.id}-workouts`],
+      // TODO: Add service messages for client display
+      // messages: [{ type: 'success', message: 'Workout deleted successfully' }],
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[API /workouts/[topicId] DELETE]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    debugger; // eslint-disable-line no-debugger
+
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to delete workout',
+        details: { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
+
+    return NextResponse.json(response, { status: 500 });
   }
 }
