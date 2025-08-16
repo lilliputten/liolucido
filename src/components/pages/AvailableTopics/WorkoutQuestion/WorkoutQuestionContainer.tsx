@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
+import { invalidateReactQueryKeys } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
@@ -73,12 +74,7 @@ export function WorkoutQuestionContainer() {
       try {
         const result = await handleApiResponse<TAnswerData[]>(fetch(url), {
           debugDetails: { initiator: 'WorkoutQuestionContainer', url },
-          onInvalidateKeys: (keys) => {
-            // TODO: Integrate with React Query
-            // queryClient.invalidateQueries({ queryKey: keys });
-            // eslint-disable-next-line no-console
-            console.log('[WorkoutQuestionContainer] Invalidate keys:', keys);
-          },
+          onInvalidateKeys: invalidateReactQueryKeys,
         });
         if (result.ok && result.data) {
           setAnswers(result.data);
