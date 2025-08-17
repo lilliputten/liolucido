@@ -18,17 +18,21 @@ export default async function WorkoutLayout({ children, params }: WorkoutLayoutP
   const user = await getCurrentUser();
   const userId = user?.id;
 
-  const topicResult = await getTopic(topicId);
-  if (!topicResult.ok || !topicResult.data) {
-    notFound();
-  }
-  const topic = topicResult.data;
+  let topic, questions;
+  try {
+    topic = await getTopic(topicId);
+    if (!topic) {
+      notFound();
+    }
 
-  const questionsResult = await getTopicQuestions(topicId);
-  if (!questionsResult.ok || !questionsResult.data) {
+    questions = await getTopicQuestions(topicId);
+    if (!questions) {
+      notFound();
+    }
+  } catch (error) {
     notFound();
   }
-  const questions = questionsResult.data;
+
   const questionIds = questions.map((q) => q.id);
   // NOTE: It's possible to move the `WorkoutContextProvider` into the client
   // component and use the questions list form the upstreaming

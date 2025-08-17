@@ -8,15 +8,13 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { APIError } from '@/shared/types/api';
-import { handleServerAction } from '@/lib/api';
+import { handleApiResponse } from '@/lib/api';
 import { invalidateReactQueryKeys } from '@/lib/data';
-import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext';
-import { updateAnswer } from '@/features/answers/actions';
 import { TAnswer } from '@/features/answers/types';
 
 import { maxTextLength, minTextLength } from '../constants';
@@ -82,14 +80,21 @@ export function EditAnswerForm(props: TEditAnswerFormProps) {
         isGenerated: formData.isGenerated,
       };
       startTransition(() => {
-        const savePromise = handleServerAction(updateAnswer(editedAnswer), {
-          onInvalidateKeys: invalidateReactQueryKeys,
-          debugDetails: {
-            initiator: 'EditAnswerForm',
-            action: 'updateAnswer',
-            answerId: editedAnswer.id,
+        const savePromise = handleApiResponse(
+          fetch(`/api/answers/${editedAnswer.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(editedAnswer),
+          }),
+          {
+            onInvalidateKeys: invalidateReactQueryKeys,
+            debugDetails: {
+              initiator: 'EditAnswerForm',
+              action: 'updateAnswer',
+              answerId: editedAnswer.id,
+            },
           },
-        });
+        );
         toast.promise(savePromise, {
           loading: 'Saving the answer data...',
           success: 'Successfully saved the answer',
@@ -98,7 +103,7 @@ export function EditAnswerForm(props: TEditAnswerFormProps) {
         return savePromise
           .then((result) => {
             if (result.ok && result.data) {
-              const updatedAnswer = result.data;
+              const updatedAnswer = result.data as TAnswer;
               setAnswers((answers) => {
                 return answers.map((answer) =>
                   answer.id === updatedAnswer.id ? updatedAnswer : answer,

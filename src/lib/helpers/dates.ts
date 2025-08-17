@@ -30,16 +30,46 @@ const relativeDateLimit = dayDateLimit;
 // const halfMonthLimit = dayDateLimit * 15;
 const halfYearLimit = dayDateLimit * 30 * 6;
 
+/** Workaround for cases when date has been passed as an ISO string or en empty value (now) */
+export function ensureDate(date?: Date | string): Date {
+  if (!date) {
+    return new Date();
+  }
+  if (typeof date === 'string') {
+    return new Date(date);
+  }
+  return date;
+}
+
 /** Return numeric date epochs difference. The returned value is positive if 'b' is the later than 'a'. Returns zero if the dates are equal. */
-export function compareDates(a: Date, b: Date) {
+export function compareDates(a: Date | string, b: Date | string) {
+  // Workaround for cases when date has been passed as an ISO string
+  a = ensureDate(a);
+  b = ensureDate(b);
+
   return b.getTime() - a.getTime();
 }
 
 export function getFormattedRelativeDate(
   format: ReturnType<typeof useFormatter>,
-  date: Date = new Date(),
-  now: Date = new Date(),
+  date?: Date | string,
+  now?: Date | string,
 ) {
+  // Workaround for cases when date has been passed as an ISO string
+  date = ensureDate(date);
+  now = ensureDate(now);
+
+  /*
+   * // DEBUG
+   * console.log('[dates:getFormattedRelativeDate]', {
+   *   format,
+   *   date,
+   *   now,
+   * });
+   * if (typeof date.getTime !== 'function') {
+   *   debugger;
+   * }
+   */
   const diff = now.getTime() - date.getTime();
   if (diff < relativeDateLimit) {
     // Return relative date
@@ -54,16 +84,24 @@ export function getFormattedRelativeDate(
   });
 }
 
-export function useFormattedRelativeDate(date?: Date, now?: Date) {
+export function useFormattedRelativeDate(date?: Date | string, now?: Date | string) {
+  // Workaround for cases when date has been passed as an ISO string
+  date = ensureDate(date);
+  now = ensureDate(now);
+
   const format = useFormatter();
   return getFormattedRelativeDate(format, date, now);
 }
 
 export function getNativeFormattedRelativeDate(
-  date: Date = new Date(),
-  now: Date = new Date(),
+  date: Date | string = new Date(),
+  now: Date | string = new Date(),
   locale: TLocale = defaultLocale,
 ) {
+  // Workaround for cases when date has been passed as an ISO string
+  date = ensureDate(date);
+  now = ensureDate(now);
+
   const rtf = new Intl.RelativeTimeFormat(locale, { style: 'short' });
   const diff = now.getTime() - date.getTime();
   const absDiff = Math.abs(diff);
@@ -117,7 +155,10 @@ export function formatDate(input: string | number, locale: TLocale = defaultLoca
 }
 
 // Utils from precedent.dev
-export const timeAgo = (timestamp: Date, timeOnly?: boolean): string => {
+export const timeAgo = (timestamp: Date | string, timeOnly?: boolean): string => {
+  // Workaround for cases when date has been passed as an ISO string
+  timestamp = ensureDate(timestamp);
+
   if (!timestamp) {
     return 'never';
   }

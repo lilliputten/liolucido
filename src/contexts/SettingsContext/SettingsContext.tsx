@@ -6,10 +6,11 @@ import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
 import { defaultThemeColor } from '@/config/themeColors';
+import { handleApiResponse } from '@/lib/api';
 import { deleteCookie, setCookie } from '@/lib/helpers/cookies';
 import { removeFalsyValues, removeNullUndefinedValues } from '@/lib/helpers/objects';
 import { useSwitchRouterLocale } from '@/hooks/useSwitchRouterLocale';
-import { getSettings, updateSettings } from '@/features/settings/actions';
+import { getSettings } from '@/features/settings/actions';
 import { defaultSettings, settingsSchema, TSettings } from '@/features/settings/types';
 import { TDefinedUserId } from '@/features/users/types/TUser';
 import { defaultLocale, TLocale } from '@/i18n/types';
@@ -145,25 +146,24 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
       if (!userId) {
         return { ok: true, data: settings } as const;
       }
-      /* // DEBUG
-       * return new Promise<TSettings>((resolve) => setTimeout(resolve, 3000, settings));
-       */
-      const savePromise = updateSettings(settings);
-      /* // ALT: Using api route
-       * const savePromise = fetch('/api/settings', {
-       *   method: 'PUT',
-       *   headers: { 'Content-Type': 'application/json' },
-       *   body: JSON.stringify(settings),
-       * }).then((res) => {
-       *   console.log('[SettingsContext:updateAndSaveSettings] done', {
-       *     res,
-       *   });
-       *   if (!res.ok) {
-       *     throw new Error(`HTTP ${res.status}`);
-       *   }
-       *   return res.json();
-       * });
-       */
+      const savePromise = handleApiResponse(
+        fetch('/api/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings),
+        }),
+        {
+          debugDetails: {
+            initiator: 'SettingsContext',
+            action: 'updateSettings',
+          },
+        },
+      ).then((result) => {
+        if (result.ok && result.data) {
+          return { ok: true, data: result.data as TSettings } as const;
+        }
+        throw new Error('Failed to update settings');
+      });
       toast.promise(
         savePromise.then((r) => (r.ok && r.data ? r.data : settings)),
         {

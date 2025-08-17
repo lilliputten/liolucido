@@ -70,7 +70,7 @@ export async function handleApiResponse<T>(
       };
       const apiError = new APIError(systemError);
       // eslint-disable-next-line no-console
-      console.error('[apiWrapper:handleApiResponse] Parse error', apiError.message, {
+      console.warn('[apiWrapper:handleApiResponse] Parse error:', apiError.message, {
         apiError,
         parseError,
         systemError,
@@ -100,9 +100,7 @@ export async function handleApiResponse<T>(
     // Process invalidation keys
     if (apiResponse.invalidateKeys?.length) {
       onInvalidateKeys?.(apiResponse.invalidateKeys);
-      // TODO: Integrate with React Query invalidation
-      // eslint-disable-next-line no-console
-      console.log('[apiWrapper] Invalidate keys:', apiResponse.invalidateKeys);
+      // TODO: Integrate with React Query invalidation. Remove `invalidateReactQueryKeys` calls from the taget components?
     }
 
     // Process service messages
@@ -116,7 +114,7 @@ export async function handleApiResponse<T>(
       const responseError = apiResponse.error;
       const apiError = new APIError(responseError);
       // eslint-disable-next-line no-console
-      console.error('[apiWrapper:handleApiResponse] API error', apiError.message, {
+      console.warn('[apiWrapper:handleApiResponse] API error:', apiError.message, {
         apiError,
         responseError,
         debugDetails,
@@ -124,7 +122,7 @@ export async function handleApiResponse<T>(
       });
       // debugger; // eslint-disable-line no-debugger
       if (onError) {
-        onError(responseError);
+        onError(apiError);
         return {
           data: apiResponse.data,
           ok: false,
@@ -157,7 +155,7 @@ export async function handleApiResponse<T>(
     const apiError = new APIError(error);
 
     // eslint-disable-next-line no-console
-    console.error('[apiWrapper:handleApiResponse] Final catch', apiError.message, {
+    console.error('[apiWrapper:handleApiResponse] Final catch:', apiError.message, {
       apiError,
       error,
       systemError,
@@ -187,9 +185,7 @@ export async function handleServerAction<T>(
     // Process invalidation keys
     if (apiResponse.invalidateKeys?.length) {
       onInvalidateKeys?.(apiResponse.invalidateKeys);
-      // TODO: Integrate with React Query invalidation
-      // eslint-disable-next-line no-console
-      console.log('[serverAction] Invalidate keys:', apiResponse.invalidateKeys);
+      // TODO: Integrate with React Query invalidation logic. Do the `invalidateReactQueryKeys` calls here, not in target components?
     }
 
     // Process service messages

@@ -42,11 +42,16 @@ export async function WorkoutTopicLayout(props: TWorkoutTopicLayoutProps) {
     redirect(welcomeRoute);
   }
 
-  const questionsResult = await getTopicQuestions(topicId);
-  if (!questionsResult.ok || !questionsResult.data) {
-    return <PageError error={'Failed to load questions for this topic.'} />;
+  let questions: TQuestion[];
+  try {
+    questions = await getTopicQuestions(topicId);
+  } catch (error) {
+    return (
+      <PageError
+        error={error instanceof Error ? error.message : 'Failed to load questions for this topic.'}
+      />
+    );
   }
-  const questions: TQuestion[] = questionsResult.data;
 
   return (
     <QuestionsContextProvider

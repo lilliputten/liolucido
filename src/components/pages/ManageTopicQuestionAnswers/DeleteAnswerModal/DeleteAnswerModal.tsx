@@ -5,13 +5,12 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
-import { handleServerAction } from '@/lib/api';
+import { handleApiResponse } from '@/lib/api';
 import { invalidateReactQueryKeys } from '@/lib/data';
 import { truncateMarkdown } from '@/lib/helpers';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deletedAnswerEventName, TDeletedAnswerDetail } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
-import { deleteAnswer } from '@/features/answers/actions/deleteAnswer';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
 
 import { topicAnswerDeletedEventId } from './constants';
@@ -65,14 +64,21 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
             reject(new Error('No answer to delete provided'));
             return;
           }
-          const promise = handleServerAction(deleteAnswer(deletingAnswer), {
-            onInvalidateKeys: invalidateReactQueryKeys,
-            debugDetails: {
-              initiator: 'DeleteAnswerModal',
-              action: 'deleteAnswer',
-              answerId: deletingAnswer.id,
+          const promise = handleApiResponse(
+            fetch(`/api/answers/${deletingAnswer.id}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(deletingAnswer),
+            }),
+            {
+              onInvalidateKeys: invalidateReactQueryKeys,
+              debugDetails: {
+                initiator: 'DeleteAnswerModal',
+                action: 'deleteAnswer',
+                answerId: deletingAnswer.id,
+              },
             },
-          })
+          )
             .then((result) => {
               if (result.ok && result.data) {
                 // Hide the modal

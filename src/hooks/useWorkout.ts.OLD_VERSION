@@ -1,9 +1,6 @@
 import React from 'react';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
-import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
 import { safeJsonParse } from '@/lib/helpers/json';
 import { isDev } from '@/constants';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -60,41 +57,17 @@ export function useWorkout(
         if (userId) {
           // Fetch from server for authenticated user
           try {
-            const result = await handleApiResponse<TWorkoutData>(
-              fetch(`/api/workouts/${topicId}`),
-              {
-                onInvalidateKeys: invalidateReactQueryKeys,
-                debugDetails: {
-                  initiator: 'useWorkout',
-                  action: 'fetchWorkout',
-                  topicId,
-                },
-                onError: (error) => {
-                  console.warn('[useWorkout:_retrieveData]', {
-                    error,
-                    topicId,
-                    userId,
-                  })
-                  debugger;
-                  // NOTE: Do nothing, we consider that workout just absent
-                },
-              },
-            );
-
-            if (result.ok && result.data) {
-              return resolve(result.data);
+            const response = await fetch(`/api/workouts/${topicId}`);
+            if (response.ok) {
+              const data = (await response.json()) as TWorkoutData;
+              return resolve(data);
             } else {
               return resolve(null);
             }
           } catch (error) {
-            const details = error instanceof APIError ? error.details : null;
-            const msg = 'Cannot load workout';
+            const msg = 'Failed to load workout';
             // eslint-disable-next-line no-console
-            console.error('[useWorkout]', msg, {
-              details,
-              error,
-              topicId,
-            });
+            console.error(msg, error);
             debugger; // eslint-disable-line no-debugger
             return reject(error);
           }
@@ -138,9 +111,7 @@ export function useWorkout(
     } catch (error) {
       const msg = 'Failed to fetch workout';
       // eslint-disable-next-line no-console
-      console.error(msg, {
-        error,
-      });
+      console.error(msg, error);
       debugger; // eslint-disable-line no-debugger
       // Prevent Updated workout effect
       memo.workout = null;
@@ -175,40 +146,46 @@ export function useWorkout(
                 headers: !isDelete ? { 'Content-Type': 'application/json' } : {},
                 body: requestData != undefined ? JSON.stringify(requestData) : undefined,
               };
-
-              const result = await handleApiResponse<TWorkoutData | { success: boolean }>(
-                fetch(url, requestInit),
-                {
-                  onInvalidateKeys: invalidateReactQueryKeys,
-                  debugDetails: {
-                    initiator: 'useWorkout',
-                    action: 'storeData',
-                    method,
-                    topicId,
-                  },
-                },
-              );
-
-              if (result.ok && result.data) {
-                if (isDelete) {
-                  return resolve(null);
-                } else {
-                  return resolve(result.data as TWorkoutData);
-                }
-              } else {
-                const error = new Error(result.error?.message || 'Cannot store workout data');
-                return reject(error);
+              /* console.log('[useWorkout:storeData]', method, {
+               *   data,
+               *   requestData,
+               *   isDelete,
+               *   isNew,
+               *   isUpdate,
+               *   requestInit,
+               *   url,
+               *   memo,
+               * });
+               */
+              // debugger;
+              const res = await fetch(url, requestInit);
+              const body = await res.text();
+              if (!res.ok) {
+                const error = new Error('Cannot store a workout data to the server');
+                // prettier-ignore
+                console.warn('[useWorkout:storeData]', error.message, { // eslint-disable-line no-console
+                  error,
+                  body,
+                  res,
+                  requestInit,
+                  url,
+                  isNew,
+                  isDelete,
+                  data,
+                  method,
+                });
+                debugger; // eslint-disable-line no-debugger
+                reject(error);
+              } else if (!isDelete) {
+                const result = safeJsonParse(body, null);
+                return resolve(result);
+              } else if (isDelete) {
+                return resolve(null);
               }
             } catch (error) {
-              const details = error instanceof APIError ? error.details : null;
-              const msg = 'Cannot store workout data';
+              const msg = 'Failed to store workout data';
               // eslint-disable-next-line no-console
-              console.error('[useWorkout]', msg, {
-                details,
-                error,
-                method,
-                topicId,
-              });
+              console.error(msg, error);
               debugger; // eslint-disable-line no-debugger
               return reject(error);
             }

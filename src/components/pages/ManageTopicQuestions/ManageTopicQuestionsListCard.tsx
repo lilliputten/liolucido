@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { handleServerAction } from '@/lib/api';
+import { handleApiResponse } from '@/lib/api';
 import { invalidateReactQueryKeys } from '@/lib/data';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
@@ -31,7 +31,6 @@ import {
 } from '@/constants/eventTypes';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useTopicsContext } from '@/contexts/TopicsContext';
-import { getTopicQuestions } from '@/features/questions/actions';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 
@@ -63,7 +62,7 @@ function Toolbar(props: TToolbarActionsProps) {
     const { topicId, setQuestions } = questionsContext;
     startReload(async () => {
       try {
-        const result = await handleServerAction(getTopicQuestions(topicId), {
+        const result = await handleApiResponse(fetch(`/api/topics/${topicId}/questions`), {
           onInvalidateKeys: invalidateReactQueryKeys,
           debugDetails: {
             initiator: 'Toolbar',
@@ -71,7 +70,7 @@ function Toolbar(props: TToolbarActionsProps) {
             topicId,
           },
         });
-        const questions = result.ok && result.data ? result.data : [];
+        const questions = result.ok && result.data ? (result.data as TQuestion[]) : [];
         setQuestions((prevQuestions) => {
           const prevQuestionsCount = prevQuestions.length;
           // Dispatch a custom event with the updated questions data

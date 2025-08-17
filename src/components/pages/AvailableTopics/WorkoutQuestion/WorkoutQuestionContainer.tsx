@@ -138,7 +138,7 @@ export function WorkoutQuestionContainer() {
         <Skeleton className="h-8 w-full" />
         <div className="grid gap-4 py-4 md:grid-cols-2">
           {[...Array(2)].map((_, i) => (
-            <Skeleton key={i} className="h-15 w-full" />
+            <Skeleton key={i} className="h-12 w-full" />
           ))}
         </div>
         <div className="flex justify-center gap-4">

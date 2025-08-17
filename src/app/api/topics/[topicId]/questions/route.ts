@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { TApiResponse } from '@/shared/types/api';
-import { getQuestionAnswers } from '@/features/answers/actions';
+import { getTopicQuestions } from '@/features/questions/actions';
 
-/** GET /api/questions/[questionId]/answers - Get answers for a question */
+/** GET /api/topics/[topicId]/questions - Get questions for a topic */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ questionId: string }> },
+  { params }: { params: Promise<{ topicId: string }> },
 ) {
   try {
-    const { questionId } = await params;
-    const answers = await getQuestionAnswers(questionId);
+    const { topicId } = await params;
+    const questions = await getTopicQuestions(topicId);
 
-    const response: TApiResponse<typeof answers> = {
-      data: answers,
+    const response: TApiResponse<typeof questions> = {
+      data: questions,
       ok: true,
     };
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('[API /questions/[questionId]/answers GET]', error);
+    console.error('[API /topics/[topicId]/questions GET]', error);
 
     const response: TApiResponse<null> = {
       data: null,
       ok: false,
       error: {
         code: 'INTERNAL_ERROR',
-        message: error instanceof Error ? error.message : 'Failed to fetch answers',
+        message: error instanceof Error ? error.message : 'Failed to fetch questions',
         details: { error: error instanceof Error ? error.message : String(error) },
       },
     };

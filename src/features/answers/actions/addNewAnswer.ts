@@ -55,4 +55,3 @@ export async function addNewAnswer(newAnswer: TNewAnswer) {
     throw error;
   }
 }
-

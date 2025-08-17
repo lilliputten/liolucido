@@ -45,7 +45,6 @@ Here is a draf list of server side routes and functions, what require update:
 
 Can you find all the calls to these api methods on the client side on your own, or do you need help?
 
-
 ---
 
 Corrections:
@@ -62,7 +61,7 @@ All other things in server parts look ok (later we'll pass it through linters).
 
 Client parts:
 
-- Use answers retrieving fragment  `src/components/pages/AvailableTopics/WorkoutQuestion/WorkoutQuestionContainer.tsx` as a template.
+- Use answers retrieving fragment `src/components/pages/AvailableTopics/WorkoutQuestion/WorkoutQuestionContainer.tsx` as a template.
 
 - Use `onInvalidateKeys: invalidateReactQueryKeys` instead inline functions for `onInvalidateKeys` options fields (I'll integrate it with react query later). There already is implementation of `invalidateReactQueryKeys` in the `src/lib/data/invalidateReactQueryKeys.ts` (available to import as `import { invalidateReactQueryKeys } from '@/lib/data';`).
 
@@ -92,7 +91,6 @@ And check corresponding server-side api routes for creating correct `TApiRespons
 NextResponse.json:
 
 - src/app/api/questions/[questionId]/route.ts
-
 
 ---
 

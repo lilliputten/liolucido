@@ -35,7 +35,7 @@ export default async function ViewAnswerPage({ params }: TAwaitedProps) {
       <ViewAnswerCard
         className={cn(
           isDev && '__page_ViewAnswerPage', // DEBUG
-          'mx-4',
+          // 'mx-4',
         )}
         answerId={answerId}
       />

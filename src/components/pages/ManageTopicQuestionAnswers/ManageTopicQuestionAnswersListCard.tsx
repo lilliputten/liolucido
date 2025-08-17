@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { handleServerAction } from '@/lib/api';
+import { handleApiResponse } from '@/lib/api';
 import { invalidateReactQueryKeys } from '@/lib/data';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
@@ -29,7 +29,6 @@ import { isDev } from '@/constants';
 import { TUpdatedAnswersCountDetail, updatedQuestionsCountEventName } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { getQuestionAnswers, updateAnswer } from '@/features/answers/actions';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
 
@@ -59,14 +58,21 @@ function Toolbar(props: TToolbarActionsProps) {
     const { questionId, setAnswers } = answersContext;
     startReload(async () => {
       try {
-        const promise = getQuestionAnswers(questionId);
+        const promise = handleApiResponse(fetch(`/api/questions/${questionId}/answers`), {
+          onInvalidateKeys: invalidateReactQueryKeys,
+          debugDetails: {
+            initiator: 'ManageTopicQuestionAnswersListCard',
+            action: 'getQuestionAnswers',
+            questionId,
+          },
+        });
         toast.promise(promise, {
           loading: 'Reloading answers data...',
           success: 'Answers successfully reloaded',
           error: 'Error reloading answers.',
         });
         const result = await promise;
-        const answers = result.ok && result.data ? result.data : [];
+        const answers = result.ok && result.data ? (result.data as TAnswer[]) : [];
         setAnswers((prevAnswers) => {
           const prevAnswersCount = prevAnswers.length;
           // Dispatch a custom event with the updated answers data
@@ -180,14 +186,21 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
     (checked: boolean) => {
       startTransition(async () => {
         try {
-          const result = await handleServerAction(updateAnswer({ ...answer, isCorrect: checked }), {
-            onInvalidateKeys: invalidateReactQueryKeys,
-            debugDetails: {
-              initiator: 'AnswerTableRow',
-              action: 'updateAnswer',
-              answerId: answer.id,
+          const result = await handleApiResponse(
+            fetch(`/api/answers/${answer.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...answer, isCorrect: checked }),
+            }),
+            {
+              onInvalidateKeys: invalidateReactQueryKeys,
+              debugDetails: {
+                initiator: 'AnswerTableRow',
+                action: 'updateAnswer',
+                answerId: answer.id,
+              },
             },
-          });
+          );
 
           if (result.ok && result.data) {
             answersContext.setAnswers((prev) =>

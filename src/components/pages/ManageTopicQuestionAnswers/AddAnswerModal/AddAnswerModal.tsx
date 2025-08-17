@@ -5,9 +5,8 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
-import { handleServerAction } from '@/lib/api';
+import { handleApiResponse } from '@/lib/api';
 import { invalidateReactQueryKeys } from '@/lib/data';
-import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -15,7 +14,6 @@ import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
 import { addedAnswerEventName, TAddedAnswerDetail } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
-import { addNewAnswer } from '@/features/answers/actions';
 import { TAnswer, TNewAnswer } from '@/features/answers/types';
 import { usePathname } from '@/i18n/routing';
 
@@ -55,20 +53,27 @@ export function AddAnswerModal() {
     (newAnswer: TNewAnswer) => {
       return new Promise((resolve, reject) => {
         return startUpdating(() => {
-          const promise = handleServerAction(addNewAnswer(newAnswer), {
-            onInvalidateKeys: invalidateReactQueryKeys,
-            debugDetails: {
-              initiator: 'AddAnswerModal',
-              action: 'addNewAnswer',
-              questionId,
+          const promise = handleApiResponse(
+            fetch('/api/answers', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(newAnswer),
+            }),
+            {
+              onInvalidateKeys: invalidateReactQueryKeys,
+              debugDetails: {
+                initiator: 'AddAnswerModal',
+                action: 'addNewAnswer',
+                questionId,
+              },
             },
-          })
+          )
             .then((result) => {
               if (result.ok && result.data) {
-                const addedAnswer = result.data;
+                const addedAnswer = result.data as TAnswer;
                 // Update topics list
                 answersContext.setAnswers((answers) => {
-                  const updatedAnswers = answers.concat(addedAnswer);
+                  const updatedAnswers = [...answers, addedAnswer];
                   // Dispatch a custom event with the updated answers data
                   const answersCount = updatedAnswers.length;
                   const addedAnswerId = addedAnswer.id;
@@ -107,7 +112,7 @@ export function AddAnswerModal() {
           toast.promise(promise, {
             loading: 'Creating a new answer...',
             success: 'Successfully created a new answer.',
-            error: 'Can not create a new answer',
+            error: 'Cannot create answer',
           });
         });
       });

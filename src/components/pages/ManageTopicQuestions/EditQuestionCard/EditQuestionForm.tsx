@@ -8,15 +8,13 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { APIError } from '@/shared/types/api';
-import { handleServerAction } from '@/lib/api';
+import { handleApiResponse } from '@/lib/api';
 import { invalidateReactQueryKeys } from '@/lib/data';
-import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { updateQuestion } from '@/features/questions/actions';
 import { TQuestion, TQuestionData } from '@/features/questions/types';
 
 import { maxTextLength, minTextLength } from '../constants';
@@ -126,14 +124,21 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
         answersCountMax: formData.answersCountMax,
       };
       startTransition(() => {
-        const savePromise = handleServerAction(updateQuestion(editedQuestion), {
-          onInvalidateKeys: invalidateReactQueryKeys,
-          debugDetails: {
-            initiator: 'EditQuestionForm',
-            action: 'updateQuestion',
-            questionId: editedQuestion.id,
+        const savePromise = handleApiResponse(
+          fetch(`/api/questions/${editedQuestion.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(editedQuestion),
+          }),
+          {
+            onInvalidateKeys: invalidateReactQueryKeys,
+            debugDetails: {
+              initiator: 'EditQuestionForm',
+              action: 'updateQuestion',
+              questionId: editedQuestion.id,
+            },
           },
-        });
+        );
         toast.promise(savePromise, {
           loading: 'Saving the question data...',
           success: 'Successfully saved the question',
@@ -142,7 +147,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
         return savePromise
           .then((result) => {
             if (result.ok && result.data) {
-              const updatedQuestion = result.data;
+              const updatedQuestion = result.data as TQuestion;
               setQuestions((questions) => {
                 return questions.map((question) =>
                   question.id === updatedQuestion.id ? updatedQuestion : question,

@@ -41,7 +41,7 @@ export function WorkoutTopicControl(props: TProps) {
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
         {workout.finished
-          ? `The workout is completed ${getFormattedRelativeDate(format, workout.finishedAt)} in ${formatSecondsDuration(workout.currentTime)} with a ratio of ${workout.currentRatio}% (${workout.correctAnswers} of ${workout.questionsCount} correct answers).`
+          ? `The workout is completed ${getFormattedRelativeDate(format, workout.finishedAt)} in ${formatSecondsDuration(workout.currentTime)} with a ratio of ${workout.currentRatio}% (${workout.correctAnswers} of ${workout.questionsCount} with correct answers).`
           : workout.started
             ? 'Your workout is in progress (the progress will be shown here)' // TODO: Show the progress
             : `The workout has been created ${getFormattedRelativeDate(format, workout.startedAt)} and now is ready to start`}

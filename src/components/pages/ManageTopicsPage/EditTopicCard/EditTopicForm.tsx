@@ -9,15 +9,13 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { APIError } from '@/shared/types/api';
-import { handleServerAction } from '@/lib/api';
+import { handleApiResponse } from '@/lib/api';
 import { invalidateReactQueryKeys } from '@/lib/data';
-import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { updateTopic } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
 import {
   selectTopicEventName,
@@ -176,14 +174,21 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         answersCountMax: formData.answersCountMax,
       };
       startTransition(async () => {
-        const savePromise = handleServerAction(updateTopic(editedTopic), {
-          onInvalidateKeys: invalidateReactQueryKeys,
-          debugDetails: {
-            initiator: 'EditTopicForm',
-            action: 'updateTopic',
-            topicId: editedTopic.id,
+        const savePromise = handleApiResponse(
+          fetch(`/api/topics/${editedTopic.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(editedTopic),
+          }),
+          {
+            onInvalidateKeys: invalidateReactQueryKeys,
+            debugDetails: {
+              initiator: 'EditTopicForm',
+              action: 'updateTopic',
+              topicId: editedTopic.id,
+            },
           },
-        });
+        );
         toast.promise(savePromise, {
           loading: 'Saving the topic data...',
           success: 'Successfully saved the topic',
@@ -192,7 +197,7 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         try {
           const result = await savePromise;
           if (result.ok && result.data) {
-            const updatedTopic = result.data;
+            const updatedTopic = result.data as TTopic;
             topicsContext.setTopics((topics) => {
               return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
             });
