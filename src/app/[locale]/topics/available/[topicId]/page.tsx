@@ -34,6 +34,9 @@ export default async function ViewTopicPage({ params }: TAwaitedProps) {
       notFound();
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[src/app/[locale]/topics/available/[topicId]/page.tsx]', error);
+    debugger; // eslint-disable-line no-debugger
     notFound();
   }
 

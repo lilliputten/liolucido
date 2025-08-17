@@ -32,7 +32,9 @@ export async function PUT(
 
     return NextResponse.json(response);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[API /answers/[answerId] PUT]', error);
+    debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {
       data: null,
@@ -59,10 +61,10 @@ export async function PUT(
 /** DELETE /api/answers/[answerId] - Delete answer */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ answerId: string }> },
+  // { params }: { params: Promise<{ answerId: string }> },
 ) {
   try {
-    const { answerId } = await params;
+    // const { answerId } = await params;
     const body = await request.json();
     const answerData = body as TAnswer;
 
@@ -75,7 +77,9 @@ export async function DELETE(
 
     return NextResponse.json(response);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[API /answers/[answerId] DELETE]', error);
+    debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {
       data: null,

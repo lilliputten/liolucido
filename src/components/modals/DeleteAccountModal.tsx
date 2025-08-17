@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Modal } from '@/components/ui/modal';
@@ -19,6 +19,7 @@ function DeleteAccountModal({
 }) {
   const { data: session } = useSession();
   const [deleting, setDeleting] = useState(false);
+  const invalidateKeys = useInvalidateReactQueryKeys();
 
   async function deleteAccount() {
     setDeleting(true);
@@ -31,7 +32,7 @@ function DeleteAccountModal({
           },
         }),
         {
-          onInvalidateKeys: invalidateReactQueryKeys,
+          onInvalidateKeys: invalidateKeys,
           debugDetails: {
             initiator: 'DeleteAccountModal',
             action: 'deleteAccount',

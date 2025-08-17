@@ -27,7 +27,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[API /answers POST]', error);
+    debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {
       data: null,

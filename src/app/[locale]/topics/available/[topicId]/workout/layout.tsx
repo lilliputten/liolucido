@@ -30,6 +30,9 @@ export default async function WorkoutLayout({ children, params }: WorkoutLayoutP
       notFound();
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[src/app/[locale]/topics/available/[topicId]/workout/layout.tsx]', error);
+    debugger; // eslint-disable-line no-debugger
     notFound();
   }
 

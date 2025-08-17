@@ -47,75 +47,79 @@ export function useWorkout(
   memo.stepIndex = workout?.stepIndex;
 
   /** Low-level load data function */
-  const _retrieveData = React.useCallback((topicId?: TTopicId, userId?: TDefinedUserId) => {
-    // const topicId = memo.topicId;
-    // const userId = memo.user?.id;
-    return new Promise<TWorkoutData | null>((resolve, reject) => {
-      if (!topicId) {
-        return resolve(null);
-      }
-      startTransition(async () => {
-        if (isDev) {
-          await new Promise((r) => setTimeout(r, 1000));
+  const _retrieveData = React.useCallback(
+    (topicId?: TTopicId, userId?: TDefinedUserId) => {
+      // const topicId = memo.topicId;
+      // const userId = memo.user?.id;
+      return new Promise<TWorkoutData | null>((resolve, reject) => {
+        if (!topicId) {
+          return resolve(null);
         }
-        if (userId) {
-          // Fetch from server for authenticated user
-          try {
-            const result = await handleApiResponse<TWorkoutData>(
-              fetch(`/api/workouts/${topicId}`),
-              {
-                onInvalidateKeys: invalidateKeys,
-                debugDetails: {
-                  initiator: 'useWorkout',
-                  action: 'fetchWorkout',
-                  topicId,
-                },
-                onError: (error) => {
-                  console.warn('[useWorkout:_retrieveData]', {
-                    error,
+        startTransition(async () => {
+          if (isDev) {
+            await new Promise((r) => setTimeout(r, 1000));
+          }
+          if (userId) {
+            // Fetch from server for authenticated user
+            try {
+              const result = await handleApiResponse<TWorkoutData>(
+                fetch(`/api/workouts/${topicId}`),
+                {
+                  onInvalidateKeys: invalidateKeys,
+                  debugDetails: {
+                    initiator: 'useWorkout',
+                    action: 'fetchWorkout',
                     topicId,
-                    userId,
-                  });
-                  // NOTE: Do nothing, we consider that workout just absent
+                  },
+                  onError: (error) => {
+                    // eslint-disable-next-line no-console
+                    console.warn('[useWorkout:_retrieveData] Workout not found', {
+                      error,
+                      topicId,
+                      userId,
+                    });
+                    // NOTE: Do nothing, we consider that workout just absent
+                  },
                 },
-              },
-            );
+              );
 
-            if (result.ok && result.data) {
-              return resolve(result.data);
-            } else {
-              return resolve(null);
+              if (result.ok && result.data) {
+                return resolve(result.data);
+              } else {
+                return resolve(null);
+              }
+            } catch (error) {
+              const details = error instanceof APIError ? error.details : null;
+              const msg = 'Cannot load workout';
+              // eslint-disable-next-line no-console
+              console.error('[useWorkout]', msg, {
+                details,
+                error,
+                topicId,
+              });
+              debugger; // eslint-disable-line no-debugger
+              return reject(error);
             }
-          } catch (error) {
-            const details = error instanceof APIError ? error.details : null;
-            const msg = 'Cannot load workout';
-            // eslint-disable-next-line no-console
-            console.error('[useWorkout]', msg, {
-              details,
-              error,
-              topicId,
-            });
-            debugger; // eslint-disable-line no-debugger
-            return reject(error);
+          } else if (typeof localStorage === 'object') {
+            // Fetch from localStorage for unauthenticated user
+            try {
+              const stored = localStorage.getItem(`workout-${topicId}`);
+              const data = safeJsonParse(stored, null);
+              return resolve(data);
+            } catch (error) {
+              const msg = 'Failed to load workout from local storage';
+              // eslint-disable-next-line no-console
+              console.error(msg, error);
+              debugger; // eslint-disable-line no-debugger
+              return reject(error);
+            }
           }
-        } else if (typeof localStorage === 'object') {
-          // Fetch from localStorage for unauthenticated user
-          try {
-            const stored = localStorage.getItem(`workout-${topicId}`);
-            const data = safeJsonParse(stored, null);
-            return resolve(data);
-          } catch (error) {
-            const msg = 'Failed to load workout from local storage';
-            // eslint-disable-next-line no-console
-            console.error(msg, error);
-            debugger; // eslint-disable-line no-debugger
-            return reject(error);
-          }
-        }
-        resolve(null);
+          resolve(null);
+        });
       });
-    });
-  }, []);
+    },
+    [invalidateKeys],
+  );
 
   /** Retrieve workout data from the server or local storage.
    * In case of authentificated user, will be invoked twice, 'cause the session user will be initialized with a delay.

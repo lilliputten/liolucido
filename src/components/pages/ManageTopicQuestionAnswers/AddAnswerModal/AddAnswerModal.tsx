@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -28,6 +28,7 @@ export function AddAnswerModal() {
   }, [router]);
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
+  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const answersContext = useAnswersContext();
   const { questionId } = answersContext;
@@ -60,7 +61,7 @@ export function AddAnswerModal() {
               body: JSON.stringify(newAnswer),
             }),
             {
-              onInvalidateKeys: invalidateReactQueryKeys,
+              onInvalidateKeys: invalidateKeys,
               debugDetails: {
                 initiator: 'AddAnswerModal',
                 action: 'addNewAnswer',
@@ -117,7 +118,7 @@ export function AddAnswerModal() {
         });
       });
     },
-    [answersContext, questionId, router],
+    [answersContext, invalidateKeys, questionId, router],
   );
 
   return (

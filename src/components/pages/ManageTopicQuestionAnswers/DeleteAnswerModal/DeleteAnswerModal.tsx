@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { truncateMarkdown } from '@/lib/helpers';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deletedAnswerEventName, TDeletedAnswerDetail } from '@/constants/eventTypes';
@@ -26,6 +26,7 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
   const [isVisible, setIsVisible] = React.useState(true);
   const answersContext = useAnswersContext();
   const { answers } = answersContext;
+  const invalidateKeys = useInvalidateReactQueryKeys();
   const hideModal = React.useCallback(() => {
     setIsVisible(false);
     const { href } = window.location;
@@ -71,7 +72,7 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
               body: JSON.stringify(deletingAnswer),
             }),
             {
-              onInvalidateKeys: invalidateReactQueryKeys,
+              onInvalidateKeys: invalidateKeys,
               debugDetails: {
                 initiator: 'DeleteAnswerModal',
                 action: 'deleteAnswer',
@@ -134,7 +135,7 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
           });
         });
       }),
-    [deletingAnswer, hideModal, answersContext],
+    [deletingAnswer, hideModal, answersContext, invalidateKeys],
   );
 
   const answerName = deletingAnswer && truncateMarkdown(deletingAnswer.text, 30);

@@ -42,7 +42,9 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[API /questions/[questionId] GET]', error);
+    debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {
       data: null,
@@ -77,7 +79,9 @@ export async function PUT(
 
     return NextResponse.json(response);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[API /questions/[questionId] PUT]', error);
+    debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {
       data: null,

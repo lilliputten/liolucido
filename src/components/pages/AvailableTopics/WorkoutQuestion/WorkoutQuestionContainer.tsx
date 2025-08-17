@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
@@ -32,6 +32,7 @@ export function WorkoutQuestionContainer() {
   const [answers, setAnswers] = React.useState<TAnswerData[]>([]);
   const [isPending, startTransition] = React.useTransition();
   const selectedAnswerId = workout?.selectedAnswerId;
+  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const memo = React.useMemo<TMemo>(() => ({}), []);
 
@@ -74,7 +75,7 @@ export function WorkoutQuestionContainer() {
       try {
         const result = await handleApiResponse<TAnswerData[]>(fetch(url), {
           debugDetails: { initiator: 'WorkoutQuestionContainer', url },
-          onInvalidateKeys: invalidateReactQueryKeys,
+          onInvalidateKeys: invalidateKeys,
         });
         if (result.ok && result.data) {
           setAnswers(result.data);
@@ -95,7 +96,7 @@ export function WorkoutQuestionContainer() {
         toast.error(message);
       }
     });
-  }, [question, startTransition]);
+  }, [question, startTransition, invalidateKeys]);
 
   const goToTheNextQuestion = React.useCallback(() => {
     if (memo.nextPageTimerHandler) {

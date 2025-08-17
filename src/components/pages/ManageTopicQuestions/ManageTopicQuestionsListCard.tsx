@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { APIError } from '@/shared/types/api';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
@@ -55,6 +55,7 @@ interface TToolbarActionsProps {
 function Toolbar(props: TToolbarActionsProps) {
   const { handleAddQuestion, goBack } = props;
   const [isReloading, startReload] = React.useTransition();
+  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const questionsContext = useQuestionsContext();
 
@@ -63,7 +64,7 @@ function Toolbar(props: TToolbarActionsProps) {
     startReload(async () => {
       try {
         const result = await handleApiResponse(fetch(`/api/topics/${topicId}/questions`), {
-          onInvalidateKeys: invalidateReactQueryKeys,
+          onInvalidateKeys: invalidateKeys,
           debugDetails: {
             initiator: 'Toolbar',
             action: 'getTopicQuestions',
@@ -102,7 +103,7 @@ function Toolbar(props: TToolbarActionsProps) {
         toast.error(message);
       }
     });
-  }, [questionsContext]);
+  }, [questionsContext, invalidateKeys]);
 
   return (
     <div

@@ -9,7 +9,7 @@ import * as z from 'zod';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
@@ -44,6 +44,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
   } = props;
   const { setQuestions } = useQuestionsContext();
   const [isPending, startTransition] = React.useTransition();
+  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const formSchema = React.useMemo(
     () =>
@@ -131,7 +132,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
             body: JSON.stringify(editedQuestion),
           }),
           {
-            onInvalidateKeys: invalidateReactQueryKeys,
+            onInvalidateKeys: invalidateKeys,
             debugDetails: {
               initiator: 'EditQuestionForm',
               action: 'updateQuestion',
@@ -169,7 +170,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
           });
       });
     },
-    [form, setQuestions, question],
+    [form, setQuestions, question, invalidateKeys],
   );
 
   const handleCancel = React.useCallback(
