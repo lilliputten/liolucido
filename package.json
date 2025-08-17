@@ -6,7 +6,7 @@
   "license": "ISC",
   "version": "0.0.2",
   "timestamp": "2025.08.01 22:20:29 +0300",
-  "changed": "2025.07.15, 22:18",
+  "changed": "2025.08.17, 03:57",
   "private": false,
   "main": "src/app/page.tsx",
   "lint-staged": {
@@ -82,6 +82,9 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "^0.5.16",
+    "@tanstack/eslint-plugin-query": "^5.83.1",
+    "@tanstack/react-query": "^5.85.3",
+    "@tanstack/react-query-devtools": "^5.85.3",
     "@telegram-auth/react": "^1.0.4",
     "@telegram-auth/server": "^1.0.4",
     "@testing-library/jest-dom": "^6.6.3",

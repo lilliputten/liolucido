@@ -3,6 +3,7 @@
 import { fixupPluginRules } from '@eslint/compat';
 import pluginJs from '@eslint/js';
 import nextPlugin from '@next/eslint-plugin-next';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import { dirname } from 'path';
@@ -78,12 +79,13 @@ export default [
     },
   },
 
-  // Source files JS configuration
+  // Core project source files
   {
     files: ['src/**/*.{js,jsx,ts,tsx}'],
     plugins: {
       // tailwindcss: tailwindcssPlugin,
       'react-hooks': fixupPluginRules(pluginReactHooks),
+      '@tanstack/query': pluginQuery,
     },
     rules: {
       // ...defaultJsRules,
@@ -91,6 +93,7 @@ export default [
       // 'tailwindcss/no-custom-classname': ['warn', { callees: ['twMerge'] }],
       ...pluginReactHooks.configs.recommended.rules,
       ...commonJsRules,
+      '@tanstack/query/exhaustive-deps': 'warn',
     },
   },
 

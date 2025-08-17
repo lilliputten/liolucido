@@ -16,12 +16,6 @@ export default function AddTopicModalDefault() {
     // A path without final '/add'
     const prevChunk = pathname.substring(0, pathname.length - checkAdd.length);
     const endsWithAPath = Object.values(topicsRoutes).find((path) => prevChunk.endsWith(path));
-    console.log('[AddTopicModalDefault]', {
-      endsWithAPath,
-      prevChunk,
-      topicsRoutes,
-      pathname,
-    })
     if (endsWithAPath) {
       return <AddTopicModal />;
     }

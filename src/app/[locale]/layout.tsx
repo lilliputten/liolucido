@@ -15,6 +15,7 @@ import { cn, constructMetadata } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { GenericLayout } from '@/components/layout/GenericLayout';
 import ModalProvider from '@/components/modals/providers';
+import { ReactQueryClientProvider } from '@/components/providers/ReactQueryClientProvider';
 import { TailwindIndicator } from '@/components/service/TailwindIndicator';
 import { fontDefault, fontHeading, fontMono } from '@/assets/fonts';
 import { SettingsContextProvider } from '@/contexts/SettingsContext';
@@ -97,7 +98,7 @@ async function RootLayout(props: TRootLayoutProps) {
         <Script
           id="layoyut-init-theme"
           strategy="beforeInteractive"
-          src="/static/layoyut-init-theme.js"
+          src="/static/layout-init-theme.js"
         />
       </head>
       <body
@@ -110,55 +111,57 @@ async function RootLayout(props: TRootLayoutProps) {
         )}
         data-layout="clippable" // Default layout mode, could casue flickering
       >
-        <SessionProvider>
-          <NextIntlClientProvider messages={messages}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-              storageKey="app-theme"
-            >
-              <ModalProvider>
-                {/* NOTE: The toaster should be located before the main content */}
-                <Toaster
-                  // @see https://sonner.emilkowal.ski/toaster#api-reference
-                  expand
-                  richColors
-                  closeButton
-                  // theme="dark"
-                  // invert?: boolean;
-                  // theme?: 'light' | 'dark' | 'system';
-                  // position?: Position;
-                  // hotkey?: string[];
-                  // richColors?: boolean;
-                  // expand?: boolean;
-                  // duration?: number;
-                  // gap?: number;
-                  // visibleToasts?: number;
-                  // closeButton?: boolean;
-                  // toastOptions?: ToastOptions;
-                  // className?: string;
-                  // style?: React.CSSProperties;
-                  // offset?: Offset;
-                  // mobileOffset?: Offset;
-                  // dir?: 'rtl' | 'ltr' | 'auto';
-                  // swipeDirections?: SwipeDirection[];
-                  // icons?: ToastIcons;
-                  // containerAriaLabel?: string;
-                  // pauseWhenPageIsHidden?: boolean;
-                />
-                <SettingsContextProvider userId={userId}>
-                  <GenericLayout>
-                    {/* Core content */}
-                    {children}
-                  </GenericLayout>
-                </SettingsContextProvider>
-                <TailwindIndicator />
-              </ModalProvider>
-            </ThemeProvider>
-          </NextIntlClientProvider>
-        </SessionProvider>
+        <ReactQueryClientProvider>
+          <SessionProvider>
+            <NextIntlClientProvider messages={messages}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+                storageKey="app-theme"
+              >
+                <ModalProvider>
+                  {/* NOTE: The toaster should be located before the main content */}
+                  <Toaster
+                    // @see https://sonner.emilkowal.ski/toaster#api-reference
+                    expand
+                    richColors
+                    closeButton
+                    // theme="dark"
+                    // invert?: boolean;
+                    // theme?: 'light' | 'dark' | 'system';
+                    // position?: Position;
+                    // hotkey?: string[];
+                    // richColors?: boolean;
+                    // expand?: boolean;
+                    // duration?: number;
+                    // gap?: number;
+                    // visibleToasts?: number;
+                    // closeButton?: boolean;
+                    // toastOptions?: ToastOptions;
+                    // className?: string;
+                    // style?: React.CSSProperties;
+                    // offset?: Offset;
+                    // mobileOffset?: Offset;
+                    // dir?: 'rtl' | 'ltr' | 'auto';
+                    // swipeDirections?: SwipeDirection[];
+                    // icons?: ToastIcons;
+                    // containerAriaLabel?: string;
+                    // pauseWhenPageIsHidden?: boolean;
+                  />
+                  <SettingsContextProvider userId={userId}>
+                    <GenericLayout>
+                      {/* Core content */}
+                      {children}
+                    </GenericLayout>
+                  </SettingsContextProvider>
+                  <TailwindIndicator />
+                </ModalProvider>
+              </ThemeProvider>
+            </NextIntlClientProvider>
+          </SessionProvider>
+        </ReactQueryClientProvider>
       </body>
     </html>
   );

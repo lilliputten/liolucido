@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
-import { invalidateReactQueryKeys } from '@/lib/data';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { safeJsonParse } from '@/lib/helpers/json';
 import { isDev } from '@/constants';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -41,6 +41,7 @@ export function useWorkout(
   const [workout, setWorkout] = React.useState<TWorkoutData | null>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+  const invalidateKeys = useInvalidateReactQueryKeys();
   memo.userId = userId;
   memo.questionIds = questionIds;
   memo.stepIndex = workout?.stepIndex;
@@ -63,7 +64,7 @@ export function useWorkout(
             const result = await handleApiResponse<TWorkoutData>(
               fetch(`/api/workouts/${topicId}`),
               {
-                onInvalidateKeys: invalidateReactQueryKeys,
+                onInvalidateKeys: invalidateKeys,
                 debugDetails: {
                   initiator: 'useWorkout',
                   action: 'fetchWorkout',
@@ -74,8 +75,7 @@ export function useWorkout(
                     error,
                     topicId,
                     userId,
-                  })
-                  debugger;
+                  });
                   // NOTE: Do nothing, we consider that workout just absent
                 },
               },
@@ -179,7 +179,7 @@ export function useWorkout(
               const result = await handleApiResponse<TWorkoutData | { success: boolean }>(
                 fetch(url, requestInit),
                 {
-                  onInvalidateKeys: invalidateReactQueryKeys,
+                  onInvalidateKeys: invalidateKeys,
                   debugDetails: {
                     initiator: 'useWorkout',
                     action: 'storeData',
@@ -225,7 +225,7 @@ export function useWorkout(
         });
       });
     },
-    [memo],
+    [memo, invalidateKeys],
   );
 
   /** Helper function to save the workout data to the server or local storage */
