@@ -3,14 +3,11 @@
 import React from 'react';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
+import { useAnswers } from '@/hooks/useAnswers';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
-import { TAnswerData } from '@/features/answers/types';
 
 import { WorkoutQuestion } from './WorkoutQuestion';
 
@@ -29,10 +26,7 @@ export function WorkoutQuestionContainer() {
     goPrevQuestion,
   } = useWorkoutContext();
   const { questions } = useQuestionsContext();
-  const [answers, setAnswers] = React.useState<TAnswerData[]>([]);
-  const [isPending, startTransition] = React.useTransition();
   const selectedAnswerId = workout?.selectedAnswerId;
-  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const memo = React.useMemo<TMemo>(() => ({}), []);
 
@@ -67,36 +61,23 @@ export function WorkoutQuestionContainer() {
     return questions.find((q) => q.id === questionId);
   }, [questionId, questions]);
 
-  // Fetch answers
+  // Fetch answers using dedicated hook
+  const {
+    data: answers = [],
+    isLoading: isAnswersLoading,
+    error: answersError,
+  } = useAnswers({
+    questionId: question?.id,
+    enabled: !!question?.id,
+  });
+
+  // Handle answers loading error
   React.useEffect(() => {
-    if (!question) return;
-    startTransition(async () => {
-      const url = `/api/questions/${question.id}/answers`;
-      try {
-        const result = await handleApiResponse<TAnswerData[]>(fetch(url), {
-          debugDetails: { initiator: 'WorkoutQuestionContainer', url },
-          onInvalidateKeys: invalidateKeys,
-        });
-        if (result.ok && result.data) {
-          setAnswers(result.data);
-        } else {
-          setAnswers([]);
-        }
-      } catch (error) {
-        const details = error instanceof APIError ? error.details : null;
-        const message = 'Cannot load answers data';
-        // eslint-disable-next-line no-console
-        console.error('[WorkoutQuestionContainer]', message, {
-          details,
-          error,
-          url,
-        });
-        debugger; // eslint-disable-line no-debugger
-        setAnswers([]);
-        toast.error(message);
-      }
-    });
-  }, [question, startTransition, invalidateKeys]);
+    if (answersError) {
+      const message = 'Cannot load answers data';
+      toast.error(message);
+    }
+  }, [answersError]);
 
   const goToTheNextQuestion = React.useCallback(() => {
     if (memo.nextPageTimerHandler) {
@@ -132,7 +113,7 @@ export function WorkoutQuestionContainer() {
     saveResultAndGoNext(undefined);
   }, [saveResultAndGoNext]);
 
-  if (isPending) {
+  if (isAnswersLoading) {
     return (
       <div className="flex flex-col gap-6 py-4">
         <Skeleton className="h-6 w-1/4" />

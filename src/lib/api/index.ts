@@ -1,2 +1,1 @@
-export * from './apiWrapper';
-// export * from '@/shared/types/api';
+export * from './handleApiResponse';

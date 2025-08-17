@@ -29,6 +29,7 @@ interface TMemo {
   workout?: TWorkoutData | null;
   questionIds?: string[];
   stepIndex?: number;
+  // invalidateKeys?: ReturnType<typeof useInvalidateReactQueryKeys>;
 }
 
 export function useWorkout(
@@ -47,10 +48,8 @@ export function useWorkout(
   memo.stepIndex = workout?.stepIndex;
 
   /** Low-level load data function */
-  const _retrieveData = React.useCallback(
+  const retrieveData = React.useCallback(
     (topicId?: TTopicId, userId?: TDefinedUserId) => {
-      // const topicId = memo.topicId;
-      // const userId = memo.user?.id;
       return new Promise<TWorkoutData | null>((resolve, reject) => {
         if (!topicId) {
           return resolve(null);
@@ -61,28 +60,25 @@ export function useWorkout(
           }
           if (userId) {
             // Fetch from server for authenticated user
+            const url = `/api/workouts/${topicId}`;
             try {
-              const result = await handleApiResponse<TWorkoutData>(
-                fetch(`/api/workouts/${topicId}`),
-                {
-                  onInvalidateKeys: invalidateKeys,
-                  debugDetails: {
-                    initiator: 'useWorkout',
-                    action: 'fetchWorkout',
-                    topicId,
-                  },
-                  onError: (error) => {
-                    // eslint-disable-next-line no-console
-                    console.warn('[useWorkout:_retrieveData] Workout not found', {
-                      error,
-                      topicId,
-                      userId,
-                    });
-                    // NOTE: Do nothing, we consider that workout just absent
-                  },
+              const result = await handleApiResponse<TWorkoutData>(fetch(url), {
+                onInvalidateKeys: invalidateKeys,
+                debugDetails: {
+                  initiator: 'useWorkout',
+                  action: 'retrieveData',
+                  topicId,
                 },
-              );
-
+                onError: (error) => {
+                  // eslint-disable-next-line no-console
+                  console.warn('[useWorkout:retrieveData] Workout not found', {
+                    error,
+                    topicId,
+                    userId,
+                  });
+                  // NOTE: Do nothing, we consider that workout just absent
+                },
+              });
               if (result.ok && result.data) {
                 return resolve(result.data);
               } else {
@@ -90,7 +86,7 @@ export function useWorkout(
               }
             } catch (error) {
               const details = error instanceof APIError ? error.details : null;
-              const msg = 'Cannot load workout';
+              const msg = 'Cannot load workout from server';
               // eslint-disable-next-line no-console
               console.error('[useWorkout]', msg, {
                 details,
@@ -126,7 +122,7 @@ export function useWorkout(
    */
   const fetchWorkout = React.useCallback(async () => {
     try {
-      const workout = await _retrieveData(topicId, userId);
+      const workout = await retrieveData(topicId, userId);
       // Parse date value (if still unparsed)
       if (workout?.startedAt && typeof workout.startedAt === 'string') {
         workout.startedAt = new Date(workout.startedAt);
@@ -152,7 +148,7 @@ export function useWorkout(
       setWorkout(null);
       toast.error(msg);
     }
-  }, [memo, _retrieveData, topicId, userId]);
+  }, [memo, retrieveData, topicId, userId]);
 
   /** Low-level data store function: for store the workout data to the server or to a local strage */
   const storeData = React.useCallback(
@@ -444,7 +440,7 @@ export function useWorkout(
       questionResults: '',
       selectedAnswerId: '', // Answer for the current question. If defined then consider that user already chosen the answer but hasn't went to the next question (show the choice and suggest to go further)
       currentRatio: 0, // Current ratio (if finished)
-      currentTime: 0, // Current time remained to finish, in seconds (if finished)
+      currentTime: 0, // Current time remained to thefinish, in seconds (if finished)
       correctAnswers: 0, // Current correct answers count (if finished)
     };
     setWorkout(
@@ -456,6 +452,7 @@ export function useWorkout(
     );
   }, []);
 
+  // Effect: Load data for each new topicId and userId
   React.useEffect(() => {
     fetchWorkout();
   }, [fetchWorkout]);

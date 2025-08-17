@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     if (error instanceof ZodError) {
       // eslint-disable-next-line no-console
       console.error('[API /topics/[topicId]/topics GET] ZodError', error);
-      debugger;
+      debugger; // eslint-disable-line no-debugger
 
       const response: TApiResponse<null> = {
         data: null,

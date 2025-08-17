@@ -97,7 +97,6 @@ function Toolbar(props: TToolbarActionsProps) {
           details,
           error,
           topicId,
-          action: 'getTopicQuestions',
         });
         debugger; // eslint-disable-line no-debugger
         toast.error(message);

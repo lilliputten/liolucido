@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest) {
     const response: TApiResponse<TSettings> = {
       data: updatedSettings,
       ok: true,
-      invalidateKeys: ['settings', `user-${user.id}-settings`],
+      invalidateKeys: [['settings'], [`user-${user.id}-settings`]],
       // TODO: Add invalidation keys for React Query
       // invalidateKeys: ['settings', `user-${user.id}-settings`],
       // TODO: Add service messages for client display

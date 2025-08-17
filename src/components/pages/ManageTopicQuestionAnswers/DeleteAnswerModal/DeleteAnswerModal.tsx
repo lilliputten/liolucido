@@ -123,7 +123,6 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
                 details,
                 error,
                 answerId: deletingAnswer.id,
-                action: 'deleteAnswer',
               });
               debugger; // eslint-disable-line no-debugger
               reject(error);

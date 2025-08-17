@@ -1,9 +1,11 @@
+import { QueryKey } from '@tanstack/react-query';
+
 // Core API response types
 export interface TApiResponse<T = unknown> {
   data: T | null;
   ok: boolean;
   error?: TApiError;
-  invalidateKeys?: string[];
+  invalidateKeys?: QueryKey[];
   messages?: TServiceMessage[];
 }
 
@@ -17,14 +19,6 @@ export interface TServiceMessage {
   type: 'error' | 'success' | 'warning' | 'info';
   message: string;
   code?: string;
-}
-
-// Helper types for the wrapper function
-export interface TApiWrapperOptions {
-  onInvalidateKeys?: (keys: string[]) => void;
-  onMessages?: (messages: TServiceMessage[]) => void;
-  onError?: (error: TApiError) => void;
-  debugDetails?: Record<string, unknown>;
 }
 
 export interface TApiWrapperResult<T> {

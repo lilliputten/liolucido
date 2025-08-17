@@ -97,7 +97,6 @@ export const useAvailableTopics = () => {
           details,
           error,
           pageParam,
-          action: 'getAvailableTopics',
           url,
         });
         // eslint-disable-next-line no-debugger

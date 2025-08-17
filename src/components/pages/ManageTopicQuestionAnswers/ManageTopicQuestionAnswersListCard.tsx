@@ -99,7 +99,6 @@ function Toolbar(props: TToolbarActionsProps) {
           details,
           error,
           questionId,
-          action: 'getQuestionAnswers',
         });
         debugger; // eslint-disable-line no-debugger
         toast.error(message);
@@ -218,7 +217,6 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
             details,
             error,
             answerId: answer.id,
-            action: 'updateAnswer',
           });
           debugger; // eslint-disable-line no-debugger
           toast.error(message);
