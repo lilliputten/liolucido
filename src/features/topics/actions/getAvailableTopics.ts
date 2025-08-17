@@ -7,31 +7,10 @@ import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
 import { topicsLimit } from '../constants';
-import { TAvailableTopic } from '../types';
-
-interface TParams {
-  /** Skip records (start from the nth record), default = 0 */
-  skip?: number;
-  /** Amount of records to return, default = {topicsLimit} */
-  take?: number;
-  /** Display only current user's topics */
-  showOnlyMyTopics?: boolean;
-  /** Unclude compact user info data (name, email) in the `user` property of result object */
-  includeUser?: boolean;
-  /** Include related questions count, in `_count: { questions }` */
-  includeQuestionsCount?: boolean;
-  /** Sort by parameter, default: `{ createdAt: 'desc' }` */
-  orderBy?: Prisma.TopicFindManyArgs['orderBy'];
-}
-
-interface TGetAvailableTopicsResults {
-  topics: TAvailableTopic[];
-  /** Total records count for these conditions */
-  totalCount: number;
-}
+import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from './getAvailableTopicsSchema';
 
 export async function getAvailableTopics(
-  params: TParams = {},
+  params: TGetAvailableTopicsParams = {},
 ): Promise<TGetAvailableTopicsResults> {
   if (isDev) {
     // DEBUG: Emulate network delay

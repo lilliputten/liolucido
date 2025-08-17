@@ -235,7 +235,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Edit"
             title="Edit"
           >
-            <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
+            <Icons.edit className="size-4" />
           </Button>
           <Button
             variant="ghost"
@@ -245,7 +245,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Delete"
             title="Delete"
           >
-            <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+            <Icons.trash className="size-4" />
           </Button>
         </div>
       </TableCell>

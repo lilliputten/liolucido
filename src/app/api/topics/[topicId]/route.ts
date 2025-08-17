@@ -4,19 +4,12 @@ import { z } from 'zod';
 import { TApiResponse } from '@/shared/types/api';
 import { updateTopic } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
+import { TopicSchema } from '@/generated/prisma';
 
-const updateTopicSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1),
-  description: z.string().optional(),
-  isPublic: z.boolean().optional(),
-  keywords: z.string().optional(),
-  langCode: z.string().optional(),
-  langName: z.string().optional(),
-  langCustom: z.boolean().optional(),
-  answersCountRandom: z.boolean().optional(),
-  answersCountMin: z.union([z.string().optional(), z.number()]),
-  answersCountMax: z.union([z.string().optional(), z.number()]),
+const updateTopicSchema = TopicSchema.omit({
+  createdAt: true,
+  updatedAt: true,
+  userId: true,
 });
 
 /** PUT /api/topics/[topicId] - Update topic */
