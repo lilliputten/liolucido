@@ -1,6 +1,7 @@
 import ms from 'ms';
 import { useFormatter, useTranslations } from 'next-intl';
 
+import { dayMs, halfYearMs, hourMs, minuteMs } from '@/constants';
 import { defaultLocale, TLocale } from '@/i18n/types';
 
 /* // TODO: Translations:
@@ -23,12 +24,9 @@ import { defaultLocale, TLocale } from '@/i18n/types';
 
 type TIntlTranslator = (key: string) => string;
 
-const minDateLimit = 1000 * 60;
-const hourDateLimit = minDateLimit * 60;
-const dayDateLimit = hourDateLimit * 24;
-const relativeDateLimit = dayDateLimit;
-// const halfMonthLimit = dayDateLimit * 15;
-const halfYearLimit = dayDateLimit * 30 * 6;
+/** Use relative date format if lesser time passed */
+const relativeDateLimit = dayMs;
+// export const halfMonthLimit = dayMs * 15;
 
 /** Workaround for cases when date has been passed as an ISO string or en empty value (now) */
 export function ensureDate(date?: Date | string): Date {
@@ -78,7 +76,7 @@ export function getFormattedRelativeDate(
   // Return full date
   return format.dateTime(date, {
     // Show a year only if half a year passed
-    year: diff >= halfYearLimit ? 'numeric' : undefined,
+    year: diff >= halfYearMs ? 'numeric' : undefined,
     month: 'short',
     day: 'numeric',
   });
@@ -112,12 +110,12 @@ export function getNativeFormattedRelativeDate(
     if (absDiff < 1000 * 60) {
       // Less than 1 minute ago
       return rtf.format(-Math.round(absDiff / 1000), 'seconds');
-    } else if (absDiff < hourDateLimit) {
+    } else if (absDiff < hourMs) {
       // Less than 1 hour ago
-      return rtf.format(-Math.round(absDiff / minDateLimit), 'minutes');
+      return rtf.format(-Math.round(absDiff / minuteMs), 'minutes');
     } else {
       // Less than 1 day ago
-      return rtf.format(-Math.round(absDiff / hourDateLimit), 'hours');
+      return rtf.format(-Math.round(absDiff / hourMs), 'hours');
     }
   }
 
@@ -127,18 +125,18 @@ export function getNativeFormattedRelativeDate(
     if (absDiff < 1000 * 60) {
       // Less than 1 minute in future
       return rtf.format(Math.round(absDiff / 1000), 'seconds');
-    } else if (absDiff < hourDateLimit) {
+    } else if (absDiff < hourMs) {
       // Less than 1 hour in future
-      return rtf.format(Math.round(absDiff / minDateLimit), 'minutes');
+      return rtf.format(Math.round(absDiff / minuteMs), 'minutes');
     } else {
       // Less than 1 day in future
-      return rtf.format(Math.round(absDiff / hourDateLimit), 'hours');
+      return rtf.format(Math.round(absDiff / hourMs), 'hours');
     }
   }
 
   // Return full date for dates older than a day (both past and future)
   const formatter = new Intl.DateTimeFormat(locale, {
-    year: absDiff >= halfYearLimit ? 'numeric' : undefined,
+    year: absDiff >= halfYearMs ? 'numeric' : undefined,
     month: 'short',
     day: 'numeric',
   });

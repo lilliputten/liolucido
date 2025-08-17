@@ -11,15 +11,15 @@ export type TTopicOrderBy = z.infer<typeof zTopicOrderBy>;
 
 export const GetAvailableTopicsParamsSchema = z.object({
   /** Skip records (start from the nth record), default = 0 */
-  skip: z.number().int().nonnegative().optional(),
+  skip: z.coerce.number().int().nonnegative().optional(),
   /** Amount of records to return, default = {topicsLimit} */
-  take: z.number().int().positive().optional(),
+  take: z.coerce.number().int().positive().optional(),
   /** Display only current user's topics */
-  showOnlyMyTopics: z.boolean().optional(),
+  showOnlyMyTopics: z.coerce.boolean().optional(),
   /** Unclude compact user info data (name, email) in the `user` property of result object */
-  includeUser: z.boolean().optional(),
+  includeUser: z.coerce.boolean().optional(),
   /** Include related questions count, in `_count: { questions }` */
-  includeQuestionsCount: z.boolean().optional(),
+  includeQuestionsCount: z.coerce.boolean().optional(),
   /** Sort by parameter, default: `{ createdAt: 'desc' }`, packed json string */
   // orderBy: TopicFindManyArgsSchema.shape.orderBy, // This approach doesn't work
   orderBy: zTopicOrderBy,

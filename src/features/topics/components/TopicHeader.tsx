@@ -8,7 +8,7 @@ import { useSessionUser } from '@/hooks/useSessionUser';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAvailableTopic } from '@/features/topics/types';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
 import { usePathname } from '@/i18n/routing';
@@ -20,12 +20,14 @@ interface TTopicHeaderOptions {
 }
 interface TTopicHeaderProps {
   topic: TAvailableTopic;
+  scope: TTopicsManageScopeId;
   className?: string;
 }
 
 export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   const {
     topic,
+    scope,
     className,
     // Options...
     showDates,
@@ -49,8 +51,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   } = topic;
   const sessionUser = useSessionUser();
   const isOwner = userId && userId === sessionUser?.id;
-  const topicsContext = useTopicsContext();
-  const { routePath } = topicsContext;
+  const routePath = topicsRoutes[scope];
   const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
   const topicRoutePath = `${routePath}/${id}`;
   const pathname = usePathname();

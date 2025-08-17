@@ -7,8 +7,8 @@ import { cn } from '@/lib/utils';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
+import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic } from '@/features/topics/types';
 
 import { ViewAvailableTopicContent } from './ViewAvailableTopicContent';
@@ -19,28 +19,11 @@ interface TViewAvailableTopicProps extends TPropsWithClassName {
 }
 
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
+  const scope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const { className, topic } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const topicsContext = useTopicsContext();
-  const goBack = useGoBack(topicsContext.routePath);
-
-  /* // Delete Topic Modal
-   * const handleDeleteTopic = React.useCallback(() => {
-   *   const hasTopic = !!topicsContext.topics.find(({ id }) => id === topic.id);
-   *   if (hasTopic) {
-   *     router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=ViewAvailableTopic`);
-   *   } else {
-   *     toast.error('The requested topic does not exist.');
-   *     router.replace(topicsContext.routePath);
-   *   }
-   * }, [router, topicsContext, topic]);
-   */
-
-  /* // Add Topic Modal
-   * const handleAddQuestion = React.useCallback(() => {
-   *   router.push(`${topicsContext.routePath}/${topic.id}/questions/add`);
-   * }, [router, topicsContext, topic]);
-   */
+  const routePath = topicsRoutes[scope];
+  const goBack = useGoBack(routePath);
 
   return (
     <Card
@@ -63,12 +46,13 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <TopicsBreadcrumbs
+          <TopicsScopeBreadcrumbs
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}
-            topicId={topic.id}
-            inactiveTopic
+            scope={scope}
+            topic={topic}
+            inactiveLast
           />
           {/* // UNUSED: Title
             <CardTitle className="flex flex-1 items-center overflow-hidden">

@@ -5,21 +5,45 @@ import Link from 'next/link';
 
 import { myTopicsRoute, rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
+import { useAvailableTopics } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { PageEmpty } from '@/components/pages/shared';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 
 import { AvailableTopicsList } from './AvailableTopicsList';
+import { AvailableTopicsLoading } from './AvailableTopicsLoading';
 
 export function AvailableTopicsListWrapper() {
-  const { totalCount } = useTopicsContext();
-
   const goBack = useGoBack(rootRoute);
 
-  const hasTopics = !!totalCount;
+  const availableTopics = useAvailableTopics();
+  const { data, isLoading, isError } = availableTopics;
+
+  const hasTopics = !!data?.pages[0]?.totalCount;
+
+  if (isLoading) {
+    return <AvailableTopicsLoading />;
+  }
+
+  if (isError) {
+    return (
+      <PageEmpty
+        className="size-full flex-1"
+        title="Something went wrong"
+        description="We couldn't load the topics. Please try again later."
+        buttons={
+          <>
+            <Button variant="ghost" onClick={goBack} className="flex gap-2">
+              <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
+              Go Back
+            </Button>
+          </>
+        }
+      />
+    );
+  }
 
   if (!hasTopics) {
     return (

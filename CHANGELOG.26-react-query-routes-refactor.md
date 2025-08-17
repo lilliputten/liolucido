@@ -185,3 +185,37 @@ Ask me about specific route paths in case of troubles (if it isn't obsvious).
 - src/components/pages/ManageTopicQuestions/EditQuestionCard/EditQuestionForm.tsx: updateQuestion
 - src/components/pages/ManageTopicsPage/EditTopicCard/EditTopicForm.tsx: updateTopic
 - src/contexts/SettingsContext/SettingsContext.tsx: updateSettings (wrap with `handleApiResponse`)
+
+---
+
+Can you suggest an approach to integrate react query to the available topics list?
+
+See the module `src/components/pages/AvailableTopics/AvailableTopicsListWrapper.tsx` and it's descendants.
+
+Don't apply any changes at first, let approve the general approach.
+
+---
+
+There's already a general purpose api route to fetch available topics: `src/app/api/topics/route.ts` it could be parametrized later.
+
+And it already supports `skip` and `take` parameters to support incremental data loading (which is used currently). So, we can use `useInfiniteQuery` hook.
+
+Let's try to implement this.
+
+---
+
+Don't use axios. Use fetch.
+
+Take a look at the example of api fetchng in the src/components/pages/ManageTopicQuestions/ManageTopicQuestionsListCard.tsx, please use this scheme.
+
+Pay attention to usage of handleApiResponse to process api requests. Notify onInvalidateKeys to pass an invalidation hook (you have to get this hook via useInvalidateReactQueryKeys if it's absent), debugDetails to provide debug information, catch section with error logging, debug stop (add eslint warning stopper comments) and error toast.
+
+Don't forget also to add typescropt types where they are missed.
+
+---
+
+Help to solve the bug:
+
+The client (from useAvailableTopics) calls api route via /api/topics?skip=0&take=10, but the src/app/api/topics/route.ts gets nothing in params parameter (and the same is in the searchParams).
+
+How can I correctly get url quesry params in nextjs route?

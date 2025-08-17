@@ -31,7 +31,7 @@ export default async function ViewTopicPage({ params }: TAwaitedProps) {
         className={cn(
           isDev && '__page_ViewTopicPage', // DEBUG
         )}
-        topicId={topicId}
+        // topicId={topicId}
       />
     </AvailableTopicsPageWrapper>
   );

@@ -1,27 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 
 import { TApiResponse } from '@/shared/types/api';
 import { safeJsonParse } from '@/lib/helpers/json';
-import { zodMakeAllFieldsOptionalString } from '@/lib/helpers/types';
 import { getAvailableTopics } from '@/features/topics/actions';
 import {
   GetAvailableTopicsParamsSchema,
   TTopicOrderBy,
+  zTopicOrderBy,
 } from '@/features/topics/actions/getAvailableTopicsSchema';
 
-const ParsedSchema = GetAvailableTopicsParamsSchema;
-const ParsedSchemaRaw = ParsedSchema.extend({
+const TargetParamsSchema = GetAvailableTopicsParamsSchema;
+const TargetParamsSchemaWithPlainOderBy = TargetParamsSchema.extend({
   orderBy: z.string().optional(), // JSON string
 });
-const _ParamsSchema = zodMakeAllFieldsOptionalString(ParsedSchemaRaw);
-type TParams = z.infer<typeof _ParamsSchema>;
 
 /** GET /api/topics - Get topics */
-export async function GET(_request: NextRequest, { params }: { params: Promise<TParams> }) {
+export async function GET(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
   try {
-    const resolvedParams = await params;
-    const parsedParams = ParsedSchemaRaw.parse(resolvedParams);
+    const params = Object.fromEntries(searchParams.entries());
+    const parsedParams = TargetParamsSchemaWithPlainOderBy.parse(params);
     const {
       skip,
       take,
@@ -32,7 +31,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<T
     } = parsedParams;
 
     const orderBy = orderByStr
-      ? safeJsonParse<TTopicOrderBy | undefined>(orderByStr, undefined)
+      ? zTopicOrderBy.parse(safeJsonParse<TTopicOrderBy>(orderByStr, {}))
       : undefined;
 
     const topics = await getAvailableTopics({
@@ -51,6 +50,27 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<T
 
     return NextResponse.json(response);
   } catch (error) {
+    if (error instanceof ZodError) {
+      // eslint-disable-next-line no-console
+      console.error('[API /topics/[topicId]/topics GET] ZodError', error);
+      debugger;
+
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'ZOD_ERROR',
+          message: 'Zod parsing error', // error instanceof Error ? error.message : 'Failed to fetch topics',
+          details: {
+            // error: error instanceof Error ? error.message : String(error),
+            stack: error.stack,
+            issues: error.issues,
+          },
+        },
+      };
+      return NextResponse.json(response, { status: 500 });
+    }
+
     // eslint-disable-next-line no-console
     console.error('[API /topics/[topicId]/topics GET]', error);
     debugger; // eslint-disable-line no-debugger
@@ -64,7 +84,6 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<T
         details: { error: error instanceof Error ? error.message : String(error) },
       },
     };
-
     return NextResponse.json(response, { status: 500 });
   }
 }

@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
+import { useAvailableTopics } from '@/hooks/useAvailableTopics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TTopic } from '@/features/topics/types';
@@ -22,6 +23,7 @@ interface TAvailableTopicsListItemProps {
 }
 
 export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
+  const scope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const { topic, style } = props;
   const {
     id,
@@ -38,8 +40,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   } = topic;
   const questionsCount = _count?.questions;
   const allowedTraining = !!questionsCount;
-  const topicsContext = useTopicsContext();
-  const { routePath } = topicsContext;
+  const { routePath } = useAvailableTopics();
   const router = useRouter();
   const pathname = usePathname();
   const topicRoutePath = `${routePath}/${id}`;
@@ -63,7 +64,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
           'max-sm:flex-col-reverse',
         )}
       >
-        <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" />
+        <TopicHeader scope={scope} topic={topic} className="flex-1 max-sm:flex-col-reverse" />
       </CardHeader>
       {!!description && (
         <CardContent

@@ -11,7 +11,7 @@ export const TopicsManageScopeIds = {
   MY_TOPICS: 'my',
   ALL_TOPICS: 'all',
 } as const;
-export type TTopicsManageScopeId = (typeof TopicsManageScopeIds)[keyof typeof TopicsManageScopeIds]; // 'MY_TOPICS' | 'ALL_TOPICS';
+export type TTopicsManageScopeId = (typeof TopicsManageScopeIds)[keyof typeof TopicsManageScopeIds];
 export const defaultTopicsManageScope: TTopicsManageScopeId = TopicsManageScopeIds.MY_TOPICS;
 
 export const topicsRoutes: Record<TTopicsManageScopeId, TRoutePath> = {

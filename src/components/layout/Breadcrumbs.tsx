@@ -24,14 +24,15 @@ function BreadcrumbsItem({ link, content }: TBreadcrumbsItemProps) {
 }
 
 interface TBreadcrumbsProps extends TPropsWithClassName {
-  items: TBreadcrumbsItemProps[];
+  items: (TBreadcrumbsItemProps | undefined)[];
 }
 
 export function Breadcrumbs(props: TBreadcrumbsProps) {
   const { className, items } = props;
   const content: React.JSX.Element[] = [];
-  for (let n = 0; n < items.length; n++) {
-    const props = items[n];
+  const filteredItems = items.filter(Boolean) as TBreadcrumbsItemProps[];
+  for (let n = 0; n < filteredItems.length; n++) {
+    const props = filteredItems[n];
     content.push(
       <BreadcrumbsItem
         key={
@@ -40,7 +41,7 @@ export function Breadcrumbs(props: TBreadcrumbsProps) {
         {...props}
       />,
     );
-    if (n < items.length - 1) {
+    if (n < filteredItems.length - 1) {
       content.push(<BreadcrumbsDelim key={`BreadcrumbsDelim-${n}`} />);
     }
   }
