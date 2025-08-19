@@ -13,7 +13,6 @@ interface UseAnswersOptions {
 
 export function useAnswers({ questionId, enabled = true }: UseAnswersOptions) {
   const invalidateKeys = useInvalidateReactQueryKeys();
-
   return useQuery({
     queryKey: ['answers', questionId],
     enabled: enabled && !!questionId,

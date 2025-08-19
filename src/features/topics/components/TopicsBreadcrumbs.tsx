@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { capitalize, truncate } from '@/lib/helpers';
+import { capitalizeString, truncateString } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { cn } from '@/lib/utils';
 import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
@@ -49,10 +49,10 @@ export function TopicsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWit
   const { className, scope, topic, lastItem, inactiveLast } = props;
   const routePath = topicsRoutes[scope];
   // TODO: Use i18n translation by `scope`
-  const title = capitalize(scope) + ' Topics*';
+  const title = capitalizeString(scope) + ' Topics*';
   const items = filterOutEmpties<TBreadcrumbsItemProps>([
     { link: routePath, content: title },
-    topic && { link: `${routePath}/${topic.id}`, content: truncate(topic.name, 50) },
+    topic && { link: `${routePath}/${topic.id}`, content: truncateString(topic.name, 50) },
     lastItem,
   ]);
   if (inactiveLast && items.length) {

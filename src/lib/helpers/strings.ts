@@ -78,7 +78,7 @@ export function nFormatter(num: number, digits?: number) {
 }
 
 // TODO: Move to helpers/strings
-export function capitalize(str: string) {
+export function capitalizeString(str: string) {
   if (!str || typeof str !== 'string') {
     return str;
   }
@@ -87,7 +87,7 @@ export function capitalize(str: string) {
 
 const defaultEllipsis = '…';
 
-export function truncate(str?: string, len?: number, ellipsis: string = defaultEllipsis) {
+export function truncateString(str?: string, len?: number, ellipsis: string = defaultEllipsis) {
   if (!str || !len) {
     return str || '';
   }
