@@ -73,7 +73,7 @@ model User {
 
   // UserQuestion     UserQuestion[]
   // UserTopic        UserTopic[]
-  UserTopicWorkout UserTopicWorkout[]
+  userTopicWorkout UserTopicWorkout[]
   userSettings     UserSettings?
 
   @@map("users")
@@ -162,7 +162,7 @@ model Topic {
   questions Question[] // Questions in this topic
 
   // UserTopic        UserTopic[]
-  UserTopicWorkout UserTopicWorkout[]
+  userTopicWorkout UserTopicWorkout[]
 
   @@index([userId])
   @@map("topics")

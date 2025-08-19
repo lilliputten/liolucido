@@ -4,7 +4,6 @@ import { ExtendedUser } from '@/@types/next-auth';
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
-import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
 // import { TExtendedUser } from '@/features/users/types/TUser';
@@ -12,31 +11,27 @@ import { isDev } from '@/constants';
 import { topicsLimit } from '../constants';
 import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from './getAvailableTopicsSchema';
 
-interface TOptions {
-  noDebug?: boolean;
-}
-
-export async function getAvailableTopics(
-  params: TGetAvailableTopicsParams & TOptions = {},
+/** Testable low-level of getAvailableTopics code which accepts a current user
+ * alongside other options (a temporarily solution used due to inability of
+ * jest to trsnspile `@auth/prisma-adapter` correctly) */
+export async function getAvailableTopicsCore(
+  params: TGetAvailableTopicsParams & { user?: ExtendedUser },
 ): Promise<TGetAvailableTopicsResults> {
+  if (isDev) {
+    // DEBUG: Emulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
   const {
-    topicIds,
     skip = 0,
     take = topicsLimit,
     adminMode,
     showOnlyMyTopics,
     includeUser = true,
-    includeSortWorkouts = false,
     includeQuestionsCount = true,
     orderBy = { createdAt: 'desc' },
-    // Options
-    noDebug,
+    user,
   } = params;
-  if (isDev) {
-    // DEBUG: Emulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-  const user: ExtendedUser | undefined = await getCurrentUser();
+  // const user: ExtendedUser | undefined = undefined; //await getCurrentUser();
   const userId = user?.id;
   const isAdmin = user?.role === 'ADMIN';
   // No own topics for unauthorized users (and if no admin mode)
@@ -62,36 +57,18 @@ export async function getAvailableTopics(
           }
         : false,
     };
-    if (includeUser) {
-      include.user = {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      };
-    }
-    if (includeSortWorkouts) {
-      include.userTopicWorkout = {
-        select: { updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-        take: 1,
-      };
-    }
     const where: Prisma.TopicWhereInput = {};
     if (!userId) {
-      // Limit with public data for nonauthorized user in non-admin mode and without any other conditions
-      where.isPublic = true;
+      if (!adminMode) {
+        // Limit with public data for nonauthorized user in non-admin mode and without any other conditions
+        where.isPublic = true;
+      }
     } else if (showOnlyMyTopics) {
       // Request only this user data
       where.userId = userId;
-    } else if (!adminMode) {
+    } else {
       // Request public or this user data
       where.OR = [{ userId }, { isPublic: true }];
-    }
-    if (topicIds) {
-      // Limit the results by specified ids
-      where.id = { in: topicIds };
     }
     /*
     const where: Prisma.TopicWhereInput = showOnlyMyTopics
@@ -114,13 +91,11 @@ export async function getAvailableTopics(
     // const topics: TAvailableTopic[] = await prisma.topic.findMany(args);
     return { topics, totalCount } satisfies TGetAvailableTopicsResults;
   } catch (error) {
-    if (!noDebug) {
-      // eslint-disable-next-line no-console
-      console.error('[getAvailableTopicsCore] catch', {
-        error,
-      });
-      debugger; // eslint-disable-line no-debugger
-    }
+    // eslint-disable-next-line no-console
+    console.error('[getAvailableTopicsCore] catch', {
+      error,
+    });
+    debugger; // eslint-disable-line no-debugger
     throw error;
   }
 }

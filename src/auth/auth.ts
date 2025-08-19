@@ -86,8 +86,8 @@ export const nextAuthApp = NextAuth({
           // @see JWT type extension in `@types/next-auth.d.ts`
           user.role = token.role as UserRole;
         }
-        user.name = token.name;
-        user.image = token.picture;
+        user.name = token.name || null;
+        user.image = token.picture || null;
       }
       return session;
     },
