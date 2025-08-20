@@ -5,19 +5,10 @@ import { User } from '@prisma/client';
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';
 import { getCurrentUser } from '@/lib/session';
-import { dayMs } from '@/constants';
-
-// import { TExtendedUser } from '@/features/users/types/TUser';
 
 import { getAvailableTopics } from '../getAvailableTopics';
 
 type TExtendedUser = ExtendedUser;
-// type TExtendedUser = {
-//   // @see src/@types/next-auth.d.ts
-//   role: UserRole;
-//   // provider?: string; // XXX: In addition to Account?
-//   // providerAccountId?: string; // XXX: In addition to Account?
-// } & User;
 
 const mockedGetCurrentUser = getCurrentUser as jest.MockedFunction<typeof getCurrentUser>;
 
@@ -136,14 +127,12 @@ describe('getAvailableTopics', () => {
   it('should return all topics for an admin user in adminMode', async () => {
     const dateTag = formatDateTag();
     const createdIds: CreatedId[] = [];
-    let admin: User | null = null;
-    let user1: User | null = null;
     try {
-      admin = await jestPrisma.user.create({
+      const admin = await jestPrisma.user.create({
         data: { email: `admin-${dateTag}@test.com`, role: 'ADMIN' },
       });
       createdIds.push({ type: 'user', id: admin.id });
-      user1 = await jestPrisma.user.create({
+      const user1 = await jestPrisma.user.create({
         data: { email: `user1-${dateTag}@test.com`, role: 'USER' },
       });
       createdIds.push({ type: 'user', id: user1.id });
@@ -224,6 +213,30 @@ describe('getAvailableTopics', () => {
       mockedGetCurrentUser.mockResolvedValue(undefined);
       const { topics } = await getAvailableTopics({ includeUser: false, noDebug: true });
       expect(topics[0].user).toBeFalsy();
+    } finally {
+      await cleanupDb(createdIds);
+    }
+  });
+
+  it('should include workout info when includeWorkout is true', async () => {
+    const now = new Date();
+    const dateTag = formatDateTag(now);
+    const createdIds: CreatedId[] = [];
+    try {
+      const user1 = await jestPrisma.user.create({ data: { email: `user1-${dateTag}@test.com` } });
+      createdIds.push({ type: 'user', id: user1.id });
+      const t1 = await jestPrisma.topic.create({
+        data: { name: 'Public', isPublic: true, userId: user1.id },
+      });
+      [t1].forEach(({ id }) => createdIds.push({ type: 'topic', id }));
+      const w1 = await jestPrisma.userTopicWorkout.create({
+        data: { userId: user1.id, topicId: t1.id },
+      });
+      [w1].forEach(({ userId, topicId }) => createdIds.push({ type: 'workout', userId, topicId }));
+      mockedGetCurrentUser.mockResolvedValue(undefined);
+      const { topics } = await getAvailableTopics({ includeWorkout: true, noDebug: true });
+      expect(topics[0].userTopicWorkout).toBeDefined();
+      expect(topics[0].userTopicWorkout).not.toBeFalsy();
     } finally {
       await cleanupDb(createdIds);
     }
@@ -342,9 +355,8 @@ describe('getAvailableTopics', () => {
     it('should order by question count', async () => {
       const dateTag = formatDateTag();
       const createdIds: CreatedId[] = [];
-      let user: User | null = null;
       try {
-        user = await jestPrisma.user.create({ data: { email: `user-${dateTag}@test.com` } });
+        const user = await jestPrisma.user.create({ data: { email: `user-${dateTag}@test.com` } });
         createdIds.push({ type: 'user', id: user.id });
         const t1 = await jestPrisma.topic.create({
           data: { name: 'Topic 1 (1q)', isPublic: true, userId: user.id },
@@ -358,11 +370,9 @@ describe('getAvailableTopics', () => {
         const topicIds = [t1.id, t2.id, t3.id];
         topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
         const q1 = await jestPrisma.question.create({ data: { text: 'q1', topicId: t2.id } });
-        createdIds.push({ type: 'question', id: q1.id });
         const q2 = await jestPrisma.question.create({ data: { text: 'q2', topicId: t2.id } });
-        createdIds.push({ type: 'question', id: q2.id });
         const q3 = await jestPrisma.question.create({ data: { text: 'q3', topicId: t1.id } });
-        createdIds.push({ type: 'question', id: q3.id });
+        [q1, q2, q3].forEach(({ id }) => createdIds.push({ type: 'question', id }));
         mockedGetCurrentUser.mockResolvedValue(undefined);
         const { topics } = await getAvailableTopics({
           topicIds,
@@ -375,66 +385,6 @@ describe('getAvailableTopics', () => {
           'Topic 2 (2q)',
           'Topic 1 (1q)',
           'Topic 3 (0q)',
-        ]);
-      } finally {
-        await cleanupDb(createdIds);
-      }
-    });
-
-    it('should order by most recent workout update date', async () => {
-      const now = new Date();
-      const nowTime = now.getTime();
-      const dateTag = formatDateTag(now);
-      const createdIds: CreatedId[] = [];
-      let user: User | null = null;
-      try {
-        const email = `user-${dateTag}@test.com`;
-        user = await jestPrisma.user.create({ data: { email } });
-
-        const oldestTime = new Date(nowTime - 2 * dayMs);
-        const middleTime = new Date(nowTime - 1 * dayMs);
-        const newestTime = new Date(nowTime);
-
-        const t1 = await jestPrisma.topic.create({
-          data: { name: 'Topic 1 (oldest)', isPublic: true, userId: user.id },
-        });
-        const t2 = await jestPrisma.topic.create({
-          data: { name: 'Topic 2 (middle)', isPublic: true, userId: user.id },
-        });
-        const t3 = await jestPrisma.topic.create({
-          data: { name: 'Topic 3 (newest)', isPublic: true, userId: user.id },
-        });
-        const topicIds = [t1.id, t2.id, t3.id];
-        topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
-
-        // Create workouts with different updatedAt dates
-        const w1 = await jestPrisma.userTopicWorkout.create({
-          data: { userId: user.id, topicId: t1.id, updatedAt: oldestTime },
-        });
-        const w3 = await jestPrisma.userTopicWorkout.create({
-          data: { userId: user.id, topicId: t3.id, updatedAt: newestTime },
-        });
-        const w2 = await jestPrisma.userTopicWorkout.create({
-          data: { userId: user.id, topicId: t2.id, updatedAt: middleTime },
-        });
-        const workoutIds = [w1, w2, w3].map(({ userId, topicId }) => ({ userId, topicId }));
-        workoutIds.forEach(({ userId, topicId }) =>
-          createdIds.push({ type: 'workout', userId, topicId }),
-        );
-
-        mockedGetCurrentUser.mockResolvedValue(undefined);
-
-        // Order by most recent workout updatedAt date using aggregation
-        const { topics } = await getAvailableTopics({
-          // orderBy: { userTopicWorkout: { _max: { updatedAt: 'desc' } } }
-          topicIds,
-          includeSortWorkouts: true,
-        });
-        const topicNamesDesc = topics.map((t) => t.name);
-        expect(topicNamesDesc).toEqual([
-          'Topic 3 (newest)',
-          'Topic 2 (middle)',
-          'Topic 1 (oldest)',
         ]);
       } finally {
         await cleanupDb(createdIds);

@@ -219,3 +219,88 @@ Help to solve the bug:
 The client (from useAvailableTopics) calls api route via /api/topics?skip=0&take=10, but the src/app/api/topics/route.ts gets nothing in params parameter (and the same is in the searchParams).
 
 How can I correctly get url quesry params in nextjs route?
+
+--
+
+How to sort by related object's field in Prisma?
+
+I have the following schema:
+
+```prisma
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  topics Topic[]
+  userTopicWorkout UserTopicWorkout[]
+  @@map("users")
+}
+
+model Topic {
+  id String @id @default(cuid())
+  name String
+  userTopicWorkout UserTopicWorkout[]
+  @@index([userId])
+  @@map("topics")
+}
+
+model UserTopicWorkout {
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId String @map("topic_id")
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  @@id([userId, topicId])
+  @@map("user_topic_workouts")
+}
+```
+
+Each user and each topic has a list of `userTopicWorkout`. But each `userTopicWorkout` for the user and the topic (so, the user has only one `userTopicWorkout` per a topic).
+
+And I want to sort topics by the related `userTopicWorkout` object's `updatedAt` date for the given user.
+
+I've tried to achieve that by the following command:
+
+```ts
+const topics = await jestPrisma.topic.findMany({
+  where: { userId: user.id, id: { in: topicIds } },
+  include: {
+    userTopicWorkout: {
+      select: {
+        updatedAt: true,
+      },
+    },
+  },
+  orderBy: { userTopicWorkout: { updatedAt: 'desc' } },
+});
+```
+
+But I'm getting the following typescript error:
+
+```
+Type '{ userTopicWorkout: { updatedAt: string; }; }' is not assignable to type 'TopicOrderByWithRelationInput | TopicOrderByWithRelationInput[] | undefined'.
+  Types of property 'userTopicWorkout' are incompatible.
+    Object literal may only specify known properties, and 'updatedAt' does not exist in type 'UserTopicWorkoutOrderByRelationAggregateInput'.ts(2322)
+```
+
+How can I achieve the goal and sort topics by related `userTopicWorkout`?
+
+-->
+
+The only solution is to fetch `prisma.userTopicWorkout`:
+
+```javascript
+const userTopicWorkouts = await prisma.userTopicWorkout.findMany({
+  where: {
+    userId: user.id,
+    topicId: { in: topicIds },
+  },
+  orderBy: {
+    updatedAt: 'desc',
+  },
+  include: {
+    topic: true,
+  },
+});
+const topicsSortedByUpdatedAt = userTopicWorkouts.map((utw) => utw.topic);
+```

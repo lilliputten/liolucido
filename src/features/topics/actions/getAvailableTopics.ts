@@ -7,9 +7,8 @@ import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 
-// import { TExtendedUser } from '@/features/users/types/TUser';
-
 import { topicsLimit } from '../constants';
+import { IncludedUserSelect, IncludedUserTopicWorkoutSelect } from '../types';
 import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from './getAvailableTopicsSchema';
 
 interface TOptions {
@@ -26,10 +25,10 @@ export async function getAvailableTopics(
     adminMode,
     showOnlyMyTopics,
     includeUser = true,
-    includeSortWorkouts = false,
+    includeWorkout = false,
     includeQuestionsCount = true,
     orderBy = { createdAt: 'desc' },
-    // Options
+    // Options (no error console output and debugger stops, for tests)
     noDebug,
   } = params;
   if (isDev) {
@@ -63,20 +62,10 @@ export async function getAvailableTopics(
         : false,
     };
     if (includeUser) {
-      include.user = {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      };
+      include.user = { select: IncludedUserSelect };
     }
-    if (includeSortWorkouts) {
-      include.userTopicWorkout = {
-        select: { updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-        take: 1,
-      };
+    if (includeWorkout) {
+      include.userTopicWorkout = { select: IncludedUserTopicWorkoutSelect };
     }
     const where: Prisma.TopicWhereInput = {};
     if (!userId) {

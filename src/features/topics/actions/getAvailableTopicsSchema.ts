@@ -20,8 +20,8 @@ export const GetAvailableTopicsParamsSchema = z.object({
   adminMode: z.coerce.boolean().optional(),
   /** Display only current user's topics */
   showOnlyMyTopics: z.coerce.boolean().optional(),
-  /** Include compact user info data (name, email) in the `user` property of result object */
-  includeSortWorkouts: z.coerce.boolean().optional(),
+  /** Include (limited) workout data */
+  includeWorkout: z.coerce.boolean().optional(),
   /** Include compact user info data (name, email) in the `user` property of result object */
   includeUser: z.coerce.boolean().optional(),
   /** Include related questions count, in `_count: { questions }` */
