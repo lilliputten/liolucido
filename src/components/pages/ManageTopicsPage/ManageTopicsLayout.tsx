@@ -10,9 +10,6 @@ import {
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
 import { TopicsContextProvider } from '@/contexts/TopicsContext/TopicsContext';
-import { getAllUsersTopics, getThisUserTopics } from '@/features/topics/actions';
-import { getAvailableTopics } from '@/features/topics/actions/getAvailableTopics';
-import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 import { ManageTopicsStoreProvider } from '@/stores/ManageTopicsStoreProvider';
@@ -32,15 +29,15 @@ export async function ManageTopicsLayout(props: TManageTopicsLayoutProps) {
     deleteTopicModal, // slot from @deleteTopicModal
     params,
   } = props;
-  const { locale, scope } = await params;
+  const { locale, scope: manageScope } = await params;
 
-  const namespace = topicsNamespaces[scope];
-  const routePath = topicsRoutes[scope];
+  const namespace = topicsNamespaces[manageScope];
+  const routePath = topicsRoutes[manageScope];
 
   // An invalid scope received
   if (!namespace || !routePath) {
     // eslint-disable-next-line no-console
-    console.warn('[ManageTopicsLayout] An invalid scope received:', scope);
+    console.warn('[ManageTopicsLayout] An invalid scope received:', manageScope);
     notFound();
   }
 
@@ -52,12 +49,12 @@ export async function ManageTopicsLayout(props: TManageTopicsLayoutProps) {
     redirect(welcomeRoute);
   }
 
-  const isAdminMode = scope === TopicsManageScopeIds.ALL_TOPICS;
+  const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS;
 
   // Check if it's admin user for 'all' scope
   if (isAdminMode && user.role !== 'ADMIN') {
     // eslint-disable-next-line no-console
-    console.warn('[ManageTopicsLayout] Admin user role required for topics scope', scope);
+    console.warn('[ManageTopicsLayout] Admin user role required for topics scope', manageScope);
     notFound();
   }
 
@@ -74,15 +71,16 @@ export async function ManageTopicsLayout(props: TManageTopicsLayoutProps) {
    * const topics = topicResults.topics;
    */
 
+  // TODO: Remove when done migrating to useAvailableTopicsByScope
   return (
     <TopicsContextProvider
       // topics={topics}
       topics={[]}
       namespace={namespace}
-      manageScope={scope}
+      manageScope={manageScope}
       routePath={routePath}
     >
-      <ManageTopicsStoreProvider manageScope={scope}>
+      <ManageTopicsStoreProvider manageScope={manageScope}>
         {children}
         {addTopicModal}
         {deleteTopicModal}

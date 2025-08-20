@@ -3,9 +3,10 @@ import React from 'react';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useAvailableTopics } from '@/hooks/useAvailableTopics';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { isDev } from '@/constants';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext/TopicsContextDefinitions';
 
 import { AvailableTopicsListItem } from './AvailableTopicsListItem';
 
@@ -14,6 +15,8 @@ const saveScrollHash = getRandomHashString();
 export function AvailableTopicsList(props: TPropsWithClassName) {
   const { className } = props;
 
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+
   const {
     // data,
     fetchNextPage,
@@ -21,7 +24,7 @@ export function AvailableTopicsList(props: TPropsWithClassName) {
     isFetchingNextPage,
     isLoading,
     allTopics,
-  } = useAvailableTopics();
+  } = useAvailableTopicsByScope({ manageScope });
 
   return (
     <ScrollAreaInfinite

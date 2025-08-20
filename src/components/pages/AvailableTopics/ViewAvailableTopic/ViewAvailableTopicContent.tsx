@@ -22,7 +22,7 @@ interface TViewAvailableTopicContentProps {
 }
 
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
-  const scope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const {
     topic,
     className,
@@ -61,7 +61,11 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
             className,
           )}
         >
-          <TopicHeader scope={scope} topic={topic} className="flex-1 max-sm:flex-col-reverse" />
+          <TopicHeader
+            scope={manageScope}
+            topic={topic}
+            className="flex-1 max-sm:flex-col-reverse"
+          />
           {!!description && (
             <div id="description" className="truncate">
               <MarkdownText>{description}</MarkdownText>

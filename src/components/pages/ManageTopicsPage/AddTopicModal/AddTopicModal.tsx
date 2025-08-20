@@ -2,10 +2,17 @@
 
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import {
+  addNewAvailableTopic,
+  invalidateAllUsedKeysExcept,
+  useAvailableTopicsByScope,
+} from '@/hooks/useAvailableTopics';
+import { useGoBack } from '@/hooks/useGoBack';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
@@ -13,25 +20,34 @@ import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { addNewTopic } from '@/features/topics/actions/addNewTopic';
 import { TNewTopic, TTopic } from '@/features/topics/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { AddTopicForm } from './AddTopicForm';
 
 export function AddTopicModal() {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const router = useRouter();
   const [isVisible, setVisible] = React.useState(false);
-  const hideModal = React.useCallback(() => {
-    setVisible(false);
-    router.back();
-    // TODO: Add no-history failback
-  }, [router]);
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
   const topicsContext = useTopicsContext();
 
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const queryClient = useQueryClient();
+  const { queryKey } = availableTopics;
+
   // Check if we're still on the add route
   const pathname = usePathname();
   const isAddRoute = pathname?.endsWith('/add');
+
+  const goBack = useGoBack(routePath);
+
+  const hideModal = React.useCallback(() => {
+    setVisible(false);
+    goBack();
+  }, [goBack]);
 
   // Check if the modal should be visible
   React.useEffect(() => {
@@ -54,6 +70,11 @@ export function AddTopicModal() {
             .then((addedTopic) => {
               // Update topics list
               topicsContext.setTopics((topics) => topics.concat(addedTopic));
+              // Add the created item to the cached react-query data
+              addNewAvailableTopic(queryClient, queryKey, addedTopic, true);
+              // Invalidate all other keys...
+              invalidateAllUsedKeysExcept(queryClient, queryKey);
+              // Resolve added data
               resolve(addedTopic);
               // NOTE: Close the modal first
               setVisible(false);
@@ -80,7 +101,7 @@ export function AddTopicModal() {
         });
       });
     },
-    [topicsContext, router],
+    [topicsContext, queryClient, queryKey, router],
   );
 
   return (

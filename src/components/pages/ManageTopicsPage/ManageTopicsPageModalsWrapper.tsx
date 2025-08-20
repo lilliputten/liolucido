@@ -4,8 +4,9 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { TTopicId } from '@/features/topics/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ManageTopicsListWrapper } from './ManageTopicsListWrapper';
 
@@ -20,55 +21,58 @@ interface TTopicsListProps {
 export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   const router = useRouter();
   const { showAddModal, deleteTopicId, editTopicId, editQuestionsTopicId, from } = props;
-  const topicsContext = useTopicsContext();
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { allTopics } = availableTopics;
 
   // Add Topic Modal
   const openAddTopicModal = React.useCallback(() => {
-    router.push(topicsContext.routePath + '/add');
-  }, [router, topicsContext]);
+    router.push(routePath + '/add');
+  }, [router, routePath]);
   React.useEffect(() => {
     if (showAddModal) {
       openAddTopicModal();
     }
-  }, [showAddModal, openAddTopicModal, topicsContext]);
+  }, [showAddModal, openAddTopicModal]);
 
   // Delete Topic Modal
   const openDeleteTopicModal = React.useCallback(
     (topicId: TTopicId, from: string) => {
-      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
+      const hasTopic = allTopics.find(({ id }) => id === topicId);
       if (hasTopic) {
-        router.push(`${topicsContext.routePath}/delete?topicId=${topicId}&from=${from}`);
+        router.push(`${routePath}/delete?topicId=${topicId}&from=${from}`);
       } else {
         toast.error('The requested topic does not exist.');
-        router.replace(topicsContext.routePath);
+        router.replace(routePath);
       }
     },
-    [router, topicsContext],
+    [router, routePath, allTopics],
   );
   React.useEffect(() => {
     if (deleteTopicId) {
       if (from?.startsWith('SERVER:')) {
         // eslint-disable-next-line no-console
         console.warn('No url-invoked topic deletions allowed!');
-        router.replace(topicsContext.routePath);
+        router.replace(routePath);
       } else {
         openDeleteTopicModal(deleteTopicId, from || 'Unknown_in_ManageTopicsPageModalsWrapper');
       }
     }
-  }, [deleteTopicId, router, topicsContext, openDeleteTopicModal, from]);
+  }, [deleteTopicId, router, routePath, openDeleteTopicModal, from]);
 
   // Edit Topic Card
   const openEditTopicCard = React.useCallback(
     (topicId: TTopicId) => {
-      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
+      const hasTopic = allTopics.find(({ id }) => id === topicId);
       if (hasTopic) {
-        router.push(`${topicsContext.routePath}/${topicId}/edit`);
+        router.push(`${routePath}/${topicId}/edit`);
       } else {
         toast.error('The requested topic does not exist.');
-        router.replace(topicsContext.routePath);
+        router.replace(routePath);
       }
     },
-    [router, topicsContext],
+    [router, routePath, allTopics],
   );
   React.useEffect(() => {
     if (editTopicId) {
@@ -79,15 +83,15 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   // Edit Questions Page
   const openEditQuestionsPage = React.useCallback(
     (topicId: TTopicId) => {
-      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
+      const hasTopic = allTopics.find(({ id }) => id === topicId);
       if (hasTopic) {
-        router.push(`${topicsContext.routePath}/${topicId}/questions`);
+        router.push(`${routePath}/${topicId}/questions`);
       } else {
         toast.error('The requested topic does not exist.');
-        router.replace(topicsContext.routePath);
+        router.replace(routePath);
       }
     },
-    [router, topicsContext],
+    [router, routePath, allTopics],
   );
   React.useEffect(() => {
     // Use another id (`editQuestionsTopicId`)?

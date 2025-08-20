@@ -4,16 +4,19 @@ import React from 'react';
 
 import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { getUnqueTopicsList, useAvailableTopics } from '@/hooks/useAvailableTopics';
+import { getUnqueTopicsList, useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Icons } from '@/components/shared/icons';
+import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared';
+import { ContentSkeleton } from './ContentSkeleton';
 import { ManageTopicsListCard } from './ManageTopicsListCard';
 
 interface TTopicsListProps {
@@ -26,23 +29,53 @@ interface TTopicsListProps {
 export function ManageTopicsListWrapper(props: TTopicsListProps) {
   const { openAddTopicModal, openDeleteTopicModal, openEditTopicCard, openEditQuestionsPage } =
     props;
-  // TODO: Remove
+  // TODO: Remove when done migrating to useAvailableTopicsByScope
   const { topics, setTopics } = useTopicsContext();
 
   const goBack = useGoBack(rootRoute);
 
   const manageTopicsStore = useManageTopicsStore();
+  const { manageScope } = manageTopicsStore;
 
-  const availableTopics = useAvailableTopics();
-  const { data, isLoading, isError, hasTopics } = availableTopics;
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const {
+    data,
+    isLoading,
+    // isFetched,
+    refetch,
+    isError,
+    error,
+    hasTopics,
+  } = availableTopics;
 
-  // TODO: Remove
+  // TODO: Remove when done migrating to useAvailableTopicsByScope
   React.useEffect(() => {
     const allTopics = getUnqueTopicsList(data?.pages);
     setTopics(allTopics);
   }, [data, setTopics]);
 
-  // const hasTopics = !!topics.length;
+  if (isError) {
+    return (
+      <PageError
+        className={cn(
+          isDev && '__ManageTopicsListWrapper_Error', // DEBUG
+        )}
+        error={error || 'Error loading available topics data'}
+        reset={refetch}
+        // extraActions={extraActions}
+      />
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Card className={cn('xl:col-span-2', 'relative flex flex-1 flex-col overflow-hidden')}>
+        <CardContent className={cn('relative flex flex-1 flex-col overflow-hidden p-4')}>
+          <ContentSkeleton />
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!hasTopics) {
     return (

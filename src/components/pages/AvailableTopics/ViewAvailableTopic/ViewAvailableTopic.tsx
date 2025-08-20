@@ -19,10 +19,10 @@ interface TViewAvailableTopicProps extends TPropsWithClassName {
 }
 
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
-  const scope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const { className, topic } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const routePath = topicsRoutes[scope];
+  const routePath = topicsRoutes[manageScope];
   const goBack = useGoBack(routePath);
 
   return (
@@ -50,7 +50,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}
-            scope={scope}
+            scope={manageScope}
             topic={topic}
             inactiveLast
           />

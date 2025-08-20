@@ -12,7 +12,7 @@ import { removeFalsyValues, removeNullUndefinedValues } from '@/lib/helpers/obje
 import { useSwitchRouterLocale } from '@/hooks/useSwitchRouterLocale';
 import { getSettings } from '@/features/settings/actions';
 import { defaultSettings, settingsSchema, TSettings } from '@/features/settings/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
+// import { TDefinedUserId } from '@/features/users/types/TUser';
 import { defaultLocale, TLocale } from '@/i18n/types';
 
 import { SettingsContextData } from './SettingsContextDefinitions';
@@ -21,7 +21,7 @@ const SettingsContext = React.createContext<SettingsContextData | undefined>(und
 
 interface SettingsContextProviderProps {
   children: React.ReactNode;
-  userId?: TDefinedUserId;
+  user?: SettingsContextData['user'];
 }
 
 function getLocalSettings() {
@@ -51,7 +51,8 @@ type TMemo = {
   setAppTheme?: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export function SettingsContextProvider({ children, userId }: SettingsContextProviderProps) {
+export function SettingsContextProvider({ children, user }: SettingsContextProviderProps) {
+  const userId = user?.id;
   const memo = React.useMemo<TMemo>(() => ({ settings: { ...defaultSettings } }), []);
   const [settings, setSettings] = React.useState<TSettings>(memo.settings);
   const [inited, setInited] = React.useState(false);
@@ -258,7 +259,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   const settingsContext = React.useMemo<SettingsContextData>(
     () => ({
-      userId,
+      user,
       settings,
       setLocale,
       setTheme,
@@ -271,7 +272,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
       userInited,
     }),
     [
-      userId,
+      user,
       settings,
       setLocale,
       setTheme,

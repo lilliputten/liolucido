@@ -7,12 +7,15 @@ import { getAvailableTopics } from '@/features/topics/actions';
 import {
   GetAvailableTopicsParamsSchema,
   TTopicOrderBy,
+  TTopicTopicIds,
   zTopicOrderBy,
+  zTopicTopicIds,
 } from '@/features/topics/actions/getAvailableTopicsSchema';
 
 const TargetParamsSchema = GetAvailableTopicsParamsSchema;
-const TargetParamsSchemaWithPlainOderBy = TargetParamsSchema.extend({
-  orderBy: z.string().optional(), // JSON string
+const TargetParamsSchemaPlain = TargetParamsSchema.extend({
+  orderBy: z.string().optional(), // JSON string (object)
+  topicIds: z.string().optional(), // JSON string (array)
 });
 
 /** GET /api/topics - Get topics */
@@ -20,7 +23,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   try {
     const params = Object.fromEntries(searchParams.entries());
-    const parsedParams = TargetParamsSchemaWithPlainOderBy.parse(params);
+    const parsedParams = TargetParamsSchemaPlain.parse(params);
     const {
       skip,
       take,
@@ -28,10 +31,17 @@ export async function GET(request: NextRequest) {
       includeUser,
       includeQuestionsCount,
       orderBy: orderByStr,
+      topicIds: topicIdsStr,
     } = parsedParams;
 
+    // Parse json packed orderBy
     const orderBy = orderByStr
       ? zTopicOrderBy.parse(safeJsonParse<TTopicOrderBy>(orderByStr, {}))
+      : undefined;
+
+    // Parse json packed topicIds
+    const topicIds = topicIdsStr
+      ? zTopicTopicIds.parse(safeJsonParse<TTopicTopicIds>(topicIdsStr, []))
       : undefined;
 
     const topics = await getAvailableTopics({
@@ -41,6 +51,7 @@ export async function GET(request: NextRequest) {
       includeUser,
       includeQuestionsCount,
       orderBy,
+      topicIds,
     });
 
     const response: TApiResponse<typeof topics> = {

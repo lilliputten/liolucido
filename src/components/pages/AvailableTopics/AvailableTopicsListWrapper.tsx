@@ -5,23 +5,23 @@ import Link from 'next/link';
 
 import { myTopicsRoute, rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { useAvailableTopics } from '@/hooks/useAvailableTopics';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { PageEmpty } from '@/components/pages/shared';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 
 import { AvailableTopicsList } from './AvailableTopicsList';
 import { AvailableTopicsLoading } from './AvailableTopicsLoading';
 
 export function AvailableTopicsListWrapper() {
   const goBack = useGoBack(rootRoute);
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
 
-  const availableTopics = useAvailableTopics();
-  const { data, isLoading, isError, hasTopics } = availableTopics;
-
-  // const hasTopics = !!data?.pages[0]?.totalCount;
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { isLoading, isError, hasTopics } = availableTopics;
 
   if (isLoading) {
     return <AvailableTopicsLoading />;

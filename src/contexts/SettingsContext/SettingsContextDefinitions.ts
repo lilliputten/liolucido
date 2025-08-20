@@ -1,10 +1,12 @@
+// import { TDefinedUserId } from '@/features/users/types/TUser';
+import { ExtendedUser } from '@/@types/next-auth';
+
 import { TApiResponse } from '@/shared/types/api';
 import { TSettings } from '@/features/settings/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
 
 export interface SettingsContextData {
   /** Current user */
-  userId?: TDefinedUserId;
+  user?: ExtendedUser;
   /** The settings data */
   settings: TSettings;
   setLocale: (locale: TSettings['locale']) => Promise<TSettings>;

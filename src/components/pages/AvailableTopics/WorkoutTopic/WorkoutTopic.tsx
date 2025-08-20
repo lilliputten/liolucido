@@ -18,10 +18,10 @@ import { WorkoutTopicContentActions } from './WorkoutTopicContentActions';
 
 export function WorkoutTopic(props: TPropsWithClassName) {
   const { className } = props;
-  const scope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const { topic } = useWorkoutContext();
-  const routePath = topicsRoutes[scope];
+  const routePath = topicsRoutes[manageScope];
   const goBack = useGoBack(`${routePath}/${topic.id}`); // topicsContext.routePath);
   if (!topic.id || !topic) {
     throw new Error('No such topic exists');
@@ -59,7 +59,7 @@ export function WorkoutTopic(props: TPropsWithClassName) {
                 isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
                 'flex-1',
               )}
-              scope={scope}
+              scope={manageScope}
               topic={topic}
               lastItem={{
                 content: 'Workout',

@@ -63,7 +63,7 @@ async function RootLayout(props: TRootLayoutProps) {
   const messages = await getMessages();
 
   const user = await getCurrentUser();
-  const userId = user?.id;
+  // const userId = user?.id;
 
   const settings = await getSettings();
   // Get theme color from setting or from cookie or get the default value
@@ -150,7 +150,7 @@ async function RootLayout(props: TRootLayoutProps) {
                     // containerAriaLabel?: string;
                     // pauseWhenPageIsHidden?: boolean;
                   />
-                  <SettingsContextProvider userId={userId}>
+                  <SettingsContextProvider user={user}>
                     <GenericLayout>
                       {/* Core content */}
                       {children}

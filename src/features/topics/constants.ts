@@ -1,3 +1,3 @@
 import { isDev } from '@/constants';
 
-export const topicsLimit = isDev ? 8 : 20;
+export const topicsLimit = isDev ? 5 : 20;

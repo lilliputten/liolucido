@@ -9,6 +9,7 @@ interface TScrollAreaInfiniteProps extends React.ComponentProps<typeof ScrollAre
   className?: string; // Already defined in `ScrollArea`
   containerClassName?: string;
   // Fetch params...
+  /** Data to control update event hadlers */
   effectorData: unknown;
   fetchNextPage: () => Promise<unknown>;
   isLoading: boolean;

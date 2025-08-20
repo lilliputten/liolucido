@@ -4,6 +4,9 @@ import { TopicOrderByWithRelationInputSchema } from '@/generated/prisma';
 
 import { TAvailableTopic } from '../types';
 
+export const zTopicTopicIds = z.array(z.string()).optional();
+export type TTopicTopicIds = z.infer<typeof zTopicTopicIds>;
+
 export const zTopicOrderBy = z
   .union([TopicOrderByWithRelationInputSchema.array(), TopicOrderByWithRelationInputSchema])
   .optional();
@@ -14,8 +17,6 @@ export const GetAvailableTopicsParamsSchema = z.object({
   skip: z.coerce.number().int().nonnegative().optional(),
   /** Amount of records to return, default = {topicsLimit} */
   take: z.coerce.number().int().positive().optional(),
-  /** Include only listed topic ids */
-  topicIds: z.array(z.string()).optional(),
   /** Get all users' data not only your own (admins only: will return no data for non-admins) ??? */
   adminMode: z.coerce.boolean().optional(),
   /** Display only current user's topics */
@@ -29,6 +30,8 @@ export const GetAvailableTopicsParamsSchema = z.object({
   /** Sort by parameter, default: `{ createdAt: 'desc' }`, packed json string */
   // orderBy: TopicFindManyArgsSchema.shape.orderBy, // This approach doesn't work
   orderBy: zTopicOrderBy,
+  /** Include only listed topic ids */
+  topicIds: zTopicTopicIds, // z.array(z.string()).optional(),
 });
 
 export type TGetAvailableTopicsParams = z.infer<typeof GetAvailableTopicsParamsSchema>;

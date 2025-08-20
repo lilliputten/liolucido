@@ -4,6 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import {
   InfiniteData,
+  QueryClient,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryResult,
@@ -13,12 +14,25 @@ import { toast } from 'sonner';
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
-import { composeUrl } from '@/lib/helpers/urls';
+import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
 import { minuteMs } from '@/constants';
-import { TGetAvailableTopicsResults } from '@/features/topics/actions/getAvailableTopicsSchema';
+import {
+  defaultTopicsManageScope,
+  TopicsManageScopeIds,
+  TTopicsManageScopeId,
+} from '@/contexts/TopicsContext';
+import {
+  TGetAvailableTopicsParams,
+  TGetAvailableTopicsResults,
+} from '@/features/topics/actions/getAvailableTopicsSchema';
 import { topicsLimit } from '@/features/topics/constants';
+import { TTopic } from '@/features/topics/types';
+
+import { useSessionUser } from './useSessionUser';
 
 const staleTime = minuteMs * 10;
+
+// TODO: Register all the query keys
 
 /** Extract & deduplicate topics by their IDs */
 export function getUnqueTopicsList(results?: TGetAvailableTopicsResults[]) {
@@ -35,11 +49,111 @@ export function getUnqueTopicsList(results?: TGetAvailableTopicsResults[]) {
     });
 }
 
-export const useAvailableTopics = () => {
+type TUseAvailableTopicsProps = Omit<TGetAvailableTopicsParams, 'skip' | 'take'>;
+
+/** Collection of the all used query keys (mb, already invalidated).
+ *
+ * TODO:
+ * - To use `QueryCache.subscribe` to remove invalidated keys?
+ * - Create a helper to invalidate all the keys or all the keys, except current?
+ */
+const allUsedKeys: Record<string, QueryKey> = {};
+
+export function stringifyQueryKey(qk: QueryKey) {
+  // return JSON.stringify(qk);
+  return String(qk);
+}
+
+/*
+export function addNewAvailableTopic(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  newTopic: TTopic,
+  toStart?: boolean,
+) {
+  queryClient.setQueryData<InfiniteData<TGetAvailableTopicsResults, unknown>>(
+    queryKey,
+    (oldData) => {
+      if (!oldData) return oldData;
+      // Append to the end of the last page's topics
+      const lastPageIndex = oldData.pages.length - 1;
+      const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
+        if (toStart && !index) {
+          // Add to the beginning of the first page's topics
+          return { ...page, topics: [newTopic, ...page.topics] };
+        } else if (!toStart && index === lastPageIndex) {
+          // Add to the end
+          return { ...page, topics: [...page.topics, newTopic] };
+        }
+        return page;
+      });
+      return { ...oldData, pages };
+    },
+  );
+}
+*/
+
+export function addNewAvailableTopic(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  newTopic: TTopic,
+  /** Add the new item to the beginning of the existing items */
+  toStart?: boolean,
+) {
+  queryClient.setQueryData<InfiniteData<TGetAvailableTopicsResults, unknown>>(
+    queryKey,
+    (oldData) => {
+      if (!oldData) return oldData;
+      const lastPageIndex = oldData.pages.length - 1;
+      let totalCount = 0;
+      const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
+        if (toStart && index === 0) {
+          // Add to the beginning of the first page's topics
+          page = { ...page, topics: [newTopic, ...page.topics] };
+        } else if (!toStart && index === lastPageIndex) {
+          // Add to the end of the last page's topics
+          page = { ...page, topics: [...page.topics, newTopic] };
+        }
+        totalCount += page.topics.length;
+        return page;
+      });
+      // Update totalCount for the all pages...
+      const updatedPages = pages.map((page) => ({ ...page, totalCount }));
+      return { ...oldData, pages: updatedPages };
+    },
+  );
+}
+
+export function invalidateAllUsedKeysExcept(queryClient: QueryClient, excludeKey: QueryKey) {
+  queryClient.invalidateQueries({
+    predicate: (query) => {
+      // Exclude queries matching the excludeKey exactly
+      // React Query stores query keys as arrays internally
+      const queryKeyStr = JSON.stringify(query.queryKey);
+      const excludeKeyStr = JSON.stringify(excludeKey);
+      return (
+        queryKeyStr !== excludeKeyStr &&
+        Object.values(allUsedKeys).some((key) => {
+          return JSON.stringify(key) === queryKeyStr;
+        })
+      );
+    },
+  });
+}
+
+export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   const invalidateKeys = useInvalidateReactQueryKeys();
   const pathname = usePathname();
 
-  // : QueryObserverBaseResult<InfiniteData<TGetAvailableTopicsResults>>
+  /* Use partrial query url as a part of the query key */
+  const queryHash = React.useMemo(
+    () => composeUrlQuery(queryProps, { omitFalsy: true }),
+    [queryProps],
+  );
+  // const queryKey = React.useMemo<QueryKey>(() => ['topics', 'available', queryHash], [queryHash]);
+  const queryKey: QueryKey = ['available-topics', queryHash];
+  allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
+
   const query: UseInfiniteQueryResult<
     InfiniteData<TGetAvailableTopicsResults, unknown>,
     Error
@@ -48,9 +162,9 @@ export const useAvailableTopics = () => {
     Error,
     InfiniteData<TGetAvailableTopicsResults>,
     QueryKey,
-    number // cursor type
+    number // Cursor type (from `skip` api parameter)
   >({
-    queryKey: ['topics', 'available'],
+    queryKey,
     staleTime, // Data validity period
     // gcTime: 10 * staleTime, // Inactive cache validity period
     initialPageParam: 0,
@@ -63,26 +177,15 @@ export const useAvailableTopics = () => {
       return loadedCount < lastPage.totalCount ? loadedCount : undefined;
     },
     queryFn: async (params) => {
-      const { pageParam = 0 } = params;
-      /* // TODO: It's possible to pass other parameters (see `GetAvailableTopicsParamsSchema`):
-       * skip: Skip records (start from the nth record), default = 0
-       * take: Amount of records to return, default = {topicsLimit}
-       * showOnlyMyTopics: Display only current user's topics
-       * includeUser: Unclude compact user info data (name, email) in the `user` property of result object
-       * includeQuestionsCount: Include related questions count, in `_count: { questions }`
-       * orderBy: Sort by parameter, default: `{ createdAt: 'desc' }`, packed json string
+      /* // DEBUG: Test error
+       * throw new Error('Test error');
        */
-      // const url = `/api/topics?skip=${pageParam}&take=${topicsLimit}`;
-      const url = composeUrl(
-        '/api/topics',
+      const { pageParam = 0 } = params;
+      const paginationHash = composeUrlQuery(
         { skip: pageParam, take: topicsLimit },
         { omitFalsy: true },
       );
-      /* console.log('[useAvailableTopics:queryFn] start', {
-       *   pageParam,
-       *   url,
-       * });
-       */
+      const url = appendUrlQueries('/api/topics', queryHash, paginationHash);
       try {
         const result = await handleApiResponse(fetch(url), {
           onInvalidateKeys: invalidateKeys,
@@ -92,12 +195,6 @@ export const useAvailableTopics = () => {
             pageParam,
           },
         });
-        /* console.log('[useAvailableTopics:queryFn] done', {
-         *   result,
-         *   pageParam,
-         *   url,
-         * });
-         */
         return result.data as TGetAvailableTopicsResults;
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
@@ -158,8 +255,37 @@ export const useAvailableTopics = () => {
 
   return {
     ...query,
+    queryKey,
+    allUsedKeys,
     allTopics,
     hasTopics: !!allTopics.length, // !!query.data?.pages[0]?.totalCount,
     routePath: pathname,
   };
-};
+}
+
+interface TUseAvailableTopicsByScopeProps {
+  manageScope?: TTopicsManageScopeId;
+}
+
+export function useAvailableTopicsByScope(props: TUseAvailableTopicsByScopeProps = {}) {
+  const {
+    manageScope = defaultTopicsManageScope,
+    // user,
+  } = props;
+  const user = useSessionUser();
+  const queryProps: TUseAvailableTopicsProps = React.useMemo(() => {
+    const isAdmin = user?.role === 'ADMIN';
+    return {
+      // skip, // Skip records (start from the nth record), default = 0 // z.number().int().nonnegative().optional()
+      // take, // Amount of records to return, default = {topicsLimit} // z.number().int().positive().optional()
+      adminMode: manageScope === TopicsManageScopeIds.ALL_TOPICS && isAdmin, // Get all users' data not only your own (admins only: will return no data for non-admins) ??? // z.boolean().optional()
+      showOnlyMyTopics: manageScope === TopicsManageScopeIds.MY_TOPICS, // Display only current user's topics // z.boolean().optional()
+      includeWorkout: true, // Include (limited) workout data // z.boolean().optional()
+      includeUser: true, // Include compact user info data (name, email) in the `user` property of result object // z.boolean().optional()
+      includeQuestionsCount: true, // Include related questions count, in `_count: { questions }` // z.boolean().optional()
+      orderBy: { updatedAt: 'desc' }, // Sort by parameter, default: `{ createdAt: 'desc' }`, packed json string // TopicFindManyArgsSchema.shape.orderBy // This approach doesn't work
+      // topicIds, // Include only listed topic ids // z.array(z.string()).optional()
+    } satisfies TUseAvailableTopicsProps;
+  }, [manageScope, user]);
+  return useAvailableTopics(queryProps);
+}
