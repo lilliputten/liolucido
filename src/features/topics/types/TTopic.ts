@@ -8,6 +8,7 @@ export type TTopicReal = ReplaceNullWithUndefined<TTopic>;
 
 export type TTopicId = TTopic['id'];
 
+/** User fields to include with a flag `iGetAvailableTopicsParamsSchema.ncludeUser` */
 export const IncludedUserSelect = {
   id: true as const, // z.string().cuid(),
   name: true as const, // z.string().nullable(),
@@ -21,6 +22,7 @@ export const IncludedUserSelect = {
 const _IncludedUserSchema = UserSchema.pick(IncludedUserSelect);
 type TIncludedUser = z.infer<typeof _IncludedUserSchema>;
 
+/** UserTopicWorkout fields to include with a flag `GetAvailableTopicsParamsSchema.includeWorkout` */
 export const IncludedUserTopicWorkoutSelect = {
   userId: true as const, // z.string(),
   topicId: true as const, // z.string(),

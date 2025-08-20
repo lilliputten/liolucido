@@ -11,9 +11,11 @@ import {
 } from '@/contexts/TopicsContext';
 import { TopicsContextProvider } from '@/contexts/TopicsContext/TopicsContext';
 import { getAllUsersTopics, getThisUserTopics } from '@/features/topics/actions';
+import { getAvailableTopics } from '@/features/topics/actions/getAvailableTopics';
 import { TTopic } from '@/features/topics/types';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+import { ManageTopicsStoreProvider } from '@/stores/ManageTopicsStoreProvider';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId }>;
 
@@ -64,19 +66,27 @@ export async function ManageTopicsLayout(props: TManageTopicsLayoutProps) {
   // Enable static rendering
   setRequestLocale(locale);
 
-  const topicsPromise = isAdminMode ? getAllUsersTopics() : getThisUserTopics();
-  const topics: TTopic[] = (await topicsPromise) || [];
+  /*// UNUSED: Fetching the topics is proceeding on the client side, see `ManageTopicsListWrapper`. TODO: In the future the `TopicsContext` must be compeltely replcaed by react query-provided data
+   * // const topicsPromise = isAdminMode ? getAllUsersTopics() : getThisUserTopics();
+   * // const topics: TTopic[] = (await topicsPromise) || [];
+   * const topicsPromise = getAvailableTopics({ adminMode: isAdminMode });
+   * const topicResults = await topicsPromise;
+   * const topics = topicResults.topics;
+   */
 
   return (
     <TopicsContextProvider
-      topics={topics}
+      // topics={topics}
+      topics={[]}
       namespace={namespace}
       manageScope={scope}
       routePath={routePath}
     >
-      {children}
-      {addTopicModal}
-      {deleteTopicModal}
+      <ManageTopicsStoreProvider manageScope={scope}>
+        {children}
+        {addTopicModal}
+        {deleteTopicModal}
+      </ManageTopicsStoreProvider>
     </TopicsContextProvider>
   );
 }

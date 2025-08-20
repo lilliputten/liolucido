@@ -1,7 +1,13 @@
 'use client';
 
+import React from 'react';
 import { usePathname } from 'next/navigation';
-import { InfiniteData, QueryKey, useInfiniteQuery } from '@tanstack/react-query';
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+} from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
@@ -33,7 +39,11 @@ export const useAvailableTopics = () => {
   const invalidateKeys = useInvalidateReactQueryKeys();
   const pathname = usePathname();
 
-  const query = useInfiniteQuery<
+  // : QueryObserverBaseResult<InfiniteData<TGetAvailableTopicsResults>>
+  const query: UseInfiniteQueryResult<
+    InfiniteData<TGetAvailableTopicsResults, unknown>,
+    Error
+  > = useInfiniteQuery<
     TGetAvailableTopicsResults,
     Error,
     InfiniteData<TGetAvailableTopicsResults>,
@@ -107,8 +117,49 @@ export const useAvailableTopics = () => {
     },
   });
 
+  /* // List of query properties:
+   * status
+   * error
+   * data
+   * isLoading
+   * isError
+   * isPending
+   * isLoadingError
+   * isRefetchError
+   * isSuccess
+   * isPlaceholderData
+   * fetchNextPage
+   * fetchPreviousPage
+   * hasNextPage
+   * hasPreviousPage
+   * isFetchNextPageError
+   * isFetchingNextPage
+   * isFetchPreviousPageError
+   * isFetchingPreviousPage
+   * dataUpdatedAt
+   * errorUpdatedAt
+   * failureCount
+   * failureReason
+   * errorUpdateCount
+   * isFetched
+   * isFetchedAfterMount
+   * isFetching
+   * isInitialLoading
+   * isPaused
+   * isRefetching
+   * isStale
+   * isEnabled
+   * refetch
+   * fetchStatus
+   * promise
+   */
+
+  const allTopics = React.useMemo(() => getUnqueTopicsList(query.data?.pages), [query.data?.pages]);
+
   return {
     ...query,
+    allTopics,
+    hasTopics: !!allTopics.length, // !!query.data?.pages[0]?.totalCount,
     routePath: pathname,
   };
 };

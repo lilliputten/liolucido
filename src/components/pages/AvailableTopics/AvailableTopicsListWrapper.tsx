@@ -19,9 +19,9 @@ export function AvailableTopicsListWrapper() {
   const goBack = useGoBack(rootRoute);
 
   const availableTopics = useAvailableTopics();
-  const { data, isLoading, isError } = availableTopics;
+  const { data, isLoading, isError, hasTopics } = availableTopics;
 
-  const hasTopics = !!data?.pages[0]?.totalCount;
+  // const hasTopics = !!data?.pages[0]?.totalCount;
 
   if (isLoading) {
     return <AvailableTopicsLoading />;

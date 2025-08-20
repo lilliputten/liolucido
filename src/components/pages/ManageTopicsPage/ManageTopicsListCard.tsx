@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString, truncateString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useAvailableTopics } from '@/hooks/useAvailableTopics';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -31,7 +32,7 @@ import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersFor
 const saveScrollHash = getRandomHashString();
 
 interface TManageTopicsListCardProps extends TPropsWithClassName {
-  topics: TTopic[];
+  // topics: TTopic[];
   handleDeleteTopic: (topicId: TTopicId, from: string) => void;
   handleEditTopic: (topicId: TTopicId) => void;
   handleEditQuestions: (topicId: TTopicId) => void;
@@ -256,7 +257,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
 export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
   const {
     className,
-    topics,
+    // topics,
     handleDeleteTopic,
     handleEditTopic,
     handleEditQuestions,
@@ -265,8 +266,11 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
   const { manageScope } = useTopicsContext();
   const user = useSessionUser();
   const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';
+  const availableTopics = useAvailableTopics();
+  const { isLoading, isError, hasTopics, allTopics } = availableTopics;
+
   const cachedUsers = useCachedUsersForTopics({
-    topics,
+    topics: allTopics,
     bypass: !isAdminMode, // Do not use users data if not admin user role
   });
   return (
@@ -311,7 +315,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
           <Table>
             <TopicTableHeader isAdminMode={isAdminMode} />
             <TableBody>
-              {topics.map((topic, idx) => (
+              {allTopics.map((topic, idx) => (
                 <TopicTableRow
                   key={topic.id}
                   idx={idx}
