@@ -4,16 +4,17 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import {
   InfiniteData,
-  QueryClient,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryResult,
+  useQueryClient,
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
+import { stringifyQueryKey } from '@/lib/helpers/react-query';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
 import { minuteMs } from '@/constants';
 import {
@@ -26,30 +27,18 @@ import {
   TGetAvailableTopicsResults,
 } from '@/features/topics/actions/getAvailableTopicsSchema';
 import { topicsLimit } from '@/features/topics/constants';
-import { TTopic } from '@/features/topics/types';
+import { TTopic, TTopicId } from '@/features/topics/types';
 
+import { getUnqueTopicsList } from './helpers/availableTopics';
 import { useSessionUser } from './useSessionUser';
 
 const staleTime = minuteMs * 10;
 
 // TODO: Register all the query keys
 
-/** Extract & deduplicate topics by their IDs */
-export function getUnqueTopicsList(results?: TGetAvailableTopicsResults[]) {
-  if (!results) return [];
-  // Deduplicate topics by their ID
-  const uniqueTopicsMap = new Set<string>();
-  return results
-    .flatMap((page) => page.topics)
-    .filter(({ id }) => {
-      if (!uniqueTopicsMap.has(id)) {
-        uniqueTopicsMap.add(id);
-        return true;
-      }
-    });
-}
-
 type TUseAvailableTopicsProps = Omit<TGetAvailableTopicsParams, 'skip' | 'take'>;
+
+type TQueryData = InfiniteData<TGetAvailableTopicsResults, unknown>;
 
 /** Collection of the all used query keys (mb, already invalidated).
  *
@@ -59,89 +48,8 @@ type TUseAvailableTopicsProps = Omit<TGetAvailableTopicsParams, 'skip' | 'take'>
  */
 const allUsedKeys: Record<string, QueryKey> = {};
 
-export function stringifyQueryKey(qk: QueryKey) {
-  // return JSON.stringify(qk);
-  return String(qk);
-}
-
-/*
-export function addNewAvailableTopic(
-  queryClient: QueryClient,
-  queryKey: QueryKey,
-  newTopic: TTopic,
-  toStart?: boolean,
-) {
-  queryClient.setQueryData<InfiniteData<TGetAvailableTopicsResults, unknown>>(
-    queryKey,
-    (oldData) => {
-      if (!oldData) return oldData;
-      // Append to the end of the last page's topics
-      const lastPageIndex = oldData.pages.length - 1;
-      const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
-        if (toStart && !index) {
-          // Add to the beginning of the first page's topics
-          return { ...page, topics: [newTopic, ...page.topics] };
-        } else if (!toStart && index === lastPageIndex) {
-          // Add to the end
-          return { ...page, topics: [...page.topics, newTopic] };
-        }
-        return page;
-      });
-      return { ...oldData, pages };
-    },
-  );
-}
-*/
-
-export function addNewAvailableTopic(
-  queryClient: QueryClient,
-  queryKey: QueryKey,
-  newTopic: TTopic,
-  /** Add the new item to the beginning of the existing items */
-  toStart?: boolean,
-) {
-  queryClient.setQueryData<InfiniteData<TGetAvailableTopicsResults, unknown>>(
-    queryKey,
-    (oldData) => {
-      if (!oldData) return oldData;
-      const lastPageIndex = oldData.pages.length - 1;
-      let totalCount = 0;
-      const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
-        if (toStart && index === 0) {
-          // Add to the beginning of the first page's topics
-          page = { ...page, topics: [newTopic, ...page.topics] };
-        } else if (!toStart && index === lastPageIndex) {
-          // Add to the end of the last page's topics
-          page = { ...page, topics: [...page.topics, newTopic] };
-        }
-        totalCount += page.topics.length;
-        return page;
-      });
-      // Update totalCount for the all pages...
-      const updatedPages = pages.map((page) => ({ ...page, totalCount }));
-      return { ...oldData, pages: updatedPages };
-    },
-  );
-}
-
-export function invalidateAllUsedKeysExcept(queryClient: QueryClient, excludeKey: QueryKey) {
-  queryClient.invalidateQueries({
-    predicate: (query) => {
-      // Exclude queries matching the excludeKey exactly
-      // React Query stores query keys as arrays internally
-      const queryKeyStr = JSON.stringify(query.queryKey);
-      const excludeKeyStr = JSON.stringify(excludeKey);
-      return (
-        queryKeyStr !== excludeKeyStr &&
-        Object.values(allUsedKeys).some((key) => {
-          return JSON.stringify(key) === queryKeyStr;
-        })
-      );
-    },
-  });
-}
-
 export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
+  const queryClient = useQueryClient();
   const invalidateKeys = useInvalidateReactQueryKeys();
   const pathname = usePathname();
 
@@ -150,20 +58,16 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
     () => composeUrlQuery(queryProps, { omitFalsy: true }),
     [queryProps],
   );
-  // const queryKey = React.useMemo<QueryKey>(() => ['topics', 'available', queryHash], [queryHash]);
-  const queryKey: QueryKey = ['available-topics', queryHash];
+  const queryKey = React.useMemo<QueryKey>(() => ['available-topics', queryHash], [queryHash]);
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
-
-  const query: UseInfiniteQueryResult<
-    InfiniteData<TGetAvailableTopicsResults, unknown>,
-    Error
-  > = useInfiniteQuery<
+  const query: UseInfiniteQueryResult<TQueryData, Error> = useInfiniteQuery<
     TGetAvailableTopicsResults,
     Error,
     InfiniteData<TGetAvailableTopicsResults>,
     QueryKey,
     number // Cursor type (from `skip` api parameter)
   >({
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey,
     staleTime, // Data validity period
     // gcTime: 10 * staleTime, // Inactive cache validity period
@@ -214,6 +118,82 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
     },
   });
 
+  /** Add new topic record to the pages data
+   * @param {TTopic} newTopic - Record to add
+   * @param {boolean} toStart - Add the new item to the beginning of the existing items. TODO: Determine default behavior by `orderBy`?
+   */
+  const addNewTopic = React.useCallback(
+    (newTopic: TTopic, toStart?: boolean) => {
+      queryClient.setQueryData<TQueryData>(queryKey, (oldData) => {
+        if (!oldData) return oldData;
+        const lastPageIndex = oldData.pages.length - 1;
+        // Recalculate totalCount as sum of all pages' topics length
+        let totalCount = 0;
+        const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
+          if (toStart && index === 0) {
+            // Add to the beginning of the first page's topics
+            page = { ...page, topics: [newTopic, ...page.topics] };
+          } else if (!toStart && index === lastPageIndex) {
+            // Add to the end of the last page's topics
+            page = { ...page, topics: [...page.topics, newTopic] };
+          }
+          totalCount += page.topics.length;
+          return page;
+        });
+        // Update totalCount for the all pages...
+        const updatedPages = pages.map((page) => ({ ...page, totalCount }));
+        return { ...oldData, pages: updatedPages };
+      });
+    },
+    [queryClient, queryKey],
+  );
+
+  /** Delete the specified topic (by id) from the pages data.
+   * @param {TTopicId} topicIdToDelete - Assuming topic has a unique id of string or number type
+   */
+  const deleteTopic = React.useCallback(
+    (topicIdToDelete: TTopicId) => {
+      queryClient.setQueryData<TQueryData>(queryKey, (oldData) => {
+        if (!oldData) return oldData;
+        // Recalculate totalCount as sum of all pages' topics length
+        let totalCount = 0;
+        // Filter out the topic to delete from all pages
+        const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
+          const topics = page.topics.filter((topic) => topic.id !== topicIdToDelete);
+          totalCount += topics.length;
+          return { ...page, topics };
+        });
+        const updatedPages = pages.map((page) => ({ ...page, totalCount }));
+        return { ...oldData, pages: updatedPages };
+      });
+    },
+    [queryClient, queryKey],
+  );
+
+  /** Invalidate all used keys, except optional specified ones
+   * @param {QueryKey[]} [excludeKeys] -- The list of keys to exclude from the invalidation
+   */
+  const invalidateAllKeysExcept = React.useCallback(
+    (excludeKeys?: QueryKey[]) => {
+      const excludeKeysStr =
+        Array.isArray(excludeKeys) && excludeKeys.length ? excludeKeys.map(stringifyQueryKey) : [];
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          // Exclude queries matching the excludeKey exactly
+          // React Query stores query keys as arrays internally
+          const queryKeyStr = JSON.stringify(query.queryKey);
+          return (
+            !excludeKeysStr.includes(queryKeyStr) &&
+            Object.values(allUsedKeys).some((key) => {
+              return stringifyQueryKey(key) === queryKeyStr;
+            })
+          );
+        },
+      });
+    },
+    [queryClient],
+  );
+
   /* // List of query properties:
    * status
    * error
@@ -255,11 +235,17 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
 
   return {
     ...query,
+    // Derived data...
     queryKey,
     allUsedKeys,
     allTopics,
     hasTopics: !!allTopics.length, // !!query.data?.pages[0]?.totalCount,
     routePath: pathname,
+    // Helpers...
+    // \<\(addNewTopic\|deleteTopic\|invalidateAllKeysExcept\)\>
+    addNewTopic,
+    deleteTopic,
+    invalidateAllKeysExcept,
   };
 }
 

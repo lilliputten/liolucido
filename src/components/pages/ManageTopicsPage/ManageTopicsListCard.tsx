@@ -225,7 +225,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
     props;
   const manageTopicsStore = useManageTopicsStore();
   const { manageScope } = manageTopicsStore;
-  // const { manageScope } = useTopicsContext();
+  // const { manageScope } = useTopicsContext(); // TODO: To remove!
   const user = useSessionUser();
   // const { user } = useSettingsContext();
   const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';

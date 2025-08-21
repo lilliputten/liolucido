@@ -4,7 +4,8 @@ import React from 'react';
 
 import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { getUnqueTopicsList, useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
+import { getUnqueTopicsList } from '@/hooks/helpers/availableTopics';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,7 +30,7 @@ interface TTopicsListProps {
 export function ManageTopicsListWrapper(props: TTopicsListProps) {
   const { openAddTopicModal, openDeleteTopicModal, openEditTopicCard, openEditQuestionsPage } =
     props;
-  // TODO: Remove when done migrating to useAvailableTopicsByScope
+  // TODO: Remove when done migrating to useAvailableTopicsByScope (temporarily feeding topics context from `AvailableTopics`)
   const { topics, setTopics } = useTopicsContext();
 
   const goBack = useGoBack(rootRoute);
