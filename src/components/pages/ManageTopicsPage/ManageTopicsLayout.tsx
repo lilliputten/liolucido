@@ -9,7 +9,6 @@ import {
   topicsRoutes,
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
-import { TopicsContextProvider } from '@/contexts/TopicsContext/TopicsContext';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 import { ManageTopicsStoreProvider } from '@/stores/ManageTopicsStoreProvider';
@@ -73,18 +72,10 @@ export async function ManageTopicsLayout(props: TManageTopicsLayoutProps) {
 
   // TODO: Remove when done migrating to useAvailableTopicsByScope
   return (
-    <TopicsContextProvider
-      // topics={topics}
-      topics={[]}
-      namespace={namespace}
-      manageScope={manageScope}
-      routePath={routePath}
-    >
-      <ManageTopicsStoreProvider manageScope={manageScope}>
-        {children}
-        {addTopicModal}
-        {deleteTopicModal}
-      </ManageTopicsStoreProvider>
-    </TopicsContextProvider>
+    <ManageTopicsStoreProvider manageScope={manageScope}>
+      {children}
+      {addTopicModal}
+      {deleteTopicModal}
+    </ManageTopicsStoreProvider>
   );
 }

@@ -12,13 +12,14 @@ import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TAvailableTopic } from '@/features/topics/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const format = useFormatter();
   const user = useSessionUser();
-  const topicsContext = useTopicsContext();
 
   const isOwner = !!topic.userId && topic.userId === user?.id;
 
@@ -44,7 +45,7 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
         <h3 className="text-lg font-semibold">Properties</h3>
         <div className="flex flex-wrap gap-2">
           {!!topic._count?.questions && (
-            <Link href={`${topicsContext.routePath}/${topic.id}/questions`}>
+            <Link href={`${routePath}/${topic.id}/questions`}>
               <Badge
                 variant="default"
                 className="cursor-pointer bg-theme-500 hover:bg-theme-500/80"

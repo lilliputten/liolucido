@@ -4,7 +4,6 @@ import React from 'react';
 
 import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { getUnqueTopicsList } from '@/hooks/helpers/availableTopics';
 import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Icons } from '@/components/shared/icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -30,8 +28,6 @@ interface TTopicsListProps {
 export function ManageTopicsListWrapper(props: TTopicsListProps) {
   const { openAddTopicModal, openDeleteTopicModal, openEditTopicCard, openEditQuestionsPage } =
     props;
-  // TODO: Remove when done migrating to useAvailableTopicsByScope (temporarily feeding topics context from `AvailableTopics`)
-  const { topics, setTopics } = useTopicsContext();
 
   const goBack = useGoBack(rootRoute);
 
@@ -40,20 +36,24 @@ export function ManageTopicsListWrapper(props: TTopicsListProps) {
 
   const availableTopics = useAvailableTopicsByScope({ manageScope });
   const {
-    data,
+    // data,
     isLoading,
-    // isFetched,
+    isFetched,
     refetch,
     isError,
     error,
     hasTopics,
   } = availableTopics;
 
-  // TODO: Remove when done migrating to useAvailableTopicsByScope
-  React.useEffect(() => {
-    const allTopics = getUnqueTopicsList(data?.pages);
-    setTopics(allTopics);
-  }, [data, setTopics]);
+  if (!isFetched || isLoading) {
+    return (
+      <Card className={cn('xl:col-span-2', 'relative flex flex-1 flex-col overflow-hidden')}>
+        <CardContent className={cn('relative flex flex-1 flex-col overflow-hidden p-4')}>
+          <ContentSkeleton />
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isError) {
     return (
@@ -65,16 +65,6 @@ export function ManageTopicsListWrapper(props: TTopicsListProps) {
         reset={refetch}
         // extraActions={extraActions}
       />
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Card className={cn('xl:col-span-2', 'relative flex flex-1 flex-col overflow-hidden')}>
-        <CardContent className={cn('relative flex flex-1 flex-col overflow-hidden p-4')}>
-          <ContentSkeleton />
-        </CardContent>
-      </Card>
     );
   }
 

@@ -1,57 +1,70 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
+import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TAvailableTopic, TTopicId } from '@/features/topics/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-import { ViewTopicContent } from './ViewTopicContent';
+import { ViewTopicContentActions } from './ViewTopicContentActions';
+import { ViewTopicContentSummary } from './ViewTopicContentSummary';
 
 interface TViewTopicCardProps extends TPropsWithClassName {
   topicId: TTopicId;
 }
 
 export function ViewTopicCard(props: TViewTopicCardProps) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
+  const goBack = useGoBack(routePath);
+  const goToTheRoute = useGoToTheRoute();
   const { className, topicId } = props;
-  const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
-  const router = useRouter();
-  const topicsContext = useTopicsContext();
-  const { topics } = topicsContext;
-  const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { allTopics, isFetched } = availableTopics;
+  const topic: TAvailableTopic | undefined = React.useMemo(
+    () => allTopics.find(({ id }) => id === topicId),
+    [allTopics, topicId],
   );
-  if (!topicId || !topic) {
-    throw new Error('No such topic exists');
-  }
-  const goBack = useGoBack(topicsContext.routePath);
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
-    const hasTopic = !!topicsContext.topics.find(({ id }) => id === topic.id);
-    if (hasTopic) {
-      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=ViewTopicCard`);
-    } else {
-      toast.error('The requested topic does not exist.');
-      router.replace(topicsContext.routePath);
-    }
-  }, [router, topicsContext, topic]);
+    const url = `${routePath}/delete?topicId=${topicId}&from=ViewTopicCard`;
+    goToTheRoute(url);
+  }, [goToTheRoute, routePath, topicId]);
 
-  /* // Add Topic Modal
-   * const handleAddQuestion = React.useCallback(() => {
-   *   router.push(`${topicsContext.routePath}/${topic.id}/questions/add`);
-   * }, [router, topicsContext, topic]);
-   */
+  // No data loaded yet
+  if (!isFetched) {
+    return (
+      <div
+        className={cn(
+          isDev && '__EditTopicCard_Skeleton', // DEBUG
+          'size-full',
+          'flex flex-1 flex-col gap-4 py-4',
+          className,
+        )}
+      >
+        <Skeleton className="h-8 w-48 rounded-lg" />
+        <Skeleton className="h-8 w-full rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  // Error: topic hasn't been found
+  if (!topicId || !topic) {
+    throw new Error('No such topic exists');
+  }
 
   return (
     <Card
@@ -74,12 +87,13 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <TopicsBreadcrumbs
+          <TopicsScopeBreadcrumbs
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}
-            topicId={topicId}
-            inactiveTopic
+            scope={manageScope}
+            topic={topic}
+            inactiveLast
           />
           {/* // UNUSED: Title
             <CardTitle className="flex flex-1 items-center overflow-hidden">
@@ -88,27 +102,27 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
             */}
         </div>
         <div
-          ref={toolbarPortalRef}
           className={cn(
             isDev && '__ViewTopicCard_Toolbar', // DEBUG
             'flex flex-wrap items-center gap-2',
           )}
-        />
+        >
+          <ViewTopicContentActions
+            topic={topic}
+            goBack={goBack}
+            handleDeleteTopic={handleDeleteTopic}
+          />
+        </div>
       </CardHeader>
-
       <CardContent
         className={cn(
           isDev && '__ViewTopicCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ViewTopicContent
-          topic={topic}
-          goBack={goBack}
-          handleDeleteTopic={handleDeleteTopic}
-          // handleAddQuestion={handleAddQuestion}
-          toolbarPortalRoot={toolbarPortalRoot}
-        />
+        <ScrollArea>
+          <ViewTopicContentSummary topic={topic} />
+        </ScrollArea>
       </CardContent>
     </Card>
   );

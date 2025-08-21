@@ -27,15 +27,19 @@ export interface TApiWrapperResult<T> {
   error?: TApiError;
 }
 
+export type TApiDebugDetails = Record<string, unknown>;
+
 // Custom API Error class
 export class APIError extends Error {
   public readonly code: string;
-  public readonly details?: Record<string, unknown>;
+  public readonly details?: TApiDebugDetails;
 
-  constructor(apiError: TApiError) {
+  constructor(apiError: TApiError, debugDetails?: TApiDebugDetails) {
     super(apiError.message);
     this.name = 'APIError';
     this.code = apiError.code;
-    this.details = apiError.details;
+    if (debugDetails || apiError.details) {
+      this.details = { ...debugDetails, ...apiError.details };
+    }
   }
 }

@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { TApiResponse } from '@/shared/types/api';
+import { makeNullableFieldsOptional } from '@/lib/helpers/zod';
 import { updateTopic } from '@/features/topics/actions';
 import { TTopic } from '@/features/topics/types';
 import { TopicSchema } from '@/generated/prisma';
 
-const updateTopicSchema = TopicSchema.omit({
+const updateTopicSchema = makeNullableFieldsOptional(TopicSchema).omit({
   createdAt: true,
   updatedAt: true,
   userId: true,
@@ -32,7 +33,11 @@ export async function PUT(
     return NextResponse.json(response);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[API /topics/[topicId] PUT]', error);
+    console.error('[API /topics/[topicId] PUT]', {
+      error,
+      params,
+      request,
+    });
     debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {

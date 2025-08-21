@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createPortal } from 'react-dom';
 import { useForm } from 'react-hook-form';
@@ -12,15 +11,17 @@ import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
+import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TTopic } from '@/features/topics/types';
+import { TAvailableTopic, TTopic } from '@/features/topics/types';
 import {
   selectTopicEventName,
   TSelectTopicLanguageData,
 } from '@/features/topics/types/TSelectTopicLanguageData';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { maxNameLength, maxTextLength, minNameLength } from '../constants';
 import { EditTopicFormActions } from './EditTopicFormActions';
@@ -33,15 +34,20 @@ interface TEditTopicFormProps {
   topic: TTopic;
   className?: string;
   onCancel?: () => void;
-  toolbarPortalRoot: HTMLDivElement | null;
+  toolbarPortalRef: React.RefObject<HTMLDivElement>;
 }
 
 export function EditTopicForm(props: TEditTopicFormProps) {
-  const { topic, className, onCancel, toolbarPortalRoot } = props;
-  const router = useRouter();
-  const topicsContext = useTopicsContext();
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
+  const { topic, className, onCancel, toolbarPortalRef } = props;
+  const toolbarPortalRoot = toolbarPortalRef.current;
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
   const [isPending, startTransition] = React.useTransition();
   const invalidateKeys = useInvalidateReactQueryKeys();
+
+  const goToTheRoute = useGoToTheRoute();
+  // const goBack = useGoBack(routePath);
 
   const formSchema = React.useMemo(
     () =>
@@ -150,18 +156,17 @@ export function EditTopicForm(props: TEditTopicFormProps) {
       if (langCode) params.append('langCode', langCode);
       if (langName) params.append('langName', langName);
       if (langCustom) params.append('langCustom', String(langCustom));
-      router.push(
-        `${topicsContext.routePath}/${topic.id}/edit/select-language?${params.toString()}`,
-      );
+      const url = `${routePath}/${topic.id}/edit/select-language?${params.toString()}`;
+      goToTheRoute(url);
     },
-    [form, router, topic, topicsContext],
+    [form, topic, routePath, goToTheRoute],
   );
 
   const isSubmitEnabled = !isPending && isDirty && isValid;
 
   const handleFormSubmit = React.useCallback(
     (formData: TFormData) => {
-      const editedTopic: TTopic = {
+      const editedTopic: TAvailableTopic = {
         ...topic,
         name: formData.name,
         description: formData.description,
@@ -175,8 +180,9 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         answersCountMax: formData.answersCountMax,
       };
       startTransition(async () => {
-        const savePromise = handleApiResponse(
-          fetch(`/api/topics/${editedTopic.id}`, {
+        const url = `/api/topics/${editedTopic.id}`;
+        const savePromise = handleApiResponse<TAvailableTopic>(
+          fetch(url, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(editedTopic),
@@ -193,15 +199,17 @@ export function EditTopicForm(props: TEditTopicFormProps) {
         toast.promise(savePromise, {
           loading: 'Saving the topic data...',
           success: 'Successfully saved the topic',
-          error: 'Can not save the topic data.',
+          error: 'Cannot save the topic data.',
         });
         try {
           const result = await savePromise;
           if (result.ok && result.data) {
-            const updatedTopic = result.data as TTopic;
-            topicsContext.setTopics((topics) => {
-              return topics.map((topic) => (topic.id === updatedTopic.id ? updatedTopic : topic));
-            });
+            const updatedTopic = result.data;
+            // Add the created item to the cached react-query data
+            availableTopics.updateTopic(updatedTopic);
+            // Invalidate all other keys...
+            availableTopics.invalidateAllKeysExcept([availableTopics.queryKey]);
+            // Reset for state with the current values
             form.reset(form.getValues());
           }
         } catch (error) {
@@ -212,12 +220,15 @@ export function EditTopicForm(props: TEditTopicFormProps) {
             details,
             error,
             topicId: editedTopic.id,
+            url,
+            editedTopic,
+            formData,
           });
           debugger; // eslint-disable-line no-debugger
         }
       });
     },
-    [form, topicsContext, topic, invalidateKeys],
+    [availableTopics, form, topic, invalidateKeys],
   );
 
   const handleCancel = React.useCallback(
@@ -232,14 +243,19 @@ export function EditTopicForm(props: TEditTopicFormProps) {
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
-    const hasTopic = topicsContext.topics.find(({ id }) => id === topic.id);
-    if (hasTopic) {
-      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=EditTopicForm`);
-    } else {
-      toast.error('The requested topic does not exist.');
-      router.replace(topicsContext.routePath);
-    }
-  }, [router, topicsContext, topic]);
+    const url = `${routePath}/delete?topicId=${topic.id}&from=EditTopicForm`;
+    goToTheRoute(url);
+    /*
+     * const hasTopic = allTopics.find(({ id }) => id === topic.id);
+     * if (hasTopic) {
+     *   const url = `${routePath}/delete?topicId=${topic.id}&from=EditTopicForm`;
+     *   goToTheRoute(url);
+     * } else {
+     *   toast.error('The requested topic does not exist.');
+     *   goToTheRoute(routePath, true);
+     * }
+     */
+  }, [goToTheRoute, routePath, topic]);
 
   return (
     <>

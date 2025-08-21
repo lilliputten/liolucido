@@ -63,3 +63,36 @@ export function makeAllFieldsOptionalString<T extends z.ZodRawShape>(schema: z.Z
   }
   return z.object(newShape);
 }
+
+export function makeNullableFieldsOptional<T extends ZodRawShape>(
+  schema: ZodObject<T>,
+): ZodObject<T> {
+  // New shape object to hold converted fields
+  const newShape: Partial<T> = {};
+
+  for (const key in schema.shape) {
+    if (Object.prototype.hasOwnProperty.call(schema.shape, key)) {
+      const field = schema.shape[key];
+
+      // Check if the field is a nullable type
+      // Zod nullable is implemented as ZodOptional<ZodNullable<...>>, or ZodOptional<...> with inner nullable
+      // But we can also check typeName or unwrap .nullable() from union with null
+
+      // A reliable way is checking if unwrap().isNullable()
+
+      // Unfortunately, zod doesn't expose a direct isNullable(), but we can check the ._def to see if it's ZodNullable
+      if (field._def.typeName === 'ZodNullable') {
+        // get the inner type (non-nullable part)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const innerType = (field as any)._def.innerType as ZodTypeAny;
+        // convert it to optional instead of nullable:
+        newShape[key] = innerType.optional() as unknown as T[typeof key];
+      } else {
+        // leave unchanged
+        newShape[key] = field;
+      }
+    }
+  }
+
+  return z.object(newShape as T);
+}

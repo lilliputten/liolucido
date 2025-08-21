@@ -27,7 +27,7 @@ import {
   TGetAvailableTopicsResults,
 } from '@/features/topics/actions/getAvailableTopicsSchema';
 import { topicsLimit } from '@/features/topics/constants';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TAvailableTopic, TTopicId } from '@/features/topics/types';
 
 import { getUnqueTopicsList } from './helpers/availableTopics';
 import { useSessionUser } from './useSessionUser';
@@ -119,11 +119,11 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   });
 
   /** Add new topic record to the pages data
-   * @param {TTopic} newTopic - Record to add
+   * @param {TAvailableTopic} newTopic - Record to add
    * @param {boolean} toStart - Add the new item to the beginning of the existing items. TODO: Determine default behavior by `orderBy`?
    */
   const addNewTopic = React.useCallback(
-    (newTopic: TTopic, toStart?: boolean) => {
+    (newTopic: TAvailableTopic, toStart?: boolean) => {
       queryClient.setQueryData<TQueryData>(queryKey, (oldData) => {
         if (!oldData) return oldData;
         const lastPageIndex = oldData.pages.length - 1;
@@ -165,6 +165,30 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
         });
         const updatedPages = pages.map((page) => ({ ...page, totalCount }));
         return { ...oldData, pages: updatedPages };
+      });
+    },
+    [queryClient, queryKey],
+  );
+
+  /** Delete the specified topic (by id) from the pages data.
+   * @param {TTopicId} topicIdToDelete - Assuming topic has a unique id of string or number type
+   */
+  const updateTopic = React.useCallback(
+    (updatedTopic: TAvailableTopic) => {
+      queryClient.setQueryData<TQueryData>(queryKey, (oldData) => {
+        if (!oldData) return oldData;
+        const updatedId = updatedTopic.id;
+        // Filter out the topic to delete from all pages
+        const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
+          if (!page.topics.find(({ id }) => id === updatedId)) {
+            return page;
+          }
+          const topics = page.topics.map((topic) =>
+            topic.id === updatedTopic.id ? updatedTopic : topic,
+          );
+          return { ...page, topics };
+        });
+        return { ...oldData, pages };
       });
     },
     [queryClient, queryKey],
@@ -245,6 +269,7 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
     // \<\(addNewTopic\|deleteTopic\|invalidateAllKeysExcept\)\>
     addNewTopic,
     deleteTopic,
+    updateTopic,
     invalidateAllKeysExcept,
   };
 }

@@ -7,6 +7,7 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { cn } from '@/lib/utils';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,23 +17,26 @@ import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TAnswer } from '@/features/answers/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const format = useFormatter();
   const user = useSessionUser();
   const answersContext = useAnswersContext();
   const questionsContext = useQuestionsContext();
-  const topicsContext = useTopicsContext();
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { allTopics } = availableTopics;
 
   const question = React.useMemo(() => {
     return questionsContext.questions.find((q) => q.id === answer.questionId);
   }, [questionsContext.questions, answer.questionId]);
 
   const topic = React.useMemo(() => {
-    return topicsContext.topics.find((t) => t.id === answersContext.topicId);
-  }, [topicsContext.topics, answersContext.topicId]);
+    return allTopics.find((t) => t.id === answersContext.topicId);
+  }, [allTopics, answersContext.topicId]);
 
   const totalAnswersCount = answersContext.answers.length;
 
@@ -108,10 +112,7 @@ export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
             <h3 className="text-lg font-semibold">Topic</h3>
             {isOwner && (
               <Button variant="ghost" size="sm">
-                <Link
-                  href={`${topicsContext.routePath}/${topic.id}`}
-                  className="flex items-center gap-2"
-                >
+                <Link href={`${routePath}/${topic.id}`} className="flex items-center gap-2">
                   <Icons.edit className="size-3" />
                   <span>Manage Topic</span>
                 </Link>

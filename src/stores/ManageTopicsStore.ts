@@ -2,7 +2,6 @@ import { createStore } from 'zustand/vanilla';
 
 import {
   defaultTopicsManageScope,
-  TopicsManageScopeIds,
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext/TopicsContextDefinitions';
 
@@ -18,7 +17,7 @@ export type ManageTopicsActions = {
 export type ManageTopicsStore = ManageTopicsState & ManageTopicsActions;
 
 export const defaultManageTopicsState: ManageTopicsState = {
-  manageScope: TopicsManageScopeIds.AVAILABLE_TOPICS, // defaultTopicsManageScope,
+  manageScope: defaultTopicsManageScope, // TopicsManageScopeIds.AVAILABLE_TOPICS,
 };
 
 export const createManageTopicsStore = (

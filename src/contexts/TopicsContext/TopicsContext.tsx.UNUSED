@@ -1,7 +1,5 @@
-'use client';
-
+// UNUSED: In favour of `useAvailableTopicsByScope`, not used in the codebase
 import React from 'react';
-
 import { TRoutePath } from '@/config/routesConfig';
 import {
   addedQuestionEventName,
@@ -10,22 +8,30 @@ import {
   TDeletedQuestionDetail,
 } from '@/constants/eventTypes';
 import { TAvailableTopic } from '@/features/topics/types';
-
 import {
   defaultTopicsManageScope,
   defaultTopicsNamespace,
   TopicsContextData,
   topicsRoutes,
 } from './TopicsContextDefinitions';
-
+export interface TopicsContextData {
+  topics: TAvailableTopic[];
+  setTopics: React.Dispatch<React.SetStateAction<TAvailableTopic[]>>;
+  totalCount: number;
+  setTotalCount: (count: number) => void;
+  /** Topics type: only user's topics or all topics (for admin) */
+  manageScope: TTopicsManageScopeId;
+  /** Route for this topics manage context root (depends on `manageScope`) -- the topics list page */
+  routePath: TRoutePath;
+  /** Translation namespace, for `useTranslations` or `getTranslations`, default is "ManageTopicsPage" */
+  namespace: string;
+}
 const TopicsContext = React.createContext<TopicsContextData | undefined>(undefined);
-
 interface TopicsContextProviderProps
   extends Omit<TopicsContextData, 'setTopics' | 'totalCount' | 'setTotalCount'> {
   children: React.ReactNode;
   totalCount?: number;
 }
-
 export function TopicsContextProvider({
   children,
   totalCount: initialTotalCount,
@@ -84,7 +90,6 @@ export function TopicsContextProvider({
 
   return <TopicsContext.Provider value={topicsContext}>{children}</TopicsContext.Provider>;
 }
-
 export function useTopicsContext() {
   const context = React.useContext(TopicsContext);
   if (!context) {

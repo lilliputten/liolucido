@@ -2,6 +2,7 @@ import { QueryKey } from '@tanstack/react-query';
 
 import {
   APIError,
+  TApiDebugDetails,
   TApiError,
   TApiResponse,
   TApiWrapperResult,
@@ -15,7 +16,7 @@ export interface TApiWrapperOptions {
   onInvalidateKeys?: (keys: QueryKey[]) => void;
   onMessages?: (messages: TServiceMessage[]) => void;
   onError?: (error: TApiError) => void;
-  debugDetails?: Record<string, unknown>;
+  debugDetails?: TApiDebugDetails;
   useConsole?: boolean;
 }
 
@@ -41,7 +42,7 @@ export async function handleApiResponse<T>(
         message: 'Invalid response format',
         details: { parseError: String(parseError), originalContent: body },
       };
-      const apiError = new APIError(systemError);
+      const apiError = new APIError(systemError, debugDetails);
       if (useConsole) {
         // eslint-disable-next-line no-console
         console.warn('[handleApiResponse:handleApiResponse] Parse error:', apiError.message, {
@@ -89,7 +90,7 @@ export async function handleApiResponse<T>(
     // Handle errors
     if (!apiResponse.ok && apiResponse.error) {
       const responseError = apiResponse.error;
-      const apiError = new APIError(responseError);
+      const apiError = new APIError(responseError, debugDetails);
       if (useConsole) {
         // eslint-disable-next-line no-console
         console.warn('[handleApiResponse:handleApiResponse] API error:', apiError.message, {
@@ -131,7 +132,7 @@ export async function handleApiResponse<T>(
       Object.assign(error, systemError);
     }
 
-    const apiError = new APIError(error);
+    const apiError = new APIError(error, debugDetails);
 
     if (useConsole) {
       // eslint-disable-next-line no-console
@@ -148,7 +149,7 @@ export async function handleApiResponse<T>(
       onError(error);
       return { data: null, ok: false, error };
     } else {
-      throw new APIError(error);
+      throw new APIError(error, debugDetails);
     }
   }
 }

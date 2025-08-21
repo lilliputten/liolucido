@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
-import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TTopic } from '@/features/topics/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export interface TViewTopicContentActionsProps {
   topic: TTopic;
@@ -18,6 +18,8 @@ export interface TViewTopicContentActionsProps {
 }
 
 export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const { topic, goBack, handleDeleteTopic, handleAddQuestion } = props;
   const {
     id,
@@ -34,8 +36,6 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
   } = topic;
   const questionsCount = _count?.questions;
   const allowedTraining = !!questionsCount;
-  // const router = useRouter();
-  const topicsContext = useTopicsContext();
   return (
     <>
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
@@ -43,14 +43,14 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
         <span>Back</span>
       </Button>
       <Link
-        href={`${topicsContext.routePath}/${topic.id}/edit`}
+        href={`${routePath}/${topic.id}/edit`}
         className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
         <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
         <span>Edit</span>
       </Link>
       <Link
-        href={`${topicsContext.routePath}/${topic.id}/questions`}
+        href={`${routePath}/${topic.id}/questions`}
         className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
         <Icons.questions className="hidden size-4 opacity-50 sm:flex" />

@@ -22,6 +22,9 @@ export interface TQuestionsBreadcrumbsProps extends TTopicsBreadcrumbsProps {
 }
 
 export function useQuestionsBreadcrumbsItems(props: TQuestionsBreadcrumbsProps) {
+  // const { manageScope } = useManageTopicsStore();
+  // const rootRoutePath = `/topics/${manageScope}`;
+
   const { questionId, inactiveQuestions, inactiveQuestion, ...rest } = props;
   const questionsContext = useQuestionsContext();
   const { questions, topicId, routePath } = questionsContext;

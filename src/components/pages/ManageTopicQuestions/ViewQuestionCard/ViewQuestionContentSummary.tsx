@@ -7,6 +7,7 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { cn } from '@/lib/utils';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,17 +15,21 @@ import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
 import { TQuestion } from '@/features/questions/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export function ViewQuestionContentSummary({ question }: { question: TQuestion }) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const format = useFormatter();
   const user = useSessionUser();
-  const topicsContext = useTopicsContext();
+
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { allTopics } = availableTopics;
 
   const topic = React.useMemo(() => {
-    return topicsContext.topics.find((t) => t.id === question.topicId);
-  }, [topicsContext.topics, question.topicId]);
+    return allTopics.find((t) => t.id === question.topicId);
+  }, [allTopics, question.topicId]);
 
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
 
@@ -48,9 +53,7 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
         <h3 className="text-lg font-semibold">Properties</h3>
         <div className="flex flex-wrap gap-2">
           {!!question._count?.answers && (
-            <Link
-              href={`${topicsContext.routePath}/${question.topicId}/questions/${question.id}/answers`}
-            >
+            <Link href={`${routePath}/${question.topicId}/questions/${question.id}/answers`}>
               <Badge variant="secondary" className="cursor-pointer hover:bg-secondary/80">
                 <Icons.messages className="opcity-50 mr-1 size-3" />
                 Answers: {question._count.answers}
@@ -75,10 +78,7 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
             <h3 className="text-lg font-semibold">Topic</h3>
             {isOwner && (
               <Button variant="ghost" size="sm">
-                <Link
-                  href={`${topicsContext.routePath}/${topic.id}`}
-                  className="flex items-center gap-2"
-                >
+                <Link href={`${routePath}/${topic.id}`} className="flex items-center gap-2">
                   <Icons.edit className="size-3 opacity-50" />
                   <span>Manage Topic</span>
                 </Link>

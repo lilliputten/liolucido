@@ -4,12 +4,14 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { EditTopicForm } from './EditTopicForm';
 
@@ -17,47 +19,45 @@ interface TEditTopicCardProps extends TPropsWithClassName {
   topicId: TTopicId;
 }
 
-type TToolbarProps = /* Omit<TEditTopicCardProps, 'className'> & */ {
-  goBack: () => void;
-  toolbarPortalRef: React.RefObject<HTMLDivElement>;
-};
-
-function Toolbar({ toolbarPortalRef }: TToolbarProps) {
-  return (
-    <div
-      ref={toolbarPortalRef}
-      className={cn(
-        isDev && '__EditTopicCard_Toolbar', // DEBUG
-        'flex flex-wrap gap-2',
-      )}
-    >
-      {/* // Example
-      <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
-        <Link href="#" className="flex items-center gap-2">
-          <Icons.refresh className="hidden size-4 sm:block" />
-          <span>Refresh</span>
-        </Link>
-      </Button>
-      */}
-    </div>
-  );
-}
-
 export function EditTopicCard(props: TEditTopicCardProps) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
+  const goBack = useGoBack(routePath);
   const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
-  const topicsContext = useTopicsContext();
-  const { topics } = topicsContext;
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { allTopics, isFetched } = availableTopics;
+
   const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
+    () => allTopics.find(({ id }) => id === topicId),
+    [allTopics, topicId],
   );
+
+  // No data loaded yet
+  if (!isFetched) {
+    return (
+      <div
+        className={cn(
+          isDev && '__EditTopicCard_Skeleton', // DEBUG
+          'size-full',
+          'flex flex-1 flex-col gap-4 py-4',
+          className,
+        )}
+      >
+        <Skeleton className="h-8 w-48 rounded-lg" />
+        <Skeleton className="h-8 w-full rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  // Error: topic hasn't been found
   if (!topicId || !topic) {
     throw new Error('No such topic exists');
   }
-  const goBack = useGoBack(topicsContext.routePath);
+
   return (
     <Card
       className={cn(
@@ -73,19 +73,36 @@ export function EditTopicCard(props: TEditTopicCardProps) {
           'item-start flex flex-col gap-4',
         )}
       >
-        <TopicsBreadcrumbs
+        <TopicsScopeBreadcrumbs
           className={cn(
             isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
           )}
-          topicId={topicId}
+          scope={manageScope}
+          topic={topic}
         />
         <div className="item-start flex flex-row flex-wrap gap-4">
           {/* // Title
           <CardTitle className="flex flex-1 items-center overflow-hidden">
             <span className="truncate">Manage Topic "{topic.name}"</span>
           </CardTitle>
-          */}
           <Toolbar goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
+          */}
+          <div
+            ref={toolbarPortalRef}
+            className={cn(
+              isDev && '__EditTopicCard_Toolbar', // DEBUG
+              'flex flex-wrap gap-2',
+            )}
+          >
+            {/* // Example
+            <Button disabled variant="ghost" size="sm" className="flex gap-2 px-4">
+              <Link href="#" className="flex items-center gap-2">
+                <Icons.refresh className="hidden size-4 sm:block" />
+                <span>Refresh</span>
+              </Link>
+            </Button>
+            */}
+          </div>
         </div>
       </CardHeader>
       <CardContent
@@ -94,7 +111,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <EditTopicForm topic={topic} onCancel={goBack} toolbarPortalRoot={toolbarPortalRoot} />
+        <EditTopicForm topic={topic} onCancel={goBack} toolbarPortalRef={toolbarPortalRef} />
       </CardContent>
     </Card>
   );

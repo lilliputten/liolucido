@@ -96,7 +96,7 @@ function TopicTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
         <TableHead id="name" className="truncate">
           Topic Name
         </TableHead>
-        <TableHead id="questions" className="truncate">
+        <TableHead id="questions" className="truncate max-sm:hidden">
           Questions
         </TableHead>
         {isAdminMode && (
@@ -158,7 +158,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
           {truncateString(name, 40)}
         </Link>
       </TableCell>
-      <TableCell id="questions" className="max-w-[8em] truncate">
+      <TableCell id="questions" className="max-w-[8em] truncate max-sm:hidden">
         <div className="truncate">
           {questionsCount ? (
             <span className="font-bold">{questionsCount}</span>
@@ -225,9 +225,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
     props;
   const manageTopicsStore = useManageTopicsStore();
   const { manageScope } = manageTopicsStore;
-  // const { manageScope } = useTopicsContext(); // TODO: To remove!
   const user = useSessionUser();
-  // const { user } = useSettingsContext();
   const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';
   const availableTopics = useAvailableTopicsByScope({ manageScope });
   const { isLoading, allTopics, fetchNextPage, hasNextPage, isFetchingNextPage } = availableTopics;

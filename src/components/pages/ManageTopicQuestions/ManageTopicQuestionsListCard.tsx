@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
@@ -11,6 +10,7 @@ import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useGoBack } from '@/hooks/useGoBack';
+import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
 import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -30,9 +30,9 @@ import {
   updatedQuestionsCountEventName,
 } from '@/constants/eventTypes';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { useTopicsContext } from '@/contexts/TopicsContext';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared/PageEmpty';
 
@@ -258,34 +258,22 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     handleEditQuestion,
     handleEditAnswers,
   } = props;
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
 
-  const router = useRouter();
-  const topicsContext = useTopicsContext();
   const questionsContext = useQuestionsContext();
 
-  /* // UNUSED: Current topic
-   * const topic = React.useMemo(() => {
-   *   return topicsContext.topics.find(({ id }) => id === questionsContext.topicId);
-   * }, [questionsContext.topicId, topicsContext]);
-   */
-
+  const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(questionsContext.topicsListRoutePath);
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
     const { topicId } = questionsContext;
-    const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
-    if (hasTopic) {
-      router.push(
-        `${topicsContext.routePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`,
-      );
-    } else {
-      toast.error('The requested topic does not exist.');
-      router.replace(topicsContext.routePath);
-    }
-  }, [router, topicsContext, questionsContext]);
+    const url = `${routePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`;
+    goToTheRoute(url);
+  }, [goToTheRoute, questionsContext, routePath]);
 
   const hasQuestions = !!questionsContext.questions.length;
 

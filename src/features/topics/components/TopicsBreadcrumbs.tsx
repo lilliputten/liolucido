@@ -7,11 +7,12 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { capitalizeString, truncateString } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { cn } from '@/lib/utils';
+import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
-import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { topicsNamespaces, topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export interface TTopicsBreadcrumbsProps {
   topicId?: TTopicId;
@@ -21,13 +22,16 @@ export interface TTopicsBreadcrumbsProps {
 }
 
 export function useTopicsBreadcrumbsItems(props: TTopicsBreadcrumbsProps) {
+  const { manageScope } = useManageTopicsStore();
+  const namespace = topicsNamespaces[manageScope];
+  const routePath = `/topics/${manageScope}`;
   const { topicId, topic, inactiveTopic } = props;
-  const topicsContext = useTopicsContext();
-  const { topics, routePath, namespace } = topicsContext;
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { allTopics } = availableTopics;
   const t = useTranslations(namespace);
   const usedTopic: TTopic | undefined = React.useMemo(
-    () => topic || (topicId ? topics.find(({ id }) => id === topicId) : undefined),
-    [topic, topics, topicId],
+    () => topic || (topicId ? allTopics.find(({ id }) => id === topicId) : undefined),
+    [topic, allTopics, topicId],
   );
   const items = filterOutEmpties<TBreadcrumbsItemProps>([
     { link: routePath, content: t('title') },
@@ -68,16 +72,19 @@ export function TopicsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWit
     />
   );
 }
-export function TopicsBreadcrumbs(props: TTopicsBreadcrumbsProps & TPropsWithClassName) {
-  const { className, lastItem, ...rest } = props;
-  const items = useTopicsBreadcrumbsItems(rest);
-  return (
-    <Breadcrumbs
-      className={cn(
-        isDev && '__TopicsBreadcrumbs', // DEBUG
-        className,
-      )}
-      items={lastItem ? items.concat(lastItem) : items}
-    />
-  );
-}
+
+/* // UNUSED: In favour of `TopicsScopeBreadcrumbs`, not used in the codebase
+ * export function TopicsBreadcrumbs(props: TTopicsBreadcrumbsProps & TPropsWithClassName) {
+ *   const { className, lastItem, ...rest } = props;
+ *   const items = useTopicsBreadcrumbsItems(rest);
+ *   return (
+ *     <Breadcrumbs
+ *       className={cn(
+ *         isDev && '__TopicsBreadcrumbs', // DEBUG
+ *         className,
+ *       )}
+ *       items={lastItem ? items.concat(lastItem) : items}
+ *     />
+ *   );
+ * }
+ */
