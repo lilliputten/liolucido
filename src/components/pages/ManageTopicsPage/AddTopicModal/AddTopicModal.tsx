@@ -24,7 +24,6 @@ import { AddTopicForm } from './AddTopicForm';
 export function AddTopicModal() {
   const { manageScope } = useManageTopicsStore();
   const routePath = `/topics/${manageScope}`;
-  const goToTheRoute = useGoToTheRoute();
   const [isVisible, setVisible] = React.useState(false);
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
@@ -36,6 +35,7 @@ export function AddTopicModal() {
   /** Should the modal be visible? */
   const shouldBeVisible = pathname?.endsWith('/add');
 
+  const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(routePath);
 
   const hideModal = React.useCallback(() => {
