@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 
 import { TApiResponse } from '@/shared/types/api';
 import { makeNullableFieldsOptional } from '@/lib/helpers/zod';
+import { TopicIncludeParamsSchema } from '@/lib/zod-schemes';
 import { updateTopic } from '@/features/topics/actions';
+import { getAvailableTopicById } from '@/features/topics/actions/getAvailableTopicById';
 import { TTopic } from '@/features/topics/types';
 import { TopicSchema } from '@/generated/prisma';
 
@@ -12,6 +14,75 @@ const updateTopicSchema = makeNullableFieldsOptional(TopicSchema).omit({
   updatedAt: true,
   userId: true,
 });
+
+/** GET /api/topics/[topicId]?... - Get topic data */
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ topicId: string }> },
+) {
+  const { topicId } = await params;
+  const { searchParams } = request.nextUrl;
+  try {
+    const params = Object.fromEntries(searchParams.entries());
+    const parsedParams = TopicIncludeParamsSchema.parse(params);
+    const {
+      // TopicIncludeParamsSchema params
+      includeWorkout,
+      includeUser,
+      includeQuestionsCount,
+    } = parsedParams;
+
+    const topic = await getAvailableTopicById({
+      id: topicId,
+      includeWorkout,
+      includeUser,
+      includeQuestionsCount,
+    });
+
+    const response: TApiResponse<typeof topic> = {
+      data: topic,
+      ok: true,
+    };
+
+    return NextResponse.json(response);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      // eslint-disable-next-line no-console
+      console.error('[API /api/topics/[topicId] GET] ZodError', error);
+      debugger; // eslint-disable-line no-debugger
+
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'ZOD_ERROR',
+          message: 'Zod parsing error', // error instanceof Error ? error.message : 'Failed to fetch topics',
+          details: {
+            // error: error instanceof Error ? error.message : String(error),
+            stack: error.stack,
+            issues: error.issues,
+          },
+        },
+      };
+      return NextResponse.json(response, { status: 500 });
+    }
+
+    // eslint-disable-next-line no-console
+    console.error('[API /api/topics/[topicId] GET]', error);
+    debugger; // eslint-disable-line no-debugger
+
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error instanceof Error ? error.message : 'Failed to fetch topics',
+        details: { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
+    return NextResponse.json(response, { status: 500 });
+  }
+}
 
 /** PUT /api/topics/[topicId] - Update topic */
 export async function PUT(

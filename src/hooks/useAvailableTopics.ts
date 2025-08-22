@@ -13,8 +13,6 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { TAllUsedKeys, TAvailableTopicsResultsQueryData } from '@/shared/types/react-query';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import {
   addNewTopicToCache,
   deleteTopicFromCache,
@@ -22,7 +20,8 @@ import {
   stringifyQueryKey,
   updateTopicInCache,
 } from '@/lib/helpers/react-query';
-import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
+import { composeUrlQuery } from '@/lib/helpers/urls';
+import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemes';
 import { minuteMs } from '@/constants';
 import {
   defaultTopicsManageScope,
@@ -30,10 +29,6 @@ import {
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
 import { getAvailableTopics } from '@/features/topics/actions';
-import {
-  TGetAvailableTopicsParams,
-  TGetAvailableTopicsResults,
-} from '@/features/topics/actions/getAvailableTopicsSchema';
 import { topicsLimit } from '@/features/topics/constants';
 import { TAvailableTopic, TTopicId } from '@/features/topics/types';
 
@@ -92,20 +87,20 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
        */
       const { pageParam = 0 } = params;
       try {
-        // OPTION: Via server function
+        // OPTION: Using server function
         const result = await getAvailableTopics({
           ...queryProps,
           skip: pageParam,
           take: topicsLimit,
         });
         return result;
-        /* // OPTION: Via fetch
+        /* // OPTION: Using route api fetch
          * const paginationHash = composeUrlQuery(
          *   { skip: pageParam, take: topicsLimit },
          *   { omitFalsy: true },
          * );
          * const url = appendUrlQueries('/api/topics', queryHash, paginationHash);
-         * const result = await handleApiResponse(fetch(url), {
+         * const result = await handleApiResponse<TGetAvailableTopicsResults>(fetch(url), {
          *   onInvalidateKeys: invalidateKeys,
          *   debugDetails: {
          *     initiator: 'useAvailableTopics',

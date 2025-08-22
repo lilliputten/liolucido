@@ -5,11 +5,11 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemes';
 import { isDev } from '@/constants';
 
 import { topicsLimit } from '../constants';
 import { IncludedUserSelect, IncludedUserTopicWorkoutSelect } from '../types';
-import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from './getAvailableTopicsSchema';
 
 interface TOptions {
   noDebug?: boolean;

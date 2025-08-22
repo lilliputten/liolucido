@@ -5,7 +5,7 @@ import {
   TAvailableTopicsResultsQueryData,
   TQueryClient,
 } from '@/shared/types/react-query';
-import { TGetAvailableTopicsResults } from '@/features/topics/actions/getAvailableTopicsSchema';
+import { TGetAvailableTopicsResults } from '@/lib/zod-schemes';
 import { TAvailableTopic, TTopicId } from '@/features/topics/types';
 
 export function stringifyQueryKey(qk: QueryKey) {

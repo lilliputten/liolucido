@@ -1,9 +1,8 @@
 import { z } from 'zod';
 
+import { TopicIncludeParamsSchema } from '@/lib/zod-schemes';
+import { TAvailableTopic } from '@/features/topics/types';
 import { TopicOrderByWithRelationInputSchema } from '@/generated/prisma';
-
-import { TAvailableTopic } from '../types';
-import { TopicIncludeParamsSchema } from './getAvailableTopicByIdSchema';
 
 export const zTopicTopicIds = z.array(z.string()).optional();
 export type TTopicTopicIds = z.infer<typeof zTopicTopicIds>;

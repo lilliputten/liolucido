@@ -3,14 +3,14 @@ import { z, ZodError } from 'zod';
 
 import { TApiResponse } from '@/shared/types/api';
 import { safeJsonParse } from '@/lib/helpers/json';
-import { getAvailableTopics } from '@/features/topics/actions';
 import {
   GetAvailableTopicsParamsSchema,
   TTopicOrderBy,
   TTopicTopicIds,
   zTopicOrderBy,
   zTopicTopicIds,
-} from '@/features/topics/actions/getAvailableTopicsSchema';
+} from '@/lib/zod-schemes';
+import { getAvailableTopics } from '@/features/topics/actions';
 
 const TargetParamsSchema = GetAvailableTopicsParamsSchema;
 const TargetParamsSchemaPlain = TargetParamsSchema.extend({
@@ -18,7 +18,7 @@ const TargetParamsSchemaPlain = TargetParamsSchema.extend({
   topicIds: z.string().optional(), // JSON string (array)
 });
 
-/** GET /api/topics - Get topics */
+/** GET /api/topics?... - Get topics */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   try {
@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
       skip,
       take,
       showOnlyMyTopics,
+      includeWorkout,
       includeUser,
       includeQuestionsCount,
       orderBy: orderByStr,
@@ -48,6 +49,7 @@ export async function GET(request: NextRequest) {
       skip,
       take,
       showOnlyMyTopics,
+      includeWorkout,
       includeUser,
       includeQuestionsCount,
       orderBy,
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     if (error instanceof ZodError) {
       // eslint-disable-next-line no-console
-      console.error('[API /topics/[topicId]/topics GET] ZodError', error);
+      console.error('[API /api/topics GET] ZodError', error);
       debugger; // eslint-disable-line no-debugger
 
       const response: TApiResponse<null> = {
@@ -83,7 +85,7 @@ export async function GET(request: NextRequest) {
     }
 
     // eslint-disable-next-line no-console
-    console.error('[API /topics/[topicId]/topics GET]', error);
+    console.error('[API /api/[topicId]/topics GET]', error);
     debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {

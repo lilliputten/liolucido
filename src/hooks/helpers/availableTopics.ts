@@ -1,4 +1,4 @@
-import { TGetAvailableTopicsResults } from '@/features/topics/actions/getAvailableTopicsSchema';
+import { TGetAvailableTopicsResults } from '@/lib/zod-schemes';
 
 /** Extract & deduplicate topics by their IDs */
 export function getUnqueTopicsList(results?: TGetAvailableTopicsResults[]) {

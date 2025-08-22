@@ -35,18 +35,23 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
     isFetched: isTopicsFetched,
     // isLoading: isTopicsLoading,
     queryKey: availableTopicsQueryKey,
-    queryProps,
+    queryProps: availableTopicsQueryProps,
   } = availableTopics;
 
   const availableTopicQuery = useAvailableTopicById({
     id: topicId,
     availableTopicsQueryKey,
-    // ...queryProps,
-    includeWorkout: queryProps.includeWorkout,
-    includeUser: queryProps.includeUser,
-    includeQuestionsCount: queryProps.includeQuestionsCount,
+    // ...availableTopicsQueryProps,
+    includeWorkout: availableTopicsQueryProps.includeWorkout,
+    includeUser: availableTopicsQueryProps.includeUser,
+    includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
   });
-  const { topic, isFetched: isTopicFetched, isLoading: isTopicLoading } = availableTopicQuery;
+  const {
+    topic,
+    isFetched: isTopicFetched,
+    isLoading: isTopicLoading,
+    // isCached: isTopicCached,
+  } = availableTopicQuery;
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
@@ -55,7 +60,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
   }, [goToTheRoute, routePath, topicId]);
 
   // No data loaded yet
-  if (!isTopicsFetched || !isTopicFetched || isTopicLoading) {
+  if (!topic && (!isTopicsFetched || !isTopicFetched || isTopicLoading)) {
     return (
       <div
         className={cn(

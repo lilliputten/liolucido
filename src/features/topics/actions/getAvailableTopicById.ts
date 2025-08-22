@@ -4,10 +4,10 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemes';
 import { isDev } from '@/constants';
 
-import { IncludedUserSelect, IncludedUserTopicWorkoutSelect, TTopic } from '../types';
-import { TGetAvailableTopicByIdParams } from './getAvailableTopicByIdSchema';
+import { IncludedUserSelect, IncludedUserTopicWorkoutSelect, TAvailableTopic } from '../types';
 
 interface TOptions {
   noDebug?: boolean;
@@ -48,24 +48,36 @@ export async function getAvailableTopicById(params: TGetAvailableTopicByIdParams
           }
         : false,
     };
-    if (includeUser) {
+    if (includeUser && userId) {
       include.user = { select: IncludedUserSelect };
     }
-    if (includeWorkout) {
-      include.userTopicWorkout = { select: IncludedUserTopicWorkoutSelect };
+    if (includeWorkout && userId) {
+      include.userTopicWorkout = {
+        where: { userId },
+        select: IncludedUserTopicWorkoutSelect,
+      };
     }
-    const topic: TTopic | undefined =
-      (await prisma.topic.findUnique({
-        where,
-        include,
-      })) || undefined;
-    if (!topic) {
+    const topicWithWorkouts = await prisma.topic.findUnique({
+      where,
+      include,
+    });
+
+    if (!topicWithWorkouts) {
       throw new Error('No topic found');
     }
+
+    const { userTopicWorkout, ...rest } = topicWithWorkouts;
+
+    const topic = {
+      ...rest,
+      userTopicWorkout: userTopicWorkout?.[0],
+    } satisfies TAvailableTopic;
+
     // Check if the current user is allowed to see the topic?
     if (!topic.isPublic && userId !== topic?.userId && user?.role !== 'ADMIN') {
       throw new Error('Current user is not allowed to access the topic');
     }
+
     return topic;
   } catch (error) {
     // eslint-disable-next-line no-console
