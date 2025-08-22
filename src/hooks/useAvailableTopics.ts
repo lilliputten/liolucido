@@ -12,9 +12,16 @@ import {
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
+import { TAllUsedKeys, TAvailableTopicsResultsQueryData } from '@/shared/types/react-query';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
-import { stringifyQueryKey } from '@/lib/helpers/react-query';
+import {
+  addNewTopicToCache,
+  deleteTopicFromCache,
+  invalidateAllUsedKeysExcept,
+  stringifyQueryKey,
+  updateTopicInCache,
+} from '@/lib/helpers/react-query';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
 import { minuteMs } from '@/constants';
 import {
@@ -38,20 +45,18 @@ const staleTime = minuteMs * 10;
 
 type TUseAvailableTopicsProps = Omit<TGetAvailableTopicsParams, 'skip' | 'take'>;
 
-type TQueryData = InfiniteData<TGetAvailableTopicsResults, unknown>;
-
 /** Collection of the all used query keys (mb, already invalidated).
  *
  * TODO:
  * - To use `QueryCache.subscribe` to remove invalidated keys?
  * - Create a helper to invalidate all the keys or all the keys, except current?
  */
-const allUsedKeys: Record<string, QueryKey> = {};
+const allUsedKeys: TAllUsedKeys = {};
 
 export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   const queryClient = useQueryClient();
   const invalidateKeys = useInvalidateReactQueryKeys();
-  const pathname = usePathname();
+  const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
   const queryHash = React.useMemo(
@@ -60,7 +65,13 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   );
   const queryKey = React.useMemo<QueryKey>(() => ['available-topics', queryHash], [queryHash]);
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
-  const query: UseInfiniteQueryResult<TQueryData, Error> = useInfiniteQuery<
+
+  console.log('[useAvailableTopics:DEBUG]', {
+    queryKey,
+    routePath,
+  });
+
+  const query: UseInfiniteQueryResult<TAvailableTopicsResultsQueryData, Error> = useInfiniteQuery<
     TGetAvailableTopicsResults,
     Error,
     InfiniteData<TGetAvailableTopicsResults>,
@@ -118,33 +129,19 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
     },
   });
 
+  // Derived data...
+
+  const allTopics = React.useMemo(() => getUnqueTopicsList(query.data?.pages), [query.data?.pages]);
+
+  // Incapsulated helpers...
+
   /** Add new topic record to the pages data
    * @param {TAvailableTopic} newTopic - Record to add
    * @param {boolean} toStart - Add the new item to the beginning of the existing items. TODO: Determine default behavior by `orderBy`?
    */
   const addNewTopic = React.useCallback(
-    (newTopic: TAvailableTopic, toStart?: boolean) => {
-      queryClient.setQueryData<TQueryData>(queryKey, (oldData) => {
-        if (!oldData) return oldData;
-        const lastPageIndex = oldData.pages.length - 1;
-        // Recalculate totalCount as sum of all pages' topics length
-        let totalCount = 0;
-        const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
-          if (toStart && index === 0) {
-            // Add to the beginning of the first page's topics
-            page = { ...page, topics: [newTopic, ...page.topics] };
-          } else if (!toStart && index === lastPageIndex) {
-            // Add to the end of the last page's topics
-            page = { ...page, topics: [...page.topics, newTopic] };
-          }
-          totalCount += page.topics.length;
-          return page;
-        });
-        // Update totalCount for the all pages...
-        const updatedPages = pages.map((page) => ({ ...page, totalCount }));
-        return { ...oldData, pages: updatedPages };
-      });
-    },
+    (newTopic: TAvailableTopic, toStart?: boolean) =>
+      addNewTopicToCache(queryClient, queryKey, newTopic, toStart),
     [queryClient, queryKey],
   );
 
@@ -152,21 +149,7 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
    * @param {TTopicId} topicIdToDelete - Assuming topic has a unique id of string or number type
    */
   const deleteTopic = React.useCallback(
-    (topicIdToDelete: TTopicId) => {
-      queryClient.setQueryData<TQueryData>(queryKey, (oldData) => {
-        if (!oldData) return oldData;
-        // Recalculate totalCount as sum of all pages' topics length
-        let totalCount = 0;
-        // Filter out the topic to delete from all pages
-        const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
-          const topics = page.topics.filter((topic) => topic.id !== topicIdToDelete);
-          totalCount += topics.length;
-          return { ...page, topics };
-        });
-        const updatedPages = pages.map((page) => ({ ...page, totalCount }));
-        return { ...oldData, pages: updatedPages };
-      });
-    },
+    (topicIdToDelete: TTopicId) => deleteTopicFromCache(queryClient, queryKey, topicIdToDelete),
     [queryClient, queryKey],
   );
 
@@ -174,23 +157,7 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
    * @param {TTopicId} topicIdToDelete - Assuming topic has a unique id of string or number type
    */
   const updateTopic = React.useCallback(
-    (updatedTopic: TAvailableTopic) => {
-      queryClient.setQueryData<TQueryData>(queryKey, (oldData) => {
-        if (!oldData) return oldData;
-        const updatedId = updatedTopic.id;
-        // Filter out the topic to delete from all pages
-        const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
-          if (!page.topics.find(({ id }) => id === updatedId)) {
-            return page;
-          }
-          const topics = page.topics.map((topic) =>
-            topic.id === updatedTopic.id ? updatedTopic : topic,
-          );
-          return { ...page, topics };
-        });
-        return { ...oldData, pages };
-      });
-    },
+    (updatedTopic: TAvailableTopic) => updateTopicInCache(queryClient, queryKey, updatedTopic),
     [queryClient, queryKey],
   );
 
@@ -198,23 +165,8 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
    * @param {QueryKey[]} [excludeKeys] -- The list of keys to exclude from the invalidation
    */
   const invalidateAllKeysExcept = React.useCallback(
-    (excludeKeys?: QueryKey[]) => {
-      const excludeKeysStr =
-        Array.isArray(excludeKeys) && excludeKeys.length ? excludeKeys.map(stringifyQueryKey) : [];
-      queryClient.invalidateQueries({
-        predicate: (query) => {
-          // Exclude queries matching the excludeKey exactly
-          // React Query stores query keys as arrays internally
-          const queryKeyStr = JSON.stringify(query.queryKey);
-          return (
-            !excludeKeysStr.includes(queryKeyStr) &&
-            Object.values(allUsedKeys).some((key) => {
-              return stringifyQueryKey(key) === queryKeyStr;
-            })
-          );
-        },
-      });
-    },
+    (excludeKeys?: QueryKey[]) =>
+      invalidateAllUsedKeysExcept(queryClient, excludeKeys, allUsedKeys),
     [queryClient],
   );
 
@@ -255,18 +207,16 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
    * promise
    */
 
-  const allTopics = React.useMemo(() => getUnqueTopicsList(query.data?.pages), [query.data?.pages]);
-
   return {
     ...query,
     // Derived data...
+    routePath,
+    queryProps,
     queryKey,
     allUsedKeys,
     allTopics,
     hasTopics: !!allTopics.length, // !!query.data?.pages[0]?.totalCount,
-    routePath: pathname,
     // Helpers...
-    // \<\(addNewTopic\|deleteTopic\|invalidateAllKeysExcept\)\>
     addNewTopic,
     deleteTopic,
     updateTopic,
@@ -290,7 +240,7 @@ export function useAvailableTopicsByScope(props: TUseAvailableTopicsByScopeProps
       // skip, // Skip records (start from the nth record), default = 0 // z.number().int().nonnegative().optional()
       // take, // Amount of records to return, default = {topicsLimit} // z.number().int().positive().optional()
       adminMode: manageScope === TopicsManageScopeIds.ALL_TOPICS && isAdmin, // Get all users' data not only your own (admins only: will return no data for non-admins) ??? // z.boolean().optional()
-      showOnlyMyTopics: manageScope === TopicsManageScopeIds.MY_TOPICS, // Display only current user's topics // z.boolean().optional()
+      showOnlyMyTopics: manageScope === TopicsManageScopeIds.MY_TOPICS, // Display only current user's topics, TODO: To use the settings value?
       includeWorkout: true, // Include (limited) workout data // z.boolean().optional()
       includeUser: true, // Include compact user info data (name, email) in the `user` property of result object // z.boolean().optional()
       includeQuestionsCount: true, // Include related questions count, in `_count: { questions }` // z.boolean().optional()

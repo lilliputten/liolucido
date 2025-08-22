@@ -4,6 +4,7 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useAvailableTopicById } from '@/hooks/useAvailableTopicById';
 import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { useGoBack } from '@/hooks/useGoBack';
 import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
@@ -12,7 +13,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
-import { TAvailableTopic, TTopicId } from '@/features/topics/types';
+import { TTopicId } from '@/features/topics/types';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ViewTopicContentActions } from './ViewTopicContentActions';
@@ -29,11 +30,21 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
   const goToTheRoute = useGoToTheRoute();
   const { className, topicId } = props;
   const availableTopics = useAvailableTopicsByScope({ manageScope });
-  const { allTopics, isFetched } = availableTopics;
+  const {
+    allTopics,
+    isFetched: isTopicsFetched,
+    // isLoading: isTopicsLoading,
+    queryKey: topicsQueryKey,
+  } = availableTopics;
+
+  const availableTopicQuery = useAvailableTopicById(topicId, topicsQueryKey);
+  const { topic, isFetched: isTopicFetched, isLoading: isTopicLoading } = availableTopicQuery;
+  /*
   const topic: TAvailableTopic | undefined = React.useMemo(
     () => allTopics.find(({ id }) => id === topicId),
     [allTopics, topicId],
   );
+  */
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
@@ -42,7 +53,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
   }, [goToTheRoute, routePath, topicId]);
 
   // No data loaded yet
-  if (!isFetched) {
+  if (!isTopicsFetched || !isTopicFetched || isTopicLoading) {
     return (
       <div
         className={cn(
@@ -63,7 +74,17 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
 
   // Error: topic hasn't been found
   if (!topicId || !topic) {
-    throw new Error('No such topic exists');
+    const error = new Error('No such topic exists');
+    // eslint-disable-next-line no-console
+    console.error('[ViewTopicCard]', error.message, {
+      topicId,
+      topic,
+      isFetched: isTopicsFetched,
+      allTopics,
+      error,
+    });
+    debugger; // eslint-disable-line no-debugger
+    throw error;
   }
 
   return (
