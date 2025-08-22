@@ -24,11 +24,10 @@ export async function getAvailableTopics(
     take = topicsLimit,
     adminMode,
     showOnlyMyTopics,
-    orderBy = { createdAt: 'desc' },
-    // TopicIncludeParamsSchema
     includeUser = true,
     includeWorkout = false,
     includeQuestionsCount = true,
+    orderBy = { createdAt: 'desc' },
     // Options (no error console output and debugger stops, for tests)
     noDebug,
   } = params;

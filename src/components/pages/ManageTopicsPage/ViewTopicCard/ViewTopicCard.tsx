@@ -34,17 +34,19 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
     allTopics,
     isFetched: isTopicsFetched,
     // isLoading: isTopicsLoading,
-    queryKey: topicsQueryKey,
+    queryKey: availableTopicsQueryKey,
+    queryProps,
   } = availableTopics;
 
-  const availableTopicQuery = useAvailableTopicById(topicId, topicsQueryKey);
+  const availableTopicQuery = useAvailableTopicById({
+    id: topicId,
+    availableTopicsQueryKey,
+    // ...queryProps,
+    includeWorkout: queryProps.includeWorkout,
+    includeUser: queryProps.includeUser,
+    includeQuestionsCount: queryProps.includeQuestionsCount,
+  });
   const { topic, isFetched: isTopicFetched, isLoading: isTopicLoading } = availableTopicQuery;
-  /*
-  const topic: TAvailableTopic | undefined = React.useMemo(
-    () => allTopics.find(({ id }) => id === topicId),
-    [allTopics, topicId],
-  );
-  */
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {

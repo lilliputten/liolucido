@@ -29,6 +29,7 @@ import {
   TopicsManageScopeIds,
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
+import { getAvailableTopics } from '@/features/topics/actions';
 import {
   TGetAvailableTopicsParams,
   TGetAvailableTopicsResults,
@@ -55,7 +56,7 @@ const allUsedKeys: TAllUsedKeys = {};
 
 export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   const queryClient = useQueryClient();
-  const invalidateKeys = useInvalidateReactQueryKeys();
+  // const invalidateKeys = useInvalidateReactQueryKeys();
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
@@ -66,11 +67,6 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   const queryKey = React.useMemo<QueryKey>(() => ['available-topics', queryHash], [queryHash]);
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
 
-  console.log('[useAvailableTopics:DEBUG]', {
-    queryKey,
-    routePath,
-  });
-
   const query: UseInfiniteQueryResult<TAvailableTopicsResultsQueryData, Error> = useInfiniteQuery<
     TGetAvailableTopicsResults,
     Error,
@@ -78,7 +74,6 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
     QueryKey,
     number // Cursor type (from `skip` api parameter)
   >({
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey,
     staleTime, // Data validity period
     // gcTime: 10 * staleTime, // Inactive cache validity period
@@ -96,21 +91,30 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
        * throw new Error('Test error');
        */
       const { pageParam = 0 } = params;
-      const paginationHash = composeUrlQuery(
-        { skip: pageParam, take: topicsLimit },
-        { omitFalsy: true },
-      );
-      const url = appendUrlQueries('/api/topics', queryHash, paginationHash);
       try {
-        const result = await handleApiResponse(fetch(url), {
-          onInvalidateKeys: invalidateKeys,
-          debugDetails: {
-            initiator: 'useAvailableTopics',
-            action: 'getAvailableTopics',
-            pageParam,
-          },
+        // OPTION: Via server function
+        const result = await getAvailableTopics({
+          ...queryProps,
+          skip: pageParam,
+          take: topicsLimit,
         });
-        return result.data as TGetAvailableTopicsResults;
+        return result;
+        /* // OPTION: Via fetch
+         * const paginationHash = composeUrlQuery(
+         *   { skip: pageParam, take: topicsLimit },
+         *   { omitFalsy: true },
+         * );
+         * const url = appendUrlQueries('/api/topics', queryHash, paginationHash);
+         * const result = await handleApiResponse(fetch(url), {
+         *   onInvalidateKeys: invalidateKeys,
+         *   debugDetails: {
+         *     initiator: 'useAvailableTopics',
+         *     action: 'getAvailableTopics',
+         *     pageParam,
+         *   },
+         * });
+         * return result.data as TGetAvailableTopicsResults;
+         */
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
         const message = 'Cannot load topics data';
@@ -119,7 +123,7 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
           details,
           error,
           pageParam,
-          url,
+          // url,
         });
         // eslint-disable-next-line no-debugger
         debugger;
