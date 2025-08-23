@@ -15,10 +15,12 @@ interface TOptions {
   noDebug?: boolean;
 }
 
+/** Get available questions for `topicId`, or for other conditions (by `questionIds`), with a pagination by `skip` and `take` */
 export async function getAvailableQuestions(
   params: TGetAvailableQuestionsParams & TOptions = {},
 ): Promise<TGetAvailableQuestionsResults> {
   const {
+    topicId,
     questionIds,
     skip = 0,
     take = itemsLimit,
@@ -26,8 +28,6 @@ export async function getAvailableQuestions(
     showOnlyMyQuestions,
     orderBy = { updatedAt: 'desc' },
     // QuestionIncludeParamsSchema
-    // includeUser = true,
-    // includeWorkout = false,
     includeTopic = true,
     includeAnswersCount = true,
     // Options (no error console output and debugger stops, for tests)
@@ -76,6 +76,9 @@ export async function getAvailableQuestions(
       topic: Object.keys(whereTopic).length ? whereTopic : undefined,
       // topic: { isPublic: true },
     };
+    if (topicId) {
+      where.topicId = topicId;
+    }
     if (questionIds) {
       // Limit the results by specified ids
       where.id = { in: questionIds };

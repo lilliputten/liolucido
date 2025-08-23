@@ -38,15 +38,6 @@ export async function getAvailableTopicById(params: TGetAvailableTopicByIdParams
     };
     const include: Prisma.TopicInclude = {
       _count: { select: { questions: includeQuestionsCount } },
-      user: includeUser
-        ? {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          }
-        : false,
     };
     if (includeUser && userId) {
       include.user = { select: IncludedUserSelect };

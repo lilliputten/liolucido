@@ -14,6 +14,8 @@ export const zQuestionOrderBy = z
 export type TQuestionOrderBy = z.infer<typeof zQuestionOrderBy>;
 
 export const GetAvailableQuestionsParamsSchema = QuestionIncludeParamsSchema.extend({
+  /** Get questions for topic */
+  topicId: z.coerce.string().optional(),
   /** Skip records (start from the nth record), default = 0 */
   skip: z.coerce.number().int().nonnegative().optional(),
   /** Amount of records to return, default = {questionsLimit} */
@@ -22,15 +24,6 @@ export const GetAvailableQuestionsParamsSchema = QuestionIncludeParamsSchema.ext
   adminMode: z.coerce.boolean().optional(),
   /** Display only current user's questions */
   showOnlyMyQuestions: z.coerce.boolean().optional(),
-  includeTopic: z.coerce.boolean().optional(),
-  /* // These parameter come from `QuestionIncludeParamsSchema`
-   * [>* Include (limited) workout data <]
-   * includeWorkout: z.coerce.boolean().optional(),
-   * [>* Include compact user info data (name, email) in the `user` property of result object <]
-   * includeUser: z.coerce.boolean().optional(),
-   * [>* Include related answers count, in `_count: { answers }` <]
-   * includeAnswersCount: z.coerce.boolean().optional(),
-   */
   /** Sort by parameter, default: `{ updatedAt: 'desc' }`, packed json string */
   // orderBy: QuestionFindManyArgsSchema.shape.orderBy, // This approach doesn't work
   orderBy: zQuestionOrderBy,
