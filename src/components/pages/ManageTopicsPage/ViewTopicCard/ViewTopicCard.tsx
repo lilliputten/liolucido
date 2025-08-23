@@ -59,7 +59,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
     goToTheRoute(url);
   }, [goToTheRoute, routePath, topicId]);
 
-  // No data loaded yet
+  // No data loaded yet: display skeleton
   if (!topic && (!isTopicsFetched || !isTopicFetched || isTopicLoading)) {
     return (
       <div

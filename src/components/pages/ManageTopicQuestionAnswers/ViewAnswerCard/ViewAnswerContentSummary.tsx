@@ -38,11 +38,6 @@ export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
     queryProps: availableTopicsQueryProps,
   } = availableTopics;
 
-  /* // Old, naive topic fetching approach
-   * const topic = React.useMemo(() => {
-   *   return allTopics.find((t) => t.id === answersContext.topicId);
-   * }, [allTopics, answersContext.topicId]);
-   */
   const availableTopicQuery = useAvailableTopicById({
     id: topicId,
     availableTopicsQueryKey,
