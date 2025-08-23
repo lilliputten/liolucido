@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { TAnswer } from '@/features/answers/types';
+import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
 
 import {
   TViewAnswerContentActionsProps,
@@ -15,6 +17,9 @@ import {
 import { ViewAnswerContentSummary } from './ViewAnswerContentSummary';
 
 interface TViewAnswerContentProps {
+  topicId: TTopicId;
+  questionId: TQuestionId;
+  // answerId: TAnswerId;
   answer: TAnswer;
   className?: string;
   goBack?: () => void;
@@ -24,8 +29,17 @@ interface TViewAnswerContentProps {
 }
 
 export function ViewAnswerContent(props: TViewAnswerContentProps) {
-  const { answer, className, goBack, handleDeleteAnswer, handleAddAnswer, toolbarPortalRoot } =
-    props;
+  const {
+    topicId,
+    // questionId,
+    // answerId,
+    answer,
+    className,
+    goBack,
+    handleDeleteAnswer,
+    handleAddAnswer,
+    toolbarPortalRoot,
+  } = props;
   return (
     <>
       <div
@@ -36,7 +50,12 @@ export function ViewAnswerContent(props: TViewAnswerContentProps) {
         )}
       >
         <ScrollArea>
-          <ViewAnswerContentSummary answer={answer} />
+          <ViewAnswerContentSummary
+            topicId={topicId}
+            // questionId={questionId}
+            // answerId={answerId}
+            answer={answer}
+          />
         </ScrollArea>
       </div>
       {toolbarPortalRoot &&

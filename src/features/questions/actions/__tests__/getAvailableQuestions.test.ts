@@ -1,6 +1,4 @@
-import { ExtendedUser } from '@/@types/next-auth';
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { User } from '@prisma/client';
 
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';

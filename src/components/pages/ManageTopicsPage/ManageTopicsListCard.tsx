@@ -276,16 +276,16 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
           saveScrollKey="ManageTopicsListCard"
           saveScrollHash={saveScrollHash}
           className={cn(
-            isDev && '__ManageTopicsListCard', // DEBUG
+            isDev && '__ManageTopicsListCard_Scroll', // DEBUG
             'relative flex flex-1 flex-col overflow-hidden',
             className,
           )}
           viewportClassName={cn(
-            isDev && '__ManageTopicsListCard_Viewport', // DEBUG
+            isDev && '__ManageTopicsListCard_Scroll_Viewport', // DEBUG
             'px-6',
           )}
           containerClassName={cn(
-            isDev && '__ManageTopicsListCard_Container', // DEBUG
+            isDev && '__ManageTopicsListCard_Scroll_Container', // DEBUG
             'relative w-full flex flex-col gap-4',
           )}
         >

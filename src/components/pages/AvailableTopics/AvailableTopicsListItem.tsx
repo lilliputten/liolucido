@@ -43,9 +43,9 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   const { routePath } = useAvailableTopicsByScope({ manageScope });
   const router = useRouter();
   const pathname = usePathname();
-  const topicRoutePath = `${routePath}/${id}`;
+  const topicsRoutePath = `${routePath}/${id}`;
   const workoutRoutePath = `/topics/available/${id}/workout`;
-  const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
+  const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicsRoutePath, pathname);
   const startWorkout = (ev: React.MouseEvent) => {
     ev.stopPropagation();
     router.push(workoutRoutePath);
@@ -98,7 +98,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   );
   if (!isCurrentTopicRoutePath) {
     cardContent = (
-      <Link className="flex-1 text-xl font-medium" href={topicRoutePath}>
+      <Link className="flex-1 text-xl font-medium" href={topicsRoutePath}>
         {cardContent}
       </Link>
     );

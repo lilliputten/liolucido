@@ -1,61 +1,81 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
+import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
-import { TQuestion, TQuestionId } from '@/features/questions/types';
-import { useGoBack } from '@/hooks';
+import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
+import { useGoBack, useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ViewQuestionContent } from './ViewQuestionContent';
 
 interface TViewQuestionCardProps extends TPropsWithClassName {
+  topicId: TTopicId;
   questionId: TQuestionId;
 }
 
 export function ViewQuestionCard(props: TViewQuestionCardProps) {
   const { manageScope } = useManageTopicsStore();
-  const routePath = `/topics/${manageScope}`;
-  const { className, questionId } = props;
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const { className, topicId, questionId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
-  const router = useRouter();
-  const questionsContext = useQuestionsContext();
-  const { questions } = questionsContext;
-  const question: TQuestion | undefined = React.useMemo(
-    () => questions.find(({ id }) => id === questionId),
-    [questions, questionId],
-  );
-  if (!questionId || !question) {
-    throw new Error(`No such question exists: ${questionId}`);
-  }
-  const goBack = useGoBack(questionsContext.routePath);
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    question,
+    isFetched: isQuestionFetched,
+    isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
+  const questionsListRoutePath = `${topicsListRoutePath}/${topicId}/questions`;
+
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(questionsListRoutePath);
 
   // Add Question Modal
   const handleAddQuestion = React.useCallback(() => {
-    router.push(`${questionsContext.routePath}/add`);
-  }, [router, questionsContext]);
+    const url = `${questionsListRoutePath}/add`;
+    goToTheRoute(url);
+  }, [goToTheRoute, questionsListRoutePath]);
 
   // Delete Question Modal
   const handleDeleteQuestion = React.useCallback(() => {
-    const hasQuestion = questionsContext.questions.find(({ id }) => id === question.id);
-    if (hasQuestion) {
-      router.push(
-        `${questionsContext.routePath}/delete?questionId=${question.id}&from=ViewQuestionCard`,
-      );
-    } else {
-      toast.error('The requested question does not exist.');
-      router.replace(questionsContext.routePath);
+    if (question) {
+      const url = `${questionsListRoutePath}/delete?questionId=${question.id}&from=ViewQuestionCard`;
+      goToTheRoute(url);
+      // NOTE: Dropped the check if the question existis (consider it as existed or rely on later checks)
     }
-  }, [router, questionsContext, question]);
+  }, [goToTheRoute, question, questionsListRoutePath]);
+
+  // No data loaded yet: display skeleton
+  if (isQuestionLoadingOverall) {
+    return (
+      <div
+        className={cn(
+          isDev && '__ViewQuestionCard_Skeleton', // DEBUG
+          'size-full',
+          'flex flex-1 flex-col gap-4 py-4',
+          className,
+        )}
+      >
+        <Skeleton className="h-8 w-48 rounded-lg" />
+        <Skeleton className="h-8 w-full rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!question) {
+    throw new Error(`No such question exists: ${questionId}`);
+  }
 
   return (
     <Card
@@ -111,7 +131,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
           goBack={goBack}
           handleDeleteQuestion={handleDeleteQuestion}
           handleAddQuestion={handleAddQuestion}
-          toolbarPortalRoot={toolbarPortalRoot}
+          toolbarPortalRef={toolbarPortalRef}
         />
       </CardContent>
     </Card>

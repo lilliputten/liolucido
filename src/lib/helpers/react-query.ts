@@ -3,9 +3,27 @@ import { QueryKey } from '@tanstack/react-query';
 import { TGetResults, TGetResultsIniniteQueryData } from '@/shared/types/generic/api';
 import { TAllUsedKeys, TQueryClient } from '@/shared/types/react-query';
 
+/** Stringify react-query data key (unknown[] -> string) */
 export function stringifyQueryKey(qk: QueryKey) {
   // return JSON.stringify(qk);
   return String(qk);
+}
+
+/** Extract & deduplicate topics by their IDs */
+export function getUnqueItemsList<TItem extends { id: TId }, TId = string>(
+  results?: TGetResults<TItem>[],
+) {
+  if (!results) return [];
+  // Deduplicate topics by their ID
+  const uniqueTopicsMap = new Set<TId>();
+  return results
+    .flatMap((page) => page.items)
+    .filter(({ id }) => {
+      if (!uniqueTopicsMap.has(id)) {
+        uniqueTopicsMap.add(id);
+        return true;
+      }
+    });
 }
 
 /** Add a new item record to cached pages. */

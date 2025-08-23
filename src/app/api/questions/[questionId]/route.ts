@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 
 import { TApiResponse } from '@/shared/types/api';
-import { getQuestion, updateQuestion } from '@/features/questions/actions';
+import { makeNullableFieldsOptional } from '@/lib/helpers/zod';
+import { QuestionIncludeParamsSchema } from '@/lib/zod-schemes';
+import { updateQuestion } from '@/features/questions/actions';
+import { getAvailableQuestionById } from '@/features/questions/actions/getAvailableQuestionById';
 import { TQuestionData } from '@/features/questions/types';
+import { QuestionSchema } from '@/generated/prisma';
 
+const updateQuestionSchema = makeNullableFieldsOptional(QuestionSchema).omit({
+  createdAt: true,
+  updatedAt: true,
+  topicId: true,
+});
+
+/*
 const updateQuestionSchema = z.object({
   id: z.string(),
   topicId: z.string(),
@@ -13,27 +24,30 @@ const updateQuestionSchema = z.object({
   answersCountMin: z.union([z.string().optional(), z.number()]),
   answersCountMax: z.union([z.string().optional(), z.number()]),
 });
+*/
 
 /** GET /api/questions/[questionId] - Get question */
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ questionId: string }> },
 ) {
-  try {
-    const { questionId } = await params;
-    const question = await getQuestion(questionId);
+  const { questionId } = await params;
+  const { searchParams } = request.nextUrl;
 
-    if (!question) {
-      const response: TApiResponse<null> = {
-        data: null,
-        ok: false,
-        error: {
-          code: 'NOT_FOUND',
-          message: 'Question not found',
-        },
-      };
-      return NextResponse.json(response, { status: 404 });
-    }
+  try {
+    const params = Object.fromEntries(searchParams.entries());
+    const parsedParams = QuestionIncludeParamsSchema.parse(params);
+    const {
+      // QuestionIncludeParamsSchema params
+      includeTopic,
+      includeAnswersCount,
+    } = parsedParams;
+
+    const question = await getAvailableQuestionById({
+      id: questionId,
+      includeTopic,
+      includeAnswersCount,
+    });
 
     const response: TApiResponse<typeof question> = {
       data: question,
@@ -42,8 +56,28 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
+    if (error instanceof ZodError) {
+      // eslint-disable-next-line no-console
+      console.error('[API GET /api/questions/[questionId]] ZodError', error);
+      debugger; // eslint-disable-line no-debugger
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'ZOD_ERROR',
+          message: 'Zod parsing error',
+          details: {
+            // error: error instanceof Error ? error.message : String(error),
+            stack: error.stack,
+            issues: error.issues,
+          },
+        },
+      };
+      return NextResponse.json(response, { status: 500 });
+    }
+
     // eslint-disable-next-line no-console
-    console.error('[API /questions/[questionId] GET]', error);
+    console.error('[API GET /api/questions/[questionId]]', error);
     debugger; // eslint-disable-line no-debugger
 
     const response: TApiResponse<null> = {
@@ -51,11 +85,10 @@ export async function GET(
       ok: false,
       error: {
         code: 'INTERNAL_ERROR',
-        message: error instanceof Error ? error.message : 'Failed to fetch question',
+        message: error instanceof Error ? error.message : 'Failed to fetch questions',
         details: { error: error instanceof Error ? error.message : String(error) },
       },
     };
-
     return NextResponse.json(response, { status: 500 });
   }
 }
@@ -79,6 +112,26 @@ export async function PUT(
 
     return NextResponse.json(response);
   } catch (error) {
+    if (error instanceof ZodError) {
+      // eslint-disable-next-line no-console
+      console.error('[API GET /api/questions/[questionId]] ZodError', error);
+      debugger; // eslint-disable-line no-debugger
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'ZOD_ERROR',
+          message: 'Zod parsing error',
+          details: {
+            // error: error instanceof Error ? error.message : String(error),
+            stack: error.stack,
+            issues: error.issues,
+          },
+        },
+      };
+      return NextResponse.json(response, { status: 500 });
+    }
+
     // eslint-disable-next-line no-console
     console.error('[API /questions/[questionId] PUT]', error);
     debugger; // eslint-disable-line no-debugger
@@ -87,7 +140,7 @@ export async function PUT(
       data: null,
       ok: false,
       error: {
-        code: error instanceof z.ZodError ? 'VALIDATION_ERROR' : 'INTERNAL_ERROR',
+        code: 'INTERNAL_ERROR',
         message:
           error instanceof z.ZodError
             ? 'Invalid question data'

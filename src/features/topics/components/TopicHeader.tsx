@@ -51,9 +51,9 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   } = topic;
   const sessionUser = useSessionUser();
   const isOwner = userId && userId === sessionUser?.id;
-  const routePath = topicsRoutes[scope];
+  const topicsListRoutePath = topicsRoutes[scope];
   const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
-  const topicRoutePath = `${routePath}/${id}`;
+  const topicRoutePath = `${topicsListRoutePath}/${id}`;
   const pathname = usePathname();
   let nameContent = <>{name}</>;
   if (withLink) {

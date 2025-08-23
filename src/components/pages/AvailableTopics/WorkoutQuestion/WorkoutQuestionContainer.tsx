@@ -3,9 +3,9 @@
 import React from 'react';
 import { toast } from 'sonner';
 
+import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { useAnswers } from '@/hooks';
 
@@ -25,7 +25,6 @@ export function WorkoutQuestionContainer() {
     goNextQuestion,
     goPrevQuestion,
   } = useWorkoutContext();
-  const { questions } = useQuestionsContext();
   const selectedAnswerId = workout?.selectedAnswerId;
 
   const memo = React.useMemo<TMemo>(() => ({}), []);
@@ -56,10 +55,13 @@ export function WorkoutQuestionContainer() {
     }
   }, [finishWorkout, isExceed, currentStep, totalSteps, workout]);
 
-  const question = React.useMemo(() => {
-    if (!questionId || !questions) return null;
-    return questions.find((q) => q.id === questionId);
-  }, [questionId, questions]);
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    question,
+    isFetched: isQuestionFetched,
+    isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  // const questionsListRoutePath = `${topicRoutePath}/${topicId}/questions`;
 
   // Fetch answers using dedicated hook
   const {
@@ -67,9 +69,12 @@ export function WorkoutQuestionContainer() {
     isLoading: isAnswersLoading,
     error: answersError,
   } = useAnswers({
-    questionId: question?.id,
-    enabled: !!question?.id,
+    questionId,
+    // enabled: !!questionId,
   });
+
+  const isLoadingOverall =
+    (!question || !answers) && (isAnswersLoading || !isQuestionFetched || isQuestionLoading);
 
   // Handle answers loading error
   React.useEffect(() => {
@@ -113,7 +118,7 @@ export function WorkoutQuestionContainer() {
     saveResultAndGoNext(undefined);
   }, [saveResultAndGoNext]);
 
-  if (isAnswersLoading) {
+  if (isLoadingOverall) {
     return (
       <div className="flex flex-col gap-6 py-4">
         <Skeleton className="h-6 w-1/4" />

@@ -28,7 +28,7 @@ export async function getAvailableQuestions(
     showOnlyMyQuestions,
     orderBy = { updatedAt: 'desc' },
     // QuestionIncludeParamsSchema
-    includeTopic = true,
+    includeTopic = false,
     includeAnswersCount = true,
     // Options (no error console output and debugger stops, for tests)
     noDebug,

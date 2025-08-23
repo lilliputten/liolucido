@@ -51,12 +51,15 @@ interface TScopeBreadcrumbsProps {
 }
 export function TopicsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWithClassName) {
   const { className, scope, topic, lastItem, inactiveLast } = props;
-  const routePath = topicsRoutes[scope];
+  const topicsListRoutePath = topicsRoutes[scope];
   // TODO: Use i18n translation by `scope`
   const title = capitalizeString(scope) + ' Topics*';
   const items = filterOutEmpties<TBreadcrumbsItemProps>([
-    { link: routePath, content: title },
-    topic && { link: `${routePath}/${topic.id}`, content: truncateString(topic.name, 50) },
+    { link: topicsListRoutePath, content: title },
+    topic && {
+      link: `${topicsListRoutePath}/${topic.id}`,
+      content: truncateString(topic.name, 50),
+    },
     lastItem,
   ]);
   if (inactiveLast && items.length) {

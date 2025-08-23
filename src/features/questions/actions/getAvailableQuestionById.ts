@@ -17,12 +17,12 @@ export async function getAvailableQuestionById(params: TGetAvailableQuestionById
   const {
     id,
     // QuestionIncludeParamsSchema
-    includeTopic = true,
+    includeTopic = false,
     includeAnswersCount = true,
     // Options (no error console output and debugger stops, for tests)
     noDebug,
   } = params;
-  /* // TODO: Check user rights to delete the answer...?
+  /* // TODO: Check user rights to access the question?
    * const user = await getCurrentUser();
    * const userId = user?.id;
    * const isAdmin = user?.role === 'ADMIN';

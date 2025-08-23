@@ -16,6 +16,7 @@ import { TAllUsedKeys, TAvailableTopicsResultsQueryData } from '@/shared/types/r
 import {
   addNewItemToQueryCache,
   deleteItemFromQueryCache,
+  getUnqueItemsList,
   invalidateAllUsedKeysExcept,
   stringifyQueryKey,
   updateItemInQueryCache,
@@ -32,7 +33,6 @@ import { getAvailableTopics } from '@/features/topics/actions';
 import { itemsLimit } from '@/features/topics/constants';
 import { TAvailableTopic, TTopicId } from '@/features/topics/types';
 
-import { getUnqueTopicsList } from '../helpers/availableTopics';
 import { useSessionUser } from '../useSessionUser';
 
 const staleTime = minuteMs * 10;
@@ -77,7 +77,7 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       /* // Take only unique topics (it cause permanent 'more items available' if some topics has been loaded twice)
-       * const loadedCount = getUnqueTopicsList(allPages).length;
+       * const loadedCount = getUnqueItemsList(allPages).length;
        */
       // A naive solution
       const loadedCount = allPages.reduce((acc, page) => acc + page.items.length, 0);
@@ -132,7 +132,7 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
 
   // Derived data...
 
-  const allTopics = React.useMemo(() => getUnqueTopicsList(query.data?.pages), [query.data?.pages]);
+  const allTopics = React.useMemo(() => getUnqueItemsList(query.data?.pages), [query.data?.pages]);
 
   // Incapsulated helpers...
 

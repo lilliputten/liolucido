@@ -11,16 +11,20 @@ import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext/AnswersContext';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
+import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
 import { useGoBack } from '@/hooks';
 
 import { ViewAnswerContent } from './ViewAnswerContent';
 
 interface TViewAnswerCardProps extends TPropsWithClassName {
+  topicId: TTopicId;
+  questionId: TQuestionId;
   answerId: TAnswerId;
 }
 
 export function ViewAnswerCard(props: TViewAnswerCardProps) {
-  const { className, answerId } = props;
+  const { className, topicId, questionId, answerId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
   React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
@@ -102,6 +106,9 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
         )}
       >
         <ViewAnswerContent
+          topicId={topicId}
+          questionId={questionId}
+          // answerId={answerId}
           answer={answer}
           goBack={goBack}
           handleDeleteAnswer={handleDeleteAnswer}

@@ -7,6 +7,7 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { cn } from '@/lib/utils';
+import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
@@ -15,42 +16,69 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TAnswer } from '@/features/answers/types';
-import { useAvailableTopicById, useAvailableTopicsByScope, useSessionUser } from '@/hooks';
+import { TTopicId } from '@/features/topics/types';
+import { useAvailableTopicById, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
+export function ViewAnswerContentSummary({
+  topicId,
+  answer,
+}: {
+  topicId: TTopicId;
+  answer: TAnswer;
+}) {
   const { manageScope } = useManageTopicsStore();
-  const routePath = `/topics/${manageScope}`;
   const format = useFormatter();
   const user = useSessionUser();
+
+  // TODO: Remove after implementing `useAvailableAnswers`
   const answersContext = useAnswersContext();
-  const { topicId } = answersContext;
-  const questionsContext = useQuestionsContext();
-  const availableTopics = useAvailableTopicsByScope({ manageScope });
-  const {
-    isFetched: isTopicsFetched,
-    // isLoading: isTopicsLoading,
-    queryKey: availableTopicsQueryKey,
-    queryProps: availableTopicsQueryProps,
-  } = availableTopics;
+
+  /* // UNUSED: AvailableTopics
+   * const availableTopics = useAvailableTopicsByScope({ manageScope });
+   * const {
+   *   isFetched: isTopicsFetched,
+   *   // isLoading: isTopicsLoading,
+   *   queryKey: availableTopicsQueryKey,
+   *   queryProps: availableTopicsQueryProps,
+   * } = availableTopics;
+   */
+
+  const questionId = answer.questionId;
+
+  const topicsListPath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListPath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+  // const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  // const answersListRoutePath = `${questionRoutePath}/answers`;
+  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
 
   const availableTopicQuery = useAvailableTopicById({
     id: topicId,
-    availableTopicsQueryKey,
+    // availableTopicsQueryKey,
     // ...availableTopicsQueryProps,
-    includeWorkout: availableTopicsQueryProps.includeWorkout,
-    includeUser: availableTopicsQueryProps.includeUser,
-    includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
+    // includeWorkout: availableTopicsQueryProps.includeWorkout,
+    // includeUser: availableTopicsQueryProps.includeUser,
+    // includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
   });
   const { topic, isFetched: isTopicFetched, isLoading: isTopicLoading } = availableTopicQuery;
+  const isTopicLoadingOverall =
+    !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
 
-  const isTopicLoadingOverall = !topic && (!isTopicsFetched || !isTopicFetched || isTopicLoading);
+  /*
+   * const question = React.useMemo(() => {
+   *   return questionsContext.questions.find((q) => q.id === answer.questionId);
+   * }, [questionsContext.questions, answer.questionId]);
+   */
 
-  const question = React.useMemo(() => {
-    return questionsContext.questions.find((q) => q.id === answer.questionId);
-  }, [questionsContext.questions, answer.questionId]);
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    question,
+    isFetched: isQuestionFetched,
+    isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
 
   const totalAnswersCount = answersContext.answers.length;
 
@@ -75,7 +103,7 @@ export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
         <h3 className="text-lg font-semibold">Topic</h3>
         {isOwner && (
           <Button variant="ghost" size="sm">
-            <Link href={`${routePath}/${topic.id}`} className="flex items-center gap-2">
+            <Link href={`${topicsListPath}/${topic.id}`} className="flex items-center gap-2">
               <Icons.edit className="size-3" />
               <span>Manage Topic</span>
             </Link>
@@ -127,14 +155,26 @@ export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
   );
 
   // TODO: Use skeleton if is lolading
-  const questionInfoContent = question && (
+  const questionInfoContent = isQuestionLoadingOverall ? (
+    <div
+      className={cn(
+        isDev && '__ViewAnswerContentSummary_Question_Skeleton', // DEBUG
+        'flex size-full flex-1 flex-col gap-4 py-4',
+      )}
+    >
+      <Skeleton className="h-8 w-full rounded-lg" />
+      {[...Array(1)].map((_, i) => (
+        <Skeleton key={i} className="h-20 w-full rounded-lg" />
+      ))}
+    </div>
+  ) : question ? (
     <div data-testid="__Section_Question" className="flex flex-col gap-4">
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold">Question</h3>
         {isOwner && (
           <Button variant="ghost" size="sm">
             <Link
-              href={`${questionsContext.routePath}/${question.id}`}
+              href={`${questionsListRoutePath}/${question.id}`}
               className="flex items-center gap-2"
             >
               <Icons.edit className="size-3" />
@@ -150,7 +190,7 @@ export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {
         </p>
       </div>
     </div>
-  );
+  ) : null;
 
   const authorInfoContent = (
     <div data-testid="__Section_Author" className="flex flex-col gap-4">

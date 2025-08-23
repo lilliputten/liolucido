@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
@@ -26,16 +25,20 @@ import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TUpdatedAnswersCountDetail, updatedQuestionsCountEventName } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
-import { useGoBack, useSessionUser } from '@/hooks';
+import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
+import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared/PageEmpty';
 
 const saveScrollHash = getRandomHashString();
 
 interface TManageTopicQuestionAnswersListCardProps extends TPropsWithClassName {
+  topicId: TTopicId;
+  questionId: TQuestionId;
   handleDeleteAnswer: (answerId: TAnswerId) => void;
   handleEditAnswer: (answerId: TAnswerId) => void;
   handleAddAnswer: () => void;
@@ -169,16 +172,21 @@ function AnswerTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
 interface TAnswerTableRowProps {
   answer: TAnswer;
   idx: number;
+  answersListRoutePath: string;
   handleDeleteAnswer: TManageTopicQuestionAnswersListCardProps['handleDeleteAnswer'];
   handleEditAnswer: TManageTopicQuestionAnswersListCardProps['handleEditAnswer'];
   isAdminMode: boolean;
 }
 
 function AnswerTableRow(props: TAnswerTableRowProps) {
-  const { answer, handleDeleteAnswer, handleEditAnswer, isAdminMode, idx } = props;
+  const { answer, answersListRoutePath, handleDeleteAnswer, handleEditAnswer, isAdminMode, idx } =
+    props;
+  const answerId = answer.id;
+  const answerRoutePath = `${answersListRoutePath}/${answerId}`;
   const { id, text, isCorrect, isGenerated } = answer;
+
   const answersContext = useAnswersContext();
-  const { routePath } = answersContext;
+
   const [isPending, startTransition] = React.useTransition();
 
   const invalidateKeys = useInvalidateReactQueryKeys();
@@ -238,7 +246,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
         </TableCell>
       )}
       <TableCell id="text" className="max-w-[20em] truncate">
-        <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
+        <Link className="truncate text-lg font-medium hover:underline" href={answerRoutePath}>
           {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
@@ -284,16 +292,34 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
 export function ManageTopicQuestionAnswersListCard(
   props: TManageTopicQuestionAnswersListCardProps,
 ) {
-  const { className, handleDeleteAnswer, handleAddAnswer, handleEditAnswer } = props;
+  const { className, topicId, questionId, handleDeleteAnswer, handleAddAnswer, handleEditAnswer } =
+    props;
+
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
 
-  const router = useRouter();
-  // const topicsContext = useTopicsContext();
-  const questionsContext = useQuestionsContext();
+  const { manageScope } = useManageTopicsStore();
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+  const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  const answersListRoutePath = `${questionRoutePath}/answers`;
+  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
   const answersContext = useAnswersContext();
 
+  const goToTheRoute = useGoToTheRoute();
+  // const goBack = useGoBack(questionsRoutePath);
+  const goBack = useGoBack(questionsListRoutePath);
+
   const hasAnswers = !!answersContext.answers.length;
+
+  // Delete Question Modal
+  const handleDeleteQuestion = React.useCallback(() => {
+    const { questionId } = answersContext;
+    const url = `${questionsListRoutePath}/delete?questionId=${questionId}&from=ManageTopicQuestionAnswersListCard`;
+    goToTheRoute(url);
+  }, [goToTheRoute, questionsListRoutePath, answersContext]);
 
   /* // Owner question
    * const question = React.useMemo(() => {
@@ -301,23 +327,6 @@ export function ManageTopicQuestionAnswersListCard(
    *   return questionsContext.questions.find(({ id }) => id === questionId);
    * }, [questionsContext, answersContext]);
    */
-
-  // Delete Question Modal
-  const handleDeleteQuestion = React.useCallback(() => {
-    const { questionId } = answersContext;
-    const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
-    if (hasQuestion) {
-      router.push(
-        `${questionsContext.routePath}/delete?questionId=${questionId}&from=ManageTopicQuestionAnswersListCard`,
-      );
-    } else {
-      toast.error('The requested question does not exist.');
-      router.replace(questionsContext.routePath);
-    }
-  }, [router, questionsContext, answersContext]);
-
-  const goBack = useGoBack(answersContext.topicsListRoutePath);
-
   /* // Render nothing if no owner question found
    * if (!question) {
    *   return null;
@@ -382,6 +391,7 @@ export function ManageTopicQuestionAnswersListCard(
                   <AnswerTableRow
                     key={answer.id}
                     idx={idx}
+                    answersListRoutePath={answersListRoutePath}
                     answer={answer}
                     handleDeleteAnswer={handleDeleteAnswer}
                     handleEditAnswer={handleEditAnswer}

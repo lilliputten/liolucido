@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     const {
       skip,
       take,
+      adminMode,
       showOnlyMyTopics,
       includeWorkout,
       includeUser,
@@ -48,6 +49,7 @@ export async function GET(request: NextRequest) {
     const topics = await getAvailableTopics({
       skip,
       take,
+      adminMode,
       showOnlyMyTopics,
       includeWorkout,
       includeUser,

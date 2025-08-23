@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
+import { minuteMs } from '@/constants';
 import { TAnswerData } from '@/features/answers/types';
 
 interface UseAnswersOptions {
@@ -11,12 +12,14 @@ interface UseAnswersOptions {
   enabled?: boolean;
 }
 
+const staleTime = minuteMs * 10;
+
 export function useAnswers({ questionId, enabled = true }: UseAnswersOptions) {
   const invalidateKeys = useInvalidateReactQueryKeys();
-  return useQuery({
+  const query = useQuery({
     queryKey: ['answers', questionId],
     enabled: enabled && !!questionId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime,
     retry: 1,
     queryFn: async () => {
       if (!questionId) return [];
@@ -47,4 +50,5 @@ export function useAnswers({ questionId, enabled = true }: UseAnswersOptions) {
       }
     },
   });
+  return query;
 }

@@ -24,10 +24,10 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 }
 
 export default async function ViewQuestionPage({ params }: TAwaitedProps) {
-  const { questionId } = await params;
+  const { topicId, questionId } = await params;
 
   if (!questionId) {
-    return <PageError error={'Not question specified.'} />;
+    return <PageError error={'No question specified.'} />;
   }
 
   return (
@@ -38,6 +38,7 @@ export default async function ViewQuestionPage({ params }: TAwaitedProps) {
           isDev && '__page_ViewQuestionPage', // DEBUG
           'mx-4',
         )}
+        topicId={topicId}
         questionId={questionId}
       />
     </ManageTopicsPageWrapper>
