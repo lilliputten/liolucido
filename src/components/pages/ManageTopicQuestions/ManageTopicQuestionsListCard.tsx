@@ -1,18 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/ScrollArea';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -25,15 +20,10 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import {
-  TUpdatedQuestionsCountDetail,
-  updatedQuestionsCountEventName,
-} from '@/constants/eventTypes';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
+import { QuestionsScopeBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
+import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared/PageEmpty';
@@ -56,57 +46,23 @@ interface TToolbarActionsProps {
   goBack: () => void;
 }
 
-function Toolbar(props: TToolbarActionsProps) {
-  const { topicId, handleAddQuestion, goBack } = props;
-  const [isReloading, startReload] = React.useTransition();
-  const invalidateKeys = useInvalidateReactQueryKeys();
+function Toolbar(
+  props: TToolbarActionsProps & {
+    availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
+  },
+) {
+  const {
+    availableQuestionsQuery,
+    // topicId,
+    handleAddQuestion,
+    goBack,
+  } = props;
 
-  const questionsContext = useQuestionsContext();
+  const { refetch, isRefetching } = availableQuestionsQuery;
 
   const handleReload = React.useCallback(() => {
-    const { setQuestions } = questionsContext;
-    startReload(async () => {
-      try {
-        const result = await handleApiResponse(fetch(`/api/topics/${topicId}/questions`), {
-          onInvalidateKeys: invalidateKeys,
-          debugDetails: {
-            initiator: 'Toolbar',
-            action: 'getTopicQuestions',
-            topicId,
-          },
-        });
-        const questions = result.ok && result.data ? (result.data as TQuestion[]) : [];
-        setQuestions((prevQuestions) => {
-          const prevQuestionsCount = prevQuestions.length;
-          // Dispatch a custom event with the updated questions data
-          const questionsCount = questions.length;
-          if (questionsCount !== prevQuestionsCount) {
-            const detail: TUpdatedQuestionsCountDetail = { topicId, questionsCount };
-            const event = new CustomEvent<TUpdatedQuestionsCountDetail>(
-              updatedQuestionsCountEventName,
-              {
-                detail,
-                bubbles: true,
-              },
-            );
-            setTimeout(() => window.dispatchEvent(event), 100);
-          }
-          return questions;
-        });
-      } catch (error) {
-        const details = error instanceof APIError ? error.details : null;
-        const message = 'Cannot reload questions data';
-        // eslint-disable-next-line no-console
-        console.error('[Toolbar]', message, {
-          details,
-          error,
-          topicId,
-        });
-        debugger; // eslint-disable-line no-debugger
-        toast.error(message);
-      }
-    });
-  }, [topicId, questionsContext, invalidateKeys]);
+    refetch({ cancelRefetch: true });
+  }, [refetch]);
 
   return (
     <div
@@ -124,12 +80,12 @@ function Toolbar(props: TToolbarActionsProps) {
         size="sm"
         className={cn(
           'flex items-center gap-2 px-4',
-          isReloading && 'pointer-events-none opacity-50',
+          isRefetching && 'pointer-events-none opacity-50',
         )}
         onClick={handleReload}
       >
         <Icons.refresh
-          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+          className={cn('hidden size-4 opacity-50 sm:flex', isRefetching && 'animate-spin')}
         />
         <span>Reload</span>
       </Button>
@@ -255,11 +211,15 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
 }
 
 export function ManageTopicQuestionsListCardContent(
-  props: TManageTopicQuestionsListCardProps & { topicRoutePath: string },
+  props: TManageTopicQuestionsListCardProps & {
+    topicRoutePath: string;
+    availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
+  },
 ) {
   const {
+    availableQuestionsQuery,
     topicRoutePath,
-    topicId,
+    // topicId,
     // questions,
     handleDeleteQuestion,
     handleAddQuestion,
@@ -270,7 +230,6 @@ export function ManageTopicQuestionsListCardContent(
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
 
-  const availableQuestions = useAvailableQuestions({ topicId });
   const {
     allQuestions,
     hasQuestions,
@@ -281,7 +240,7 @@ export function ManageTopicQuestionsListCardContent(
     isFetchingNextPage,
     // queryKey: availableQuestionsQueryKey,
     // queryProps: availableQuestionsQueryProps,
-  } = availableQuestions;
+  } = availableQuestionsQuery;
 
   if (!isQuestionsFetched) {
     return (
@@ -374,6 +333,11 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
   // const questionsListRoutePath = `${topicRoutePath}/questions`;
 
+  const availableQuestionsQuery = useAvailableQuestions({ topicId });
+
+  const availableTopicQuery = useAvailableTopicById({ id: topicId });
+  const { data: topic } = availableTopicQuery;
+
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(topicsListRoutePath);
 
@@ -403,11 +367,14 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <QuestionsBreadcrumbs
+          <QuestionsScopeBreadcrumbs
             className={cn(
               isDev && '__ManageTopicQuestionsListCard_Breadcrumbs', // DEBUG
             )}
-            inactiveQuestions
+            scope={manageScope}
+            isLoading={!topic}
+            topic={topic}
+            inactiveLast
           />
           {/* // UNUSED: Title
             <CardTitle className="flex flex-1 items-center overflow-hidden">
@@ -420,6 +387,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
           handleAddQuestion={handleAddQuestion}
           handleDeleteTopic={handleDeleteTopic}
           goBack={goBack}
+          availableQuestionsQuery={availableQuestionsQuery}
         />
       </CardHeader>
       <CardContent
@@ -428,7 +396,11 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ManageTopicQuestionsListCardContent {...props} topicRoutePath={topicRoutePath} />
+        <ManageTopicQuestionsListCardContent
+          {...props}
+          topicRoutePath={topicRoutePath}
+          availableQuestionsQuery={availableQuestionsQuery}
+        />
       </CardContent>
     </Card>
   );
