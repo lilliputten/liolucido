@@ -9,7 +9,6 @@ import { TPropsWithChildren } from '@/shared/types/generic';
 import { SidebarNavItem } from '@/shared/types/site/NavItem';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/ScrollArea';
@@ -22,6 +21,7 @@ import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { useMediaQuery } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
 
 import { DialogDescription } from '../ui/dialog';

@@ -6,17 +6,19 @@ import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoBack } from '@/hooks/useGoBack';
-import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useModalTitle } from '@/hooks/useModalTitle';
-import { useUpdateModalVisibility } from '@/hooks/useUpdateModalVisibility';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
 import { addNewTopic } from '@/features/topics/actions/addNewTopic';
 import { TNewTopic, TTopic } from '@/features/topics/types';
+import {
+  useAvailableTopicsByScope,
+  useGoBack,
+  useGoToTheRoute,
+  useMediaQuery,
+  useModalTitle,
+  useUpdateModalVisibility,
+} from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { AddTopicForm } from './AddTopicForm';

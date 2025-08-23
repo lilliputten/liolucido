@@ -4,13 +4,12 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { EditTopicForm } from './EditTopicForm';

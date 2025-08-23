@@ -9,9 +9,9 @@ import { defaultThemeColor } from '@/config/themeColors';
 import { handleApiResponse } from '@/lib/api';
 import { deleteCookie, setCookie } from '@/lib/helpers/cookies';
 import { removeFalsyValues, removeNullUndefinedValues } from '@/lib/helpers/objects';
-import { useSwitchRouterLocale } from '@/hooks/useSwitchRouterLocale';
 import { getSettings } from '@/features/settings/actions';
 import { defaultSettings, settingsSchema, TSettings } from '@/features/settings/types';
+import { useSwitchRouterLocale } from '@/hooks';
 // import { TDefinedUserId } from '@/features/users/types/TUser';
 import { defaultLocale, TLocale } from '@/i18n/types';
 

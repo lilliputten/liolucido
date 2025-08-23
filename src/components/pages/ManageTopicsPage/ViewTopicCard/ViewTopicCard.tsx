@@ -4,16 +4,18 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicById } from '@/hooks/useAvailableTopicById';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoBack } from '@/hooks/useGoBack';
-import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopicId } from '@/features/topics/types';
+import {
+  useAvailableTopicById,
+  useAvailableTopicsByScope,
+  useGoBack,
+  useGoToTheRoute,
+} from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ViewTopicContentActions } from './ViewTopicContentActions';

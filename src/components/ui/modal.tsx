@@ -7,9 +7,9 @@ import { X } from 'lucide-react';
 import { Drawer } from 'vaul';
 
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { isDev } from '@/constants';
+import { useMediaQuery } from '@/hooks';
 
 interface ModalProps {
   children: React.ReactNode;

@@ -4,12 +4,10 @@ import React from 'react';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoBack } from '@/hooks/useGoBack';
-import { useModalTitle } from '@/hooks/useModalTitle';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useGoBack, useModalTitle } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 interface TDeleteTopicModalProps {

@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString, truncateString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
@@ -22,6 +20,7 @@ import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersForTopics';

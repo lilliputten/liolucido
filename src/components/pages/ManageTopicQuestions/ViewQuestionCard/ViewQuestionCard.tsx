@@ -6,12 +6,12 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { useGoBack } from '@/hooks';
 
 import { ViewQuestionContent } from './ViewQuestionContent';
 

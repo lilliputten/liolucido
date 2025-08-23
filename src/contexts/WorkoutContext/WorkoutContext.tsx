@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-import { useWorkout } from '@/hooks/useWorkout';
 import { TAvailableTopic } from '@/features/topics/types';
 import { TDefinedUserId } from '@/features/users/types/TUser';
+import { useWorkout } from '@/hooks';
 
 type TUseWorkout = ReturnType<typeof useWorkout>;
 

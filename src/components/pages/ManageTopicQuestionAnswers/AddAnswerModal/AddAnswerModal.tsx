@@ -8,13 +8,13 @@ import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
 import { addedAnswerEventName, TAddedAnswerDetail } from '@/constants/eventTypes';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { TAnswer, TNewAnswer } from '@/features/answers/types';
+import { useMediaQuery } from '@/hooks';
 import { usePathname } from '@/i18n/routing';
 
 import { AddAnswerForm } from './AddAnswerForm';

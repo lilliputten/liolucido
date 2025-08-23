@@ -3,11 +3,11 @@
 import React from 'react';
 import { toast } from 'sonner';
 
-import { useAnswers } from '@/hooks/useAnswers';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
+import { useAnswers } from '@/hooks';
 
 import { WorkoutQuestion } from './WorkoutQuestion';
 

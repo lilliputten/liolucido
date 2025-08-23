@@ -4,7 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,6 +14,7 @@ import {
   TTopicId,
   TTopicLanguageData,
 } from '@/features/topics/types';
+import { useMediaQuery } from '@/hooks';
 
 import { SelectLanguageCustomForm } from './SelectLanguageCustomForm';
 import { SelectLanguagePredefinedForm } from './SelectLanguagePredefinedForm';

@@ -7,9 +7,6 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicById } from '@/hooks/useAvailableTopicById';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
@@ -18,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
+import { useAvailableTopicById, useAvailableTopicsByScope, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export function ViewQuestionContentSummary({ question }: { question: TQuestion }) {

@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
@@ -14,6 +13,7 @@ import { addedQuestionEventName, TAddedQuestionDetail } from '@/constants/eventT
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { addNewQuestion } from '@/features/questions/actions';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
+import { useMediaQuery } from '@/hooks';
 import { usePathname } from '@/i18n/routing';
 
 import { AddQuestionForm } from './AddQuestionForm';

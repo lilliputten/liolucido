@@ -4,12 +4,12 @@ import { useFormatter } from 'next-intl';
 
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAvailableTopic } from '@/features/topics/types';
+import { useSessionUser } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
 import { usePathname } from '@/i18n/routing';
 

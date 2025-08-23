@@ -7,11 +7,11 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { capitalizeString, truncateString } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
 import { topicsNamespaces, topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export interface TTopicsBreadcrumbsProps {

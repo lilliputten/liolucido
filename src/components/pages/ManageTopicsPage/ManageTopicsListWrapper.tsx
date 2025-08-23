@@ -4,14 +4,13 @@ import React from 'react';
 
 import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Icons } from '@/components/shared/icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared';

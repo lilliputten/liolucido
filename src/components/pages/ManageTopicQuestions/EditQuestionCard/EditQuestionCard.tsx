@@ -6,13 +6,13 @@ import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { useGoBack } from '@/hooks';
 
 import { topicQuestionDeletedEventId } from '../DeleteQuestionModal';
 import { EditQuestionForm } from './EditQuestionForm';

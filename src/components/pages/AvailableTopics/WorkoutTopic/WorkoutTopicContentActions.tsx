@@ -3,11 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TTopic } from '@/features/topics/types';
+import { useSessionUser } from '@/hooks';
 
 export interface TWorkoutTopicContentActionsProps {
   topic: TTopic;

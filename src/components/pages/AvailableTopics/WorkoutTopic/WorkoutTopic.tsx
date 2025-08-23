@@ -4,7 +4,6 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
@@ -12,6 +11,7 @@ import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { useGoBack } from '@/hooks';
 
 import { WorkoutTopicContent } from './WorkoutTopicContent';
 import { WorkoutTopicContentActions } from './WorkoutTopicContentActions';

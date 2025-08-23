@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { UseFormReturn } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TSettings } from '@/features/settings/types';
+import { useSessionUser } from '@/hooks';
 
 import { TFormData } from './types';
 

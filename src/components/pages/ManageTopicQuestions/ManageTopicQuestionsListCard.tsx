@@ -9,9 +9,6 @@ import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
-import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
@@ -32,6 +29,7 @@ import {
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared/PageEmpty';

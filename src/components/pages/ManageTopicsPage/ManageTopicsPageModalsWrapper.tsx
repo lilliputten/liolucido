@@ -3,9 +3,8 @@
 import React from 'react';
 import { toast } from 'sonner';
 
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
 import { TAvailableTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ManageTopicsListWrapper } from './ManageTopicsListWrapper';

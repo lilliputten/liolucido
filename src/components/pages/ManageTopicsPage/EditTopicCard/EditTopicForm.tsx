@@ -11,8 +11,6 @@ import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoToTheRoute } from '@/hooks/useGoToTheRoute';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
@@ -21,6 +19,7 @@ import {
   selectTopicEventName,
   TSelectTopicLanguageData,
 } from '@/features/topics/types/TSelectTopicLanguageData';
+import { useAvailableTopicsByScope, useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { maxNameLength, maxTextLength, minNameLength } from '../constants';

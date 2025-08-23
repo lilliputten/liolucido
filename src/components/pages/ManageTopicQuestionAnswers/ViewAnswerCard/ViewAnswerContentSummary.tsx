@@ -7,9 +7,6 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicById } from '@/hooks/useAvailableTopicById';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
@@ -20,6 +17,7 @@ import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TAnswer } from '@/features/answers/types';
+import { useAvailableTopicById, useAvailableTopicsByScope, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export function ViewAnswerContentSummary({ answer }: { answer: TAnswer }) {

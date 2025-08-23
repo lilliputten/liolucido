@@ -5,13 +5,12 @@ import Link from 'next/link';
 
 import { myTopicsRoute, rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { PageEmpty } from '@/components/pages/shared';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
+import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
 
 import { AvailableTopicsList } from './AvailableTopicsList';
 import { AvailableTopicsLoading } from './AvailableTopicsLoading';

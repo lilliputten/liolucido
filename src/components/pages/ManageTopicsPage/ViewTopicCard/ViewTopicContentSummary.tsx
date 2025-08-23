@@ -6,13 +6,13 @@ import { useFormatter } from 'next-intl';
 
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Badge } from '@/components/ui/badge';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
+import { useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {

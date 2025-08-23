@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { useAvailableTopicsByScope } from '@/hooks/useAvailableTopics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MarkdownText } from '@/components/ui/MarkdownText';
@@ -13,6 +12,7 @@ import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TTopic } from '@/features/topics/types';
+import { useAvailableTopicsByScope } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
 import { usePathname } from '@/i18n/routing';
 

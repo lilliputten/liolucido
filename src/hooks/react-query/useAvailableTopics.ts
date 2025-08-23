@@ -32,8 +32,8 @@ import { getAvailableTopics } from '@/features/topics/actions';
 import { topicsLimit } from '@/features/topics/constants';
 import { TAvailableTopic, TTopicId } from '@/features/topics/types';
 
-import { getUnqueTopicsList } from './helpers/availableTopics';
-import { useSessionUser } from './useSessionUser';
+import { getUnqueTopicsList } from '../helpers/availableTopics';
+import { useSessionUser } from '../useSessionUser';
 
 const staleTime = minuteMs * 10;
 
