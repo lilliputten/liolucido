@@ -8,3 +8,5 @@ export type TQuestionData = Omit<TQuestionReal, 'createdAt' | 'updatedAt'>;
 export type TQuestionId = TQuestion['id'];
 
 export type TNewQuestion = Partial<Question> & Pick<Question, 'text' | 'topicId'>;
+
+export type TAvailableQuestion = TQuestion;

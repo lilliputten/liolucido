@@ -12,7 +12,6 @@ export const zTopicOrderBy = z
   .optional();
 export type TTopicOrderBy = z.infer<typeof zTopicOrderBy>;
 
-// TODO: Move to zod schemas?
 export const GetAvailableTopicsParamsSchema = TopicIncludeParamsSchema.extend({
   /** Skip records (start from the nth record), default = 0 */
   skip: z.coerce.number().int().nonnegative().optional(),
@@ -40,7 +39,7 @@ export const GetAvailableTopicsParamsSchema = TopicIncludeParamsSchema.extend({
 export type TGetAvailableTopicsParams = z.infer<typeof GetAvailableTopicsParamsSchema>;
 
 export interface TGetAvailableTopicsResults {
-  topics: TAvailableTopic[];
+  items: TAvailableTopic[];
   /** Total records count for these conditions */
   totalCount: number;
 }

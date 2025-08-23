@@ -28,11 +28,11 @@ export function addNewTopicToCache(
     let totalCount = 0;
     const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
       if (toStart && index === 0) {
-        page = { ...page, topics: [newTopic, ...page.topics] };
+        page = { ...page, items: [newTopic, ...page.items] };
       } else if (!toStart && index === lastPageIndex) {
-        page = { ...page, topics: [...page.topics, newTopic] };
+        page = { ...page, items: [...page.items, newTopic] };
       }
-      totalCount += page.topics.length;
+      totalCount += page.items.length;
       return page;
     });
     const updatedPages = pages.map((page) => ({ ...page, totalCount }));
@@ -52,9 +52,9 @@ export function deleteTopicFromCache(
     if (!oldData) return oldData;
     let totalCount = 0;
     const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
-      const topics = page.topics.filter((topic) => topic.id !== topicIdToDelete);
-      totalCount += topics.length;
-      return { ...page, topics };
+      const items = page.items.filter((topic) => topic.id !== topicIdToDelete);
+      totalCount += items.length;
+      return { ...page, items };
     });
     const updatedPages = pages.map((page) => ({ ...page, totalCount }));
     return { ...oldData, pages: updatedPages };
@@ -73,13 +73,13 @@ export function updateTopicInCache(
     if (!oldData) return oldData;
     const updatedId = updatedTopic.id;
     const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
-      if (!page.topics.find(({ id }) => id === updatedId)) {
+      if (!page.items.find(({ id }) => id === updatedId)) {
         return page;
       }
-      const topics = page.topics.map((topic) =>
+      const items = page.items.map((topic) =>
         topic.id === updatedTopic.id ? updatedTopic : topic,
       );
-      return { ...page, topics };
+      return { ...page, items };
     });
     return { ...oldData, pages };
   });

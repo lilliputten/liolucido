@@ -42,7 +42,7 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
 
   // Try to find the topic in cached infinite pages
   const cachedTopic = availableTopicsData?.pages
-    .flatMap((page) => page.topics)
+    .flatMap((page) => page.items)
     .find((topic) => topic.id === topicId);
 
   const isCached = !!cachedTopic;

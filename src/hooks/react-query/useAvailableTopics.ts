@@ -78,7 +78,7 @@ export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
        * const loadedCount = getUnqueTopicsList(allPages).length;
        */
       // A naive solution
-      const loadedCount = allPages.reduce((acc, page) => acc + page.topics.length, 0);
+      const loadedCount = allPages.reduce((acc, page) => acc + page.items.length, 0);
       return loadedCount < lastPage.totalCount ? loadedCount : undefined;
     },
     queryFn: async (params) => {

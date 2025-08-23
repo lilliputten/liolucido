@@ -12,6 +12,7 @@ import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContex
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 import { useGoBack } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ViewQuestionContent } from './ViewQuestionContent';
 
@@ -20,6 +21,8 @@ interface TViewQuestionCardProps extends TPropsWithClassName {
 }
 
 export function ViewQuestionCard(props: TViewQuestionCardProps) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const { className, questionId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);

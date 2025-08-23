@@ -54,10 +54,10 @@ describe('getAvailableTopics', () => {
       const topicIds = [topic1, topic2].map(({ id }) => id);
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
       mockedGetCurrentUser.mockResolvedValue(undefined);
-      const { topics, totalCount } = await getAvailableTopics({ topicIds, noDebug: true });
-      expect(topics).toHaveLength(1);
+      const { items, totalCount } = await getAvailableTopics({ topicIds, noDebug: true });
+      expect(items).toHaveLength(1);
       expect(totalCount).toBe(1);
-      expect(topics[0].id).toBe(topic1.id);
+      expect(items[0].id).toBe(topic1.id);
     } finally {
       await cleanupDb(createdIds);
     }
@@ -84,9 +84,9 @@ describe('getAvailableTopics', () => {
       const topicIds = [topic0, topic1, topic2].map(({ id }) => id);
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
       mockedGetCurrentUser.mockResolvedValue(user1 as TExtendedUser);
-      const { topics, totalCount } = await getAvailableTopics({ topicIds, noDebug: true });
+      const { items, totalCount } = await getAvailableTopics({ topicIds, noDebug: true });
       expect(totalCount).toBe(2);
-      expect(topics.map((t) => t.id).sort()).toEqual([topic0.id, topic1.id].sort());
+      expect(items.map((t) => t.id).sort()).toEqual([topic0.id, topic1.id].sort());
     } finally {
       await cleanupDb(createdIds);
     }
@@ -112,13 +112,13 @@ describe('getAvailableTopics', () => {
       const topicIds = [topic1, topic2].map(({ id }) => id);
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
       mockedGetCurrentUser.mockResolvedValue(user1 as TExtendedUser);
-      const { topics, totalCount } = await getAvailableTopics({
+      const { items, totalCount } = await getAvailableTopics({
         topicIds,
         showOnlyMyTopics: true,
         noDebug: true,
       });
       expect(totalCount).toBe(1);
-      expect(topics[0].id).toBe(topic1.id);
+      expect(items[0].id).toBe(topic1.id);
     } finally {
       await cleanupDb(createdIds);
     }
@@ -148,13 +148,13 @@ describe('getAvailableTopics', () => {
       const topicIds = [t1.id, t2.id, t3.id];
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
       mockedGetCurrentUser.mockResolvedValue(admin as TExtendedUser);
-      const { topics, totalCount } = await getAvailableTopics({
+      const { items, totalCount } = await getAvailableTopics({
         topicIds,
         adminMode: true,
         noDebug: true,
       });
       expect(totalCount).toBe(3);
-      expect(topics).toHaveLength(3);
+      expect(items).toHaveLength(3);
     } finally {
       await cleanupDb(createdIds);
     }
@@ -190,9 +190,9 @@ describe('getAvailableTopics', () => {
       });
       createdIds.push({ type: 'topic', id: publicTopic.id });
       mockedGetCurrentUser.mockResolvedValue(undefined);
-      const { topics } = await getAvailableTopics({ includeUser: true, noDebug: true });
-      expect(topics[0].user).toBeDefined();
-      expect(topics[0].user).not.toBeFalsy();
+      const { items } = await getAvailableTopics({ includeUser: true, noDebug: true });
+      expect(items[0].user).toBeDefined();
+      expect(items[0].user).not.toBeFalsy();
     } finally {
       await cleanupDb(createdIds);
     }
@@ -211,8 +211,8 @@ describe('getAvailableTopics', () => {
       });
       createdIds.push({ type: 'topic', id: publicTopic.id });
       mockedGetCurrentUser.mockResolvedValue(undefined);
-      const { topics } = await getAvailableTopics({ includeUser: false, noDebug: true });
-      expect(topics[0].user).toBeFalsy();
+      const { items } = await getAvailableTopics({ includeUser: false, noDebug: true });
+      expect(items[0].user).toBeFalsy();
     } finally {
       await cleanupDb(createdIds);
     }
@@ -234,9 +234,9 @@ describe('getAvailableTopics', () => {
       });
       [w1].forEach(({ userId, topicId }) => createdIds.push({ type: 'workout', userId, topicId }));
       mockedGetCurrentUser.mockResolvedValue(undefined);
-      const { topics } = await getAvailableTopics({ includeWorkout: true, noDebug: true });
-      expect(topics[0].userTopicWorkout).toBeDefined();
-      expect(topics[0].userTopicWorkout).not.toBeFalsy();
+      const { items } = await getAvailableTopics({ includeWorkout: true, noDebug: true });
+      expect(items[0].userTopicWorkout).toBeDefined();
+      expect(items[0].userTopicWorkout).not.toBeFalsy();
     } finally {
       await cleanupDb(createdIds);
     }
@@ -259,8 +259,8 @@ describe('getAvailableTopics', () => {
       });
       createdIds.push({ type: 'question', id: question.id });
       mockedGetCurrentUser.mockResolvedValue(undefined);
-      const { topics } = await getAvailableTopics({ includeQuestionsCount: true, noDebug: true });
-      expect(topics.find((t) => t.id === publicTopic.id)?._count?.questions).toBe(1);
+      const { items } = await getAvailableTopics({ includeQuestionsCount: true, noDebug: true });
+      expect(items.find((t) => t.id === publicTopic.id)?._count?.questions).toBe(1);
     } finally {
       await cleanupDb(createdIds);
     }
@@ -286,7 +286,7 @@ describe('getAvailableTopics', () => {
       const topicIds = [t1.id, t2.id, t3.id];
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
       mockedGetCurrentUser.mockResolvedValue(undefined);
-      const { topics: page1, totalCount } = await getAvailableTopics({
+      const { items: page1, totalCount } = await getAvailableTopics({
         topicIds,
         take: 2,
         orderBy: { name: 'asc' },
@@ -294,7 +294,7 @@ describe('getAvailableTopics', () => {
       });
       expect(page1).toHaveLength(2);
       expect(totalCount).toBe(3);
-      const { topics: page2 } = await getAvailableTopics({
+      const { items: page2 } = await getAvailableTopics({
         topicIds,
         skip: 2,
         take: 2,
@@ -325,7 +325,7 @@ describe('getAvailableTopics', () => {
         const topicIds = [t1.id, t2.id, t3.id];
         topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
         mockedGetCurrentUser.mockResolvedValue(undefined);
-        const { topics: asc } = await getAvailableTopics({
+        const { items: asc } = await getAvailableTopics({
           topicIds,
           orderBy: { name: 'asc' },
           noDebug: true,
@@ -336,7 +336,7 @@ describe('getAvailableTopics', () => {
           'B Topic',
           'C Topic',
         ]);
-        const { topics: desc } = await getAvailableTopics({
+        const { items: desc } = await getAvailableTopics({
           topicIds,
           orderBy: { name: 'desc' },
           noDebug: true,
@@ -374,12 +374,12 @@ describe('getAvailableTopics', () => {
         const q3 = await jestPrisma.question.create({ data: { text: 'q3', topicId: t1.id } });
         [q1, q2, q3].forEach(({ id }) => createdIds.push({ type: 'question', id }));
         mockedGetCurrentUser.mockResolvedValue(undefined);
-        const { topics } = await getAvailableTopics({
+        const { items } = await getAvailableTopics({
           topicIds,
           orderBy: { questions: { _count: 'desc' } },
           noDebug: true,
         });
-        const topicNames = topics.map((t) => t.name);
+        const topicNames = items.map((t) => t.name);
         expect(topicNames).toEqual([
           // Compare results...
           'Topic 2 (2q)',

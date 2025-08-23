@@ -48,7 +48,7 @@ export async function getAvailableTopics(
       throw new Error('Admin mode is allowed only for administrators');
     }
     if (!userId && showOnlyMyTopics && !adminMode) {
-      return { topics: [], totalCount: 0 };
+      return { items: [], totalCount: 0 };
     }
     const include: Prisma.TopicInclude = {
       _count: { select: { questions: includeQuestionsCount } },
@@ -95,14 +95,14 @@ export async function getAvailableTopics(
       include,
       orderBy,
     };
-    const [topics, totalCount] = await prisma.$transaction([
+    const [items, totalCount] = await prisma.$transaction([
       prisma.topic.findMany(args),
       prisma.topic.count({
         where,
       }),
     ]);
     // const topics: TAvailableTopic[] = await prisma.topic.findMany(args);
-    return { topics, totalCount } satisfies TGetAvailableTopicsResults;
+    return { items, totalCount } satisfies TGetAvailableTopicsResults;
   } catch (error) {
     if (!noDebug) {
       // eslint-disable-next-line no-console

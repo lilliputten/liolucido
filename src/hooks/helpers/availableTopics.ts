@@ -6,7 +6,7 @@ export function getUnqueTopicsList(results?: TGetAvailableTopicsResults[]) {
   // Deduplicate topics by their ID
   const uniqueTopicsMap = new Set<string>();
   return results
-    .flatMap((page) => page.topics)
+    .flatMap((page) => page.items)
     .filter(({ id }) => {
       if (!uniqueTopicsMap.has(id)) {
         uniqueTopicsMap.add(id);
