@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/lib/session';
 import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemes';
 import { isDev } from '@/constants';
 
-import { topicsLimit } from '../constants';
+import { itemsLimit } from '../constants';
 import { IncludedUserSelect, IncludedUserTopicWorkoutSelect } from '../types';
 
 interface TOptions {
@@ -21,10 +21,10 @@ export async function getAvailableTopics(
   const {
     topicIds,
     skip = 0,
-    take = topicsLimit,
+    take = itemsLimit,
     adminMode,
     showOnlyMyTopics,
-    orderBy = { createdAt: 'desc' },
+    orderBy = { updatedAt: 'desc' },
     // TopicIncludeParamsSchema
     includeUser = true,
     includeWorkout = false,
@@ -39,8 +39,8 @@ export async function getAvailableTopics(
   const user: ExtendedUser | undefined = await getCurrentUser();
   const userId = user?.id;
   const isAdmin = user?.role === 'ADMIN';
-  // No own topics for unauthorized users (and if no admin mode)
   try {
+    // Check if conditions are correct...
     if (!user && showOnlyMyTopics) {
       throw new Error('Only authorized users can get their own data');
     }
@@ -50,17 +50,9 @@ export async function getAvailableTopics(
     if (!userId && showOnlyMyTopics && !adminMode) {
       return { items: [], totalCount: 0 };
     }
+    // Create the "include" data...
     const include: Prisma.TopicInclude = {
       _count: { select: { questions: includeQuestionsCount } },
-      user: includeUser
-        ? {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          }
-        : false,
     };
     if (includeUser) {
       include.user = { select: IncludedUserSelect };
@@ -68,6 +60,7 @@ export async function getAvailableTopics(
     if (includeWorkout) {
       include.userTopicWorkout = { select: IncludedUserTopicWorkoutSelect };
     }
+    // Create the "where" data...
     const where: Prisma.TopicWhereInput = {};
     if (!userId) {
       // Limit with public data for nonauthorized user in non-admin mode and without any other conditions
@@ -83,11 +76,7 @@ export async function getAvailableTopics(
       // Limit the results by specified ids
       where.id = { in: topicIds };
     }
-    /*
-    const where: Prisma.TopicWhereInput = showOnlyMyTopics
-      ? { userId }
-      : { OR: [{ userId }, { isPublic: true }] };
-    */
+    // Combine all the request arguments...
     const args: Prisma.TopicFindManyArgs = {
       skip,
       take,

@@ -43,8 +43,6 @@ type TUseAvailableTopicsProps = Omit<TGetAvailableTopicsParams, 'skip' | 'take'>
 
 /** Collection of the all used query keys (mb, already invalidated).
  *
- * QueryKey's are stored with strigified keys.
- *
  * TODO:
  * - To use `QueryCache.subscribe` to remove invalidated keys?
  * - Create a helper to invalidate all the keys or all the keys, except current?

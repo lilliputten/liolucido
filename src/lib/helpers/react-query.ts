@@ -1,32 +1,25 @@
 import { QueryKey } from '@tanstack/react-query';
 
-import {
-  TAllUsedKeys,
-  TAvailableTopicsResultsQueryData,
-  TQueryClient,
-} from '@/shared/types/react-query';
-import { TGetAvailableTopicsResults } from '@/lib/zod-schemes';
-import { TAvailableTopic, TTopicId } from '@/features/topics/types';
+import { TGetResults, TGetResultsIniniteQueryData } from '@/shared/types/generic/api';
+import { TAllUsedKeys, TQueryClient } from '@/shared/types/react-query';
 
 export function stringifyQueryKey(qk: QueryKey) {
   // return JSON.stringify(qk);
   return String(qk);
 }
 
-/**
- * Add a new topic record to cached pages.
- */
-export function addNewTopicToCache(
+/** Add a new item record to cached pages. */
+export function addNewItemToQueryCache<TItem>(
   queryClient: TQueryClient,
   queryKey: QueryKey,
-  newTopic: TAvailableTopic,
+  newTopic: TItem,
   toStart?: boolean,
 ) {
-  queryClient.setQueryData<TAvailableTopicsResultsQueryData>(queryKey, (oldData) => {
+  queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
     if (!oldData) return oldData;
     const lastPageIndex = oldData.pages.length - 1;
     let totalCount = 0;
-    const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page, index) => {
+    const pages: TGetResults<TItem>[] = oldData.pages.map((page, index) => {
       if (toStart && index === 0) {
         page = { ...page, items: [newTopic, ...page.items] };
       } else if (!toStart && index === lastPageIndex) {
@@ -40,18 +33,16 @@ export function addNewTopicToCache(
   });
 }
 
-/**
- * Delete a topic from cached pages by id.
- */
-export function deleteTopicFromCache(
+/** Delete an item from cached pages by id. */
+export function deleteItemFromQueryCache<TItem extends { id: TId }, TId = string>(
   queryClient: TQueryClient,
   queryKey: QueryKey,
-  topicIdToDelete: TTopicId,
+  topicIdToDelete: TId,
 ) {
-  queryClient.setQueryData<TAvailableTopicsResultsQueryData>(queryKey, (oldData) => {
+  queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
     if (!oldData) return oldData;
     let totalCount = 0;
-    const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
+    const pages: TGetResults<TItem>[] = oldData.pages.map((page) => {
       const items = page.items.filter((topic) => topic.id !== topicIdToDelete);
       totalCount += items.length;
       return { ...page, items };
@@ -61,18 +52,16 @@ export function deleteTopicFromCache(
   });
 }
 
-/**
- * Update a topic in cached pages by id.
- */
-export function updateTopicInCache(
+/** Update an item in cached pages by id. */
+export function updateItemInQueryCache<TItem extends { id: TId }, TId = string>(
   queryClient: TQueryClient,
   queryKey: QueryKey,
-  updatedTopic: TAvailableTopic,
+  updatedTopic: TItem,
 ) {
-  queryClient.setQueryData<TAvailableTopicsResultsQueryData>(queryKey, (oldData) => {
+  queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
     if (!oldData) return oldData;
     const updatedId = updatedTopic.id;
-    const pages: TGetAvailableTopicsResults[] = oldData.pages.map((page) => {
+    const pages: TGetResults<TItem>[] = oldData.pages.map((page) => {
       if (!page.items.find(({ id }) => id === updatedId)) {
         return page;
       }
@@ -85,9 +74,7 @@ export function updateTopicInCache(
   });
 }
 
-/**
- * Invalidate all used keys except the provided ones.
- */
+/** Invalidate all used keys except the provided ones. */
 export function invalidateAllUsedKeysExcept(
   queryClient: TQueryClient,
   excludeKeys?: QueryKey[],

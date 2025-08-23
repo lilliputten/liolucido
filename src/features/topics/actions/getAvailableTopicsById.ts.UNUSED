@@ -27,7 +27,7 @@ export async function getAvailableTopics(
     includeUser = true,
     includeWorkout = false,
     includeQuestionsCount = true,
-    orderBy = { createdAt: 'desc' },
+    orderBy = { updatedAt: 'desc' },
     // Options (no error console output and debugger stops, for tests)
     noDebug,
   } = params;
