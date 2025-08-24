@@ -9,7 +9,7 @@ import {
   TQuestionQuestionIds,
   zQuestionOrderBy,
   zQuestionQuestionIds,
-} from '@/lib/zod-schemes';
+} from '@/lib/zod-schemas';
 import { getAvailableQuestions } from '@/features/questions/actions';
 
 const TargetParamsSchema = GetAvailableQuestionsParamsSchema;

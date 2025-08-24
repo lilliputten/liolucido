@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { TGetResults } from '@/shared/types/generic/api';
-import { TopicIncludeParamsSchema } from '@/lib/zod-schemes';
+import { TopicIncludeParamsSchema } from '@/lib/zod-schemas';
 import { TAvailableTopic } from '@/features/topics/types';
 import { TopicOrderByWithRelationInputSchema } from '@/generated/prisma';
 

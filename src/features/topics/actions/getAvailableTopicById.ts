@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
-import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemes';
+import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemas';
 import { isDev } from '@/constants';
 
 import { IncludedUserSelect, IncludedUserTopicWorkoutSelect, TAvailableTopic } from '../types';

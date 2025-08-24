@@ -9,7 +9,7 @@ import {
   TTopicTopicIds,
   zTopicOrderBy,
   zTopicTopicIds,
-} from '@/lib/zod-schemes';
+} from '@/lib/zod-schemas';
 import { getAvailableTopics } from '@/features/topics/actions';
 
 const TargetParamsSchema = GetAvailableTopicsParamsSchema;

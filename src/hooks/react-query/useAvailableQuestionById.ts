@@ -7,7 +7,7 @@ import { TAvailableQuestionsResultsQueryData } from '@/shared/types/react-query'
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
-import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemes';
+import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
 import { TAvailableQuestion } from '@/features/questions/types';
 

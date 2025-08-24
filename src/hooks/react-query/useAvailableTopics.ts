@@ -22,7 +22,7 @@ import {
   updateItemInQueryCache,
 } from '@/lib/helpers/react-query';
 import { composeUrlQuery } from '@/lib/helpers/urls';
-import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemes';
+import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
 import {
   defaultTopicsManageScope,

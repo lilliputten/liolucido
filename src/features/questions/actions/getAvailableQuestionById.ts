@@ -3,7 +3,7 @@
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
-import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemes';
+import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
 import { isDev } from '@/constants';
 
 import { IncludedTopicSelect, TAvailableQuestion } from '../types';

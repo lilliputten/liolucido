@@ -13,7 +13,6 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { TAllUsedKeys, TAvailableQuestionsResultsQueryData } from '@/shared/types/react-query';
-import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data';
 import {
   addNewItemToQueryCache,
@@ -23,12 +22,8 @@ import {
   stringifyQueryKey,
   updateItemInQueryCache,
 } from '@/lib/helpers/react-query';
-import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
-import {
-  TGetAvailableQuestionsParams,
-  TGetAvailableQuestionsResults,
-  TGetAvailableTopicsResults,
-} from '@/lib/zod-schemes';
+import { composeUrlQuery } from '@/lib/helpers/urls';
+import { TGetAvailableQuestionsParams, TGetAvailableQuestionsResults } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
 import { getAvailableQuestions } from '@/features/questions/actions/getAvailableQuestions';
 import { itemsLimit } from '@/features/questions/constants';

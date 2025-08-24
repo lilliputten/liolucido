@@ -7,7 +7,7 @@ import { TAvailableTopicsResultsQueryData } from '@/shared/types/react-query';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
-import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemes';
+import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
 

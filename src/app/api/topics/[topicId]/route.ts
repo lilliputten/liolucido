@@ -3,7 +3,7 @@ import { z, ZodError } from 'zod';
 
 import { TApiResponse } from '@/shared/types/api';
 import { makeNullableFieldsOptional } from '@/lib/helpers/zod';
-import { TopicIncludeParamsSchema } from '@/lib/zod-schemes';
+import { TopicIncludeParamsSchema } from '@/lib/zod-schemas';
 import { updateTopic } from '@/features/topics/actions';
 import { getAvailableTopicById } from '@/features/topics/actions/getAvailableTopicById';
 import { TTopic } from '@/features/topics/types';
