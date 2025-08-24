@@ -42,14 +42,18 @@ type TUseAvailableQuestionsProps = Omit<TGetAvailableQuestionsParams, 'skip' | '
  */
 const allUsedKeys: TAllUsedKeys = {};
 
-export function useAvailableQuestions(queryProps: TUseAvailableQuestionsProps = {}) {
+export function useAvailableQuestions(props: TUseAvailableQuestionsProps = {}) {
+  const { topicId, ...queryProps } = props;
   const queryClient = useQueryClient();
   // const invalidateKeys = useInvalidateReactQueryKeys();
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
   const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
-  const queryKey = React.useMemo<QueryKey>(() => ['available-questions', queryHash], [queryHash]);
+  const queryKey = React.useMemo<QueryKey>(
+    () => ['available-questions', topicId, queryHash],
+    [topicId, queryHash],
+  );
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
 
   const query: UseInfiniteQueryResult<TAvailableQuestionsResultsQueryData, Error> =
@@ -73,6 +77,7 @@ export function useAvailableQuestions(queryProps: TUseAvailableQuestionsProps = 
           // OPTION 1: Using server function
           const results = await getAvailableQuestions({
             ...queryProps,
+            topicId,
             skip: pageParam,
             take: itemsLimit,
           });

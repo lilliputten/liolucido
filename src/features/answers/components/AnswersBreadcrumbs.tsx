@@ -23,8 +23,8 @@ import { TTopic } from '@/features/topics/types';
 
 interface TScopeBreadcrumbsProps {
   scope: TTopicsManageScopeId;
-  topic: TTopic; // The topic is required by might by undefined while loading, then display skeleton
-  question: TQuestion;
+  topic?: TTopic; // The topic is required by might by undefined while loading, then display skeleton
+  question?: TQuestion;
   answer?: TAnswer;
   lastItem?: TBreadcrumbsItemProps | BreadcrumbsItem;
   inactiveLast?: boolean;
@@ -35,7 +35,8 @@ export function useAnswersScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps) {
   const topicsListRoutePath = topicsRoutes[scope];
   const topicRoutePath = topic && `${topicsListRoutePath}/${topic.id}`;
   const questionsListRoutePath = topicRoutePath && `${topicRoutePath}/questions`;
-  const questionRoutePath = questionsListRoutePath && `${questionsListRoutePath}/${question.id}`;
+  const questionRoutePath =
+    question && questionsListRoutePath && `${questionsListRoutePath}/${question.id}`;
   const answersListRoutePath = questionRoutePath && `${questionRoutePath}/answers`;
   const answerRoutePath = answer && answersListRoutePath && `${answersListRoutePath}/${answer.id}`;
   // TODO: Use i18n translations

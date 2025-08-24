@@ -45,14 +45,17 @@ interface TUseAvailableAnswersProps extends Omit<TGetAvailableAnswersParams, 'sk
 const allUsedKeys: TAllUsedKeys = {};
 
 export function useAvailableAnswers(props: TUseAvailableAnswersProps = {}) {
-  const { enabled, ...queryProps } = props;
+  const { enabled, questionId, ...queryProps } = props;
   const queryClient = useQueryClient();
   // const invalidateKeys = useInvalidateReactQueryKeys();
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
   const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
-  const queryKey = React.useMemo<QueryKey>(() => ['available-answers', queryHash], [queryHash]);
+  const queryKey = React.useMemo<QueryKey>(
+    () => ['available-answers', questionId, queryHash],
+    [questionId, queryHash],
+  );
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
 
   const query: UseInfiniteQueryResult<TAvailableAnswersResultsQueryData, Error> = useInfiniteQuery<
@@ -76,6 +79,7 @@ export function useAvailableAnswers(props: TUseAvailableAnswersProps = {}) {
         // OPTION 1: Using server function
         const results = await getAvailableAnswers({
           ...queryProps,
+          questionId,
           skip: pageParam,
           take: itemsLimit,
         });
@@ -197,30 +201,3 @@ export function useAvailableAnswers(props: TUseAvailableAnswersProps = {}) {
     invalidateAllKeysExcept,
   };
 }
-
-/* // UNUSED?
- * interface TUseAvailableQuestionsByScopeProps {
- *   manageScope?: TQuestionsManageScopeId;
- * }
- * export function useAvailableAnswersByScope(props: TUseAvailableQuestionsByScopeProps = {}) {
- *   const {
- *     manageScope = defaultQuestionsManageScope,
- *     // user,
- *   } = props;
- *   const user = useSessionUser();
- *   const queryProps: TUseAvailableAnswersProps = React.useMemo(() => {
- *     const isAdmin = user?.role === 'ADMIN';
- *     return {
- *       // skip, // Skip records (start from the nth record), default = 0 // z.number().int().nonnegative().optional()
- *       // take, // Amount of records to return, default = {itemsLimit} // z.number().int().positive().optional()
- *       adminMode: manageScope === QuestionsManageScopeIds.ALL_QUESTIONS && isAdmin, // Get all users' data not only your own (admins only: will return no data for non-admins) ??? // z.boolean().optional()
- *       showOnlyMyAnswers: manageScope === QuestionsManageScopeIds.MY_QUESTIONS, // Display only current user's answers
- *       includeQuestion: true, // Include (limited) question data // z.boolean().optional()
- *       includeAnswersCount: true, // Include related answers count, in `_count: { answers }` // z.boolean().optional()
- *       orderBy: { updatedAt: 'desc' }, // Sort by parameter, default: `{ updatedAt: 'desc' }`, packed json string // QuestionFindManyArgsSchema.shape.orderBy // This approach doesn't work
- *       // questionIds, // Include only listed question ids // z.array(z.string()).optional()
- *     } satisfies TUseAvailableAnswersProps;
- *   }, [manageScope, user]);
- *   return useAvailableQuestions(queryProps);
- * }
- */

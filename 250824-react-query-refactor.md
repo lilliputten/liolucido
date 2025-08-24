@@ -1,7 +1,13 @@
 > 2025.08.24
 
+useAnswersContext -> useAvailableAnswers
+AnswersBreadcrumbs -> AnswersScopeBreadcrumbs
+
 useQuestionsContext -> useAvailableQuestions
 QuestionsBreadcrumbs -> QuestionsScopeBreadcrumbs
+
+useTopicsContext -> useAvailableTopicsByScope (-> useAvailableTopics)
+TopicsBreadcrumbs -> TopicsScopeBreadcrumbs
 
 paths:
 

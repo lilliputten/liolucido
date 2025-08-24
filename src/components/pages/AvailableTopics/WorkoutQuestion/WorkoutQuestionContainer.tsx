@@ -7,7 +7,7 @@ import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuesti
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
-import { useAnswers } from '@/hooks';
+import { useAvailableAnswers } from '@/hooks';
 
 import { WorkoutQuestion } from './WorkoutQuestion';
 
@@ -34,6 +34,7 @@ export function WorkoutQuestionContainer() {
     () => (workout?.questionsOrder || '').split(' '),
     [workout?.questionsOrder],
   );
+
   const totalSteps = questionsOrder.length;
   const stepIndex = workout?.stepIndex || 0;
   const currentStep = stepIndex + 1;
@@ -64,17 +65,14 @@ export function WorkoutQuestionContainer() {
   // const questionsListRoutePath = `${topicRoutePath}/${topicId}/questions`;
 
   // Fetch answers using dedicated hook
-  const {
-    data: answers = [],
-    isLoading: isAnswersLoading,
-    error: answersError,
-  } = useAnswers({
+  const availablwAnswersQuery = useAvailableAnswers({
     questionId,
     // enabled: !!questionId,
   });
+  const { allAnswers, isLoading: isAnswersLoading, error: answersError } = availablwAnswersQuery;
 
   const isLoadingOverall =
-    (!question || !answers) && (isAnswersLoading || !isQuestionFetched || isQuestionLoading);
+    (!question || !allAnswers) && (isAnswersLoading || !isQuestionFetched || isQuestionLoading);
 
   // Handle answers loading error
   React.useEffect(() => {
@@ -98,7 +96,7 @@ export function WorkoutQuestionContainer() {
 
   const onAnswerSelect = React.useCallback(
     (answerId: string) => {
-      const answer = answers.find(({ id }) => id === answerId);
+      const answer = allAnswers.find(({ id }) => id === answerId);
       if (answer) {
         const { isCorrect } = answer;
         // Update workout with result and move to next question
@@ -110,7 +108,7 @@ export function WorkoutQuestionContainer() {
         }
       }
     },
-    [memo, answers, goToTheNextQuestion, saveResult, saveAnswer],
+    [memo, allAnswers, goToTheNextQuestion, saveResult, saveAnswer],
   );
 
   const onSkip = React.useCallback(() => {
@@ -181,7 +179,7 @@ export function WorkoutQuestionContainer() {
   return (
     <WorkoutQuestion
       questionText={question?.text || ''}
-      answers={answers}
+      answers={allAnswers}
       currentStep={currentStep}
       totalSteps={totalSteps}
       onAnswerSelect={onAnswerSelect}

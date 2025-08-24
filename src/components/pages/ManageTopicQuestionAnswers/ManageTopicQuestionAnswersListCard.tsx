@@ -4,14 +4,13 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/ScrollArea';
+import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import {
   Table,
@@ -23,13 +22,18 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { TUpdatedAnswersCountDetail, updatedQuestionsCountEventName } from '@/constants/eventTypes';
-import { useAnswersContext } from '@/contexts/AnswersContext';
-import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
-import { TAnswer, TAnswerId } from '@/features/answers/types';
+import { updateAnswer } from '@/features/answers/actions';
+import { AnswersScopeBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
+import { TAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
+import {
+  useAvailableAnswers,
+  useAvailableQuestionById,
+  useAvailableTopicById,
+  useGoBack,
+  useSessionUser,
+} from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared/PageEmpty';
@@ -39,74 +43,41 @@ const saveScrollHash = getRandomHashString();
 interface TManageTopicQuestionAnswersListCardProps extends TPropsWithClassName {
   topicId: TTopicId;
   questionId: TQuestionId;
-  handleDeleteAnswer: (answerId: TAnswerId) => void;
-  handleEditAnswer: (answerId: TAnswerId) => void;
-  handleAddAnswer: () => void;
+  // handleDeleteAnswer: (answerId: TAnswerId) => void;
+  // handleEditAnswer: (answerId: TAnswerId) => void;
+  // handleAddAnswer: () => void;
 }
 
 interface TToolbarActionsProps {
-  handleAddAnswer: () => void;
-  handleDeleteQuestion?: () => void;
   goBack: () => void;
+  availableAnswersQuery: ReturnType<typeof useAvailableAnswers>;
+  answersListRoutePath: string;
 }
 
 function Toolbar(props: TToolbarActionsProps) {
-  const { handleAddAnswer, goBack } = props;
-  const [isReloading, startReload] = React.useTransition();
-  const invalidateKeys = useInvalidateReactQueryKeys();
+  const { answersListRoutePath, goBack, availableAnswersQuery } = props;
+  const {
+    refetch: refetchAnswers,
+    isRefetching: isAnswersRefetching,
+    isLoading: isAnswersLoading,
+    isFetched: isAnswersFetched,
+  } = availableAnswersQuery;
+  const isOverallLoading = !isAnswersFetched || isAnswersLoading;
 
-  const answersContext = useAnswersContext();
-
-  const handleReload = React.useCallback(() => {
-    const { questionId, setAnswers } = answersContext;
-    startReload(async () => {
-      try {
-        const promise = handleApiResponse(fetch(`/api/questions/${questionId}/answers`), {
-          onInvalidateKeys: invalidateKeys,
-          debugDetails: {
-            initiator: 'ManageTopicQuestionAnswersListCard',
-            action: 'getQuestionAnswers',
-            questionId,
-          },
-        });
-        toast.promise(promise, {
-          loading: 'Reloading answers data...',
-          success: 'Answers successfully reloaded',
-          error: 'Error reloading answers.',
-        });
-        const result = await promise;
-        const answers = result.ok && result.data ? (result.data as TAnswer[]) : [];
-        setAnswers((prevAnswers) => {
-          const prevAnswersCount = prevAnswers.length;
-          // Dispatch a custom event with the updated answers data
-          const answersCount = answers.length;
-          if (answersCount !== prevAnswersCount) {
-            const detail: TUpdatedAnswersCountDetail = { questionId, answersCount };
-            const event = new CustomEvent<TUpdatedAnswersCountDetail>(
-              updatedQuestionsCountEventName,
-              {
-                detail,
-                bubbles: true,
-              },
-            );
-            setTimeout(() => window.dispatchEvent(event), 100);
-          }
-          return answers;
-        });
-      } catch (error) {
-        const details = error instanceof APIError ? error.details : null;
-        const message = 'Cannot reload answers data';
-        // eslint-disable-next-line no-console
-        console.error('[Toolbar]', message, {
-          details,
-          error,
-          questionId,
-        });
-        debugger; // eslint-disable-line no-debugger
-        toast.error(message);
-      }
-    });
-  }, [answersContext, invalidateKeys]);
+  if (isOverallLoading) {
+    return (
+      <div
+        className={cn(
+          isDev && '__ManageTopicQuestionAnswersListCard_Toolbar_Skeleton', // DEBUG
+          'flex gap-2',
+        )}
+      >
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-8 w-24 rounded" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -115,7 +86,7 @@ function Toolbar(props: TToolbarActionsProps) {
         'flex flex-wrap gap-2',
       )}
     >
-      <Button variant="ghost" size="sm" className="flex gap-2 px-4" onClick={goBack}>
+      <Button variant="ghost" size="sm" className="flex gap-2" onClick={goBack}>
         <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
@@ -124,20 +95,22 @@ function Toolbar(props: TToolbarActionsProps) {
         size="sm"
         className={cn(
           'flex items-center gap-2 px-4',
-          isReloading && 'pointer-events-none opacity-50',
+          isAnswersRefetching && 'pointer-events-none opacity-50',
         )}
-        onClick={handleReload}
+        onClick={() => refetchAnswers()}
       >
         <Icons.refresh
-          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+          className={cn('hidden size-4 opacity-50 sm:flex', isAnswersRefetching && 'animate-spin')}
         />
         <span>Reload</span>
       </Button>
-      <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2 px-4">
-        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
-        <span>
-          Add <span className="hidden sm:inline-flex">New Answer</span>
-        </span>
+      <Button variant="ghost" size="sm">
+        <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
+          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <span>
+            Add <span className="hidden sm:inline-flex">New Answer</span>
+          </span>
+        </Link>
       </Button>
     </div>
   );
@@ -173,54 +146,35 @@ interface TAnswerTableRowProps {
   answer: TAnswer;
   idx: number;
   answersListRoutePath: string;
-  handleDeleteAnswer: TManageTopicQuestionAnswersListCardProps['handleDeleteAnswer'];
-  handleEditAnswer: TManageTopicQuestionAnswersListCardProps['handleEditAnswer'];
   isAdminMode: boolean;
+  availableAnswersQuery: ReturnType<typeof useAvailableAnswers>;
 }
 
 function AnswerTableRow(props: TAnswerTableRowProps) {
-  const { answer, answersListRoutePath, handleDeleteAnswer, handleEditAnswer, isAdminMode, idx } =
-    props;
+  const { answer, answersListRoutePath, isAdminMode, idx, availableAnswersQuery } = props;
   const answerId = answer.id;
   const answerRoutePath = `${answersListRoutePath}/${answerId}`;
   const { id, text, isCorrect, isGenerated } = answer;
 
-  const answersContext = useAnswersContext();
-
   const [isPending, startTransition] = React.useTransition();
-
-  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const handleToggleCorrect = React.useCallback(
     (checked: boolean) => {
       startTransition(async () => {
+        const updatedAnswer = { ...answer, isCorrect: checked };
         try {
-          const result = await handleApiResponse(
-            fetch(`/api/answers/${answer.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ...answer, isCorrect: checked }),
-            }),
-            {
-              onInvalidateKeys: invalidateKeys,
-              debugDetails: {
-                initiator: 'AnswerTableRow',
-                action: 'updateAnswer',
-                answerId: answer.id,
-              },
-            },
-          );
-
-          if (result.ok && result.data) {
-            answersContext.setAnswers((prev) =>
-              prev.map((a) => (a.id === answer.id ? { ...a, isCorrect: checked } : a)),
-            );
-          }
+          // Update via server function
+          await updateAnswer(updatedAnswer);
+          // Update the item to the cached react-query data
+          availableAnswersQuery.updateAnswer(updatedAnswer);
+          // TODO: Update or invalidate all other possible AvailableAnswer and AvailableAnswers cached data
+          // Invalidate all other keys...
+          availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
         } catch (error) {
           const details = error instanceof APIError ? error.details : null;
           const message = 'Cannot update answer status';
           // eslint-disable-next-line no-console
-          console.error('[AnswerTableRow]', message, {
+          console.error('[AnswerTableRow:handleToggleCorrect]', message, {
             details,
             error,
             answerId: answer.id,
@@ -230,7 +184,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
         }
       });
     },
-    [answer, answersContext, invalidateKeys],
+    [answer, availableAnswersQuery],
   );
   return (
     <TableRow className="truncate" data-answer-id={id}>
@@ -267,21 +221,28 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
             variant="ghost"
             size="icon"
             className="size-9 shrink-0"
-            onClick={() => handleEditAnswer(answer.id)}
+            // onClick={() => handleEditAnswer(answer.id)}
             aria-label="Edit"
             title="Edit"
           >
-            <Icons.edit className="size-4" />
+            <Link className="flex" href={`${answerRoutePath}/edit`}>
+              <Icons.edit className="size-4" />
+            </Link>
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="size-9 shrink-0 text-destructive"
-            onClick={() => handleDeleteAnswer(answer.id)}
+            // onClick={() => handleDeleteAnswer(answer.id)}
             aria-label="Delete"
             title="Delete"
           >
-            <Icons.trash className="size-4" />
+            <Link
+              className="flex"
+              href={`${answersListRoutePath}/delete?answerId=${answer.id}&from=ManageTopicQuestionAnswersListCard`}
+            >
+              <Icons.trash className="size-4" />
+            </Link>
           </Button>
         </div>
       </TableCell>
@@ -289,14 +250,124 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
   );
 }
 
-export function ManageTopicQuestionAnswersListCard(
-  props: TManageTopicQuestionAnswersListCardProps,
+interface TManageTopicQuestionAnswersListCardContentProps
+  extends TManageTopicQuestionAnswersListCardProps {
+  availableAnswersQuery: ReturnType<typeof useAvailableAnswers>;
+  answersListRoutePath: string;
+}
+
+export function ManageTopicQuestionAnswersListCardContent(
+  props: TManageTopicQuestionAnswersListCardContentProps,
 ) {
-  const { className, topicId, questionId, handleDeleteAnswer, handleAddAnswer, handleEditAnswer } =
-    props;
+  const {
+    // className,
+    // topicId,
+    // questionId,
+    availableAnswersQuery,
+    answersListRoutePath,
+  } = props;
 
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
+
+  const {
+    allAnswers,
+    hasAnswers,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isAnswersLoading,
+    isFetched: isAnswersFetched,
+    // queryKey: availableAnswersQueryKey,
+    // queryProps: availableAnswersQueryProps,
+  } = availableAnswersQuery;
+
+  const isOverallLoading = !isAnswersFetched || isAnswersLoading;
+
+  if (isOverallLoading) {
+    return (
+      <div
+        className={cn(
+          isDev && '__ManageTopicQuestionAnswersListCardContent_Skeleton', // DEBUG
+          'flex flex-col gap-4 px-6',
+        )}
+      >
+        <Skeleton className="h-8 w-full rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!hasAnswers) {
+    return (
+      <PageEmpty
+        className="size-full flex-1"
+        iconName="answers"
+        title="No answers have been created yet"
+        description="You dont have any answers yet. Add any answer to your profile."
+        framed={false}
+        buttons={
+          <>
+            <Button>
+              <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
+                <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+                Add New Answer
+              </Link>
+            </Button>
+          </>
+        }
+      />
+    );
+  }
+
+  // TODO: Use ScrollAreaInfinite
+  return (
+    <ScrollAreaInfinite
+      effectorData={allAnswers}
+      fetchNextPage={fetchNextPage}
+      isLoading={isAnswersLoading}
+      isFetchingNextPage={isFetchingNextPage}
+      hasNextPage={hasNextPage}
+      saveScrollKey="ManageTopicQuestionAnswersListCard"
+      saveScrollHash={saveScrollHash}
+      className={cn(
+        isDev && '__ManageTopicQuestionAnswersListCard_Scroll', // DEBUG
+        'relative flex flex-1 flex-col overflow-hidden',
+      )}
+      viewportClassName={cn(
+        isDev && '__ManageTopicQuestionAnswersListCard_Scroll_Viewport', // DEBUG
+        'px-6',
+      )}
+      containerClassName={cn(
+        isDev && '__ManageTopicQuestionAnswersListCard_Scroll_Container', // DEBUG
+        'relative w-full flex flex-col gap-4',
+      )}
+    >
+      <Table>
+        <AnswerTableHeader isAdminMode={isAdmin} />
+        <TableBody>
+          {allAnswers.map((answer, idx) => (
+            <AnswerTableRow
+              key={answer.id}
+              idx={idx}
+              answer={answer}
+              answersListRoutePath={answersListRoutePath}
+              isAdminMode={isAdmin}
+              availableAnswersQuery={availableAnswersQuery}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </ScrollAreaInfinite>
+  );
+}
+
+export function ManageTopicQuestionAnswersListCard(
+  props: TManageTopicQuestionAnswersListCardProps,
+) {
+  const { className, topicId, questionId } = props;
 
   const { manageScope } = useManageTopicsStore();
   const topicsListRoutePath = `/topics/${manageScope}`;
@@ -306,32 +377,26 @@ export function ManageTopicQuestionAnswersListCard(
   const answersListRoutePath = `${questionRoutePath}/answers`;
   // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
 
-  const answersContext = useAnswersContext();
+  const availableTopicQuery = useAvailableTopicById({ id: topicId });
+  const {
+    data: topic,
+    // isFetched: isTopicFetched,
+    // isLoading: isTopicLoading,
+  } = availableTopicQuery;
+  // const isTopicLoadingOverall = !topic && (!isTopicFetched || isTopicLoading);
 
-  const goToTheRoute = useGoToTheRoute();
-  // const goBack = useGoBack(questionsRoutePath);
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    data: question,
+    // isFetched: isQuestionFetched,
+    // isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  // const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
+
+  const availableAnswersQuery = useAvailableAnswers({ questionId });
+
+  // const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(questionsListRoutePath);
-
-  const hasAnswers = !!answersContext.answers.length;
-
-  // Delete Question Modal
-  const handleDeleteQuestion = React.useCallback(() => {
-    const { questionId } = answersContext;
-    const url = `${questionsListRoutePath}/delete?questionId=${questionId}&from=ManageTopicQuestionAnswersListCard`;
-    goToTheRoute(url);
-  }, [goToTheRoute, questionsListRoutePath, answersContext]);
-
-  /* // Owner question
-   * const question = React.useMemo(() => {
-   *   const { questionId } = answersContext;
-   *   return questionsContext.questions.find(({ id }) => id === questionId);
-   * }, [questionsContext, answersContext]);
-   */
-  /* // Render nothing if no owner question found
-   * if (!question) {
-   *   return null;
-   * }
-   */
 
   return (
     <Card
@@ -353,23 +418,22 @@ export function ManageTopicQuestionAnswersListCard(
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <AnswersBreadcrumbs
+          <AnswersScopeBreadcrumbs
             className={cn(
               isDev && '__ManageTopicQuestionAnswersListCard_Breadcrumbs', // DEBUG
             )}
-            // answerId={answerId}
-            inactiveAnswers
+            scope={manageScope}
+            isLoading={!topic || !question}
+            topic={topic}
+            question={question}
+            // answer={answer}
+            inactiveLast
           />
-          {/* // UNUSED: Tilte & description
-          <CardTitle className="flex flex-1 items-center overflow-hidden">
-            <span className="truncate">Manage answers for the question "{question.name}"</span>
-          </CardTitle>
-          */}
         </div>
         <Toolbar
-          handleAddAnswer={handleAddAnswer}
-          handleDeleteQuestion={handleDeleteQuestion}
           goBack={goBack}
+          availableAnswersQuery={availableAnswersQuery}
+          answersListRoutePath={answersListRoutePath}
         />
       </CardHeader>
       <CardContent
@@ -378,52 +442,15 @@ export function ManageTopicQuestionAnswersListCard(
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        {hasAnswers ? (
-          <ScrollArea
-            saveScrollKey="ManageTopicQuestionAnswersListCard"
-            saveScrollHash={saveScrollHash}
-            viewportClassName="px-6"
-          >
-            <Table>
-              <AnswerTableHeader isAdminMode={isAdmin} />
-              <TableBody>
-                {answersContext.answers.map((answer, idx) => (
-                  <AnswerTableRow
-                    key={answer.id}
-                    idx={idx}
-                    answersListRoutePath={answersListRoutePath}
-                    answer={answer}
-                    handleDeleteAnswer={handleDeleteAnswer}
-                    handleEditAnswer={handleEditAnswer}
-                    isAdminMode={isAdmin}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        ) : (
-          <PageEmpty
-            className="size-full flex-1"
-            iconName="answers"
-            title="No answers have been created yet"
-            description="You dont have any answers yet. Add any answer to your profile."
-            framed={false}
-            buttons={
-              <>
-                {/*
-                <Button variant="ghost" onClick={goBack} className="flex gap-2">
-                  <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
-                  Go Back
-                </Button>
-                */}
-                <Button onClick={handleAddAnswer} className="flex gap-2">
-                  <Icons.add className="hidden size-4 opacity-50 sm:flex" />
-                  Add New Answer
-                </Button>
-              </>
-            }
-          />
-        )}
+        <ManageTopicQuestionAnswersListCardContent
+          {...props}
+          className={cn(
+            isDev && '__ManageTopicQuestionAnswersListCard_CardContent', // DEBUG
+            'relative flex flex-1 flex-col overflow-hidden px-0',
+          )}
+          answersListRoutePath={answersListRoutePath}
+          availableAnswersQuery={availableAnswersQuery}
+        />
       </CardContent>
     </Card>
   );

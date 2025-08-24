@@ -63,7 +63,7 @@ export function EditQuestionFormActions(props: TProps) {
         </Button>
       )}
       {handleAddQuestion && (
-        <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
+        <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
           <Icons.add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Question</span>

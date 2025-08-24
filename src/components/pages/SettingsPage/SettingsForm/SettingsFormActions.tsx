@@ -47,7 +47,7 @@ export function SettingsFormActions(props: TProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="flex gap-2 px-4"
+          className="flex gap-2"
           disabled={isDirty}
           onClick={onCancel}
         >
@@ -89,7 +89,7 @@ export function SettingsFormActions(props: TProps) {
           variant="ghost"
           size="sm"
           onClick={() => form.reset()}
-          className="flex gap-2 px-4"
+          className="flex gap-2"
           disabled={!isDirty}
         >
           <Icons.close className="hidden size-4 opacity-50 sm:flex" />

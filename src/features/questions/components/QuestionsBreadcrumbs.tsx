@@ -27,6 +27,7 @@ interface TScopeBreadcrumbsProps {
   inactiveLast?: boolean;
   isLoading?: boolean;
 }
+
 export function useQuestionsScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps) {
   const { scope, topic, question, lastItem, isLoading } = props;
   const topicsListRoutePath = topicsRoutes[scope];
@@ -84,45 +85,3 @@ export function QuestionsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TProps
     />
   );
 }
-
-/* // UNUSED: Was used only in `useAnswersBreadcrumbsItems`: To remove
- * // Below items are used only with `useQuestionsContext` (REMOVE)
- * export interface TQuestionsBreadcrumbsProps extends TTopicsBreadcrumbsProps {
- *   questionId?: TQuestionId;
- *   inactiveQuestions?: boolean;
- *   inactiveQuestion?: boolean;
- * }
- * export function useQuestionsBreadcrumbsItems(_props: TQuestionsBreadcrumbsProps) {
- *   // QuestionsContext isn't used, so it'll be an empty list always
- *   const { questionId, inactiveQuestions, inactiveQuestion, ...rest } = props;
- *   const questionsContext = useQuestionsContext();
- *   const { questions, topicId, routePath } = questionsContext;
- *   const topicItems = useTopicsBreadcrumbsItems({ topicId, ...rest });
- *   const question: TQuestion | undefined = React.useMemo(
- *     () => (questionId ? questions.find(({ id }) => id === questionId) : undefined),
- *     [questions, questionId],
- *   );
- *   const items = filterOutEmpties<TBreadcrumbsItemProps>([
- *     { link: inactiveQuestions ? undefined : routePath, content: 'Questions' },
- *     !!question && {
- *       link: inactiveQuestion ? undefined : `${routePath}/${question.id}`,
- *       content: truncateString(question.text, 20),
- *     },
- *   ]);
- *   return [...topicItems, ...items];
- * }
- * // UNUSED: QuestionsBreadcrumbs (was used only in QuestionsContext components
- * export function QuestionsBreadcrumbs(props: TQuestionsBreadcrumbsProps & TPropsWithClassName) {
- *   const { className, ...rest } = props;
- *   const items = useQuestionsBreadcrumbsItems(rest);
- *   return (
- *     <Breadcrumbs
- *       className={cn(
- *         isDev && '__QuestionsBreadcrumbs', // DEBUG
- *         className,
- *       )}
- *       items={items}
- *     />
- *   );
- * }
- */

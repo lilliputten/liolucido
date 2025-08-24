@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
@@ -10,6 +8,8 @@ import { useAnswersContext } from '@/contexts/AnswersContext';
 import { TAnswerId } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
+import { useGoToTheRoute } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ManageTopicQuestionAnswersListCard } from './ManageTopicQuestionAnswersListCard';
 
@@ -22,14 +22,25 @@ interface TTopicsListProps {
 }
 
 export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListProps) {
-  const router = useRouter();
+  const { manageScope } = useManageTopicsStore();
   const { topicId, questionId, showAddModal, deleteAnswerId, editAnswerId } = props;
   const answersContext = useAnswersContext();
 
+  // Calculate paths...
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+  const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  const answersListRoutePath = `${questionRoutePath}/answers`;
+  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
+  const goToTheRoute = useGoToTheRoute();
+
   // Add Answer Modal
   const openAddAnswerModal = React.useCallback(() => {
-    router.push(answersContext.routePath + '/add');
-  }, [router, answersContext]);
+    const url = `${answersListRoutePath}/add`;
+    goToTheRoute(url);
+  }, [answersListRoutePath, goToTheRoute]);
   React.useEffect(() => {
     if (showAddModal) {
       openAddAnswerModal();
@@ -39,15 +50,10 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
   // Delete Answer Modal
   const openDeleteAnswerModal = React.useCallback(
     (answerId: TAnswerId) => {
-      const hasAnswer = answersContext.answers.find(({ id }) => id === answerId);
-      if (hasAnswer) {
-        router.push(`${answersContext.routePath}/delete?answerId=${answerId}`);
-      } else {
-        toast.error('The requested answer does not exist.');
-        router.replace(answersContext.routePath);
-      }
+      const url = `${answersListRoutePath}/delete?answerId=${answerId}`;
+      goToTheRoute(url);
     },
-    [router, answersContext],
+    [answersListRoutePath, goToTheRoute],
   );
   React.useEffect(() => {
     if (deleteAnswerId) {
@@ -58,15 +64,10 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
   // Edit Answer Card
   const openEditAnswerCard = React.useCallback(
     (answerId: TAnswerId) => {
-      const hasAnswer = answersContext.answers.find(({ id }) => id === answerId);
-      if (hasAnswer) {
-        router.push(`${answersContext.routePath}/${answerId}/edit`);
-      } else {
-        toast.error('The requested answer does not exist.');
-        router.replace(answersContext.routePath);
-      }
+      const url = `${answersListRoutePath}/${answerId}/edit`;
+      goToTheRoute(url);
     },
-    [router, answersContext],
+    [answersListRoutePath, goToTheRoute],
   );
   React.useEffect(() => {
     if (editAnswerId) {
@@ -83,9 +84,9 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
       topicId={topicId}
       questionId={questionId}
       // answers={answers}
-      handleDeleteAnswer={openDeleteAnswerModal}
-      handleEditAnswer={openEditAnswerCard}
-      handleAddAnswer={openAddAnswerModal}
+      // handleDeleteAnswer={openDeleteAnswerModal}
+      // handleEditAnswer={openEditAnswerCard}
+      // handleAddAnswer={openAddAnswerModal}
     />
   );
 }
