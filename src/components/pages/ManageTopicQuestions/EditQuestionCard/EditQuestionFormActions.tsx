@@ -33,7 +33,6 @@ export function EditQuestionFormActions(props: TProps) {
   } = props;
   const { isDirty } = form.formState;
   const Icon = isPending ? Icons.spinner : Icons.check;
-  const buttonText = isPending ? 'Saving' : 'Save';
   const handleSubmit = form.handleSubmit(onSubmit);
   return (
     <>
@@ -85,7 +84,8 @@ export function EditQuestionFormActions(props: TProps) {
         className="gap-2"
         onClick={handleSubmit}
       >
-        <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
+        <Icon className={cn('size-4', isPending && 'animate-spin')} />{' '}
+        <span>{isPending ? 'Saving' : 'Save'}</span>
       </Button>
     </>
   );

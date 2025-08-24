@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 }
 
 export default async function EditManageQuestionPage({ params }: TAwaitedProps) {
-  const { questionId } = await params;
+  const { topicId, questionId } = await params;
 
   if (!questionId) {
     return <PageError error={'Undefined question ID.'} />;
@@ -31,7 +31,7 @@ export default async function EditManageQuestionPage({ params }: TAwaitedProps) 
   return (
     <ManageTopicsPageWrapper>
       <PageHeader heading={'Edit Question Properties'} />
-      <EditQuestionCard questionId={questionId} />
+      <EditQuestionCard topicId={topicId} questionId={questionId} />
     </ManageTopicsPageWrapper>
   );
 }

@@ -11,10 +11,10 @@ import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
+import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TQuestion, TQuestionData } from '@/features/questions/types';
 
 import { maxTextLength, minTextLength } from '../constants';
@@ -25,6 +25,7 @@ import { TFormData } from './types';
 const __debugShowData = false;
 
 interface TEditQuestionFormProps {
+  availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
   question: TQuestion;
   className?: string;
   onCancel?: () => void;
@@ -35,6 +36,7 @@ interface TEditQuestionFormProps {
 
 export function EditQuestionForm(props: TEditQuestionFormProps) {
   const {
+    availableQuestionsQuery,
     question,
     className,
     onCancel,
@@ -42,7 +44,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
     handleAddQuestion,
     toolbarPortalRoot,
   } = props;
-  const { setQuestions } = useQuestionsContext();
+  // const { setQuestions } = useQuestionsContext();
   const [isPending, startTransition] = React.useTransition();
   const invalidateKeys = useInvalidateReactQueryKeys();
 
@@ -149,12 +151,21 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
           .then((result) => {
             if (result.ok && result.data) {
               const updatedQuestion = result.data as TQuestion;
-              setQuestions((questions) => {
-                return questions.map((question) =>
-                  question.id === updatedQuestion.id ? updatedQuestion : question,
-                );
-              });
+              /* // UNUSED: QuestionsContext
+               * setQuestions((questions) => {
+               *   return questions.map((question) =>
+               *     question.id === updatedQuestion.id ? updatedQuestion : question,
+               *   );
+               * });
+               */
+              // Update the item to the cached react-query data
+              availableQuestionsQuery.updateQuestion(updatedQuestion);
+              // TODO: Update or invalidate all other possible AvailableQuestion and AvailableQuestions cached data
+              // Invalidate all other keys...
+              availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+              // Reset form to the current data
               form.reset(form.getValues());
+              // TODO: Convert `updatedQuestion` to the form data & reset form to these values?
             }
           })
           .catch((error) => {
@@ -170,7 +181,7 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
           });
       });
     },
-    [form, setQuestions, question, invalidateKeys],
+    [availableQuestionsQuery, form, question, invalidateKeys],
   );
 
   const handleCancel = React.useCallback(

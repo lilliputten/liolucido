@@ -11,6 +11,8 @@ import { TQuestionId } from '@/features/questions/types';
 import { useGoBack, useModalTitle, useUpdateModalVisibility } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
+import { topicQuestionDeletedEventId } from './constants';
+
 interface TDeleteQuestionModalProps {
   questionId?: TQuestionId;
   from?: string;
@@ -78,13 +80,12 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
               availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
               // Resolve added data
               resolve();
-              /* // Broadcast an event
-               * const event = new CustomEvent<TQuestion>(topicQuestionDeletedEventId, {
-               *   detail: deletingQuestion,
-               *   bubbles: true,
-               * });
-               * window.dispatchEvent(event);
-               */
+              // Broadcast an event
+              const event = new CustomEvent<TQuestionId>(topicQuestionDeletedEventId, {
+                detail: questionId,
+                bubbles: true,
+              });
+              window.dispatchEvent(event);
               // Hide the modal
               hideModal();
             })
