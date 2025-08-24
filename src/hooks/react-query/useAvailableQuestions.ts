@@ -13,7 +13,6 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { TAllUsedKeys, TAvailableQuestionsResultsQueryData } from '@/shared/types/react-query';
-import { useInvalidateReactQueryKeys } from '@/lib/data';
 import {
   addNewItemToQueryCache,
   deleteItemFromQueryCache,
@@ -45,7 +44,7 @@ const allUsedKeys: TAllUsedKeys = {};
 
 export function useAvailableQuestions(queryProps: TUseAvailableQuestionsProps = {}) {
   const queryClient = useQueryClient();
-  const invalidateKeys = useInvalidateReactQueryKeys();
+  // const invalidateKeys = useInvalidateReactQueryKeys();
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
