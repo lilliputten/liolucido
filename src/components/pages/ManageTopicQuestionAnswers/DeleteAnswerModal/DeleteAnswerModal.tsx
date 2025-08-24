@@ -1,17 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
-import { truncateMarkdown } from '@/lib/helpers';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { deletedAnswerEventName, TDeletedAnswerDetail } from '@/constants/eventTypes';
-import { useAnswersContext } from '@/contexts/AnswersContext';
-import { TAnswer, TAnswerId } from '@/features/answers/types';
+import { deleteAnswer } from '@/features/answers/actions';
+import { TAnswerId } from '@/features/answers/types';
+import { useAvailableAnswers, useGoBack, useModalTitle, useUpdateModalVisibility } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { topicAnswerDeletedEventId } from './constants';
 
@@ -20,32 +18,54 @@ interface TDeleteAnswerModalProps {
   from?: string;
 }
 
+const urlPostfix = '/answers/delete';
+const urlQuestionToken = '/questions/';
+const idToken = '([^/]*)';
+const urlMatchRegExp = new RegExp(idToken + urlQuestionToken + idToken + urlPostfix);
+
 export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
+  const { manageScope } = useManageTopicsStore();
   const { answerId } = props;
-  const router = useRouter();
-  const [isVisible, setIsVisible] = React.useState(true);
-  const answersContext = useAnswersContext();
-  const { answers } = answersContext;
-  const invalidateKeys = useInvalidateReactQueryKeys();
-  const hideModal = React.useCallback(() => {
-    setIsVisible(false);
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        // TODO: To use `from` parameter?
-        router.push(answersContext.routePath);
-      }
-    }, 200);
-  }, [router, answersContext]);
+
   if (!answerId) {
     throw new Error('No answer id passed for deletion');
   }
-  const deletingAnswer: TAnswer | undefined = React.useMemo(
-    () => answers.find(({ id }) => id === answerId),
-    [answerId, answers],
-  );
+
+  const [isVisible, setVisible] = React.useState(true);
+
+  const pathname = usePathname();
+  const match = pathname.match(urlMatchRegExp);
+  const shouldBeVisible = pathname.endsWith(urlPostfix);
+  const topicId = match?.[1];
+  const questionId = match?.[2];
+
+  if (!topicId) {
+    throw new Error('Not found topic id');
+  }
+  if (!questionId) {
+    throw new Error('No question id passed for deletion');
+  }
+
+  // Calculate paths...
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+  const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  const answersListRoutePath = `${questionRoutePath}/answers`;
+  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
+  const goBack = useGoBack(answersListRoutePath);
+
+  const hideModal = React.useCallback(() => {
+    setVisible(false);
+    goBack();
+  }, [goBack]);
+
+  const availableAnswersQuery = useAvailableAnswers({ questionId });
+
+  useModalTitle('Delete a Question', shouldBeVisible);
+  useUpdateModalVisibility(setVisible, shouldBeVisible);
+
   const [isPending, startUpdating] = React.useTransition();
 
   // Change a browser title
@@ -59,87 +79,50 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
 
   const confirmDeleteAnswer = React.useCallback(
     () =>
-      new Promise((resolve, reject) => {
-        return startUpdating(() => {
-          if (!deletingAnswer) {
-            reject(new Error('No answer to delete provided'));
-            return;
-          }
-          const promise = handleApiResponse(
-            fetch(`/api/answers/${deletingAnswer.id}`, {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(deletingAnswer),
-            }),
-            {
-              onInvalidateKeys: invalidateKeys,
-              debugDetails: {
-                initiator: 'DeleteAnswerModal',
-                action: 'deleteAnswer',
-                answerId: deletingAnswer.id,
-              },
-            },
-          )
-            .then((result) => {
-              if (result.ok && result.data) {
-                // Hide the modal
-                hideModal();
-                // Update data
-                answersContext.setAnswers((answers) => {
-                  const updatedAnswers = answers.filter(({ id }) => id != deletingAnswer.id);
-                  // Dispatch a custom event with the updated answers data
-                  const { questionId } = answersContext;
-                  const answersCount = updatedAnswers.length;
-                  const deletedAnswerId = deletingAnswer.id;
-                  const detail: TDeletedAnswerDetail = {
-                    questionId,
-                    deletedAnswerId,
-                    answersCount,
-                  };
-                  const event = new CustomEvent<TDeletedAnswerDetail>(deletedAnswerEventName, {
-                    detail,
-                    bubbles: true,
-                  });
-                  setTimeout(() => window.dispatchEvent(event), 100);
-                  // Return data to update a state
-                  return updatedAnswers;
-                });
-                resolve(deletingAnswer);
-                // Dispatch an event
-                const event = new CustomEvent<TAnswer>(topicAnswerDeletedEventId, {
-                  detail: deletingAnswer,
-                  bubbles: true,
-                });
-                window.dispatchEvent(event);
-              } else {
-                reject(new Error('Failed to delete answer'));
-              }
-            })
-            .catch((error) => {
-              const details = error instanceof APIError ? error.details : null;
-              const message = 'Cannot delete answer';
-              // eslint-disable-next-line no-console
-              console.error('[DeleteAnswerModal]', message, {
-                details,
-                error,
-                answerId: deletingAnswer.id,
-              });
-              debugger; // eslint-disable-line no-debugger
-              reject(error);
+      new Promise<void>((resolve, reject) => {
+        return startUpdating(async () => {
+          try {
+            const promise = deleteAnswer(answerId);
+            toast.promise(promise, {
+              loading: 'Deleting the answer...',
+              success: 'Successfully deleted the answer.',
+              error: `Can not delete the answer."`,
             });
-          toast.promise(promise, {
-            loading: 'Deleting the answer...',
-            success: 'Successfully deleted the answer.',
-            error: `Can not delete the answer."`,
-          });
+            await promise;
+            // Hide the modal
+            hideModal();
+            // Add the created item to the cached react-query data
+            availableAnswersQuery.deleteAnswer(answerId);
+            // Invalidate all other keys...
+            availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+            // Resolve added data
+            resolve();
+            // Dispatch a broadcast event
+            const event = new CustomEvent<TAnswerId>(topicAnswerDeletedEventId, {
+              detail: answerId,
+              bubbles: true,
+            });
+            window.dispatchEvent(event);
+          } catch (error) {
+            const details = error instanceof APIError ? error.details : null;
+            const message = 'Cannot delete answer';
+            // eslint-disable-next-line no-console
+            console.error('[DeleteAnswerModal:confirmDeleteAnswer]', message, {
+              details,
+              error,
+              answerId: answerId,
+            });
+            debugger; // eslint-disable-line no-debugger
+            reject(error);
+          }
         });
       }),
-    [deletingAnswer, hideModal, answersContext, invalidateKeys],
+    [answerId, availableAnswersQuery, hideModal],
   );
 
-  const answerName = deletingAnswer && truncateMarkdown(deletingAnswer.text, 30);
+  // const answerName = deletingAnswer && truncateMarkdown(deletingAnswer.text, 30);
 
-  if (!answerName) {
+  if (!shouldBeVisible) {
     return null;
   }
 
@@ -155,7 +138,7 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
       isPending={isPending}
       isVisible={isVisible}
     >
-      Do you confirm deleting the answer "{answerName}"?
+      Do you confirm deleting the answer?
     </ConfirmModal>
   );
 }

@@ -68,7 +68,7 @@ export async function DELETE(
     const body = await request.json();
     const answerData = body as TAnswer;
 
-    const deletedAnswer = await deleteAnswer(answerData);
+    const deletedAnswer = await deleteAnswer(answerData.id);
 
     const response: TApiResponse<typeof deletedAnswer> = {
       data: deletedAnswer,

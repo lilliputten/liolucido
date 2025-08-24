@@ -4,7 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { getErrorText } from '@/lib/helpers/strings';
+import { APIError } from '@/shared/types/api';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -24,11 +24,13 @@ import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 import { AddQuestionForm } from './AddQuestionForm';
 
 const urlPostfix = '/questions/add';
-const urlTopicIdRegExp = new RegExp('([^/]*)' + urlPostfix + '$');
+const idToken = '([^/]*)';
+const urlTopicIdRegExp = new RegExp(idToken + urlPostfix + '$');
 
 export function AddQuestionModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(false);
+
   const pathname = usePathname();
   const match = pathname.match(urlTopicIdRegExp);
   const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
@@ -61,58 +63,50 @@ export function AddQuestionModal() {
   const handleAddQuestion = React.useCallback(
     (newQuestion: TNewQuestion) => {
       return new Promise((resolve, reject) => {
-        return startUpdating(() => {
-          const promise = addNewQuestion(newQuestion)
-            .then((addedQuestion) => {
-              /* // UNUSED: Old way: via QuestionsContext: Update topics list
-               * questionsContext.setQuestions((questions) => {
-               *   const updatedQuestions = questions.concat(addedQuestion);
-               *   // Dispatch a custom event with the updated questions data
-               *   const { topicId } = questionsContext;
-               *   const questionsCount = updatedQuestions.length;
-               *   const addedQuestionId = addedQuestion.id;
-               *   // Return data to update a state
-               *   return updatedQuestions;
-               * });
-               */
-              // Add the created item to the cached react-query data
-              availableQuestionsQuery.addNewQuestion(addedQuestion, true);
-              // Invalidate all other keys...
-              availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
-              /* // Broadcast an event
-               * const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
-               *   detail: { topicId, addedQuestionId: addedQuestion.id, questionsCount: ...Get from `addNewQuestion` results... },
-               *   bubbles: true,
-               * });
-               * window.dispatchEvent(event);
-               */
-              // Resolve added data
-              resolve(addedQuestion);
-              // NOTE: Close or go to the edit page
-              setVisible(false);
-              const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
-              setTimeout(() => goToTheRoute(returnUrl, true), 100);
-              return addedQuestion;
-            })
-            .catch((error) => {
-              // eslint-disable-next-line no-console
-              console.error('[AddQuestionModal:handleAddQuestion:catch]', getErrorText(error), {
-                error,
-                newQuestion,
-              });
-              debugger; // eslint-disable-line no-debugger
-              reject(error);
-              throw error;
+        return startUpdating(async () => {
+          try {
+            const promise = addNewQuestion(newQuestion);
+            toast.promise<TQuestion>(promise, {
+              loading: 'Creating a new question...',
+              success: 'Successfully created a new question.',
+              error: 'Can not create a new question',
             });
-          toast.promise<TQuestion>(promise, {
-            loading: 'Creating a new question...',
-            success: 'Successfully created a new question.',
-            error: 'Can not create a new question',
-          });
+            const addedQuestion = await promise;
+            // Add the created item to the cached react-query data
+            availableQuestionsQuery.addNewQuestion(addedQuestion, true);
+            // Invalidate all other keys...
+            availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+            /* // Broadcast an event
+             * const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
+             *   detail: { topicId, addedQuestionId: addedQuestion.id, questionsCount: ...Get from `addNewQuestion` results... },
+             *   bubbles: true,
+             * });
+             * window.dispatchEvent(event);
+             */
+            // Resolve added data
+            resolve(addedQuestion);
+            // NOTE: Close or go to the edit page
+            setVisible(false);
+            const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
+            setTimeout(() => goToTheRoute(returnUrl, true), 100);
+          } catch (error) {
+            const details = error instanceof APIError ? error.details : null;
+            const message = 'Cannot create question';
+            // eslint-disable-next-line no-console
+            console.error('[AddQuestionModal:handleAddQuestion]', message, {
+              error,
+              details,
+              newQuestion,
+              topicId,
+            });
+            debugger; // eslint-disable-line no-debugger
+            reject(error);
+            throw error;
+          }
         });
       });
     },
-    [availableQuestionsQuery, goToTheRoute, questionsListRoutePath],
+    [availableQuestionsQuery, goToTheRoute, questionsListRoutePath, topicId],
   );
 
   if (!shouldBeVisible || !topicId) {

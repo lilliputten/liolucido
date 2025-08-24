@@ -14,7 +14,7 @@ export async function deleteTopic(topic: TTopic) {
   }
   // Check user rights to delete the question...
   if (userId !== topic.userId && user.role !== 'ADMIN') {
-    throw new Error('Current user not allowed to delete the topic');
+    throw new Error('Current user is not allowed to delete the topic');
   }
   try {
     if (isDev) {

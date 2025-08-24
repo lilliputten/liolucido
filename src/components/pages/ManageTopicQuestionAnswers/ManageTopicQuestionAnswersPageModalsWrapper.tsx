@@ -4,7 +4,6 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
-import { useAnswersContext } from '@/contexts/AnswersContext';
 import { TAnswerId } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
@@ -24,7 +23,6 @@ interface TTopicsListProps {
 export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListProps) {
   const { manageScope } = useManageTopicsStore();
   const { topicId, questionId, showAddModal, deleteAnswerId, editAnswerId } = props;
-  const answersContext = useAnswersContext();
 
   // Calculate paths...
   const topicsListRoutePath = `/topics/${manageScope}`;
@@ -45,7 +43,7 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
     if (showAddModal) {
       openAddAnswerModal();
     }
-  }, [showAddModal, openAddAnswerModal, answersContext]);
+  }, [showAddModal, openAddAnswerModal]);
 
   // Delete Answer Modal
   const openDeleteAnswerModal = React.useCallback(

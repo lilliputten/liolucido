@@ -1,125 +1,120 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { addedAnswerEventName, TAddedAnswerDetail } from '@/constants/eventTypes';
-import { useAnswersContext } from '@/contexts/AnswersContext';
-import { TAnswer, TNewAnswer } from '@/features/answers/types';
-import { useMediaQuery } from '@/hooks';
-import { usePathname } from '@/i18n/routing'; // TODO: Use 'next/navigation'
+import { addNewAnswer } from '@/features/answers/actions';
+import { TNewAnswer } from '@/features/answers/types';
+import {
+  useAvailableAnswers,
+  useGoBack,
+  useGoToTheRoute,
+  useMediaQuery,
+  useModalTitle,
+  useUpdateModalVisibility,
+} from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { AddAnswerForm } from './AddAnswerForm';
 
+// Url example: /en/topics/my/[topicId]/questions/[questionId]/answers/add
+const urlPostfix = '/answers/add';
+const urlQuestionToken = '/questions/';
+const idToken = '([^/]*)';
+const urlRegExp = new RegExp(idToken + urlQuestionToken + idToken + urlPostfix + '$');
+
 export function AddAnswerModal() {
-  const [isVisible, setVisible] = React.useState(false);
-  const router = useRouter();
-  const hideModal = React.useCallback(() => {
-    setVisible(false);
-    router.back();
-  }, [router]);
+  const { manageScope } = useManageTopicsStore();
+  const [isVisible, setVisible] = React.useState(true);
+
+  const pathname = usePathname();
+  const match = pathname.match(urlRegExp);
+  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
+  const topicId = match?.[1];
+  const questionId = match?.[2];
+
+  if (!topicId) {
+    throw new Error('Not found topic id');
+  }
+  if (!questionId) {
+    throw new Error('Not found question id');
+  }
+
+  // Calculate paths...
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+  const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  const answersListRoutePath = `${questionRoutePath}/answers`;
+  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
-  const invalidateKeys = useInvalidateReactQueryKeys();
 
-  const answersContext = useAnswersContext();
-  const { questionId } = answersContext;
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(answersListRoutePath);
 
-  // Check if we're still on the add route
-  const pathname = usePathname();
-  const isAddRoute = pathname?.endsWith('/add');
+  const hideModal = React.useCallback(() => {
+    setVisible(false);
+    goBack();
+  }, [goBack]);
 
-  // Check if the modal should be visible
-  React.useEffect(() => {
-    setVisible(isAddRoute);
-    if (isAddRoute) {
-      const originalTitle = document.title;
-      document.title = 'Add an Answer';
-      return () => {
-        setVisible(false);
-        document.title = originalTitle;
-      };
-    }
-  }, [isAddRoute]);
+  const availableAnswersQuery = useAvailableAnswers({ questionId });
+
+  useModalTitle('Add an Answer', shouldBeVisible);
+  useUpdateModalVisibility(setVisible, shouldBeVisible);
 
   const handleAddAnswer = React.useCallback(
     (newAnswer: TNewAnswer) => {
       return new Promise((resolve, reject) => {
-        return startUpdating(() => {
-          const promise = handleApiResponse(
-            fetch('/api/answers', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(newAnswer),
-            }),
-            {
-              onInvalidateKeys: invalidateKeys,
-              debugDetails: {
-                initiator: 'AddAnswerModal',
-                action: 'addNewAnswer',
-                questionId,
-              },
-            },
-          )
-            .then((result) => {
-              if (result.ok && result.data) {
-                const addedAnswer = result.data as TAnswer;
-                // Update topics list
-                answersContext.setAnswers((answers) => {
-                  const updatedAnswers = [...answers, addedAnswer];
-                  // Dispatch a custom event with the updated answers data
-                  const answersCount = updatedAnswers.length;
-                  const addedAnswerId = addedAnswer.id;
-                  const detail: TAddedAnswerDetail = { questionId, addedAnswerId, answersCount };
-                  const event = new CustomEvent<TAddedAnswerDetail>(addedAnswerEventName, {
-                    detail,
-                    bubbles: true,
-                  });
-                  setTimeout(() => window.dispatchEvent(event), 100);
-                  // Return data to update a state
-                  return updatedAnswers;
-                });
-                // Resolve data
-                resolve(addedAnswer);
-                // NOTE: Close or go to the edit page
-                setVisible(false);
-                router.replace(`${answersContext.routePath}/${addedAnswer.id}`);
-                return addedAnswer;
-              } else {
-                reject(new Error('Failed to create answer'));
-              }
-            })
-            .catch((error) => {
-              const details = error instanceof APIError ? error.details : null;
-              const message = 'Cannot create answer';
-              // eslint-disable-next-line no-console
-              console.error('[AddAnswerModal]', message, {
-                details,
-                error,
-                newAnswer,
-                questionId,
-              });
-              debugger; // eslint-disable-line no-debugger
-              reject(error);
+        return startUpdating(async () => {
+          try {
+            const promise = addNewAnswer(newAnswer);
+            toast.promise(promise, {
+              loading: 'Creating a new answer...',
+              success: 'Successfully created a new answer.',
+              error: 'Cannot create answer',
             });
-          toast.promise(promise, {
-            loading: 'Creating a new answer...',
-            success: 'Successfully created a new answer.',
-            error: 'Cannot create answer',
-          });
+            const addedAnswer = await promise;
+            // Add the created item to the cached react-query data
+            availableAnswersQuery.addNewAnswer(addedAnswer, true);
+            // Invalidate all other keys...
+            availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+            // Resolve data
+            resolve(addedAnswer);
+            // NOTE: Close or go to the edit page
+            setVisible(false);
+            const continueUrl = `${answersListRoutePath}/${addedAnswer.id}`;
+            goToTheRoute(continueUrl, true);
+          } catch (error) {
+            const details = error instanceof APIError ? error.details : null;
+            const message = 'Cannot create answer';
+            // eslint-disable-next-line no-console
+            console.error('[AddAnswerModal:handleAddAnswer]', message, {
+              error,
+              details,
+              newAnswer,
+              questionId,
+            });
+            debugger; // eslint-disable-line no-debugger
+            reject(error);
+          }
         });
       });
     },
-    [answersContext, invalidateKeys, questionId, router],
+    [answersListRoutePath, availableAnswersQuery, goToTheRoute, questionId],
   );
+
+  if (!shouldBeVisible) {
+    return null;
+    // throw new Error('Cannot parse topic id from the modal url.');
+  }
 
   return (
     <Modal
