@@ -1,98 +1,92 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { truncateMarkdown } from '@/lib/helpers';
+import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { deletedQuestionEventName, TDeletedQuestionDetail } from '@/constants/eventTypes';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { deleteQuestion } from '@/features/questions/actions/deleteQuestion';
-import { TQuestion, TQuestionId } from '@/features/questions/types';
-
-import { topicQuestionDeletedEventId } from './constants';
+import { TQuestionId } from '@/features/questions/types';
+import { useGoBack, useModalTitle, useUpdateModalVisibility } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 interface TDeleteQuestionModalProps {
   questionId?: TQuestionId;
   from?: string;
 }
 
+const urlPostfix = '/questions/delete';
+const urlMatchRegExp = new RegExp('([^/]*)' + urlPostfix); // + '\\b\\?([^/]*)$');
+
 export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
+  const { manageScope } = useManageTopicsStore();
   const { questionId } = props;
-  const router = useRouter();
-  const [isVisible, setIsVisible] = React.useState(true);
-  const questionsContext = useQuestionsContext();
-  const { questions } = questionsContext;
+  const [isVisible, setVisible] = React.useState(true);
+
+  const pathname = usePathname();
+  const match = pathname.match(urlMatchRegExp);
+  const shouldBeVisible = pathname.endsWith(urlPostfix);
+  const topicId = match?.[1];
+
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+
+  const goBack = useGoBack(questionsListRoutePath);
+
   const hideModal = React.useCallback(() => {
-    setIsVisible(false);
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        // TODO: To use `from` parameter?
-        router.push(questionsContext.routePath);
-      }
-    }, 200);
-  }, [router, questionsContext]);
+    setVisible(false);
+    goBack();
+  }, [goBack]);
+
+  const availableQuestionsQuery = useAvailableQuestions({ topicId });
+
+  useModalTitle('Delete a Question', shouldBeVisible);
+  useUpdateModalVisibility(setVisible, shouldBeVisible);
+
+  if (!topicId) {
+    throw new Error('Not found topic id');
+  }
   if (!questionId) {
     throw new Error('No question id passed for deletion');
   }
-  const deletingQuestion: TQuestion | undefined = React.useMemo(
-    () => questions.find(({ id }) => id === questionId),
-    [questionId, questions],
-  );
-  const [isPending, startUpdating] = React.useTransition();
 
-  // Change a browser title
-  React.useEffect(() => {
-    const originalTitle = document.title;
-    document.title = 'Delete a Question?';
-    return () => {
-      document.title = originalTitle;
-    };
-  }, []);
+  const [isPending, startUpdating] = React.useTransition();
 
   const confirmDeleteQuestion = React.useCallback(
     () =>
-      new Promise((resolve, reject) => {
+      new Promise<void>((resolve, reject) => {
         return startUpdating(() => {
-          if (!deletingQuestion) {
-            reject(new Error('No question to delete provided'));
-            return;
-          }
-          const promise = deleteQuestion(deletingQuestion)
+          /* if (!deletingQuestion) {
+           *   reject(new Error('No question provided to deletion'));
+           *   return;
+           * }
+           */
+          const promise = deleteQuestion(questionId)
             .then(() => {
+              /* // UNUSED: Update data via QuestionsContext
+               * questionsContext.setQuestions((questions) => {
+               *   const updatedQuestions = questions.filter(({ id }) => id != deletingQuestion.id);
+               *   // Return data to update a state
+               *   return updatedQuestions;
+               * });
+               */
+              // Add the created item to the cached react-query data
+              availableQuestionsQuery.deleteQuestion(questionId);
+              // Invalidate all other keys...
+              availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+              // Resolve added data
+              resolve();
+              /* // Broadcast an event
+               * const event = new CustomEvent<TQuestion>(topicQuestionDeletedEventId, {
+               *   detail: deletingQuestion,
+               *   bubbles: true,
+               * });
+               * window.dispatchEvent(event);
+               */
               // Hide the modal
               hideModal();
-              // Update data
-              questionsContext.setQuestions((questions) => {
-                const updatedQuestions = questions.filter(({ id }) => id != deletingQuestion.id);
-                // Dispatch a custom event with the updated questions data
-                const { topicId } = questionsContext;
-                const questionsCount = updatedQuestions.length;
-                const deletedQuestionId = deletingQuestion.id;
-                const detail: TDeletedQuestionDetail = {
-                  topicId,
-                  deletedQuestionId,
-                  questionsCount,
-                };
-                const event = new CustomEvent<TDeletedQuestionDetail>(deletedQuestionEventName, {
-                  detail,
-                  bubbles: true,
-                });
-                setTimeout(() => window.dispatchEvent(event), 100);
-                // Return data to update a state
-                return updatedQuestions;
-              });
-              resolve(deletingQuestion);
-              // Dispatch an event
-              const event = new CustomEvent<TQuestion>(topicQuestionDeletedEventId, {
-                detail: deletingQuestion,
-                bubbles: true,
-              });
-              window.dispatchEvent(event);
             })
             .catch((error) => {
               // eslint-disable-next-line no-console
@@ -110,13 +104,12 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
           });
         });
       }),
-    [deletingQuestion, hideModal, questionsContext],
+    [questionId, availableQuestionsQuery, hideModal],
   );
 
-  const questionName = deletingQuestion && truncateMarkdown(deletingQuestion.text, 30);
-
-  if (!questionName) {
+  if (!shouldBeVisible || !topicId || !questionId) {
     return null;
+    // throw new Error('Cannot parse topic id from the modal url.');
   }
 
   return (
@@ -131,7 +124,7 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
       isPending={isPending}
       isVisible={isVisible}
     >
-      Do you confirm deleting the question "{questionName}"?
+      Do you confirm the deletion of the question?
     </ConfirmModal>
   );
 }

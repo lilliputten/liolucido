@@ -24,15 +24,19 @@ import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 import { AddQuestionForm } from './AddQuestionForm';
 
 const urlPostfix = '/questions/add';
-const urlTopicIdRegExp = new RegExp('([^/]*)' + urlPostfix);
+const urlTopicIdRegExp = new RegExp('([^/]*)' + urlPostfix + '$');
 
 export function AddQuestionModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(false);
   const pathname = usePathname();
-  const shouldBeVisible = pathname.endsWith(urlPostfix);
   const match = pathname.match(urlTopicIdRegExp);
+  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
   const topicId = match?.[1];
+
+  if (!topicId) {
+    throw new Error('Not found topic id');
+  }
 
   const topicsListRoutePath = `/topics/${manageScope}`;
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
@@ -67,12 +71,6 @@ export function AddQuestionModal() {
                *   const { topicId } = questionsContext;
                *   const questionsCount = updatedQuestions.length;
                *   const addedQuestionId = addedQuestion.id;
-               *   const detail: TAddedQuestionDetail = { topicId, addedQuestionId, questionsCount };
-               *   const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
-               *     detail,
-               *     bubbles: true,
-               *   });
-               *   setTimeout(() => window.dispatchEvent(event), 100);
                *   // Return data to update a state
                *   return updatedQuestions;
                * });
@@ -81,6 +79,13 @@ export function AddQuestionModal() {
               availableQuestionsQuery.addNewQuestion(addedQuestion, true);
               // Invalidate all other keys...
               availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+              /* // Broadcast an event
+               * const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
+               *   detail: { topicId, addedQuestionId: addedQuestion.id, questionsCount: ...Get from `addNewQuestion` results... },
+               *   bubbles: true,
+               * });
+               * window.dispatchEvent(event);
+               */
               // Resolve added data
               resolve(addedQuestion);
               // NOTE: Close or go to the edit page

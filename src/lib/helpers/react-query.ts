@@ -33,7 +33,7 @@ export function addNewItemToQueryCache<TItem>(
   newTopic: TItem,
   toStart?: boolean,
 ) {
-  queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
+  return queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
     if (!oldData) return oldData;
     const lastPageIndex = oldData.pages.length - 1;
     let totalCount = 0;
@@ -57,7 +57,7 @@ export function deleteItemFromQueryCache<TItem extends { id: TId }, TId = string
   queryKey: QueryKey,
   topicIdToDelete: TId,
 ) {
-  queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
+  return queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
     if (!oldData) return oldData;
     let totalCount = 0;
     const pages: TGetResults<TItem>[] = oldData.pages.map((page) => {
@@ -76,7 +76,7 @@ export function updateItemInQueryCache<TItem extends { id: TId }, TId = string>(
   queryKey: QueryKey,
   updatedTopic: TItem,
 ) {
-  queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
+  return queryClient.setQueryData<TGetResultsIniniteQueryData<TItem>>(queryKey, (oldData) => {
     if (!oldData) return oldData;
     const updatedId = updatedTopic.id;
     const pages: TGetResults<TItem>[] = oldData.pages.map((page) => {
