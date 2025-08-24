@@ -8,7 +8,6 @@ import { getCurrentUser } from '@/lib/session';
 import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemes';
 import { isDev } from '@/constants';
 
-import { itemsLimit } from '../constants';
 import { IncludedUserSelect, IncludedUserTopicWorkoutSelect } from '../types';
 
 interface TOptions {
@@ -20,15 +19,16 @@ export async function getAvailableTopics(
 ): Promise<TGetAvailableTopicsResults> {
   const {
     topicIds,
-    skip = 0,
-    take = itemsLimit,
+    skip, // = 0,
+    take, // = itemsLimit,
     adminMode,
     showOnlyMyTopics,
     orderBy = { updatedAt: 'desc' },
     // TopicIncludeParamsSchema
-    includeUser = true,
+    includeUser = false,
     includeWorkout = false,
     includeQuestionsCount = true,
+    includeQuestions = false,
     // Options (no error console output and debugger stops, for tests)
     noDebug,
   } = params;
@@ -56,6 +56,9 @@ export async function getAvailableTopics(
     };
     if (includeUser) {
       include.user = { select: IncludedUserSelect };
+    }
+    if (includeQuestions) {
+      include.questions = true;
     }
     if (includeWorkout) {
       include.userTopicWorkout = { select: IncludedUserTopicWorkoutSelect };

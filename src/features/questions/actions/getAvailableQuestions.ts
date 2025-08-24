@@ -8,7 +8,6 @@ import { getCurrentUser } from '@/lib/session';
 import { TGetAvailableQuestionsParams, TGetAvailableQuestionsResults } from '@/lib/zod-schemes';
 import { isDev } from '@/constants';
 
-import { itemsLimit } from '../constants';
 import { IncludedTopicSelect } from '../types';
 
 interface TOptions {
@@ -22,14 +21,15 @@ export async function getAvailableQuestions(
   const {
     topicId,
     questionIds,
-    skip = 0,
-    take = itemsLimit,
+    skip, // = 0,
+    take, // = itemsLimit,
     adminMode,
     showOnlyMyQuestions,
     orderBy = { updatedAt: 'desc' },
     // QuestionIncludeParamsSchema
     includeTopic = false,
     includeAnswersCount = true,
+    includeAnswers = false,
     // Options (no error console output and debugger stops, for tests)
     noDebug,
   } = params;
@@ -58,6 +58,9 @@ export async function getAvailableQuestions(
     };
     if (includeTopic) {
       include.topic = { select: IncludedTopicSelect };
+    }
+    if (includeAnswers) {
+      include.answers = true;
     }
     // Create the "where" data...
     const whereTopic: Prisma.XOR<Prisma.TopicScalarRelationFilter, Prisma.TopicWhereInput> = {};

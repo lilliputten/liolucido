@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { TApiResponse } from '@/shared/types/api';
-import { getTopicQuestions } from '@/features/questions/actions';
+import { getAvailableQuestions } from '@/features/questions/actions';
 
 /** GET /api/topics/[topicId]/questions - Get questions for a topic */
 export async function GET(
@@ -10,10 +10,11 @@ export async function GET(
 ) {
   try {
     const { topicId } = await params;
-    const questions = await getTopicQuestions(topicId);
+    const results = await getAvailableQuestions({ topicId });
+    // const { items: questions, totalCount } = results;
 
-    const response: TApiResponse<typeof questions> = {
-      data: questions,
+    const response: TApiResponse<typeof results> = {
+      data: results,
       ok: true,
     };
 

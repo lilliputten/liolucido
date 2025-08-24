@@ -19,6 +19,7 @@ export async function getAvailableQuestionById(params: TGetAvailableQuestionById
     // QuestionIncludeParamsSchema
     includeTopic = false,
     includeAnswersCount = true,
+    includeAnswers = false,
     // Options (no error console output and debugger stops, for tests)
     noDebug,
   } = params;
@@ -38,6 +39,9 @@ export async function getAvailableQuestionById(params: TGetAvailableQuestionById
     };
     if (includeTopic) {
       include.topic = { select: IncludedTopicSelect };
+    }
+    if (includeAnswers) {
+      include.answers = true;
     }
     // Create the "where" data...
     const where: Prisma.QuestionWhereUniqueInput = {

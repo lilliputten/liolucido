@@ -1,7 +1,7 @@
 import z from 'zod';
 
 import { ExtendNullWithUndefined, ReplaceNullWithUndefined } from '@/lib/ts';
-import { Topic, UserSchema, UserTopicWorkoutSchema } from '@/generated/prisma';
+import { Question, Topic, UserSchema, UserTopicWorkoutSchema } from '@/generated/prisma';
 
 export type TTopic = ExtendNullWithUndefined<Topic> & { _count?: { questions: number } };
 export type TTopicReal = ReplaceNullWithUndefined<TTopic>;
@@ -55,6 +55,8 @@ export type TAvailableTopic = TTopic & {
   user?: TIncludedUser;
   /** For `includeWorkout` flag */
   userTopicWorkout?: TIncludedUserTopicWorkout;
+  /** For `includeQuestions` flag */
+  questions?: Question[];
 };
 
 /** // XXX: New topic shouldn't contain id (?)

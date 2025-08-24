@@ -22,19 +22,12 @@ export const GetAvailableTopicsParamsSchema = TopicIncludeParamsSchema.extend({
   adminMode: z.coerce.boolean().optional(),
   /** Display only current user's topics */
   showOnlyMyTopics: z.coerce.boolean().optional(),
-  /* // These parameter come from `TopicIncludeParamsSchema`
-   * [>* Include (limited) workout data <]
-   * includeWorkout: z.coerce.boolean().optional(),
-   * [>* Include compact user info data (name, email) in the `user` property of result object <]
-   * includeUser: z.coerce.boolean().optional(),
-   * [>* Include related questions count, in `_count: { questions }` <]
-   * includeQuestionsCount: z.coerce.boolean().optional(),
-   */
   /** Sort by parameter, default: `{ updatedAt: 'desc' }`, packed json string */
   // orderBy: TopicFindManyArgsSchema.shape.orderBy, // This approach doesn't work
   orderBy: zTopicOrderBy,
   /** Include only listed topic ids */
   topicIds: zTopicTopicIds, // z.array(z.string()).optional(),
+  // See also "include" parameters from `TopicIncludeParamsSchema`...
 });
 
 export type TGetAvailableTopicsParams = z.infer<typeof GetAvailableTopicsParamsSchema>;

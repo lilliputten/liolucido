@@ -17,9 +17,10 @@ export async function getAvailableTopicById(params: TGetAvailableTopicByIdParams
   const {
     id,
     // TopicIncludeParamsSchema:
-    includeUser = true,
+    includeUser = false,
     includeWorkout = false,
     includeQuestionsCount = true,
+    includeQuestions = false,
   } = params;
   // Check user rights to delete the question...?
   const user = await getCurrentUser();
@@ -41,6 +42,9 @@ export async function getAvailableTopicById(params: TGetAvailableTopicByIdParams
     };
     if (includeUser && userId) {
       include.user = { select: IncludedUserSelect };
+    }
+    if (includeQuestions) {
+      include.questions = true;
     }
     if (includeWorkout && userId) {
       include.userTopicWorkout = {

@@ -25,10 +25,7 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
   const { availableTopicsQueryKey, id: topicId, ...queryProps } = props;
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(
-    () => composeUrlQuery(queryProps, { omitFalsy: true }),
-    [queryProps],
-  );
+  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
 
   const queryKey = React.useMemo<QueryKey>(
     () => ['available-topic', topicId, queryHash],

@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       ? zTopicTopicIds.parse(safeJsonParse<TTopicTopicIds>(topicIdsStr, []))
       : undefined;
 
-    const topics = await getAvailableTopics({
+    const results = await getAvailableTopics({
       skip,
       take,
       adminMode,
@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
       topicIds,
     });
 
-    const response: TApiResponse<typeof topics> = {
-      data: topics,
+    const response: TApiResponse<typeof results> = {
+      data: results,
       ok: true,
     };
 

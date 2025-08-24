@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { TAllUsedKeys, TAvailableQuestionsResultsQueryData } from '@/shared/types/react-query';
+import { handleApiResponse } from '@/lib/api';
+import { useInvalidateReactQueryKeys } from '@/lib/data';
 import {
   addNewItemToQueryCache,
   deleteItemFromQueryCache,
@@ -21,8 +23,12 @@ import {
   stringifyQueryKey,
   updateItemInQueryCache,
 } from '@/lib/helpers/react-query';
-import { composeUrlQuery } from '@/lib/helpers/urls';
-import { TGetAvailableQuestionsParams, TGetAvailableQuestionsResults } from '@/lib/zod-schemes';
+import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
+import {
+  TGetAvailableQuestionsParams,
+  TGetAvailableQuestionsResults,
+  TGetAvailableTopicsResults,
+} from '@/lib/zod-schemes';
 import { minuteMs } from '@/constants';
 import { getAvailableQuestions } from '@/features/questions/actions/getAvailableQuestions';
 import { itemsLimit } from '@/features/questions/constants';
@@ -44,14 +50,11 @@ const allUsedKeys: TAllUsedKeys = {};
 
 export function useAvailableQuestions(queryProps: TUseAvailableQuestionsProps = {}) {
   const queryClient = useQueryClient();
-  // const invalidateKeys = useInvalidateReactQueryKeys();
+  const invalidateKeys = useInvalidateReactQueryKeys();
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(
-    () => composeUrlQuery(queryProps, { omitFalsy: true }),
-    [queryProps],
-  );
+  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
   const queryKey = React.useMemo<QueryKey>(() => ['available-questions', queryHash], [queryHash]);
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
 
@@ -73,20 +76,18 @@ export function useAvailableQuestions(queryProps: TUseAvailableQuestionsProps = 
       queryFn: async (params) => {
         const { pageParam = 0 } = params;
         try {
-          // OPTION: Using server function
-          const result = await getAvailableQuestions({
+          // OPTION 1: Using server function
+          const results = await getAvailableQuestions({
             ...queryProps,
             skip: pageParam,
             take: itemsLimit,
           });
-          return result;
-          /* // OPTION: Using route api fetch
-           * const paginationHash = composeUrlQuery(
-           *   { skip: pageParam, take: itemsLimit },
-           *   { omitFalsy: true },
-           * );
-           * const url = appendUrlQueries(`/api/topics/${topicId}/questions`, queryHash, paginationHash);
-           * const result = await handleApiResponse<TGetAvailableTopicsResults>(fetch(url), {
+          return results;
+          /* // OPTION 2: Using route api fetch
+           * const paginationHash = composeUrlQuery({ skip: pageParam, take: itemsLimit });
+           * const baseUrl = `/api/questions`;
+           * const url = appendUrlQueries(baseUrl, queryHash, paginationHash);
+           * const results = await handleApiResponse<TGetAvailableQuestionsResults>(fetch(url), {
            *   onInvalidateKeys: invalidateKeys,
            *   debugDetails: {
            *     initiator: 'useAvailableTopics',
@@ -94,7 +95,10 @@ export function useAvailableQuestions(queryProps: TUseAvailableQuestionsProps = 
            *     pageParam,
            *   },
            * });
-           * return result.data as TGetAvailableTopicsResults;
+           * if (!results.ok || !results.data) {
+           *   throw new Error('No data returned');
+           * }
+           * return results.data;
            */
         } catch (error) {
           const details = error instanceof APIError ? error.details : null;

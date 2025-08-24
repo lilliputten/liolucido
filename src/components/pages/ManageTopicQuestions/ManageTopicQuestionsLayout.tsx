@@ -1,13 +1,10 @@
 import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
-import { TRoutePath, welcomeRoute } from '@/config/routesConfig';
+import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { PageError } from '@/components/shared/PageError';
-import { QuestionsContextProvider } from '@/contexts/QuestionsContext';
-import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
-import { getTopicQuestions } from '@/features/questions/actions/getTopicQuestions';
-import { TQuestion } from '@/features/questions/types';
+import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
@@ -27,10 +24,14 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
     params,
   } = props;
   const resolvedParams = await params;
-  const { locale, scope, topicId } = resolvedParams;
-  const topicsListRoutePath = topicsRoutes[scope];
-  const topicRootRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
-  const routePath = `${topicsListRoutePath}/${topicId}/questions` as TRoutePath;
+  const {
+    locale,
+    // scope,
+    topicId,
+  } = resolvedParams;
+  // const topicsListRoutePath = topicsRoutes[scope];
+  // const topicRootRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
+  // const routePath = `${topicsListRoutePath}/${topicId}/questions` as TRoutePath;
 
   if (!topicId) {
     return <PageError error={'Topic ID not specified.'} />;
@@ -47,28 +48,11 @@ export async function ManageTopicQuestionsLayout(props: TManageTopicQuestionsLay
   // Enable static rendering
   setRequestLocale(locale);
 
-  let questions: TQuestion[];
-  try {
-    questions = await getTopicQuestions(topicId);
-  } catch (error) {
-    return (
-      <PageError
-        error={error instanceof Error ? error.message : 'Failed to load questions for this topic.'}
-      />
-    );
-  }
-
   return (
-    <QuestionsContextProvider
-      questions={questions}
-      routePath={routePath}
-      topicRootRoutePath={topicRootRoutePath}
-      topicsListRoutePath={topicsListRoutePath}
-      topicId={topicId}
-    >
+    <>
       {children}
       {addQuestionModal}
       {deleteQuestionModal}
-    </QuestionsContextProvider>
+    </>
   );
 }

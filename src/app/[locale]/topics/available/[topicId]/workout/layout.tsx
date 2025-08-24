@@ -2,8 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { getCurrentUser } from '@/lib/session';
 import { WorkoutContextProvider } from '@/contexts/WorkoutContext';
-import { getTopicQuestions } from '@/features/questions/actions';
-import { getTopic } from '@/features/topics/actions';
+import { getAvailableTopicById } from '@/features/topics/actions';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ topicId: string }>;
@@ -18,16 +17,12 @@ export default async function WorkoutLayout({ children, params }: WorkoutLayoutP
   const user = await getCurrentUser();
   const userId = user?.id;
 
-  let topic, questions;
-  try {
-    topic = await getTopic(topicId);
-    if (!topic) {
-      notFound();
-    }
+  let topicResult: Awaited<ReturnType<typeof getAvailableTopicById>>;
 
-    questions = await getTopicQuestions(topicId);
-    if (!questions) {
-      notFound();
+  try {
+    topicResult = await getAvailableTopicById({ id: topicId, includeQuestions: true });
+    if (!topicResult) {
+      throw new Error('No topic found');
     }
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -36,12 +31,8 @@ export default async function WorkoutLayout({ children, params }: WorkoutLayoutP
     notFound();
   }
 
+  const { questions, ...topic } = topicResult;
   const questionIds = questions.map((q) => q.id);
-  // NOTE: It's possible to move the `WorkoutContextProvider` into the client
-  // component and use the questions list form the upstreaming
-  // `QuestionsContextProvider`, which is created in the
-  // `src/components/pages/AvailableTopics/WorkoutTopic/WorkoutTopicLayout.tsx`
-  // module.
 
   return (
     <WorkoutContextProvider userId={userId} topic={topic} questionIds={questionIds}>

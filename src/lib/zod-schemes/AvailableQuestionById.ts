@@ -6,6 +6,8 @@ export const QuestionIncludeParamsSchema = z.object({
   includeTopic: z.coerce.boolean().optional(),
   /** Include related answers count, in `_count: { answers }` */
   includeAnswersCount: z.coerce.boolean().optional(),
+  /** Include related answers data */
+  includeAnswers: z.coerce.boolean().optional(),
 });
 
 export type TQuestionIncludeParams = z.infer<typeof QuestionIncludeParamsSchema>;
