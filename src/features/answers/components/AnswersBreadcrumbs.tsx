@@ -17,11 +17,7 @@ import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext/AnswersContext';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
-import {
-  TQuestionsBreadcrumbsProps,
-  useQuestionsBreadcrumbsItems,
-  useQuestionsScopeBreadcrumbsItems,
-} from '@/features/questions/components/QuestionsBreadcrumbs';
+import { useQuestionsScopeBreadcrumbsItems } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion } from '@/features/questions/types';
 import { TTopic } from '@/features/topics/types';
 
@@ -94,17 +90,26 @@ export function AnswersScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWi
 }
 
 // Below items are used only with `useAnswersContext`
-export interface TAnswersBreadcrumbsProps extends TQuestionsBreadcrumbsProps {
+export interface TAnswersBreadcrumbsProps /* extends TQuestionsBreadcrumbsProps */ {
   answerId?: TAnswerId;
   inactiveAnswers?: boolean;
   inactiveAnswer?: boolean;
 }
 
 export function useAnswersBreadcrumbsItems(props: TAnswersBreadcrumbsProps) {
-  const { answerId, inactiveAnswers, inactiveAnswer, ...rest } = props;
+  const {
+    answerId,
+    inactiveAnswers,
+    inactiveAnswer,
+    // ...rest,
+  } = props;
   const answersContext = useAnswersContext();
-  const { answers, questionId, routePath } = answersContext;
-  const questionItems = useQuestionsBreadcrumbsItems({ questionId, ...rest });
+  const {
+    answers,
+    // questionId,
+    routePath,
+  } = answersContext;
+  // const questionItems = useQuestionsBreadcrumbsItems({ questionId, ...rest });
   const answer: TAnswer | undefined = React.useMemo(
     () => (answerId ? answers.find(({ id }) => id === answerId) : undefined),
     [answers, answerId],
@@ -116,7 +121,10 @@ export function useAnswersBreadcrumbsItems(props: TAnswersBreadcrumbsProps) {
       content: truncateString(answer.text, 20),
     },
   ]);
-  return [...questionItems, ...items];
+  return [
+    // ...questionItems,
+    ...items,
+  ];
 }
 
 export function AnswersBreadcrumbs(props: TAnswersBreadcrumbsProps & TPropsWithClassName) {

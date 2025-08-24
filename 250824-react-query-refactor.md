@@ -13,3 +13,5 @@ const questionsListRoutePath = `${topicRoutePath}/questions`;
 const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
 const answersListRoutePath = `${questionRoutePath}/answers`;
 const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
+questionsContext.routePath -> questionsListRoutePath

@@ -44,7 +44,6 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
     handleAddQuestion,
     toolbarPortalRoot,
   } = props;
-  // const { setQuestions } = useQuestionsContext();
   const [isPending, startTransition] = React.useTransition();
   const invalidateKeys = useInvalidateReactQueryKeys();
 

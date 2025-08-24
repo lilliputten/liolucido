@@ -5,7 +5,7 @@ import React from 'react';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { truncateMarkdown } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
-import { capitalizeString, truncateString } from '@/lib/helpers/strings';
+import { capitalizeString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -14,14 +14,9 @@ import {
   TBreadcrumbsItemProps,
 } from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
-import { TQuestion, TQuestionId } from '@/features/questions/types';
-import {
-  TTopicsBreadcrumbsProps,
-  useTopicsBreadcrumbsItems,
-  useTopicsScopeBreadcrumbsItems,
-} from '@/features/topics/components/TopicsBreadcrumbs';
+import { TQuestion } from '@/features/questions/types';
+import { useTopicsScopeBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic } from '@/features/topics/types';
 
 interface TScopeBreadcrumbsProps {
@@ -90,44 +85,44 @@ export function QuestionsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TProps
   );
 }
 
-// Below items are used only with `useQuestionsContext`
-export interface TQuestionsBreadcrumbsProps extends TTopicsBreadcrumbsProps {
-  questionId?: TQuestionId;
-  inactiveQuestions?: boolean;
-  inactiveQuestion?: boolean;
-}
-
-export function useQuestionsBreadcrumbsItems(props: TQuestionsBreadcrumbsProps) {
-  // const { manageScope } = useManageTopicsStore();
-  // const rootRoutePath = `/topics/${manageScope}`;
-  const { questionId, inactiveQuestions, inactiveQuestion, ...rest } = props;
-  const questionsContext = useQuestionsContext();
-  const { questions, topicId, routePath } = questionsContext;
-  const topicItems = useTopicsBreadcrumbsItems({ topicId, ...rest });
-  const question: TQuestion | undefined = React.useMemo(
-    () => (questionId ? questions.find(({ id }) => id === questionId) : undefined),
-    [questions, questionId],
-  );
-  const items = filterOutEmpties<TBreadcrumbsItemProps>([
-    { link: inactiveQuestions ? undefined : routePath, content: 'Questions' },
-    !!question && {
-      link: inactiveQuestion ? undefined : `${routePath}/${question.id}`,
-      content: truncateString(question.text, 20),
-    },
-  ]);
-  return [...topicItems, ...items];
-}
-
-export function QuestionsBreadcrumbs(props: TQuestionsBreadcrumbsProps & TPropsWithClassName) {
-  const { className, ...rest } = props;
-  const items = useQuestionsBreadcrumbsItems(rest);
-  return (
-    <Breadcrumbs
-      className={cn(
-        isDev && '__QuestionsBreadcrumbs', // DEBUG
-        className,
-      )}
-      items={items}
-    />
-  );
-}
+/* // UNUSED: Was used only in `useAnswersBreadcrumbsItems`: To remove
+ * // Below items are used only with `useQuestionsContext` (REMOVE)
+ * export interface TQuestionsBreadcrumbsProps extends TTopicsBreadcrumbsProps {
+ *   questionId?: TQuestionId;
+ *   inactiveQuestions?: boolean;
+ *   inactiveQuestion?: boolean;
+ * }
+ * export function useQuestionsBreadcrumbsItems(_props: TQuestionsBreadcrumbsProps) {
+ *   // QuestionsContext isn't used, so it'll be an empty list always
+ *   const { questionId, inactiveQuestions, inactiveQuestion, ...rest } = props;
+ *   const questionsContext = useQuestionsContext();
+ *   const { questions, topicId, routePath } = questionsContext;
+ *   const topicItems = useTopicsBreadcrumbsItems({ topicId, ...rest });
+ *   const question: TQuestion | undefined = React.useMemo(
+ *     () => (questionId ? questions.find(({ id }) => id === questionId) : undefined),
+ *     [questions, questionId],
+ *   );
+ *   const items = filterOutEmpties<TBreadcrumbsItemProps>([
+ *     { link: inactiveQuestions ? undefined : routePath, content: 'Questions' },
+ *     !!question && {
+ *       link: inactiveQuestion ? undefined : `${routePath}/${question.id}`,
+ *       content: truncateString(question.text, 20),
+ *     },
+ *   ]);
+ *   return [...topicItems, ...items];
+ * }
+ * // UNUSED: QuestionsBreadcrumbs (was used only in QuestionsContext components
+ * export function QuestionsBreadcrumbs(props: TQuestionsBreadcrumbsProps & TPropsWithClassName) {
+ *   const { className, ...rest } = props;
+ *   const items = useQuestionsBreadcrumbsItems(rest);
+ *   return (
+ *     <Breadcrumbs
+ *       className={cn(
+ *         isDev && '__QuestionsBreadcrumbs', // DEBUG
+ *         className,
+ *       )}
+ *       items={items}
+ *     />
+ *   );
+ * }
+ */

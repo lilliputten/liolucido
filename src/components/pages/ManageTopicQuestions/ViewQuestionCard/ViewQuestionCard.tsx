@@ -12,7 +12,7 @@ import { isDev } from '@/constants';
 import { QuestionsScopeBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useAvailableTopicById, useGoBack, useGoToTheRoute } from '@/hooks';
+import { useAvailableTopicById } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ViewQuestionContentActions } from './ViewQuestionContentActions';
@@ -25,7 +25,6 @@ interface TViewQuestionCardProps extends TPropsWithClassName {
 
 export function ViewQuestionCard(props: TViewQuestionCardProps) {
   const { manageScope } = useManageTopicsStore();
-  const topicsListRoutePath = `/topics/${manageScope}`;
   const { className, topicId, questionId } = props;
 
   const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
@@ -35,28 +34,12 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
     isLoading: isQuestionLoading,
   } = availableQuestionQuery;
   const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
-  const questionsListRoutePath = `${topicsListRoutePath}/${topicId}/questions`;
+
+  // const topicsListRoutePath = `/topics/${manageScope}`;
+  // const questionsListRoutePath = `${topicsListRoutePath}/${topicId}/questions`;
 
   const availableTopicQuery = useAvailableTopicById({ id: topicId });
   const { data: topic } = availableTopicQuery;
-
-  const goToTheRoute = useGoToTheRoute();
-  const goBack = useGoBack(questionsListRoutePath);
-
-  // Add Question Modal
-  const handleAddQuestion = React.useCallback(() => {
-    const url = `${questionsListRoutePath}/add`;
-    goToTheRoute(url);
-  }, [goToTheRoute, questionsListRoutePath]);
-
-  // Delete Question Modal
-  const handleDeleteQuestion = React.useCallback(() => {
-    if (question) {
-      const url = `${questionsListRoutePath}/delete?questionId=${question.id}&from=ViewQuestionCard`;
-      goToTheRoute(url);
-      // NOTE: Dropped the check if the question existis (consider it as existed or rely on later checks)
-    }
-  }, [goToTheRoute, question, questionsListRoutePath]);
 
   // No data loaded yet: display skeleton
   if (isQuestionLoadingOverall) {
@@ -64,7 +47,6 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
       <div
         className={cn(
           isDev && '__ViewQuestionCard_Skeleton', // DEBUG
-          'size-full',
           'flex flex-1 flex-col gap-4 py-4',
           className,
         )}
@@ -114,12 +96,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
             inactiveLast
           />
         </div>
-        <ViewQuestionContentActions
-          question={question}
-          goBack={goBack}
-          handleDeleteQuestion={handleDeleteQuestion}
-          handleAddQuestion={handleAddQuestion}
-        />
+        <ViewQuestionContentActions question={question} />
       </CardHeader>
 
       <CardContent
@@ -131,16 +108,6 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
         <ScrollArea>
           <ViewQuestionContentSummary question={question} />
         </ScrollArea>
-        {/*
-        <ViewQuestionContent
-          question={question}
-          goBack={goBack}
-          handleDeleteQuestion={handleDeleteQuestion}
-          handleAddQuestion={handleAddQuestion}
-          // toolbarPortalRef={toolbarPortalRef}
-          // toolbarPortalRoot={toolbarPortalRef.current}
-        />
-        */}
       </CardContent>
     </Card>
   );
