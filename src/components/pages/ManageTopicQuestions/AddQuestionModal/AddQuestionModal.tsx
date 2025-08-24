@@ -1,52 +1,58 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
+import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { addedQuestionEventName, TAddedQuestionDetail } from '@/constants/eventTypes';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { addNewQuestion } from '@/features/questions/actions';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
-import { useMediaQuery } from '@/hooks';
-import { usePathname } from '@/i18n/routing';
+import {
+  useGoBack,
+  useGoToTheRoute,
+  useMediaQuery,
+  useModalTitle,
+  useUpdateModalVisibility,
+} from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { AddQuestionForm } from './AddQuestionForm';
 
-export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
+const urlPostfix = '/questions/add';
+const urlTopicIdRegExp = new RegExp('([^/]*)' + urlPostfix);
+
+export function AddQuestionModal() {
+  const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(false);
-  const router = useRouter();
-  const hideModal = React.useCallback(() => {
-    setVisible(false);
-    router.back();
-  }, [router]);
+  const pathname = usePathname();
+  const shouldBeVisible = pathname.endsWith(urlPostfix);
+  const match = pathname.match(urlTopicIdRegExp);
+  const topicId = match?.[1];
+
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
-  const questionsContext = useQuestionsContext();
-  const { topicId } = questionsContext;
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(questionsListRoutePath);
 
-  // Check if we're still on the add route
-  const pathname = usePathname();
-  const isAddRoute = pathname?.endsWith('/add');
+  const hideModal = React.useCallback(() => {
+    setVisible(false);
+    goBack();
+  }, [goBack]);
 
-  // Check if the modal should be visible
-  React.useEffect(() => {
-    setVisible(isAddRoute);
-    if (isAddRoute) {
-      const originalTitle = document.title;
-      document.title = 'Add a Question';
-      return () => {
-        setVisible(false);
-        document.title = originalTitle;
-      };
-    }
-  }, [isAddRoute]);
+  const availableQuestionsQuery = useAvailableQuestions({ topicId });
+
+  useModalTitle('Add a Question', shouldBeVisible);
+  useUpdateModalVisibility(setVisible, shouldBeVisible);
 
   const handleAddQuestion = React.useCallback(
     (newQuestion: TNewQuestion) => {
@@ -54,26 +60,33 @@ export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
         return startUpdating(() => {
           const promise = addNewQuestion(newQuestion)
             .then((addedQuestion) => {
-              // Update topics list
-              questionsContext.setQuestions((questions) => {
-                const updatedQuestions = questions.concat(addedQuestion);
-                // Dispatch a custom event with the updated questions data
-                const { topicId } = questionsContext;
-                const questionsCount = updatedQuestions.length;
-                const addedQuestionId = addedQuestion.id;
-                const detail: TAddedQuestionDetail = { topicId, addedQuestionId, questionsCount };
-                const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
-                  detail,
-                  bubbles: true,
-                });
-                setTimeout(() => window.dispatchEvent(event), 100);
-                // Return data to update a state
-                return updatedQuestions;
-              });
+              /* // UNUSED: Old way: via QuestionsContext: Update topics list
+               * questionsContext.setQuestions((questions) => {
+               *   const updatedQuestions = questions.concat(addedQuestion);
+               *   // Dispatch a custom event with the updated questions data
+               *   const { topicId } = questionsContext;
+               *   const questionsCount = updatedQuestions.length;
+               *   const addedQuestionId = addedQuestion.id;
+               *   const detail: TAddedQuestionDetail = { topicId, addedQuestionId, questionsCount };
+               *   const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
+               *     detail,
+               *     bubbles: true,
+               *   });
+               *   setTimeout(() => window.dispatchEvent(event), 100);
+               *   // Return data to update a state
+               *   return updatedQuestions;
+               * });
+               */
+              // Add the created item to the cached react-query data
+              availableQuestionsQuery.addNewQuestion(addedQuestion, true);
+              // Invalidate all other keys...
+              availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+              // Resolve added data
               resolve(addedQuestion);
               // NOTE: Close or go to the edit page
               setVisible(false);
-              router.replace(`${questionsContext.routePath}/${addedQuestion.id}`);
+              const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
+              setTimeout(() => goToTheRoute(returnUrl, true), 100);
               return addedQuestion;
             })
             .catch((error) => {
@@ -94,8 +107,13 @@ export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
         });
       });
     },
-    [questionsContext, router],
+    [availableQuestionsQuery, goToTheRoute, questionsListRoutePath],
   );
+
+  if (!shouldBeVisible || !topicId) {
+    return null;
+    // throw new Error('Cannot parse topic id from the modal url.');
+  }
 
   return (
     <Modal

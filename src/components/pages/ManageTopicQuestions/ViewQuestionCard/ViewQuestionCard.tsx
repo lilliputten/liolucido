@@ -6,15 +6,17 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
+import { QuestionsScopeBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useGoBack, useGoToTheRoute } from '@/hooks';
+import { useAvailableTopicById, useGoBack, useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-import { ViewQuestionContent } from './ViewQuestionContent';
+import { ViewQuestionContentActions } from './ViewQuestionContentActions';
+import { ViewQuestionContentSummary } from './ViewQuestionContentSummary';
 
 interface TViewQuestionCardProps extends TPropsWithClassName {
   topicId: TTopicId;
@@ -25,7 +27,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
   const { manageScope } = useManageTopicsStore();
   const topicsListRoutePath = `/topics/${manageScope}`;
   const { className, topicId, questionId } = props;
-  const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
+
   const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
   const {
     question,
@@ -34,6 +36,9 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
   } = availableQuestionQuery;
   const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
   const questionsListRoutePath = `${topicsListRoutePath}/${topicId}/questions`;
+
+  const availableTopicQuery = useAvailableTopicById({ id: topicId });
+  const { data: topic } = availableTopicQuery;
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(questionsListRoutePath);
@@ -89,7 +94,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
       <CardHeader
         className={cn(
           isDev && '__ViewQuestionCard_Header', // DEBUG
-          'item-start flex flex-col gap-4 md:flex-row',
+          'item-start flex flex-col gap-4 lg:flex-row',
         )}
       >
         <div
@@ -98,41 +103,44 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <QuestionsBreadcrumbs
+          <QuestionsScopeBreadcrumbs
             className={cn(
               isDev && '__EditQuestionCard_Breadcrumbs', // DEBUG
             )}
-            questionId={questionId}
-            inactiveQuestion
+            scope={manageScope}
+            isLoading={!topic}
+            topic={topic}
+            question={question}
+            inactiveLast
           />
-          {/* // UNUSED: Title
-            <CardTitle className="flex flex-1 items-center overflow-hidden">
-              <span className="truncate">Show Question</span>
-            </CardTitle>
-            */}
         </div>
-        <div
-          ref={toolbarPortalRef}
-          className={cn(
-            isDev && '__ViewQuestionCard_Toolbar', // DEBUG
-            'flex flex-wrap items-center gap-2',
-          )}
+        <ViewQuestionContentActions
+          question={question}
+          goBack={goBack}
+          handleDeleteQuestion={handleDeleteQuestion}
+          handleAddQuestion={handleAddQuestion}
         />
       </CardHeader>
 
       <CardContent
         className={cn(
           isDev && '__ViewQuestionCard_Content', // DEBUG
-          'relative flex flex-1 flex-col overflow-hidden px-0',
+          'relative flex w-full flex-1 flex-col overflow-hidden px-0',
         )}
       >
+        <ScrollArea>
+          <ViewQuestionContentSummary question={question} />
+        </ScrollArea>
+        {/*
         <ViewQuestionContent
           question={question}
           goBack={goBack}
           handleDeleteQuestion={handleDeleteQuestion}
           handleAddQuestion={handleAddQuestion}
-          toolbarPortalRef={toolbarPortalRef}
+          // toolbarPortalRef={toolbarPortalRef}
+          // toolbarPortalRoot={toolbarPortalRef.current}
         />
+        */}
       </CardContent>
     </Card>
   );

@@ -27,8 +27,8 @@ interface TViewTopicCardProps extends TPropsWithClassName {
 
 export function ViewTopicCard(props: TViewTopicCardProps) {
   const { manageScope } = useManageTopicsStore();
-  const routePath = `/topics/${manageScope}`;
-  const goBack = useGoBack(routePath);
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const goBack = useGoBack(topicsListRoutePath);
   const goToTheRoute = useGoToTheRoute();
   const { className, topicId } = props;
   const availableTopics = useAvailableTopicsByScope({ manageScope });
@@ -57,9 +57,9 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
-    const url = `${routePath}/delete?topicId=${topicId}&from=ViewTopicCard`;
+    const url = `${topicsListRoutePath}/delete?topicId=${topicId}&from=ViewTopicCard`;
     goToTheRoute(url);
-  }, [goToTheRoute, routePath, topicId]);
+  }, [goToTheRoute, topicsListRoutePath, topicId]);
 
   // No data loaded yet: display skeleton
   if (!topic && (!isTopicsFetched || !isTopicFetched || isTopicLoading)) {

@@ -51,7 +51,7 @@ type TUseAvailableTopicsProps = Omit<TGetAvailableTopicsParams, 'skip' | 'take'>
  */
 const allUsedKeys: TAllUsedKeys = {};
 
-export function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
+function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   const queryClient = useQueryClient();
   // const invalidateKeys = useInvalidateReactQueryKeys();
   const routePath = usePathname();

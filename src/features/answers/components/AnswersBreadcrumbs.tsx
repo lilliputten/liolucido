@@ -59,14 +59,14 @@ export function useAnswersScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps) {
   return [...questionItems, ...items];
 }
 
-export function QuestionsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWithClassName) {
+export function AnswersScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWithClassName) {
   const { className, inactiveLast, isLoading } = props;
-  const items = useQuestionsScopeBreadcrumbsItems(props);
+  const items = useAnswersScopeBreadcrumbsItems(props);
   if (isLoading) {
     return (
       <div
         className={cn(
-          isDev && '__QuestionsScopeBreadcrumbs_Skeleton', // DEBUG
+          isDev && '__AnswersScopeBreadcrumbs_Skeleton', // DEBUG
           'flex gap-2',
         )}
       >
@@ -85,7 +85,7 @@ export function QuestionsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TProps
   return (
     <Breadcrumbs
       className={cn(
-        isDev && '__QuestionsScopeBreadcrumbs', // DEBUG
+        isDev && '__AnswersScopeBreadcrumbs', // DEBUG
         className,
       )}
       items={items}
@@ -93,7 +93,7 @@ export function QuestionsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TProps
   );
 }
 
-// Below items are used only with `useQuestionsContext`
+// Below items are used only with `useAnswersContext`
 export interface TAnswersBreadcrumbsProps extends TQuestionsBreadcrumbsProps {
   answerId?: TAnswerId;
   inactiveAnswers?: boolean;

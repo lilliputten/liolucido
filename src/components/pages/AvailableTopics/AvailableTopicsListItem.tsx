@@ -14,7 +14,7 @@ import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TTopic } from '@/features/topics/types';
 import { useAvailableTopicsByScope } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
-import { usePathname } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing'; // TODO: Use 'next/navigation'
 
 interface TAvailableTopicsListItemProps {
   index: number;

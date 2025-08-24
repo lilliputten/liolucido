@@ -11,7 +11,7 @@ import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAvailableTopic } from '@/features/topics/types';
 import { useSessionUser } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
-import { usePathname } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing'; // TODO: Use 'next/navigation'
 
 interface TTopicHeaderOptions {
   showDates?: boolean;

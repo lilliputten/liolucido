@@ -23,6 +23,8 @@ import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { AddTopicForm } from './AddTopicForm';
 
+const urlPostfix = '/add';
+
 export function AddTopicModal() {
   const { manageScope } = useManageTopicsStore();
   const routePath = `/topics/${manageScope}`;
@@ -30,12 +32,12 @@ export function AddTopicModal() {
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
-  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const availableTopicsQuery = useAvailableTopicsByScope({ manageScope });
 
   // Check if we're still on the add route
   const pathname = usePathname();
   /** Should the modal be visible? */
-  const shouldBeVisible = pathname?.endsWith('/add');
+  const shouldBeVisible = pathname?.endsWith(urlPostfix);
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(routePath);
@@ -55,9 +57,9 @@ export function AddTopicModal() {
           const promise = addNewTopic(newTopic)
             .then((addedTopic) => {
               // Add the created item to the cached react-query data
-              availableTopics.addNewTopic(addedTopic, true);
+              availableTopicsQuery.addNewTopic(addedTopic, true);
               // Invalidate all other keys...
-              availableTopics.invalidateAllKeysExcept([availableTopics.queryKey]);
+              availableTopicsQuery.invalidateAllKeysExcept([availableTopicsQuery.queryKey]);
               // Resolve added data
               resolve(addedTopic);
               // Close the modal first
@@ -83,7 +85,7 @@ export function AddTopicModal() {
         });
       });
     },
-    [availableTopics, routePath, goToTheRoute],
+    [availableTopicsQuery, routePath, goToTheRoute],
   );
 
   return (

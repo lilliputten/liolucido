@@ -15,7 +15,7 @@ import { addedAnswerEventName, TAddedAnswerDetail } from '@/constants/eventTypes
 import { useAnswersContext } from '@/contexts/AnswersContext';
 import { TAnswer, TNewAnswer } from '@/features/answers/types';
 import { useMediaQuery } from '@/hooks';
-import { usePathname } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing'; // TODO: Use 'next/navigation'
 
 import { AddAnswerForm } from './AddAnswerForm';
 

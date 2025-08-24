@@ -3,12 +3,15 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
+import { isDev } from '@/constants';
 import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TQuestion } from '@/features/questions/types';
 
 export interface TViewQuestionContentActionsProps {
+  className?: string;
   question: TQuestion;
   isPending?: boolean;
   goBack?: (ev: React.MouseEvent) => void;
@@ -17,11 +20,17 @@ export interface TViewQuestionContentActionsProps {
 }
 
 export function ViewQuestionContentActions(props: TViewQuestionContentActionsProps) {
-  const { question, goBack, handleDeleteQuestion, handleAddQuestion } = props;
+  const { question, className, goBack, handleDeleteQuestion, handleAddQuestion } = props;
   const router = useRouter();
   const questionsContext = useQuestionsContext();
   return (
-    <>
+    <div
+      className={cn(
+        isDev && '__ViewQuestionContentActions', // DEBUG
+        'flex flex-wrap items-center gap-4',
+        className,
+      )}
+    >
       <Button variant="ghost" size="sm" onClick={goBack} className="gap-2" disabled={!goBack}>
         <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
@@ -56,6 +65,6 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
         <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
         <span>Delete Question</span>
       </Button>
-    </>
+    </div>
   );
 }

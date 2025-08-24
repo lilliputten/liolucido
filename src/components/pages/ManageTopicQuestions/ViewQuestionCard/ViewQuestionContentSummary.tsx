@@ -15,7 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
-import { useAvailableTopicById, useAvailableTopicsByScope, useSessionUser } from '@/hooks';
+import { useAvailableTopicById, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 export function ViewQuestionContentSummary({ question }: { question: TQuestion }) {
@@ -24,24 +24,26 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
   const format = useFormatter();
   const user = useSessionUser();
 
-  const availableTopics = useAvailableTopicsByScope({ manageScope });
-  const {
-    // allTopics,
-    isFetched: isTopicsFetched,
-    // isLoading: isTopicsLoading,
-    queryKey: availableTopicsQueryKey,
-    queryProps: availableTopicsQueryProps,
-  } = availableTopics;
+  /* // NOTE: All the topics list here are not necessary here
+   * const availableTopics = useAvailableTopicsByScope({ manageScope });
+   * const {
+   *   // allTopics,
+   *   isFetched: isTopicsFetched,
+   *   // isLoading: isTopicsLoading,
+   *   queryKey: availableTopicsQueryKey,
+   *   queryProps: availableTopicsQueryProps,
+   * } = availableTopics;
+   */
 
   const topicId = question.topicId;
 
   const availableTopicQuery = useAvailableTopicById({
     id: topicId,
-    availableTopicsQueryKey,
-    // ...availableTopicsQueryProps,
-    includeWorkout: availableTopicsQueryProps.includeWorkout,
-    includeUser: availableTopicsQueryProps.includeUser,
-    includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
+    // availableTopicsQueryKey,
+    // // ...availableTopicsQueryProps,
+    // includeWorkout: availableTopicsQueryProps.includeWorkout,
+    // includeUser: availableTopicsQueryProps.includeUser,
+    // includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
   });
   const {
     topic,
@@ -50,11 +52,15 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
     // isCached: isTopicCached,
   } = availableTopicQuery;
 
-  const isTopicLoadingOverall = !topic && (!isTopicsFetched || !isTopicFetched || isTopicLoading);
+  const isTopicLoadingOverall =
+    !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
 
   const questionTextContent = (
-    <div data-testid="__Section_QuestionText" className="flex flex-col gap-4">
+    <div
+      data-testid="__ViewQuestionContentSummary_Section_QuestionText"
+      className="flex flex-col gap-4"
+    >
       <h3 className="text-lg font-semibold">Question Text</h3>
       <div className="rounded-lg bg-slate-500/10 p-4">
         <MarkdownText>{question.text}</MarkdownText>
@@ -63,7 +69,10 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
   );
 
   const questionPropertiesContent = (
-    <div data-testid="__Section_Properties" className="flex flex-col gap-4">
+    <div
+      data-testid="__ViewQuestionContentSummary_Section_Properties"
+      className="flex flex-col gap-4"
+    >
       <h3 className="text-lg font-semibold">Properties</h3>
       <div className="flex flex-wrap gap-2">
         {!!question._count?.answers && (
@@ -98,7 +107,7 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
       ))}
     </div>
   ) : topic ? (
-    <div data-testid="__Section_Topic" className="flex flex-col gap-4">
+    <div data-testid="__ViewQuestionContentSummary_Section_Topic" className="flex flex-col gap-4">
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold">Topic</h3>
         {isOwner && (
@@ -125,7 +134,7 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
   ) : null;
 
   const authorInfoContent = (
-    <div data-testid="__Section_Author" className="flex flex-col gap-4">
+    <div data-testid="__ViewQuestionContentSummary_Section_Author" className="flex flex-col gap-4">
       <h3 className="text-lg font-semibold">Author</h3>
       <div className="flex items-center gap-2 text-sm">
         {isOwner ? (
@@ -147,7 +156,10 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
   );
 
   const timestampsContent = (
-    <div data-testid="__Section_Timeline" className="flex flex-col gap-4">
+    <div
+      data-testid="__ViewQuestionContentSummary_Section_Timeline"
+      className="flex flex-col gap-4"
+    >
       <h3 className="text-lg font-semibold">Timeline</h3>
       <div className="space-y-2 text-sm">
         <div className="flex items-center gap-2">

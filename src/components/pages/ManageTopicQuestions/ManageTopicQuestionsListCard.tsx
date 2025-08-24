@@ -125,7 +125,7 @@ function QuestionTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
 interface TQuestionTableRowProps {
   question: TQuestion;
   idx: number;
-  topicRoutePath: string;
+  questionsListRoutePath: string;
   handleDeleteQuestion: TManageTopicQuestionsListCardProps['handleDeleteQuestion'];
   handleEditQuestion: TManageTopicQuestionsListCardProps['handleEditQuestion'];
   handleEditAnswers: TManageTopicQuestionsListCardProps['handleEditAnswers'];
@@ -135,7 +135,7 @@ interface TQuestionTableRowProps {
 function QuestionTableRow(props: TQuestionTableRowProps) {
   const {
     question,
-    topicRoutePath,
+    questionsListRoutePath,
     handleDeleteQuestion,
     handleEditQuestion,
     handleEditAnswers,
@@ -143,7 +143,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
     idx,
   } = props;
   const { id, text, _count } = question;
-  const questionRoutePath = `${topicRoutePath}/${id}`;
+  const questionRoutePath = `${questionsListRoutePath}/${id}`;
   const answersCount = _count?.answers;
   return (
     <TableRow className="truncate" data-question-id={id}>
@@ -212,13 +212,13 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
 
 export function ManageTopicQuestionsListCardContent(
   props: TManageTopicQuestionsListCardProps & {
-    topicRoutePath: string;
+    questionsListRoutePath: string;
     availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
   },
 ) {
   const {
     availableQuestionsQuery,
-    topicRoutePath,
+    questionsListRoutePath,
     // topicId,
     // questions,
     handleDeleteQuestion,
@@ -306,7 +306,7 @@ export function ManageTopicQuestionsListCardContent(
               key={question.id}
               idx={idx}
               question={question}
-              topicRoutePath={topicRoutePath}
+              questionsListRoutePath={questionsListRoutePath}
               handleDeleteQuestion={handleDeleteQuestion}
               handleEditQuestion={handleEditQuestion}
               handleEditAnswers={handleEditAnswers}
@@ -331,7 +331,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
   const { manageScope } = useManageTopicsStore();
   const topicsListRoutePath = `/topics/${manageScope}`;
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
-  // const questionsListRoutePath = `${topicRoutePath}/questions`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
 
   const availableQuestionsQuery = useAvailableQuestions({ topicId });
 
@@ -398,7 +398,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       >
         <ManageTopicQuestionsListCardContent
           {...props}
-          topicRoutePath={topicRoutePath}
+          questionsListRoutePath={questionsListRoutePath}
           availableQuestionsQuery={availableQuestionsQuery}
         />
       </CardContent>
