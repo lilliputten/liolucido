@@ -370,6 +370,8 @@ export function ManageTopicQuestionAnswersListCard(
   const { className, topicId, questionId } = props;
 
   const { manageScope } = useManageTopicsStore();
+
+  // Calculate paths...
   const topicsListRoutePath = `/topics/${manageScope}`;
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
   const questionsListRoutePath = `${topicRoutePath}/questions`;

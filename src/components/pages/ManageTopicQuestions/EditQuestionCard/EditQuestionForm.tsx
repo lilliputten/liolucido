@@ -8,13 +8,12 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { APIError } from '@/shared/types/api';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
+import { updateQuestion } from '@/features/questions/actions';
 import { TQuestion, TQuestionData } from '@/features/questions/types';
 
 import { maxTextLength, minTextLength } from '../constants';
@@ -45,7 +44,6 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
     toolbarPortalRoot,
   } = props;
   const [isPending, startTransition] = React.useTransition();
-  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const formSchema = React.useMemo(
     () =>
@@ -125,62 +123,37 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
         answersCountMin: formData.answersCountMin,
         answersCountMax: formData.answersCountMax,
       };
-      startTransition(() => {
-        const savePromise = handleApiResponse(
-          fetch(`/api/questions/${editedQuestion.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(editedQuestion),
-          }),
-          {
-            onInvalidateKeys: invalidateKeys,
-            debugDetails: {
-              initiator: 'EditQuestionForm',
-              action: 'updateQuestion',
-              questionId: editedQuestion.id,
-            },
-          },
-        );
-        toast.promise(savePromise, {
-          loading: 'Saving the question data...',
-          success: 'Successfully saved the question',
-          error: 'Can not save the question data.',
-        });
-        return savePromise
-          .then((result) => {
-            if (result.ok && result.data) {
-              const updatedQuestion = result.data as TQuestion;
-              /* // UNUSED: QuestionsContext
-               * setQuestions((questions) => {
-               *   return questions.map((question) =>
-               *     question.id === updatedQuestion.id ? updatedQuestion : question,
-               *   );
-               * });
-               */
-              // Update the item to the cached react-query data
-              availableQuestionsQuery.updateQuestion(updatedQuestion);
-              // TODO: Update or invalidate all other possible AvailableQuestion and AvailableQuestions cached data
-              // Invalidate all other keys...
-              availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
-              // Reset form to the current data
-              form.reset(form.getValues());
-              // TODO: Convert `updatedQuestion` to the form data & reset form to these values?
-            }
-          })
-          .catch((error) => {
-            const details = error instanceof APIError ? error.details : null;
-            const message = 'Cannot save question data';
-            // eslint-disable-next-line no-console
-            console.error('[EditQuestionForm]', message, {
-              details,
-              error,
-              questionId: editedQuestion.id,
-            });
-            debugger; // eslint-disable-line no-debugger
+      startTransition(async () => {
+        try {
+          const promise = updateQuestion(editedQuestion);
+          toast.promise(promise, {
+            loading: 'Saving the question data...',
+            success: 'Successfully saved the question',
+            error: 'Can not save the question data.',
           });
+          const updatedQuestion = await promise;
+          // Update the item to the cached react-query data
+          availableQuestionsQuery.updateQuestion(updatedQuestion);
+          // TODO: Update or invalidate all other possible AvailableQuestion and AvailableQuestions cached data
+          // Invalidate all other keys...
+          availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+          // Reset form to the current data
+          form.reset(form.getValues());
+          // TODO: Convert `updatedQuestion` to the form data & reset form to these values?
+        } catch (error) {
+          const details = error instanceof APIError ? error.details : null;
+          const message = 'Cannot save question data';
+          // eslint-disable-next-line no-console
+          console.error('[EditQuestionForm]', message, {
+            details,
+            error,
+            questionId: editedQuestion.id,
+          });
+          debugger; // eslint-disable-line no-debugger
+        }
       });
     },
-    [availableQuestionsQuery, form, question, invalidateKeys],
+    [availableQuestionsQuery, form, question],
   );
 
   const handleCancel = React.useCallback(

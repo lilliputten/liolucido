@@ -8,14 +8,13 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { APIError } from '@/shared/types/api';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { useAnswersContext } from '@/contexts/AnswersContext';
+import { updateAnswer } from '@/features/answers/actions';
 import { TAnswer } from '@/features/answers/types';
+import { useAvailableAnswers } from '@/hooks';
 
 import { maxTextLength, minTextLength } from '../constants';
 import { EditAnswerFormActions } from './EditAnswerFormActions';
@@ -25,6 +24,7 @@ import { TFormData } from './types';
 const __debugShowData = false;
 
 interface TEditAnswerFormProps {
+  availableAnswersQuery: ReturnType<typeof useAvailableAnswers>;
   answer: TAnswer;
   className?: string;
   onCancel?: () => void;
@@ -34,11 +34,16 @@ interface TEditAnswerFormProps {
 }
 
 export function EditAnswerForm(props: TEditAnswerFormProps) {
-  const { answer, className, onCancel, handleDeleteAnswer, handleAddAnswer, toolbarPortalRoot } =
-    props;
-  const { setAnswers } = useAnswersContext();
+  const {
+    availableAnswersQuery,
+    answer,
+    className,
+    onCancel,
+    handleDeleteAnswer,
+    handleAddAnswer,
+    toolbarPortalRoot,
+  } = props;
   const [isPending, startTransition] = React.useTransition();
-  const invalidateKeys = useInvalidateReactQueryKeys();
 
   const formSchema = React.useMemo(
     () =>
@@ -80,53 +85,39 @@ export function EditAnswerForm(props: TEditAnswerFormProps) {
         isCorrect: formData.isCorrect,
         isGenerated: formData.isGenerated,
       };
-      startTransition(() => {
-        const savePromise = handleApiResponse(
-          fetch(`/api/answers/${editedAnswer.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(editedAnswer),
-          }),
-          {
-            onInvalidateKeys: invalidateKeys,
-            debugDetails: {
-              initiator: 'EditAnswerForm',
-              action: 'updateAnswer',
-              answerId: editedAnswer.id,
-            },
-          },
-        );
-        toast.promise(savePromise, {
-          loading: 'Saving the answer data...',
-          success: 'Successfully saved the answer',
-          error: 'Can not save the answer data.',
-        });
-        return savePromise
-          .then((result) => {
-            if (result.ok && result.data) {
-              const updatedAnswer = result.data as TAnswer;
-              setAnswers((answers) => {
-                return answers.map((answer) =>
-                  answer.id === updatedAnswer.id ? updatedAnswer : answer,
-                );
-              });
-              form.reset(form.getValues());
-            }
-          })
-          .catch((error) => {
-            const details = error instanceof APIError ? error.details : null;
-            const message = 'Cannot save answer data';
-            // eslint-disable-next-line no-console
-            console.error('[EditAnswerForm]', message, {
-              details,
-              error,
-              answerId: editedAnswer.id,
-            });
-            debugger; // eslint-disable-line no-debugger
+      startTransition(async () => {
+        try {
+          const promise = updateAnswer(editedAnswer);
+          toast.promise(promise, {
+            loading: 'Saving the answer data...',
+            success: 'Successfully saved the answer',
+            error: 'Can not save the answer data.',
           });
+          const updatedAnswer = await promise;
+          console.log('[EditAnswerForm]', {
+            updatedAnswer,
+          });
+          // Update the item to the cached react-query data
+          availableAnswersQuery.updateAnswer(updatedAnswer);
+          // TODO: Update or invalidate all other possible AvailableAnswer and AvailableAnswers cached data
+          // Invalidate all other keys...
+          availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+          // Reset form to the current data
+          form.reset(form.getValues());
+        } catch (error) {
+          const details = error instanceof APIError ? error.details : null;
+          const message = 'Cannot save answer data';
+          // eslint-disable-next-line no-console
+          console.error('[EditAnswerForm]', message, {
+            details,
+            error,
+            answerId: editedAnswer.id,
+          });
+          debugger; // eslint-disable-line no-debugger
+        }
       });
     },
-    [answer, invalidateKeys, setAnswers, form],
+    [availableAnswersQuery, answer, form],
   );
 
   const handleCancel = React.useCallback(

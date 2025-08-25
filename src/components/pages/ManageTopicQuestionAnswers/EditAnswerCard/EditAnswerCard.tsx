@@ -5,27 +5,45 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useAnswersContext } from '@/contexts/AnswersContext';
-import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
+import {
+  AnswersBreadcrumbs,
+  AnswersScopeBreadcrumbs,
+} from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
-import { useGoBack } from '@/hooks';
+import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
+import {
+  useAvailableAnswerById,
+  useAvailableAnswers,
+  useAvailableQuestionById,
+  useAvailableTopicById,
+  useGoBack,
+  useGoToTheRoute,
+} from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { topicAnswerDeletedEventId } from '../DeleteAnswerModal';
 import { EditAnswerForm } from './EditAnswerForm';
 
 interface TEditAnswerCardProps extends TPropsWithClassName {
+  topicId: TTopicId;
+  questionId: TQuestionId;
   answerId: TAnswerId;
 }
-type TChildProps = {
+type TToolbarProps = {
   goBack: () => void;
-  toolbarPortalRef: React.RefObject<HTMLDivElement>;
+  toolbarPortalRef: (node: HTMLDivElement | null) => void;
+  isLoading?: boolean;
 };
 
-function Toolbar({ toolbarPortalRef }: TChildProps) {
+function Toolbar({ toolbarPortalRef, isLoading }: TToolbarProps) {
   return (
     <div
       ref={toolbarPortalRef}
@@ -34,6 +52,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
         'flex flex-wrap gap-2',
       )}
     >
+      {isLoading && generateArray(3).map((i) => <Skeleton key={i} className="h-9 w-24 rounded" />)}
       {/* // Example
       <Button disabled variant="ghost" size="sm" className="flex gap-2">
         <Link href="#" className="flex items-center gap-2">
@@ -47,41 +66,66 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
 }
 
 export function EditAnswerCard(props: TEditAnswerCardProps) {
-  const { className, answerId } = props;
-  const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
+  const { manageScope } = useManageTopicsStore();
+
+  const { className, answerId, topicId, questionId } = props;
+  const [toolbarPortalNode, setToolbarPortalNode] = React.useState<HTMLDivElement | null>(null);
   const [hasDeleted, setHasDeleted] = React.useState(false);
+
   const router = useRouter();
-  const answersContext = useAnswersContext();
-  const { answers } = answersContext;
 
-  const answer: TAnswer | undefined = React.useMemo(
-    () => answers.find(({ id }) => id === answerId),
-    [answers, answerId],
-  );
+  const availableTopicQuery = useAvailableTopicById({ id: topicId });
+  const {
+    topic,
+    // isFetched: isTopicFetched,
+    // isLoading: isTopicLoading,
+  } = availableTopicQuery;
+  // const isTopicLoadingOverall = !topic && (!isTopicFetched || isTopicLoading);
 
-  if (!answerId || (!answer && !hasDeleted)) {
-    throw new Error('No such answer exists');
-  }
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    question,
+    // isFetched: isQuestionFetched,
+    // isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  // const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
 
-  const goBack = useGoBack(answersContext.routePath);
+  const availableAnswersQuery = useAvailableAnswers({ questionId });
+  const {
+    // ...
+    queryKey: availableAnswersQueryKey,
+    queryProps: availableAnswersQueryProps,
+  } = availableAnswersQuery;
+
+  // Calculate paths...
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+  const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  const answersListRoutePath = `${questionRoutePath}/answers`;
+  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
+  const availableAnswerQuery = useAvailableAnswerById({
+    id: answerId,
+    availableAnswersQueryKey,
+    includeQuestion: availableAnswersQueryProps.includeQuestion,
+  });
+  const { answer, isFetched: isAnswerFetched, isLoading: isAnswerLoading } = availableAnswerQuery;
+  const isAnswerLoadingOverall = !answer && (!isAnswerFetched || isAnswerLoading);
+
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(answersListRoutePath);
 
   // Add Answer Modal
   const handleAddAnswer = React.useCallback(() => {
-    router.push(`${answersContext.routePath}/add`);
-  }, [router, answersContext]);
+    router.push(`${answersListRoutePath}/add`);
+  }, [answersListRoutePath, router]);
 
   // Delete Answer Modal
   const handleDeleteAnswer = React.useCallback(() => {
-    const hasAnswer = answersContext.answers.find(({ id }) => id === answerId);
-    if (hasAnswer) {
-      router.push(`${answersContext.routePath}/delete?answerId=${answerId}`);
-    } else {
-      toast.error('The requested answer does not exist.');
-      router.replace(answersContext.routePath);
-    }
-  }, [router, answersContext, answerId]);
+    const url = `${answersListRoutePath}/delete?answerId=${answerId}`;
+    goToTheRoute(url);
+  }, [answerId, answersListRoutePath, goToTheRoute]);
 
   // Watch if the answer has been deleted
   React.useEffect(() => {
@@ -96,26 +140,47 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     return () => {
       window.removeEventListener(topicAnswerDeletedEventId, handleAnswerDeleted as EventListener);
     };
-  }, [answerId, router, answersContext]);
+  }, [answerId]);
 
   // Effect:hasDeleted
   React.useEffect(() => {
     if (hasDeleted) {
-      const { href } = window.location;
-      router.back();
-      setTimeout(() => {
-        // If still on the same page after trying to go back, fallback
-        if (document.visibilityState === 'visible' && href === window.location.href) {
-          router.push(answersContext.routePath);
-        }
-      }, 200);
+      goBack();
     }
-  }, [hasDeleted, answersContext, router]);
+  }, [goBack, hasDeleted]);
 
-  if (hasDeleted) {
-    // TODO: Show 'Answer has been removed' info?
-    return <PageError iconName="trash" title="The answer has been removed" />;
-  }
+  const answerFormContent = isAnswerLoadingOverall ? (
+    <div
+      className={cn(
+        isDev && '__EditAnswerCard_Form_Skeleton', // DEBUG
+        'flex size-full flex-1 flex-col gap-4 p-6',
+      )}
+    >
+      <Skeleton className="h-8 w-full rounded-lg" />
+      {[...Array(1)].map((_, i) => (
+        <Skeleton key={i} className="h-20 w-full rounded-lg" />
+      ))}
+    </div>
+  ) : answer ? (
+    <EditAnswerForm
+      className={cn(
+        isDev && '__EditAnswerCard_Form_Content', // DEBUG
+      )}
+      availableAnswersQuery={availableAnswersQuery}
+      answer={answer}
+      onCancel={goBack}
+      toolbarPortalRoot={toolbarPortalNode}
+      handleDeleteAnswer={handleDeleteAnswer}
+      handleAddAnswer={handleAddAnswer}
+    />
+  ) : (
+    <PageError
+      className={cn(
+        isDev && '__EditAnswerCard_Form_Error', // DEBUG
+      )}
+      title="No answer found"
+    />
+  );
 
   return (
     <Card
@@ -137,20 +202,24 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <AnswersBreadcrumbs
+          <AnswersScopeBreadcrumbs
             className={cn(
               isDev && '__EditAnswerCard_Breadcrumbs', // DEBUG
             )}
-            answerId={answerId}
-            // inactiveAnswers
+            scope={manageScope}
+            isLoading={!topic || !question || !answer}
+            topic={topic}
+            question={question}
+            answer={answer}
+            // inactiveLast
           />
-          {/* // UNUSED: Tilte & description
-          <CardTitle className="flex flex-1 items-center overflow-hidden">
-            <span className="truncate">Edit answer</span>
-          </CardTitle>
-          */}
         </div>
-        <Toolbar {...props} goBack={goBack} toolbarPortalRef={toolbarPortalRef} />
+        <Toolbar
+          {...props}
+          goBack={goBack}
+          toolbarPortalRef={setToolbarPortalNode}
+          isLoading={isAnswerLoadingOverall}
+        />
       </CardHeader>
       <CardContent
         className={cn(
@@ -158,15 +227,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        {answer && (
-          <EditAnswerForm
-            answer={answer}
-            onCancel={goBack}
-            toolbarPortalRoot={toolbarPortalRoot}
-            handleDeleteAnswer={handleDeleteAnswer}
-            handleAddAnswer={handleAddAnswer}
-          />
-        )}
+        {answerFormContent}
       </CardContent>
     </Card>
   );

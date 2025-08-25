@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 }
 
 export default async function EditManageAnswerPage({ params }: TAwaitedProps) {
-  const { answerId } = await params;
+  const { topicId, questionId, answerId } = await params;
 
   if (!answerId) {
     return <PageError error={'Undefined answer ID.'} />;
@@ -32,7 +32,7 @@ export default async function EditManageAnswerPage({ params }: TAwaitedProps) {
   return (
     <ManageTopicsPageWrapper>
       <PageHeader heading={'Edit Answer Properties'} />
-      <EditAnswerCard answerId={answerId} />
+      <EditAnswerCard topicId={topicId} questionId={questionId} answerId={answerId} />
     </ManageTopicsPageWrapper>
   );
 }

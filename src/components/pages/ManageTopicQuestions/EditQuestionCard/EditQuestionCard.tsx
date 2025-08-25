@@ -26,7 +26,8 @@ interface TEditQuestionCardProps extends TPropsWithClassName {
 }
 type TToolbarProps = {
   goBack: () => void;
-  toolbarPortalRef: React.RefObject<HTMLDivElement>;
+  // toolbarPortalRef: React.RefObject<HTMLDivElement>;
+  toolbarPortalRef: (node: HTMLDivElement | null) => void;
   isLoading?: boolean;
 };
 
@@ -56,7 +57,8 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
   const { manageScope } = useManageTopicsStore();
   const { className, topicId, questionId } = props;
 
-  const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
+  // const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
+  const [toolbarPortalNode, setToolbarPortalNode] = React.useState<HTMLDivElement | null>(null);
 
   const [hasDeleted, setHasDeleted] = React.useState(false);
 
@@ -164,7 +166,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
       availableQuestionsQuery={availableQuestionsQuery}
       question={question}
       onCancel={goBack}
-      toolbarPortalRoot={toolbarPortalRef.current}
+      toolbarPortalRoot={toolbarPortalNode}
       handleDeleteQuestion={handleDeleteQuestion}
       handleAddQuestion={handleAddQuestion}
     />
@@ -210,7 +212,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
         <Toolbar
           {...props}
           goBack={goBack}
-          toolbarPortalRef={toolbarPortalRef}
+          toolbarPortalRef={setToolbarPortalNode}
           isLoading={isQuestionLoadingOverall}
         />
       </CardHeader>

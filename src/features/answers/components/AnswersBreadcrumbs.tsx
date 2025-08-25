@@ -64,7 +64,7 @@ export function AnswersScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWi
       <div
         className={cn(
           isDev && '__AnswersScopeBreadcrumbs_Skeleton', // DEBUG
-          'flex gap-2',
+          'flex flex-wrap gap-2',
         )}
       >
         {[...Array(4)].map((_, i) => (
