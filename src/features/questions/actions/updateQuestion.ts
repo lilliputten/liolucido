@@ -36,9 +36,12 @@ export async function updateQuestion(questionData: TQuestionData) {
     throw new Error('Current user is not allowed to update the question');
   }
   try {
+    // NOTE: Remove the automatic fields
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, _count, createdAt, updatedAt, ...updateData } = questionData as TQuestion;
     const updatedQuestion = await prisma.question.update({
       where: { id: questionData.id },
-      data: questionData,
+      data: updateData,
     });
     return updatedQuestion as TQuestion;
   } catch (error) {

@@ -38,9 +38,12 @@ export async function updateAnswer(answer: TAnswer) {
     if (userId !== topic?.userId && user.role !== 'ADMIN') {
       throw new Error('Current user is not allowed to delete the question');
     }
+    // NOTE: Remove the automatic fields
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, createdAt, updatedAt, ...updateData } = answer;
     const updatedAnswer = await prisma.answer.update({
       where: { id: answer.id },
-      data: answer,
+      data: updateData,
     });
     return updatedAnswer as TAnswer;
   } catch (error) {
