@@ -3,11 +3,14 @@
 import React from 'react';
 import { toast } from 'sonner';
 
+import { availableTopicsRoute } from '@/config/routesConfig';
+import { generateArray } from '@/lib/helpers';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
-import { useAvailableAnswers } from '@/hooks';
+import { useAvailableAnswers, useGoToTheRoute } from '@/hooks';
 
 import { WorkoutQuestion } from './WorkoutQuestion';
 
@@ -17,6 +20,7 @@ interface TMemo {
 
 export function WorkoutQuestionContainer() {
   const {
+    topic,
     workout,
     saveResultAndGoNext,
     saveResult,
@@ -28,6 +32,10 @@ export function WorkoutQuestionContainer() {
   const selectedAnswerId = workout?.selectedAnswerId;
 
   const memo = React.useMemo<TMemo>(() => ({}), []);
+
+  const workoutRoutePath = `${availableTopicsRoute}/${topic.id}/workout`;
+
+  const goToTheRoute = useGoToTheRoute();
 
   // Prepare data...
   const questionsOrder = React.useMemo(
@@ -41,6 +49,13 @@ export function WorkoutQuestionContainer() {
   const questionId = questionsOrder[stepIndex];
   const isExceed = currentStep > totalSteps;
 
+  const handleFinish = React.useCallback(() => {
+    finishWorkout();
+    setTimeout(() => {
+      goToTheRoute(workoutRoutePath);
+    }, 10);
+  }, [finishWorkout, goToTheRoute, workoutRoutePath]);
+
   React.useEffect(() => {
     if (isExceed) {
       const error = new Error(
@@ -52,9 +67,9 @@ export function WorkoutQuestionContainer() {
         currentStep,
         workout,
       });
-      finishWorkout();
+      handleFinish();
     }
-  }, [finishWorkout, isExceed, currentStep, totalSteps, workout]);
+  }, [handleFinish, isExceed, currentStep, totalSteps, workout]);
 
   const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
   const {
@@ -62,17 +77,20 @@ export function WorkoutQuestionContainer() {
     isFetched: isQuestionFetched,
     isLoading: isQuestionLoading,
   } = availableQuestionQuery;
-  // const questionsListRoutePath = `${topicRoutePath}/${topicId}/questions`;
 
   // Fetch answers using dedicated hook
-  const availablwAnswersQuery = useAvailableAnswers({
+  const availableAnswersQuery = useAvailableAnswers({
     questionId,
     // enabled: !!questionId,
   });
-  const { allAnswers, isLoading: isAnswersLoading, error: answersError } = availablwAnswersQuery;
+  const {
+    allAnswers: answers,
+    isLoading: isAnswersLoading,
+    error: answersError,
+  } = availableAnswersQuery;
 
   const isLoadingOverall =
-    (!question || !allAnswers) && (isAnswersLoading || !isQuestionFetched || isQuestionLoading);
+    (!question || !answers) && (isAnswersLoading || !isQuestionFetched || isQuestionLoading);
 
   // Handle answers loading error
   React.useEffect(() => {
@@ -96,7 +114,7 @@ export function WorkoutQuestionContainer() {
 
   const onAnswerSelect = React.useCallback(
     (answerId: string) => {
-      const answer = allAnswers.find(({ id }) => id === answerId);
+      const answer = answers.find(({ id }) => id === answerId);
       if (answer) {
         const { isCorrect } = answer;
         // Update workout with result and move to next question
@@ -108,7 +126,7 @@ export function WorkoutQuestionContainer() {
         }
       }
     },
-    [memo, allAnswers, goToTheNextQuestion, saveResult, saveAnswer],
+    [memo, answers, goToTheNextQuestion, saveResult, saveAnswer],
   );
 
   const onSkip = React.useCallback(() => {
@@ -121,13 +139,15 @@ export function WorkoutQuestionContainer() {
       <div className="flex flex-col gap-6 py-4">
         <Skeleton className="h-6 w-1/4" />
         <Skeleton className="h-8 w-full" />
+        {/* Emulate answers */}
         <div className="grid gap-4 py-4 md:grid-cols-2">
-          {[...Array(2)].map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full" />
+          {generateArray(2).map((i) => (
+            <Skeleton key={i} className="h-14 w-full" />
           ))}
         </div>
+        {/* Emulate buttons */}
         <div className="flex justify-center gap-4">
-          {[...Array(2)].map((_, i) => (
+          {generateArray(2).map((i) => (
             <Skeleton key={i} className="h-10 w-20" />
           ))}
         </div>
@@ -165,26 +185,28 @@ export function WorkoutQuestionContainer() {
 
   if (!questionId) {
     return (
-      <div className="flex flex-col gap-3 py-6">
-        <div>Cannot get current question id from questions order.</div>
-        <PutDevDebugInfo />
-      </div>
+      <PageError
+        error="Cannot get current question id from questions order."
+        padded={false}
+        border={false}
+      />
     );
   }
 
   if (!question) {
-    return <div className="py-6">Not found question ({questionId}).</div>;
+    return <PageError error={`Not found question (${questionId}).`} padded={false} />;
   }
 
   return (
     <WorkoutQuestion
       questionText={question?.text || ''}
-      answers={allAnswers}
+      answers={answers}
+      isAnswersLoading={isAnswersLoading}
       currentStep={currentStep}
       totalSteps={totalSteps}
       onAnswerSelect={onAnswerSelect}
       onSkip={onSkip}
-      onFinish={finishWorkout}
+      onFinish={handleFinish}
       onContinue={goToTheNextQuestion}
       goPrevQuestion={goToThePrevQuestion}
       selectedAnswerId={selectedAnswerId}

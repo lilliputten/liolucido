@@ -7,19 +7,20 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
 
-import { WorkoutTopicControl } from './WorkoutTopicControl';
+import { WorkoutQuestionContainer } from '../WorkoutQuestion';
 
-interface TWorkoutTopicContentProps {
+interface TWorkoutTopicGoContentProps {
   topic: TAvailableTopic;
   className?: string;
 }
 
-export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
+export function WorkoutTopicGoContent(props: TWorkoutTopicGoContentProps) {
   const { className } = props;
+
   return (
     <div
       className={cn(
-        isDev && '__WorkoutTopicContent', // DEBUG
+        isDev && '__WorkoutTopicGoContent', // DEBUG
         'flex w-full flex-col gap-4 overflow-hidden',
         className,
       )}
@@ -27,13 +28,12 @@ export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
       <ScrollArea>
         <div
           className={cn(
-            isDev && '__WorkoutTopicContent_Scroll', // DEBUG
-            'flex w-full flex-col gap-4',
-            'mx-6',
+            isDev && '__WorkoutTopicGoContent_Scroll', // DEBUG
+            'mx-6 flex w-full flex-col gap-4',
             className,
           )}
         >
-          <WorkoutTopicControl />
+          <WorkoutQuestionContainer />
         </div>
       </ScrollArea>
     </div>

@@ -10,7 +10,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId:
 
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
-  const title = 'Workout Topic';
+  const title = 'Workout Topic Review';
   return constructMetadata({
     locale,
     title,
@@ -26,7 +26,7 @@ export default async function ViewTopicPage({ params }: TAwaitedProps) {
 
   return (
     <AvailableTopicsPageWrapper>
-      <PageHeader heading={'Workout Topic'} />
+      <PageHeader heading={'Workout Topic Review'} />
       <WorkoutTopic
         className={cn(
           isDev && '__page_ViewTopicPage', // DEBUG
