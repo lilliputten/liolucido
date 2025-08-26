@@ -59,6 +59,9 @@
     "title": "Settings",
     "description": "Application settings"
   },
+  "InfoPage": {
+    "title": "Info"
+  },
   "WelcomePage": {
     "title": "Welcome"
   },

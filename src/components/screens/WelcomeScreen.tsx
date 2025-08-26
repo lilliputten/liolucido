@@ -16,7 +16,7 @@ export function WelcomeScreen(props: TPropsWithClassName & { isLoggedUser: boole
       className={cn(
         isDev && '__WelcomeScreen', // DEBUG
         className,
-        'lg:layout-follow flex flex-1 flex-col items-stretch justify-stretch gap-8 overflow-auto lg:flex-row lg:overflow-hidden',
+        'lg:layout-follow flex flex-1 flex-col items-stretch justify-stretch gap-4 overflow-auto lg:flex-row lg:overflow-hidden',
       )}
     >
       <UseScrollableLayout type="clippable" />
@@ -31,10 +31,8 @@ export function WelcomeScreen(props: TPropsWithClassName & { isLoggedUser: boole
             isDev && '__WelcomeScreen_Gradient', // DEBUG
             'absolute bottom-0 left-0 right-0 top-0 lg:overflow-hidden',
             'welcome-screen-gradient',
-            // 'pointer-events-none',
           )}
         />
-        {/* TODO: Show a bigger page with more content if user is logged (isLoggedUser)? */}
         <WelcomeVisualBlock className="z-10" />
       </div>
       {!isLoggedUser && (
