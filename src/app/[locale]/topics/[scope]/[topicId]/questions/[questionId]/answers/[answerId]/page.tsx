@@ -10,6 +10,7 @@ import { TAwaitedLocaleProps } from '@/i18n/types';
 type TAwaitedProps = TAwaitedLocaleProps<{
   scope: TTopicsManageScopeId;
   topicId: string;
+  questionId: string;
   answerId: string;
 }>;
 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 }
 
 export default async function ViewAnswerPage({ params }: TAwaitedProps) {
-  const { answerId } = await params;
+  const { topicId, questionId, answerId } = await params;
 
   if (!answerId) {
     return <PageError error={'Not answer specified.'} />;
@@ -35,8 +36,10 @@ export default async function ViewAnswerPage({ params }: TAwaitedProps) {
       <ViewAnswerCard
         className={cn(
           isDev && '__page_ViewAnswerPage', // DEBUG
-          'mx-4',
+          // 'mx-4',
         )}
+        topicId={topicId}
+        questionId={questionId}
         answerId={answerId}
       />
     </ManageTopicsPageWrapper>

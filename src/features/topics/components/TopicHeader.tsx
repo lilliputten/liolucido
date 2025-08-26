@@ -4,14 +4,14 @@ import { useFormatter } from 'next-intl';
 
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAvailableTopic } from '@/features/topics/types';
+import { useSessionUser } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
-import { usePathname } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing'; // TODO: Use 'next/navigation'
 
 interface TTopicHeaderOptions {
   showDates?: boolean;
@@ -20,12 +20,14 @@ interface TTopicHeaderOptions {
 }
 interface TTopicHeaderProps {
   topic: TAvailableTopic;
+  scope: TTopicsManageScopeId;
   className?: string;
 }
 
 export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   const {
     topic,
+    scope,
     className,
     // Options...
     showDates,
@@ -49,10 +51,9 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   } = topic;
   const sessionUser = useSessionUser();
   const isOwner = userId && userId === sessionUser?.id;
-  const topicsContext = useTopicsContext();
-  const { routePath } = topicsContext;
+  const topicsListRoutePath = topicsRoutes[scope];
   const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
-  const topicRoutePath = `${routePath}/${id}`;
+  const topicRoutePath = `${topicsListRoutePath}/${id}`;
   const pathname = usePathname();
   let nameContent = <>{name}</>;
   if (withLink) {

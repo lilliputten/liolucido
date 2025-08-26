@@ -50,6 +50,7 @@ export async function ManageTopicQuestionsPage(props: ManageTopicQuestionsPagePr
         // text={t('description')}
       />
       <ManageTopicQuestionsPageModalsWrapper
+        topicId={topicId}
         showAddModal={showAddModal}
         deleteQuestionId={deleteQuestionId}
         editQuestionId={editQuestionId}

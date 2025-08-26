@@ -1,6 +1,9 @@
 import React from 'react';
 import { toast } from 'sonner';
 
+import { APIError } from '@/shared/types/api';
+import { handleApiResponse } from '@/lib/api';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { safeJsonParse } from '@/lib/helpers/json';
 import { isDev } from '@/constants';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -26,6 +29,7 @@ interface TMemo {
   workout?: TWorkoutData | null;
   questionIds?: string[];
   stepIndex?: number;
+  // invalidateKeys?: ReturnType<typeof useInvalidateReactQueryKeys>;
 }
 
 export function useWorkout(
@@ -38,64 +42,87 @@ export function useWorkout(
   const [workout, setWorkout] = React.useState<TWorkoutData | null>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+  const invalidateKeys = useInvalidateReactQueryKeys();
   memo.userId = userId;
   memo.questionIds = questionIds;
   memo.stepIndex = workout?.stepIndex;
 
   /** Low-level load data function */
-  const _retrieveData = React.useCallback((topicId?: TTopicId, userId?: TDefinedUserId) => {
-    // const topicId = memo.topicId;
-    // const userId = memo.user?.id;
-    return new Promise<TWorkoutData | null>((resolve, reject) => {
-      if (!topicId) {
-        return resolve(null);
-      }
-      startTransition(async () => {
-        if (isDev) {
-          await new Promise((r) => setTimeout(r, 1000));
+  const retrieveData = React.useCallback(
+    (topicId?: TTopicId, userId?: TDefinedUserId) => {
+      return new Promise<TWorkoutData | null>((resolve, reject) => {
+        if (!topicId) {
+          return resolve(null);
         }
-        if (userId) {
-          // Fetch from server for authenticated user
-          try {
-            const response = await fetch(`/api/workouts/${topicId}`);
-            if (response.ok) {
-              const data = (await response.json()) as TWorkoutData;
-              return resolve(data);
-            } else {
-              return resolve(null);
+        startTransition(async () => {
+          if (isDev) {
+            await new Promise((r) => setTimeout(r, 1000));
+          }
+          if (userId) {
+            // Fetch from server for authenticated user
+            const url = `/api/workouts/${topicId}`;
+            try {
+              const result = await handleApiResponse<TWorkoutData>(fetch(url), {
+                onInvalidateKeys: invalidateKeys,
+                debugDetails: {
+                  initiator: 'useWorkout',
+                  action: 'retrieveData',
+                  topicId,
+                },
+                onError: (error) => {
+                  // eslint-disable-next-line no-console
+                  console.warn('[useWorkout:retrieveData] Workout not found', {
+                    error,
+                    topicId,
+                    userId,
+                  });
+                  // NOTE: Do nothing, we consider that workout just absent
+                },
+              });
+              if (result.ok && result.data) {
+                return resolve(result.data);
+              } else {
+                return resolve(null);
+              }
+            } catch (error) {
+              const details = error instanceof APIError ? error.details : null;
+              const msg = 'Cannot load workout from server';
+              // eslint-disable-next-line no-console
+              console.error('[useWorkout]', msg, {
+                details,
+                error,
+                topicId,
+              });
+              debugger; // eslint-disable-line no-debugger
+              return reject(error);
             }
-          } catch (error) {
-            const msg = 'Failed to load workout';
-            // eslint-disable-next-line no-console
-            console.error(msg, error);
-            debugger; // eslint-disable-line no-debugger
-            return reject(error);
+          } else if (typeof localStorage === 'object') {
+            // Fetch from localStorage for unauthenticated user
+            try {
+              const stored = localStorage.getItem(`workout-${topicId}`);
+              const data = safeJsonParse(stored, null);
+              return resolve(data);
+            } catch (error) {
+              const msg = 'Failed to load workout from local storage';
+              // eslint-disable-next-line no-console
+              console.error(msg, error);
+              debugger; // eslint-disable-line no-debugger
+              return reject(error);
+            }
           }
-        } else if (typeof localStorage === 'object') {
-          // Fetch from localStorage for unauthenticated user
-          try {
-            const stored = localStorage.getItem(`workout-${topicId}`);
-            const data = safeJsonParse(stored, null);
-            return resolve(data);
-          } catch (error) {
-            const msg = 'Failed to load workout from local storage';
-            // eslint-disable-next-line no-console
-            console.error(msg, error);
-            debugger; // eslint-disable-line no-debugger
-            return reject(error);
-          }
-        }
-        resolve(null);
+          resolve(null);
+        });
       });
-    });
-  }, []);
+    },
+    [invalidateKeys],
+  );
 
   /** Retrieve workout data from the server or local storage.
    * In case of authentificated user, will be invoked twice, 'cause the session user will be initialized with a delay.
    */
   const fetchWorkout = React.useCallback(async () => {
     try {
-      const workout = await _retrieveData(topicId, userId);
+      const workout = await retrieveData(topicId, userId);
       // Parse date value (if still unparsed)
       if (workout?.startedAt && typeof workout.startedAt === 'string') {
         workout.startedAt = new Date(workout.startedAt);
@@ -111,7 +138,9 @@ export function useWorkout(
     } catch (error) {
       const msg = 'Failed to fetch workout';
       // eslint-disable-next-line no-console
-      console.error(msg, error);
+      console.error(msg, {
+        error,
+      });
       debugger; // eslint-disable-line no-debugger
       // Prevent Updated workout effect
       memo.workout = null;
@@ -119,7 +148,7 @@ export function useWorkout(
       setWorkout(null);
       toast.error(msg);
     }
-  }, [memo, _retrieveData, topicId, userId]);
+  }, [memo, retrieveData, topicId, userId]);
 
   /** Low-level data store function: for store the workout data to the server or to a local strage */
   const storeData = React.useCallback(
@@ -146,46 +175,40 @@ export function useWorkout(
                 headers: !isDelete ? { 'Content-Type': 'application/json' } : {},
                 body: requestData != undefined ? JSON.stringify(requestData) : undefined,
               };
-              /* console.log('[useWorkout:storeData]', method, {
-               *   data,
-               *   requestData,
-               *   isDelete,
-               *   isNew,
-               *   isUpdate,
-               *   requestInit,
-               *   url,
-               *   memo,
-               * });
-               */
-              // debugger;
-              const res = await fetch(url, requestInit);
-              const body = await res.text();
-              if (!res.ok) {
-                const error = new Error('Cannot store a workout data to the server');
-                // prettier-ignore
-                console.warn('[useWorkout:storeData]', error.message, { // eslint-disable-line no-console
-                  error,
-                  body,
-                  res,
-                  requestInit,
-                  url,
-                  isNew,
-                  isDelete,
-                  data,
-                  method,
-                });
-                debugger; // eslint-disable-line no-debugger
-                reject(error);
-              } else if (!isDelete) {
-                const result = safeJsonParse(body, null);
-                return resolve(result);
-              } else if (isDelete) {
-                return resolve(null);
+
+              const result = await handleApiResponse<TWorkoutData | { success: boolean }>(
+                fetch(url, requestInit),
+                {
+                  onInvalidateKeys: invalidateKeys,
+                  debugDetails: {
+                    initiator: 'useWorkout',
+                    action: 'storeData',
+                    method,
+                    topicId,
+                  },
+                },
+              );
+
+              if (result.ok && result.data) {
+                if (isDelete) {
+                  return resolve(null);
+                } else {
+                  return resolve(result.data as TWorkoutData);
+                }
+              } else {
+                const error = new Error(result.error?.message || 'Cannot store workout data');
+                return reject(error);
               }
             } catch (error) {
-              const msg = 'Failed to store workout data';
+              const details = error instanceof APIError ? error.details : null;
+              const msg = 'Cannot store workout data';
               // eslint-disable-next-line no-console
-              console.error(msg, error);
+              console.error('[useWorkout]', msg, {
+                details,
+                error,
+                method,
+                topicId,
+              });
               debugger; // eslint-disable-line no-debugger
               return reject(error);
             }
@@ -202,7 +225,7 @@ export function useWorkout(
         });
       });
     },
-    [memo],
+    [memo, invalidateKeys],
   );
 
   /** Helper function to save the workout data to the server or local storage */
@@ -417,7 +440,7 @@ export function useWorkout(
       questionResults: '',
       selectedAnswerId: '', // Answer for the current question. If defined then consider that user already chosen the answer but hasn't went to the next question (show the choice and suggest to go further)
       currentRatio: 0, // Current ratio (if finished)
-      currentTime: 0, // Current time remained to finish, in seconds (if finished)
+      currentTime: 0, // Current time remained to thefinish, in seconds (if finished)
       correctAnswers: 0, // Current correct answers count (if finished)
     };
     setWorkout(
@@ -429,6 +452,7 @@ export function useWorkout(
     );
   }, []);
 
+  // Effect: Load data for each new topicId and userId
   React.useEffect(() => {
     fetchWorkout();
   }, [fetchWorkout]);

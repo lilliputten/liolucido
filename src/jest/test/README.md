@@ -1,0 +1,1 @@
+Mocking module sample

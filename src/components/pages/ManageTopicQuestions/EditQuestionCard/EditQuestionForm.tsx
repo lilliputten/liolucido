@@ -7,12 +7,12 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { getErrorText } from '@/lib/helpers/strings';
+import { APIError } from '@/shared/types/api';
 import { cn } from '@/lib/utils';
+import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Form } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { updateQuestion } from '@/features/questions/actions';
 import { TQuestion, TQuestionData } from '@/features/questions/types';
 
@@ -24,6 +24,7 @@ import { TFormData } from './types';
 const __debugShowData = false;
 
 interface TEditQuestionFormProps {
+  availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
   question: TQuestion;
   className?: string;
   onCancel?: () => void;
@@ -34,6 +35,7 @@ interface TEditQuestionFormProps {
 
 export function EditQuestionForm(props: TEditQuestionFormProps) {
   const {
+    availableQuestionsQuery,
     question,
     className,
     onCancel,
@@ -41,7 +43,6 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
     handleAddQuestion,
     toolbarPortalRoot,
   } = props;
-  const { setQuestions } = useQuestionsContext();
   const [isPending, startTransition] = React.useTransition();
 
   const formSchema = React.useMemo(
@@ -122,32 +123,37 @@ export function EditQuestionForm(props: TEditQuestionFormProps) {
         answersCountMin: formData.answersCountMin,
         answersCountMax: formData.answersCountMax,
       };
-      startTransition(() => {
-        const savePromise = updateQuestion(editedQuestion);
-        toast.promise<unknown>(savePromise, {
-          loading: 'Saving the question data...',
-          success: 'Successfully saved the question',
-          error: 'Can not save the question data.',
-        });
-        return savePromise
-          .then((updatedQuestion) => {
-            setQuestions((questions) => {
-              return questions.map((question) =>
-                question.id === updatedQuestion.id ? updatedQuestion : question,
-              );
-            });
-            form.reset(form.getValues());
-          })
-          .catch((error) => {
-            const message = getErrorText(error);
-            // eslint-disable-next-line no-console
-            console.error('[EditQuestionForm:handleFormSubmit]', message, {
-              error,
-            });
+      startTransition(async () => {
+        try {
+          const promise = updateQuestion(editedQuestion);
+          toast.promise(promise, {
+            loading: 'Saving the question data...',
+            success: 'Successfully saved the question',
+            error: 'Can not save the question data.',
           });
+          const updatedQuestion = await promise;
+          // Update the item to the cached react-query data
+          availableQuestionsQuery.updateQuestion(updatedQuestion);
+          // TODO: Update or invalidate all other possible AvailableQuestion and AvailableQuestions cached data
+          // Invalidate all other keys...
+          availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+          // Reset form to the current data
+          form.reset(form.getValues());
+          // TODO: Convert `updatedQuestion` to the form data & reset form to these values?
+        } catch (error) {
+          const details = error instanceof APIError ? error.details : null;
+          const message = 'Cannot save question data';
+          // eslint-disable-next-line no-console
+          console.error('[EditQuestionForm]', message, {
+            details,
+            error,
+            questionId: editedQuestion.id,
+          });
+          debugger; // eslint-disable-line no-debugger
+        }
       });
     },
-    [form, setQuestions, question],
+    [availableQuestionsQuery, form, question],
   );
 
   const handleCancel = React.useCallback(

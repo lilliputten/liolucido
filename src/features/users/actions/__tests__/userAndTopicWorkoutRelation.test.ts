@@ -1,6 +1,6 @@
 import { Topic, User, UserTopicWorkout } from '@prisma/client';
 
-import { prisma } from '@/lib/db';
+import { jestPrisma } from '@/lib/db/jestPrisma';
 import { getErrorText } from '@/lib/helpers/strings';
 
 test('should create relation and remove it if topic removed', async () => {
@@ -9,18 +9,18 @@ test('should create relation and remove it if topic removed', async () => {
   const userTopicWorkouts: UserTopicWorkout[] = [];
   try {
     // Create users...
-    const user1: User = await prisma.user.create({
+    const user1: User = await jestPrisma.user.create({
       data: { name: 'User for userAndTopicRelation.test' },
     });
     const userId = user1.id;
     users.push(user1);
     // Create parent records...
-    const topic1 = await prisma.topic.create({
+    const topic1 = await jestPrisma.topic.create({
       data: { name: 'Test topic 1 for user ' + userId, userId },
     });
     topics.push(topic1);
     // Create a user-topic relation record
-    const userTopicWorkout1 = await prisma.userTopicWorkout.create({
+    const userTopicWorkout1 = await jestPrisma.userTopicWorkout.create({
       data: {
         userId,
         topicId: topic1.id,
@@ -33,7 +33,7 @@ test('should create relation and remove it if topic removed', async () => {
     });
     userTopicWorkouts.push(userTopicWorkout1);
     /* // EXAMPLE: Remove user's topic workout directly
-     * const removedUserTopicWorkout = await prisma.userTopicWorkout.delete({
+     * const removedUserTopicWorkout = await jestPrisma.userTopicWorkout.delete({
      *   where: {
      *     userId_topicId: {
      *       userId,
@@ -43,13 +43,13 @@ test('should create relation and remove it if topic removed', async () => {
      * });
      */
     // Remove topic
-    await prisma.topic.delete({
+    await jestPrisma.topic.delete({
       where: {
         id: topic1.id,
       },
     });
     // Find user's topics again
-    const foundUserTopicWorkouts = await prisma.userTopicWorkout.findMany({
+    const foundUserTopicWorkouts = await jestPrisma.userTopicWorkout.findMany({
       where: { userId },
     });
     // Should find nothing
@@ -70,14 +70,14 @@ test('should create relation and remove it if topic removed', async () => {
     throw nextError;
   } finally {
     // Clean up...
-    await prisma.userTopicWorkout.deleteMany({
+    await jestPrisma.userTopicWorkout.deleteMany({
       where: {
         OR: userTopicWorkouts.map(({ userId, topicId }) => ({
           AND: [{ userId }, { topicId }],
         })),
       },
     });
-    await prisma.topic.deleteMany({ where: { id: { in: topics.map(({ id }) => id) } } });
-    await prisma.user.deleteMany({ where: { id: { in: users.map(({ id }) => id) } } });
+    await jestPrisma.topic.deleteMany({ where: { id: { in: topics.map(({ id }) => id) } } });
+    await jestPrisma.user.deleteMany({ where: { id: { in: users.map(({ id }) => id) } } });
   }
 });

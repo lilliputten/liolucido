@@ -5,10 +5,10 @@ import Link from 'next/link';
 
 import { myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { TTopic } from '@/features/topics/types';
+import { useSessionUser } from '@/hooks';
 
 export interface TViewAvailableTopicContentActionsProps {
   topic: TTopic;

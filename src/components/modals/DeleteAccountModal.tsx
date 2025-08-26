@@ -2,6 +2,9 @@ import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
+import { APIError } from '@/shared/types/api';
+import { handleApiResponse } from '@/lib/api';
+import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Modal } from '@/components/ui/modal';
@@ -16,16 +19,28 @@ function DeleteAccountModal({
 }) {
   const { data: session } = useSession();
   const [deleting, setDeleting] = useState(false);
+  const invalidateKeys = useInvalidateReactQueryKeys();
 
   async function deleteAccount() {
     setDeleting(true);
-    await fetch(`/api/user`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then(async (res) => {
-      if (res.status === 200) {
+    try {
+      const result = await handleApiResponse(
+        fetch(`/api/user`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }),
+        {
+          onInvalidateKeys: invalidateKeys,
+          debugDetails: {
+            initiator: 'DeleteAccountModal',
+            action: 'deleteAccount',
+          },
+        },
+      );
+
+      if (result.ok) {
         // delay to allow for the route change to complete
         await new Promise((resolve) =>
           setTimeout(() => {
@@ -37,10 +52,20 @@ function DeleteAccountModal({
         );
       } else {
         setDeleting(false);
-        const error = await res.text();
-        throw error;
+        throw new Error(result.error?.message || 'Failed to delete account');
       }
-    });
+    } catch (error) {
+      setDeleting(false);
+      const details = error instanceof APIError ? error.details : null;
+      const message = 'Cannot delete account';
+      // eslint-disable-next-line no-console
+      console.error('[DeleteAccountModal]', message, {
+        details,
+        error,
+      });
+      debugger; // eslint-disable-line no-debugger
+      throw error;
+    }
   }
 
   return (

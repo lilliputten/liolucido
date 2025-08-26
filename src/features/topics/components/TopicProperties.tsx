@@ -40,10 +40,6 @@ export function TopicProperties(props: TTopicPropertiesProps & TTopicPropertiesO
     _count,
   } = topic;
   const questionsCount = _count?.questions;
-  // const topicsContext = useTopicsContext();
-  // const { routePath } = topicsContext;
-  // const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
-  // const topicRoutePath = `${routePath}/${id}`;
   const keywordsList = keywords
     ?.split(',')
     .map((s) => s.trim())

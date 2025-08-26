@@ -20,18 +20,21 @@ interface TViewQuestionContentProps {
   goBack?: () => void;
   handleDeleteQuestion: TViewQuestionContentActionsProps['handleDeleteQuestion'];
   handleAddQuestion?: TViewQuestionContentActionsProps['handleAddQuestion'];
-  toolbarPortalRoot: HTMLDivElement | null;
+  toolbarPortalRoot?: HTMLDivElement | null;
+  toolbarPortalRef: React.RefObject<HTMLDivElement>;
 }
 
 export function ViewQuestionContent(props: TViewQuestionContentProps) {
   const {
     question,
     className,
-    goBack,
-    handleDeleteQuestion,
-    handleAddQuestion,
-    toolbarPortalRoot,
+    // goBack,
+    // handleDeleteQuestion,
+    // handleAddQuestion,
+    // toolbarPortalRef,
+    // toolbarPortalRoot,
   } = props;
+  // const toolbarPortalRoot = toolbarPortalRef.current;
   return (
     <>
       <div
@@ -45,7 +48,7 @@ export function ViewQuestionContent(props: TViewQuestionContentProps) {
           <ViewQuestionContentSummary question={question} />
         </ScrollArea>
       </div>
-      {toolbarPortalRoot &&
+      {/*toolbarPortalRoot &&
         createPortal(
           <ViewQuestionContentActions
             question={question}
@@ -54,7 +57,7 @@ export function ViewQuestionContent(props: TViewQuestionContentProps) {
             handleAddQuestion={handleAddQuestion}
           />,
           toolbarPortalRoot,
-        )}
+          )*/}
     </>
   );
 }

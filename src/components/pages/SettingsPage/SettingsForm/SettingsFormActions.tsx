@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { UseFormReturn } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TSettings } from '@/features/settings/types';
+import { useSessionUser } from '@/hooks';
 
 import { TFormData } from './types';
 
@@ -47,7 +47,7 @@ export function SettingsFormActions(props: TProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="flex gap-2 px-4"
+          className="flex gap-2"
           disabled={isDirty}
           onClick={onCancel}
         >
@@ -89,7 +89,7 @@ export function SettingsFormActions(props: TProps) {
           variant="ghost"
           size="sm"
           onClick={() => form.reset()}
-          className="flex gap-2 px-4"
+          className="flex gap-2"
           disabled={!isDirty}
         >
           <Icons.close className="hidden size-4 opacity-50 sm:flex" />

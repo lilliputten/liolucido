@@ -35,8 +35,8 @@ export async function ManageTopicQuestionAnswersLayout(
   const resolvedParams = await params;
   const { locale, scope, topicId, questionId } = resolvedParams;
   const topicsListRoutePath = topicsRoutes[scope];
-  const topicRootRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
-  const questionsListRoutePath = `${topicRootRoutePath}/questions` as TRoutePath;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
+  const questionsListRoutePath = `${topicRoutePath}/questions` as TRoutePath;
   const questionRootRoutePath = `${questionsListRoutePath}/${questionId}` as TRoutePath;
   const routePath = `${questionRootRoutePath}/answers` as TRoutePath;
 
@@ -59,7 +59,16 @@ export async function ManageTopicQuestionAnswersLayout(
   // Enable static rendering
   setRequestLocale(locale);
 
-  const answers: TAnswer[] = await getQuestionAnswers(questionId);
+  let answers: TAnswer[];
+  try {
+    answers = await getQuestionAnswers(questionId);
+  } catch (error) {
+    return (
+      <PageError
+        error={error instanceof Error ? error.message : 'Failed to load answers for this question.'}
+      />
+    );
+  }
 
   return (
     <AnswersContextProvider
@@ -68,7 +77,7 @@ export async function ManageTopicQuestionAnswersLayout(
       questionRootRoutePath={questionRootRoutePath}
       questionsListRoutePath={questionsListRoutePath}
       questionId={questionId}
-      topicRootRoutePath={topicRootRoutePath}
+      topicRootRoutePath={topicRoutePath}
       topicsListRoutePath={topicsListRoutePath}
       topicId={topicId}
     >

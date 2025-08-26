@@ -4,10 +4,10 @@ import React from 'react';
 
 import { TReactNode } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
+import { useMediaQuery } from '@/hooks';
 
 import { ConfirmForm, TConfirmFormProps } from './ConfirmForm';
 

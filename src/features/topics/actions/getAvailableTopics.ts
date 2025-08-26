@@ -1,73 +1,85 @@
 'use server';
 
+import { ExtendedUser } from '@/@types/next-auth';
 import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemas';
 import { isDev } from '@/constants';
 
-import { topicsLimit } from '../constants';
-import { TAvailableTopic } from '../types';
+import { IncludedUserSelect, IncludedUserTopicWorkoutSelect } from '../types';
 
-interface TParams {
-  /** Skip records (start from the nth record), default = 0 */
-  skip?: number;
-  /** Amount of records to return, default = {topicsLimit} */
-  take?: number;
-  /** Display only current user's topics */
-  showOnlyMyTopics?: boolean;
-  /** Unclude compact user info data (name, email) in the `user` property of result object */
-  includeUser?: boolean;
-  /** Include related questions count, in `_count: { questions }` */
-  includeQuestionsCount?: boolean;
-  /** Sort by parameter, default: `{ createdAt: 'desc' }` */
-  orderBy?: Prisma.TopicFindManyArgs['orderBy'];
-}
-
-interface TGetAvailableTopicsResults {
-  topics: TAvailableTopic[];
-  /** Total records count for these conditions */
-  totalCount: number;
+interface TOptions {
+  noDebug?: boolean;
 }
 
 export async function getAvailableTopics(
-  params: TParams = {},
+  params: TGetAvailableTopicsParams & TOptions = {},
 ): Promise<TGetAvailableTopicsResults> {
+  const {
+    topicIds,
+    skip, // = 0,
+    take, // = itemsLimit,
+    adminMode,
+    showOnlyMyTopics,
+    orderBy = { updatedAt: 'desc' },
+    // TopicIncludeParamsSchema
+    includeUser = false,
+    includeWorkout = false,
+    includeQuestionsCount = true,
+    includeQuestions = false,
+    // Options (no error console output and debugger stops, for tests)
+    noDebug,
+  } = params;
   if (isDev) {
     // DEBUG: Emulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
-  const {
-    skip = 0,
-    take = topicsLimit,
-    showOnlyMyTopics,
-    includeUser = true,
-    includeQuestionsCount = true,
-    orderBy = { createdAt: 'desc' },
-  } = params;
-  const user = await getCurrentUser();
+  const user: ExtendedUser | undefined = await getCurrentUser();
   const userId = user?.id;
-  // const isAdmin = user?.role === 'ADMIN';
-  // No own topics for unauthorized users
-  if (!userId && showOnlyMyTopics) {
-    return { topics: [], totalCount: 0 };
-  }
+  const isAdmin = user?.role === 'ADMIN';
   try {
+    // Check if conditions are correct...
+    if (!user && showOnlyMyTopics) {
+      throw new Error('Only authorized users can get their own data');
+    }
+    if (adminMode && !isAdmin) {
+      throw new Error('Admin mode is allowed only for administrators');
+    }
+    if (!userId && showOnlyMyTopics && !adminMode) {
+      return { items: [], totalCount: 0 };
+    }
+    // Create the "include" data...
     const include: Prisma.TopicInclude = {
       _count: { select: { questions: includeQuestionsCount } },
-      user: includeUser
-        ? {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          }
-        : false,
     };
-    const where: Prisma.TopicWhereInput = showOnlyMyTopics
-      ? { userId }
-      : { OR: [{ userId }, { isPublic: true }] };
+    if (includeUser) {
+      include.user = { select: IncludedUserSelect };
+    }
+    if (includeQuestions) {
+      include.questions = true;
+    }
+    if (includeWorkout) {
+      include.userTopicWorkout = { select: IncludedUserTopicWorkoutSelect };
+    }
+    // Create the "where" data...
+    const where: Prisma.TopicWhereInput = {};
+    if (!userId) {
+      // Limit with public data for nonauthorized user in non-admin mode and without any other conditions
+      where.isPublic = true;
+    } else if (showOnlyMyTopics) {
+      // Request only this user data
+      where.userId = userId;
+    } else if (!adminMode) {
+      // Request public or this user data
+      where.OR = [{ userId }, { isPublic: true }];
+    }
+    if (topicIds) {
+      // Limit the results by specified ids
+      where.id = { in: topicIds };
+    }
+    // Combine all the request arguments...
     const args: Prisma.TopicFindManyArgs = {
       skip,
       take,
@@ -75,20 +87,22 @@ export async function getAvailableTopics(
       include,
       orderBy,
     };
-    const [topics, totalCount] = await prisma.$transaction([
+    const [items, totalCount] = await prisma.$transaction([
       prisma.topic.findMany(args),
       prisma.topic.count({
         where,
       }),
     ]);
     // const topics: TAvailableTopic[] = await prisma.topic.findMany(args);
-    return { topics, totalCount } satisfies TGetAvailableTopicsResults;
+    return { items, totalCount } satisfies TGetAvailableTopicsResults;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[getAvailableTopics] catch', {
-      error,
-    });
-    debugger; // eslint-disable-line no-debugger
+    if (!noDebug) {
+      // eslint-disable-next-line no-console
+      console.error('[getAvailableTopicsCore] catch', {
+        error,
+      });
+      debugger; // eslint-disable-line no-debugger
+    }
     throw error;
   }
 }

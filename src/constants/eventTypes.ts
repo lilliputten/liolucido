@@ -26,12 +26,14 @@ export type TAddedQuestionDetail = {
   questionsCount: number;
 };
 
-export const deletedQuestionEventName = 'deleted-question';
-export type TDeletedQuestionDetail = {
-  topicId: TTopicId;
-  deletedQuestionId: TQuestionId;
-  questionsCount: number;
-};
+/* // UNUSED Probably the duplicated id: `topicQuestionDeletedEventId`
+ * export const deletedQuestionEventName = 'deleted-question';
+ * export type TDeletedQuestionDetail = {
+ *   topicId: TTopicId;
+ *   deletedQuestionId: TQuestionId;
+ *   questionsCount: number;
+ * };
+ */
 
 export const updatedAnswersCountEventName = 'updated-answers-count';
 export type TUpdatedAnswersCountDetail = {

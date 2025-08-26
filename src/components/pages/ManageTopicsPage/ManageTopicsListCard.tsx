@@ -1,14 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
-import { getRandomHashString, truncate } from '@/lib/helpers/strings';
+import { getRandomHashString, truncateString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/ScrollArea';
+import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
@@ -20,18 +18,16 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { TUpdatedTopicsCountDetail, updatedTopicsCountEventName } from '@/constants/eventTypes';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { getAllUsersTopics, getThisUserTopics } from '@/features/topics/actions';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useSessionUser } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { TCachedUsers, useCachedUsersForTopics } from './hooks/useCachedUsersForTopics';
 
 const saveScrollHash = getRandomHashString();
 
 interface TManageTopicsListCardProps extends TPropsWithClassName {
-  topics: TTopic[];
   handleDeleteTopic: (topicId: TTopicId, from: string) => void;
   handleEditTopic: (topicId: TTopicId) => void;
   handleEditQuestions: (topicId: TTopicId) => void;
@@ -43,44 +39,15 @@ function Toolbar(props: TToolbarProps) {
   const { handleAddTopic } = props;
   const [isReloading, startReload] = React.useTransition();
 
-  const topicsContext = useTopicsContext();
+  const { manageScope } = useManageTopicsStore();
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { refetch } = availableTopics;
 
   const handleReload = React.useCallback(() => {
-    const { manageScope, setTopics } = topicsContext;
-    const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS;
-    const getFunction = isAdminMode ? getAllUsersTopics : getThisUserTopics;
     startReload(async () => {
-      try {
-        const promise = getFunction();
-        toast.promise(promise, {
-          loading: 'Reloading topics data...',
-          success: 'Topics successfully reloaded',
-          error: 'Error reloading topics.',
-        });
-        const topics = (await promise) || [];
-        setTopics((prevTopics) => {
-          const prevTopicsCount = prevTopics.length;
-          // Dispatch a custom event with the updated topics data
-          const topicsCount = topics.length;
-          if (topicsCount !== prevTopicsCount) {
-            const detail: TUpdatedTopicsCountDetail = { topicsCount };
-            const event = new CustomEvent<TUpdatedTopicsCountDetail>(updatedTopicsCountEventName, {
-              detail,
-              bubbles: true,
-            });
-            setTimeout(() => window.dispatchEvent(event), 100);
-          }
-          return topics;
-        });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('[ManageTopicsListCard:handleReload] catch', {
-          error,
-        });
-        debugger; // eslint-disable-line no-debugger
-      }
+      await refetch({ cancelRefetch: true });
     });
-  }, [topicsContext]);
+  }, [refetch]);
 
   return (
     <div
@@ -103,7 +70,7 @@ function Toolbar(props: TToolbarProps) {
         />
         <span>Reload</span>
       </Button>
-      <Button variant="ghost" size="sm" onClick={handleAddTopic} className="flex gap-2 px-4">
+      <Button variant="ghost" size="sm" onClick={handleAddTopic} className="flex gap-2">
         <Icons.add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Topic</span>
@@ -128,7 +95,7 @@ function TopicTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
         <TableHead id="name" className="truncate">
           Topic Name
         </TableHead>
-        <TableHead id="questions" className="truncate">
+        <TableHead id="questions" className="truncate max-sm:hidden">
           Questions
         </TableHead>
         {isAdminMode && (
@@ -170,9 +137,8 @@ function TopicTableRow(props: TTopicTableRowProps) {
   const { id, name, langCode, langName, keywords, userId, _count } = topic;
   const questionsCount = _count?.questions;
   const topicUser = isAdminMode ? cachedUsers[userId] : undefined;
-  const topicsContext = useTopicsContext();
-  const { routePath } = topicsContext;
-
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   return (
     <TableRow className="truncate" data-topic-id={id}>
       <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
@@ -188,10 +154,10 @@ function TopicTableRow(props: TTopicTableRowProps) {
       )}
       <TableCell id="name" className="max-w-[8em] truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
-          {truncate(name, 40)}
+          {truncateString(name, 40)}
         </Link>
       </TableCell>
-      <TableCell id="questions" className="max-w-[8em] truncate">
+      <TableCell id="questions" className="max-w-[8em] truncate max-sm:hidden">
         <div className="truncate">
           {questionsCount ? (
             <span className="font-bold">{questionsCount}</span>
@@ -235,7 +201,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Edit"
             title="Edit"
           >
-            <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
+            <Icons.edit className="size-4" />
           </Button>
           <Button
             variant="ghost"
@@ -245,7 +211,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Delete"
             title="Delete"
           >
-            <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+            <Icons.trash className="size-4" />
           </Button>
         </div>
       </TableCell>
@@ -254,19 +220,17 @@ function TopicTableRow(props: TTopicTableRowProps) {
 }
 
 export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
-  const {
-    className,
-    topics,
-    handleDeleteTopic,
-    handleEditTopic,
-    handleEditQuestions,
-    handleAddTopic,
-  } = props;
-  const { manageScope } = useTopicsContext();
+  const { className, handleDeleteTopic, handleEditTopic, handleEditQuestions, handleAddTopic } =
+    props;
+  const manageTopicsStore = useManageTopicsStore();
+  const { manageScope } = manageTopicsStore;
   const user = useSessionUser();
   const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { isLoading, allTopics, fetchNextPage, hasNextPage, isFetchingNextPage } = availableTopics;
+
   const cachedUsers = useCachedUsersForTopics({
-    topics,
+    topics: allTopics,
     bypass: !isAdminMode, // Do not use users data if not admin user role
   });
   return (
@@ -303,15 +267,32 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ScrollArea
+        <ScrollAreaInfinite
+          effectorData={allTopics}
+          fetchNextPage={fetchNextPage}
+          isLoading={isLoading}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage}
           saveScrollKey="ManageTopicsListCard"
           saveScrollHash={saveScrollHash}
-          viewportClassName="px-6"
+          className={cn(
+            isDev && '__ManageTopicsListCard_Scroll', // DEBUG
+            'relative flex flex-1 flex-col overflow-hidden',
+            className,
+          )}
+          viewportClassName={cn(
+            isDev && '__ManageTopicsListCard_Scroll_Viewport', // DEBUG
+            'px-6',
+          )}
+          containerClassName={cn(
+            isDev && '__ManageTopicsListCard_Scroll_Container', // DEBUG
+            'relative w-full flex flex-col gap-4',
+          )}
         >
           <Table>
             <TopicTableHeader isAdminMode={isAdminMode} />
             <TableBody>
-              {topics.map((topic, idx) => (
+              {allTopics.map((topic, idx) => (
                 <TopicTableRow
                   key={topic.id}
                   idx={idx}
@@ -325,7 +306,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
               ))}
             </TableBody>
           </Table>
-        </ScrollArea>
+        </ScrollAreaInfinite>
       </CardContent>
     </Card>
   );

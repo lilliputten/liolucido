@@ -1,101 +1,118 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { getErrorText } from '@/lib/helpers/strings';
+import { APIError } from '@/shared/types/api';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { addedQuestionEventName, TAddedQuestionDetail } from '@/constants/eventTypes';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { addNewQuestion } from '@/features/questions/actions';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
-import { usePathname } from '@/i18n/routing';
+import {
+  useGoBack,
+  useGoToTheRoute,
+  useMediaQuery,
+  useModalTitle,
+  useUpdateModalVisibility,
+} from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { AddQuestionForm } from './AddQuestionForm';
 
-export function AddQuestionModal(/* props: TAddQuestionModalProps */) {
+const urlPostfix = '/questions/add';
+const idToken = '([^/]*)';
+const urlTopicIdRegExp = new RegExp(idToken + urlPostfix + '$');
+
+export function AddQuestionModal() {
+  const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(false);
-  const router = useRouter();
-  const hideModal = React.useCallback(() => {
-    setVisible(false);
-    router.back();
-  }, [router]);
+
+  const pathname = usePathname();
+  const match = pathname.match(urlTopicIdRegExp);
+  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
+  const topicId = match?.[1];
+
+  if (!topicId) {
+    throw new Error('Not found topic id');
+  }
+
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
-  const questionsContext = useQuestionsContext();
-  const { topicId } = questionsContext;
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(questionsListRoutePath);
 
-  // Check if we're still on the add route
-  const pathname = usePathname();
-  const isAddRoute = pathname?.endsWith('/add');
+  const hideModal = React.useCallback(() => {
+    setVisible(false);
+    goBack();
+  }, [goBack]);
 
-  // Check if the modal should be visible
-  React.useEffect(() => {
-    setVisible(isAddRoute);
-    if (isAddRoute) {
-      const originalTitle = document.title;
-      document.title = 'Add a Question';
-      return () => {
-        setVisible(false);
-        document.title = originalTitle;
-      };
-    }
-  }, [isAddRoute]);
+  const availableQuestionsQuery = useAvailableQuestions({ topicId });
+
+  useModalTitle('Add a Question', shouldBeVisible);
+  useUpdateModalVisibility(setVisible, shouldBeVisible);
 
   const handleAddQuestion = React.useCallback(
     (newQuestion: TNewQuestion) => {
       return new Promise((resolve, reject) => {
-        return startUpdating(() => {
-          const promise = addNewQuestion(newQuestion)
-            .then((addedQuestion) => {
-              // Update topics list
-              questionsContext.setQuestions((questions) => {
-                const updatedQuestions = questions.concat(addedQuestion);
-                // Dispatch a custom event with the updated questions data
-                const { topicId } = questionsContext;
-                const questionsCount = updatedQuestions.length;
-                const addedQuestionId = addedQuestion.id;
-                const detail: TAddedQuestionDetail = { topicId, addedQuestionId, questionsCount };
-                const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
-                  detail,
-                  bubbles: true,
-                });
-                setTimeout(() => window.dispatchEvent(event), 100);
-                // Return data to update a state
-                return updatedQuestions;
-              });
-              resolve(addedQuestion);
-              // NOTE: Close or go to the edit page
-              setVisible(false);
-              router.replace(`${questionsContext.routePath}/${addedQuestion.id}`);
-              return addedQuestion;
-            })
-            .catch((error) => {
-              // eslint-disable-next-line no-console
-              console.error('[AddQuestionModal:handleAddQuestion:catch]', getErrorText(error), {
-                error,
-                newQuestion,
-              });
-              debugger; // eslint-disable-line no-debugger
-              reject(error);
-              throw error;
+        return startUpdating(async () => {
+          try {
+            const promise = addNewQuestion(newQuestion);
+            toast.promise<TQuestion>(promise, {
+              loading: 'Creating a new question...',
+              success: 'Successfully created a new question.',
+              error: 'Can not create a new question',
             });
-          toast.promise<TQuestion>(promise, {
-            loading: 'Creating a new question...',
-            success: 'Successfully created a new question.',
-            error: 'Can not create a new question',
-          });
+            const addedQuestion = await promise;
+            // Add the created item to the cached react-query data
+            availableQuestionsQuery.addNewQuestion(addedQuestion, true);
+            // Invalidate all other keys...
+            availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+            /* // Broadcast an event
+             * const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
+             *   detail: { topicId, addedQuestionId: addedQuestion.id, questionsCount: ...Get from `addNewQuestion` results... },
+             *   bubbles: true,
+             * });
+             * window.dispatchEvent(event);
+             */
+            // Resolve added data
+            resolve(addedQuestion);
+            // NOTE: Close or go to the edit page
+            setVisible(false);
+            const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
+            setTimeout(() => goToTheRoute(returnUrl, true), 100);
+          } catch (error) {
+            const details = error instanceof APIError ? error.details : null;
+            const message = 'Cannot create question';
+            // eslint-disable-next-line no-console
+            console.error('[AddQuestionModal:handleAddQuestion]', message, {
+              error,
+              details,
+              newQuestion,
+              topicId,
+            });
+            debugger; // eslint-disable-line no-debugger
+            reject(error);
+            throw error;
+          }
         });
       });
     },
-    [questionsContext, router],
+    [availableQuestionsQuery, goToTheRoute, questionsListRoutePath, topicId],
   );
+
+  if (!shouldBeVisible || !topicId) {
+    return null;
+    // throw new Error('Cannot parse topic id from the modal url.');
+  }
 
   return (
     <Modal

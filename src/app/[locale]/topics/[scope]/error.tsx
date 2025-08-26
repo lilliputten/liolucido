@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/shared/icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 // Error boundaries must be Client Components
 // @see https://nextjs.org/docs/app/getting-started/error-handling
@@ -20,8 +20,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const topicsContext = useTopicsContext();
-  const { routePath } = topicsContext;
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const router = useRouter();
 
   const goToTopicsRoot = React.useCallback(() => {

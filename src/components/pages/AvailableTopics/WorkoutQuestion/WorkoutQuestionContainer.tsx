@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
+import { toast } from 'sonner';
 
+import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
-import { TAnswerData } from '@/features/answers/types';
+import { useAvailableAnswers } from '@/hooks';
 
 import { WorkoutQuestion } from './WorkoutQuestion';
 
@@ -24,9 +25,6 @@ export function WorkoutQuestionContainer() {
     goNextQuestion,
     goPrevQuestion,
   } = useWorkoutContext();
-  const { questions } = useQuestionsContext();
-  const [answers, setAnswers] = React.useState<TAnswerData[]>([]);
-  const [isPending, startTransition] = React.useTransition();
   const selectedAnswerId = workout?.selectedAnswerId;
 
   const memo = React.useMemo<TMemo>(() => ({}), []);
@@ -36,6 +34,7 @@ export function WorkoutQuestionContainer() {
     () => (workout?.questionsOrder || '').split(' '),
     [workout?.questionsOrder],
   );
+
   const totalSteps = questionsOrder.length;
   const stepIndex = workout?.stepIndex || 0;
   const currentStep = stepIndex + 1;
@@ -57,29 +56,31 @@ export function WorkoutQuestionContainer() {
     }
   }, [finishWorkout, isExceed, currentStep, totalSteps, workout]);
 
-  const question = React.useMemo(() => {
-    if (!questionId || !questions) return null;
-    return questions.find((q) => q.id === questionId);
-  }, [questionId, questions]);
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    question,
+    isFetched: isQuestionFetched,
+    isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  // const questionsListRoutePath = `${topicRoutePath}/${topicId}/questions`;
 
-  // Fetch answers
+  // Fetch answers using dedicated hook
+  const availablwAnswersQuery = useAvailableAnswers({
+    questionId,
+    // enabled: !!questionId,
+  });
+  const { allAnswers, isLoading: isAnswersLoading, error: answersError } = availablwAnswersQuery;
+
+  const isLoadingOverall =
+    (!question || !allAnswers) && (isAnswersLoading || !isQuestionFetched || isQuestionLoading);
+
+  // Handle answers loading error
   React.useEffect(() => {
-    if (!question) return;
-    startTransition(async () => {
-      // Fetch answers
-      try {
-        const answersResponse = await fetch(`/api/questions/${question.id}/answers`);
-        if (answersResponse.ok) {
-          const answersData = await answersResponse.json();
-          setAnswers(answersData);
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to fetch answers:', error);
-        debugger; // eslint-disable-line no-debugger
-      }
-    });
-  }, [question, startTransition]);
+    if (answersError) {
+      const message = 'Cannot load answers data';
+      toast.error(message);
+    }
+  }, [answersError]);
 
   const goToTheNextQuestion = React.useCallback(() => {
     if (memo.nextPageTimerHandler) {
@@ -95,7 +96,7 @@ export function WorkoutQuestionContainer() {
 
   const onAnswerSelect = React.useCallback(
     (answerId: string) => {
-      const answer = answers.find(({ id }) => id === answerId);
+      const answer = allAnswers.find(({ id }) => id === answerId);
       if (answer) {
         const { isCorrect } = answer;
         // Update workout with result and move to next question
@@ -107,7 +108,7 @@ export function WorkoutQuestionContainer() {
         }
       }
     },
-    [memo, answers, goToTheNextQuestion, saveResult, saveAnswer],
+    [memo, allAnswers, goToTheNextQuestion, saveResult, saveAnswer],
   );
 
   const onSkip = React.useCallback(() => {
@@ -115,14 +116,14 @@ export function WorkoutQuestionContainer() {
     saveResultAndGoNext(undefined);
   }, [saveResultAndGoNext]);
 
-  if (isPending) {
+  if (isLoadingOverall) {
     return (
       <div className="flex flex-col gap-6 py-4">
         <Skeleton className="h-6 w-1/4" />
         <Skeleton className="h-8 w-full" />
         <div className="grid gap-4 py-4 md:grid-cols-2">
           {[...Array(2)].map((_, i) => (
-            <Skeleton key={i} className="h-15 w-full" />
+            <Skeleton key={i} className="h-12 w-full" />
           ))}
         </div>
         <div className="flex justify-center gap-4">
@@ -178,7 +179,7 @@ export function WorkoutQuestionContainer() {
   return (
     <WorkoutQuestion
       questionText={question?.text || ''}
-      answers={answers}
+      answers={allAnswers}
       currentStep={currentStep}
       totalSteps={totalSteps}
       onAnswerSelect={onAnswerSelect}

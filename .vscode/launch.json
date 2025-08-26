@@ -9,18 +9,18 @@
   "configurations": [
     {
       "type": "node-terminal",
-      "name": "xtunnel",
-      "request": "launch",
-      "command": "xtunnel http 3000"
-    },
-    {
-      "type": "node-terminal",
       "name": "Run local dev server",
       "request": "launch",
       "command": "pnpm run dev",
       "cwd": "${workspaceFolder}",
       "skipFiles": ["!${workspaceRoot}/node_modules/**/*.js"]
       // "runtimeArgs": ["--preserve-symlinks"]
+    },
+    {
+      "type": "node-terminal",
+      "name": "xtunnel",
+      "request": "launch",
+      "command": "xtunnel http 3000"
     },
     {
       "type": "node-terminal",
@@ -110,7 +110,7 @@
       "name": "Jest single test",
       "type": "node-terminal",
       "request": "launch",
-      "command": "pnpm exec jest --no-watch --testTimeout=60000 userAndTopicRelation.test"
+      "command": "pnpm exec jest --no-watch --testTimeout=60000 getAvailableQuestions.test"
     }
   ]
 }

@@ -8,12 +8,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TTopic } from '@/features/topics/types';
+import { useAvailableTopicsByScope } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
-import { usePathname } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing'; // TODO: Use 'next/navigation'
 
 interface TAvailableTopicsListItemProps {
   index: number;
@@ -22,6 +23,7 @@ interface TAvailableTopicsListItemProps {
 }
 
 export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const { topic, style } = props;
   const {
     id,
@@ -38,13 +40,12 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   } = topic;
   const questionsCount = _count?.questions;
   const allowedTraining = !!questionsCount;
-  const topicsContext = useTopicsContext();
-  const { routePath } = topicsContext;
+  const { routePath } = useAvailableTopicsByScope({ manageScope });
   const router = useRouter();
   const pathname = usePathname();
-  const topicRoutePath = `${routePath}/${id}`;
+  const topicsRoutePath = `${routePath}/${id}`;
   const workoutRoutePath = `/topics/available/${id}/workout`;
-  const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
+  const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicsRoutePath, pathname);
   const startWorkout = (ev: React.MouseEvent) => {
     ev.stopPropagation();
     router.push(workoutRoutePath);
@@ -63,7 +64,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
           'max-sm:flex-col-reverse',
         )}
       >
-        <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" />
+        <TopicHeader scope={manageScope} topic={topic} className="flex-1 max-sm:flex-col-reverse" />
       </CardHeader>
       {!!description && (
         <CardContent
@@ -97,7 +98,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   );
   if (!isCurrentTopicRoutePath) {
     cardContent = (
-      <Link className="flex-1 text-xl font-medium" href={topicRoutePath}>
+      <Link className="flex-1 text-xl font-medium" href={topicsRoutePath}>
         {cardContent}
       </Link>
     );

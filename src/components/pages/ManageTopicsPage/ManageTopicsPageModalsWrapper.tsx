@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TTopicId } from '@/features/topics/types';
+import { TAvailableTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useGoToTheRoute } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ManageTopicsListWrapper } from './ManageTopicsListWrapper';
 
@@ -17,77 +17,108 @@ interface TTopicsListProps {
   from?: string;
 }
 
+interface TMemo {
+  allTopics?: TAvailableTopic[];
+  routePath?: string;
+  isFetched?: boolean;
+}
+
 export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
-  const router = useRouter();
+  const memo = React.useMemo<TMemo>(() => ({}), []);
   const { showAddModal, deleteTopicId, editTopicId, editQuestionsTopicId, from } = props;
-  const topicsContext = useTopicsContext();
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const { allTopics, isFetched } = availableTopics;
+  memo.isFetched = isFetched;
+  memo.routePath = routePath;
+  memo.allTopics = allTopics;
+
+  const goToTheRoute = useGoToTheRoute();
 
   // Add Topic Modal
   const openAddTopicModal = React.useCallback(() => {
-    router.push(topicsContext.routePath + '/add');
-  }, [router, topicsContext]);
+    const { routePath } = memo;
+    if (routePath) {
+      const url = `${routePath}/add`;
+      goToTheRoute(url);
+    }
+  }, [memo, goToTheRoute]);
   React.useEffect(() => {
     if (showAddModal) {
       openAddTopicModal();
     }
-  }, [showAddModal, openAddTopicModal, topicsContext]);
+  }, [showAddModal, openAddTopicModal]);
 
   // Delete Topic Modal
   const openDeleteTopicModal = React.useCallback(
     (topicId: TTopicId, from: string) => {
-      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
-      if (hasTopic) {
-        router.push(`${topicsContext.routePath}/delete?topicId=${topicId}&from=${from}`);
-      } else {
-        toast.error('The requested topic does not exist.');
-        router.replace(topicsContext.routePath);
+      const { allTopics, routePath } = memo;
+      if (allTopics && routePath) {
+        const hasTopic = allTopics.find(({ id }) => id === topicId);
+        if (hasTopic) {
+          const url = `${routePath}/delete?topicId=${topicId}&from=${from}`;
+          goToTheRoute(url);
+        } else {
+          toast.error('The requested topic does not exist.');
+          goToTheRoute(routePath, true);
+        }
       }
     },
-    [router, topicsContext],
+    [memo, goToTheRoute],
   );
   React.useEffect(() => {
-    if (deleteTopicId) {
-      if (from?.startsWith('SERVER:')) {
-        // eslint-disable-next-line no-console
-        console.warn('No url-invoked topic deletions allowed!');
-        router.replace(topicsContext.routePath);
-      } else {
-        openDeleteTopicModal(deleteTopicId, from || 'Unknown_in_ManageTopicsPageModalsWrapper');
-      }
+    if (deleteTopicId && isFetched) {
+      /* // UNUSED: Prevent opening the delete topic midal with a browser url (but not with a programmatic router redirect)
+       * if (from?.startsWith('SERVER:')) {
+       *   // eslint-disable-next-line no-console
+       *   console.warn('No url-invoked topic deletions allowed!');
+       *   router.replace(routePath);
+       * } else {
+       */
+      openDeleteTopicModal(deleteTopicId, from || 'Unknown_in_ManageTopicsPageModalsWrapper');
     }
-  }, [deleteTopicId, router, topicsContext, openDeleteTopicModal, from]);
+  }, [deleteTopicId, openDeleteTopicModal, from, isFetched]);
 
   // Edit Topic Card
   const openEditTopicCard = React.useCallback(
     (topicId: TTopicId) => {
-      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
-      if (hasTopic) {
-        router.push(`${topicsContext.routePath}/${topicId}/edit`);
-      } else {
-        toast.error('The requested topic does not exist.');
-        router.replace(topicsContext.routePath);
+      const { allTopics, routePath } = memo;
+      if (allTopics && routePath) {
+        const hasTopic = allTopics.find(({ id }) => id === topicId);
+        if (hasTopic) {
+          const url = `${routePath}/${topicId}/edit`;
+          goToTheRoute(url);
+        } else {
+          toast.error('The requested topic does not exist.');
+          goToTheRoute(routePath, true);
+        }
       }
     },
-    [router, topicsContext],
+    [memo, goToTheRoute],
   );
   React.useEffect(() => {
-    if (editTopicId) {
+    if (editTopicId && isFetched) {
       openEditTopicCard(editTopicId);
     }
-  }, [editTopicId, openEditTopicCard]);
+  }, [editTopicId, openEditTopicCard, isFetched]);
 
   // Edit Questions Page
   const openEditQuestionsPage = React.useCallback(
     (topicId: TTopicId) => {
-      const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
-      if (hasTopic) {
-        router.push(`${topicsContext.routePath}/${topicId}/questions`);
-      } else {
-        toast.error('The requested topic does not exist.');
-        router.replace(topicsContext.routePath);
+      const { allTopics, routePath } = memo;
+      if (allTopics && routePath) {
+        const hasTopic = allTopics.find(({ id }) => id === topicId);
+        if (hasTopic) {
+          const url = `${routePath}/${topicId}/questions`;
+          goToTheRoute(url);
+        } else {
+          toast.error('The requested topic does not exist.');
+          goToTheRoute(routePath, true);
+        }
       }
     },
-    [router, topicsContext],
+    [memo, goToTheRoute],
   );
   React.useEffect(() => {
     // Use another id (`editQuestionsTopicId`)?

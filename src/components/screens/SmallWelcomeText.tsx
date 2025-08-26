@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { allTopicsRoute, infoRoute, myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { useSessionUser } from '@/hooks/useSessionUser';
 import { isDev } from '@/constants';
+import { useSessionUser } from '@/hooks';
 import { Link } from '@/i18n/routing';
 
 export function SmallWelcomeText(props: TPropsWithClassName) {

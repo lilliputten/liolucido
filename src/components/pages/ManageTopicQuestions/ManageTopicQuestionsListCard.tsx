@@ -1,17 +1,15 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
-import { useSessionUser } from '@/hooks/useSessionUser';
+import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/ScrollArea';
+import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -22,22 +20,19 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import {
-  TUpdatedQuestionsCountDetail,
-  updatedQuestionsCountEventName,
-} from '@/constants/eventTypes';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
-import { useTopicsContext } from '@/contexts/TopicsContext';
-import { getTopicQuestions } from '@/features/questions/actions';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
+import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { PageEmpty } from '../shared/PageEmpty';
 
 const saveScrollHash = getRandomHashString();
 
 interface TManageTopicQuestionsListCardProps extends TPropsWithClassName {
-  questions: TQuestion[];
+  topicId: TTopicId;
+  // questions: TQuestion[];
   handleDeleteQuestion: (questionId: TQuestionId) => void;
   handleEditQuestion: (questionId: TQuestionId) => void;
   handleAddQuestion: () => void;
@@ -45,54 +40,29 @@ interface TManageTopicQuestionsListCardProps extends TPropsWithClassName {
 }
 
 interface TToolbarActionsProps {
+  topicId: TTopicId;
   handleAddQuestion: () => void;
   handleDeleteTopic?: () => void;
   goBack: () => void;
 }
 
-function Toolbar(props: TToolbarActionsProps) {
-  const { handleAddQuestion, goBack } = props;
-  const [isReloading, startReload] = React.useTransition();
+function Toolbar(
+  props: TToolbarActionsProps & {
+    availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
+  },
+) {
+  const {
+    availableQuestionsQuery,
+    // topicId,
+    handleAddQuestion,
+    goBack,
+  } = props;
 
-  const questionsContext = useQuestionsContext();
+  const { refetch, isRefetching } = availableQuestionsQuery;
 
   const handleReload = React.useCallback(() => {
-    const { topicId, setQuestions } = questionsContext;
-    startReload(async () => {
-      try {
-        const promise = getTopicQuestions(topicId);
-        toast.promise(promise, {
-          loading: 'Reloading questions data...',
-          success: 'Questions successfully reloaded.',
-          error: 'Error reloading questions.',
-        });
-        const questions = (await promise) || [];
-        setQuestions((prevQuestions) => {
-          const prevQuestionsCount = prevQuestions.length;
-          // Dispatch a custom event with the updated questions data
-          const questionsCount = questions.length;
-          if (questionsCount !== prevQuestionsCount) {
-            const detail: TUpdatedQuestionsCountDetail = { topicId, questionsCount };
-            const event = new CustomEvent<TUpdatedQuestionsCountDetail>(
-              updatedQuestionsCountEventName,
-              {
-                detail,
-                bubbles: true,
-              },
-            );
-            setTimeout(() => window.dispatchEvent(event), 100);
-          }
-          return questions;
-        });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('[ManageTopicQuestionsListCard:handleReload] catch', {
-          error,
-        });
-        debugger; // eslint-disable-line no-debugger
-      }
-    });
-  }, [questionsContext]);
+    refetch({ cancelRefetch: true });
+  }, [refetch]);
 
   return (
     <div
@@ -101,7 +71,7 @@ function Toolbar(props: TToolbarActionsProps) {
         'flex flex-wrap gap-2',
       )}
     >
-      <Button variant="ghost" size="sm" className="flex gap-2 px-4" onClick={goBack}>
+      <Button variant="ghost" size="sm" className="flex gap-2" onClick={goBack}>
         <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
         <span>Back</span>
       </Button>
@@ -110,16 +80,16 @@ function Toolbar(props: TToolbarActionsProps) {
         size="sm"
         className={cn(
           'flex items-center gap-2 px-4',
-          isReloading && 'pointer-events-none opacity-50',
+          isRefetching && 'pointer-events-none opacity-50',
         )}
         onClick={handleReload}
       >
         <Icons.refresh
-          className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
+          className={cn('hidden size-4 opacity-50 sm:flex', isRefetching && 'animate-spin')}
         />
         <span>Reload</span>
       </Button>
-      <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2 px-4">
+      <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
         <Icons.add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Question</span>
@@ -155,6 +125,7 @@ function QuestionTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
 interface TQuestionTableRowProps {
   question: TQuestion;
   idx: number;
+  questionsListRoutePath: string;
   handleDeleteQuestion: TManageTopicQuestionsListCardProps['handleDeleteQuestion'];
   handleEditQuestion: TManageTopicQuestionsListCardProps['handleEditQuestion'];
   handleEditAnswers: TManageTopicQuestionsListCardProps['handleEditAnswers'];
@@ -164,6 +135,7 @@ interface TQuestionTableRowProps {
 function QuestionTableRow(props: TQuestionTableRowProps) {
   const {
     question,
+    questionsListRoutePath,
     handleDeleteQuestion,
     handleEditQuestion,
     handleEditAnswers,
@@ -171,9 +143,8 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
     idx,
   } = props;
   const { id, text, _count } = question;
+  const questionRoutePath = `${questionsListRoutePath}/${id}`;
   const answersCount = _count?.answers;
-  const questionsContext = useQuestionsContext();
-  const { routePath } = questionsContext;
   return (
     <TableRow className="truncate" data-question-id={id}>
       <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
@@ -188,7 +159,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
         </TableCell>
       )}
       <TableCell id="text" className="max-w-[12em] truncate">
-        <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
+        <Link className="truncate text-lg font-medium hover:underline" href={questionRoutePath}>
           {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
@@ -239,45 +210,142 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
   );
 }
 
-export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCardProps) {
+export function ManageTopicQuestionsListCardContent(
+  props: TManageTopicQuestionsListCardProps & {
+    questionsListRoutePath: string;
+    availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
+  },
+) {
   const {
-    className,
-    questions,
+    availableQuestionsQuery,
+    questionsListRoutePath,
+    // topicId,
+    // questions,
     handleDeleteQuestion,
     handleAddQuestion,
     handleEditQuestion,
     handleEditAnswers,
   } = props;
+
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
 
-  const router = useRouter();
-  const topicsContext = useTopicsContext();
-  const questionsContext = useQuestionsContext();
+  const {
+    allQuestions,
+    hasQuestions,
+    isFetched: isQuestionsFetched,
+    isLoading: isQuestionsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    // queryKey: availableQuestionsQueryKey,
+    // queryProps: availableQuestionsQueryProps,
+  } = availableQuestionsQuery;
 
-  /* // UNUSED: Current topic
-   * const topic = React.useMemo(() => {
-   *   return topicsContext.topics.find(({ id }) => id === questionsContext.topicId);
-   * }, [questionsContext.topicId, topicsContext]);
-   */
+  if (!isQuestionsFetched) {
+    return (
+      <div
+        className={cn(
+          isDev && '__ManageTopicQuestionsListCard_Skeleton', // DEBUG
+          'flex size-full flex-1 flex-col gap-4 p-6',
+        )}
+      >
+        <Skeleton className="h-8 w-full rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  } else if (!hasQuestions) {
+    return (
+      <PageEmpty
+        className="size-full flex-1"
+        iconName="questions"
+        title="No questions have been created yet"
+        description="You dont have any questions yet. Add any question to your profile."
+        framed={false}
+        buttons={
+          <>
+            <Button onClick={handleAddQuestion} className="flex gap-2">
+              <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+              Add New Question
+            </Button>
+          </>
+        }
+      />
+    );
+  }
 
-  const goBack = useGoBack(questionsContext.topicsListRoutePath);
+  return (
+    <ScrollAreaInfinite
+      effectorData={allQuestions}
+      fetchNextPage={fetchNextPage}
+      isLoading={isQuestionsLoading}
+      isFetchingNextPage={isFetchingNextPage}
+      hasNextPage={hasNextPage}
+      saveScrollKey="ManageTopicQuestionsListCardContent"
+      saveScrollHash={saveScrollHash}
+      className={cn(
+        isDev && '__ManageTopicQuestionsListCardContent_Scroll', // DEBUG
+        'relative flex flex-1 flex-col overflow-hidden',
+      )}
+      viewportClassName={cn(
+        isDev && '__ManageTopicQuestionsListCardContent_Scroll_Viewport', // DEBUG
+        'px-6',
+      )}
+      containerClassName={cn(
+        isDev && '__ManageTopicQuestionsListCardContent_Scroll_Container', // DEBUG
+        'relative w-full flex flex-col gap-4',
+      )}
+    >
+      <Table>
+        <QuestionTableHeader isAdminMode={isAdmin} />
+        <TableBody>
+          {allQuestions.map((question, idx) => (
+            <QuestionTableRow
+              key={question.id}
+              idx={idx}
+              question={question}
+              questionsListRoutePath={questionsListRoutePath}
+              handleDeleteQuestion={handleDeleteQuestion}
+              handleEditQuestion={handleEditQuestion}
+              handleEditAnswers={handleEditAnswers}
+              isAdminMode={isAdmin}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </ScrollAreaInfinite>
+  );
+}
+
+export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCardProps) {
+  const {
+    className,
+    topicId,
+    // handleDeleteQuestion,
+    handleAddQuestion,
+    // handleEditQuestion,
+    // handleEditAnswers,
+  } = props;
+  const { manageScope } = useManageTopicsStore();
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+
+  const availableQuestionsQuery = useAvailableQuestions({ topicId });
+
+  const availableTopicQuery = useAvailableTopicById({ id: topicId });
+  const { data: topic } = availableTopicQuery;
+
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(topicsListRoutePath);
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
-    const { topicId } = questionsContext;
-    const hasTopic = topicsContext.topics.find(({ id }) => id === topicId);
-    if (hasTopic) {
-      router.push(
-        `${topicsContext.routePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`,
-      );
-    } else {
-      toast.error('The requested topic does not exist.');
-      router.replace(topicsContext.routePath);
-    }
-  }, [router, topicsContext, questionsContext]);
-
-  const hasQuestions = !!questionsContext.questions.length;
+    const url = `${topicsListRoutePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`;
+    goToTheRoute(url);
+  }, [goToTheRoute, topicId, topicsListRoutePath]);
 
   return (
     <Card
@@ -303,7 +371,10 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
             className={cn(
               isDev && '__ManageTopicQuestionsListCard_Breadcrumbs', // DEBUG
             )}
-            inactiveQuestions
+            scope={manageScope}
+            isLoading={!topic}
+            topic={topic}
+            inactiveLast
           />
           {/* // UNUSED: Title
             <CardTitle className="flex flex-1 items-center overflow-hidden">
@@ -312,9 +383,11 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
             */}
         </div>
         <Toolbar
+          topicId={topicId}
           handleAddQuestion={handleAddQuestion}
           handleDeleteTopic={handleDeleteTopic}
           goBack={goBack}
+          availableQuestionsQuery={availableQuestionsQuery}
         />
       </CardHeader>
       <CardContent
@@ -323,52 +396,11 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        {hasQuestions ? (
-          <ScrollArea
-            saveScrollKey="ManageTopicQuestionsListCard"
-            saveScrollHash={saveScrollHash}
-            viewportClassName="px-6"
-          >
-            <Table>
-              <QuestionTableHeader isAdminMode={isAdmin} />
-              <TableBody>
-                {questions.map((question, idx) => (
-                  <QuestionTableRow
-                    key={question.id}
-                    idx={idx}
-                    question={question}
-                    handleDeleteQuestion={handleDeleteQuestion}
-                    handleEditQuestion={handleEditQuestion}
-                    handleEditAnswers={handleEditAnswers}
-                    isAdminMode={isAdmin}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        ) : (
-          <PageEmpty
-            className="size-full flex-1"
-            iconName="questions"
-            title="No questions have been created yet"
-            description="You dont have any questions yet. Add any question to your profile."
-            framed={false}
-            buttons={
-              <>
-                {/*
-                <Button onClick={goBack} className="flex gap-2">
-                  <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
-                  Go Back
-                </Button>
-                */}
-                <Button onClick={handleAddQuestion} className="flex gap-2">
-                  <Icons.add className="hidden size-4 opacity-50 sm:flex" />
-                  Add New Question
-                </Button>
-              </>
-            }
-          />
-        )}
+        <ManageTopicQuestionsListCardContent
+          {...props}
+          questionsListRoutePath={questionsListRoutePath}
+          availableQuestionsQuery={availableQuestionsQuery}
+        />
       </CardContent>
     </Card>
   );

@@ -27,8 +27,16 @@ export default async function ViewTopicPage({ params }: TAwaitedProps) {
     return <PageError error={'Not topic specified.'} />;
   }
 
-  const topic = await getTopic(topicId);
-  if (!topic) {
+  let topic;
+  try {
+    topic = await getTopic(topicId);
+    if (!topic) {
+      notFound();
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[src/app/[locale]/topics/available/[topicId]/page.tsx]', error);
+    debugger; // eslint-disable-line no-debugger
     notFound();
   }
 

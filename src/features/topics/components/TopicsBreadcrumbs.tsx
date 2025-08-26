@@ -1,52 +1,79 @@
 'use client';
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { capitalizeString, truncateString } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { cn } from '@/lib/utils';
-import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Breadcrumbs,
+  BreadcrumbsItem,
+  TBreadcrumbsItemProps,
+} from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { TTopic } from '@/features/topics/types';
 
-export interface TTopicsBreadcrumbsProps {
-  topicId?: TTopicId;
-  topic?: TTopic;
-  inactiveTopic?: boolean;
-  lastItem?: TBreadcrumbsItemProps;
+interface TBreadcrumbsProps {
+  scope: TTopicsManageScopeId;
+  topic?: TTopic | BreadcrumbsItem;
+  lastItem?: TBreadcrumbsItemProps | BreadcrumbsItem;
+  inactiveLast?: boolean;
+  isLoading?: boolean;
 }
 
-export function useTopicsBreadcrumbsItems(props: TTopicsBreadcrumbsProps) {
-  const { topicId, topic, inactiveTopic } = props;
-  const topicsContext = useTopicsContext();
-  const { topics, routePath, namespace } = topicsContext;
-  const t = useTranslations(namespace);
-  const usedTopic: TTopic | undefined = React.useMemo(
-    () => topic || (topicId ? topics.find(({ id }) => id === topicId) : undefined),
-    [topic, topics, topicId],
-  );
+export function useTopicsBreadcrumbsItems(props: TBreadcrumbsProps) {
+  const { scope, topic, lastItem } = props;
+  const topicsListRoutePath = topicsRoutes[scope];
+  // TODO: Use i18n translation by `scope`
+  const listTitle = capitalizeString(scope) + ' Topics' + (isDev ? '*' : '');
   const items = filterOutEmpties<TBreadcrumbsItemProps>([
-    { link: routePath, content: t('title') },
-    !!usedTopic && {
-      link: inactiveTopic ? undefined : `${routePath}/${usedTopic.id}`,
-      content: usedTopic.name,
-    },
+    { link: topicsListRoutePath, content: listTitle },
+    !topic
+      ? null
+      : topic instanceof BreadcrumbsItem
+        ? topic
+        : {
+            link: `${topicsListRoutePath}/${topic.id}`,
+            content: truncateString(topic.name, 50),
+          },
+    lastItem,
   ]);
   return items;
 }
 
-export function TopicsBreadcrumbs(props: TTopicsBreadcrumbsProps & TPropsWithClassName) {
-  const { className, lastItem, ...rest } = props;
-  const items = useTopicsBreadcrumbsItems(rest);
+export function TopicsBreadcrumbs(props: TBreadcrumbsProps & TPropsWithClassName) {
+  const { className, isLoading, inactiveLast } = props;
+  const items = useTopicsBreadcrumbsItems(props);
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          isDev && '__TopicsBreadcrumbs_Skeleton', // DEBUG
+          'flex gap-2',
+        )}
+      >
+        {[...Array(2)].map((_, i) => (
+          <Skeleton key={i} className="h-6 w-32 rounded" />
+        ))}
+      </div>
+    );
+  }
+  if (inactiveLast && items.length) {
+    const lastIdx = items.length - 1;
+    if (items[lastIdx].link) {
+      items[lastIdx] = { ...items[lastIdx], link: undefined };
+    }
+  }
   return (
     <Breadcrumbs
       className={cn(
         isDev && '__TopicsBreadcrumbs', // DEBUG
         className,
       )}
-      items={lastItem ? items.concat(lastItem) : items}
+      items={items}
     />
   );
 }

@@ -8,11 +8,11 @@ import { TReactNode } from '@/shared/types/generic';
 import { rootRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Button } from '@/components/ui/button';
 import { ErrorPlaceHolder } from '@/components/shared/ErrorPlaceHolder';
 import { Icons, TIconsKey } from '@/components/shared/icons';
 import { isDev } from '@/constants';
+import { useGoBack } from '@/hooks';
 
 interface TErrorProps {
   title?: TReactNode;

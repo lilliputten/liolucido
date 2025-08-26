@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { SelectTopicLanguageModal } from '@/components/pages/SelectTopicLanguageModal';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 
 interface SelectLanguagePageProps {
   params: Promise<{
@@ -22,11 +21,15 @@ export default function SelectTopicLanguageModalParallelRoute({
 }: SelectLanguagePageProps) {
   const { langCode, langName, langCustom } = React.use(searchParams);
   const { topicId } = React.use(params);
-  const { topics } = useTopicsContext();
-  const topic = topics.find((topic) => topic.id === topicId);
-  if (!topic) {
-    throw new Error('No such topic exists');
-  }
+  /* // UNUSED: Check if the topic exists (requires usage of `useAvailableTopicById` instead of direct lookup amongst loaded by `useAvailableTopicsByScope`
+   * const { manageScope } = useManageTopicsStore();
+   * // const routePath = `/topics/${manageScope}`;
+   * const { allTopics } = useAvailableTopicsByScope({ manageScope });
+   * const topic = allTopics.find((topic) => topic.id === topicId);
+   * if (!topic) {
+   *   throw new Error('No such topic exists');
+   * }
+   */
   return (
     <SelectTopicLanguageModal
       langCode={langCode}

@@ -32,11 +32,12 @@ export async function getTopic(id: TTopicId) {
         where,
         include,
       })) || undefined;
-    if (topic) {
-      // Check if the current user is allowed to see the topic?
-      if (!topic.isPublic && userId !== topic?.userId && user?.role !== 'ADMIN') {
-        throw new Error('Current user is not allowed to access the topic');
-      }
+    if (!topic) {
+      throw new Error('No topic found');
+    }
+    // Check if the current user is allowed to see the topic?
+    if (!topic.isPublic && userId !== topic?.userId && user?.role !== 'ADMIN') {
+      throw new Error('Current user is not allowed to access the topic');
     }
     return topic;
   } catch (error) {

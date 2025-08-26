@@ -1,15 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { deletedTopicEventName, TDeletedTopicDetail } from '@/constants/eventTypes';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
 import { TTopic, TTopicId } from '@/features/topics/types';
+import { useAvailableTopicsByScope, useGoBack, useModalTitle } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 interface TDeleteTopicModalProps {
   topicId?: TTopicId;
@@ -17,40 +16,29 @@ interface TDeleteTopicModalProps {
 }
 
 export function DeleteTopicModal(props: TDeleteTopicModalProps) {
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const { topicId } = props;
-  const router = useRouter();
-  const topicsContext = useTopicsContext();
-  const { topics } = topicsContext;
+
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+
+  const goBack = useGoBack(routePath);
 
   const hideModal = React.useCallback(() => {
-    const { href } = window.location;
-    router.back();
-    setTimeout(() => {
-      // If still on the same page after trying to go back, fallback
-      if (document.visibilityState === 'visible' && href === window.location.href) {
-        router.push(topicsContext.routePath);
-        // TODO: To use `from` parameter?
-      }
-    }, 200);
-  }, [router, topicsContext]);
+    // setVisible(false);
+    goBack();
+  }, [goBack]);
 
   if (!topicId) {
     throw new Error('No topic id passed for deletion');
   }
   const deletingTopic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topicId, topics],
+    () => availableTopics.allTopics.find(({ id }) => id === topicId),
+    [topicId, availableTopics.allTopics],
   );
   const [isPending, startUpdating] = React.useTransition();
 
-  // Change a browser title
-  React.useEffect(() => {
-    const originalTitle = document.title;
-    document.title = 'Delete a Topic?';
-    return () => {
-      document.title = originalTitle;
-    };
-  }, []);
+  useModalTitle('Delete a Topic?');
 
   const confirmDeleteTopic = React.useCallback(
     () =>
@@ -63,22 +51,30 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
           }
           const promise = deleteTopic(deletingTopic)
             .then(() => {
-              topicsContext.setTopics((topics) => {
-                const updatedTopics = topics.filter(({ id }) => id != deletingTopic.id);
-                // Dispatch a custom event with the deleted topic info
-                const detail: TDeletedTopicDetail = {
-                  deletedTopicId: deletingTopic.id,
-                  topicsCount: updatedTopics.length,
-                };
-                const event = new CustomEvent<TDeletedTopicDetail>(deletedTopicEventName, {
-                  detail,
-                  bubbles: true,
-                });
-                setTimeout(() => window.dispatchEvent(event), 100);
-                // Return updated data
-                return updatedTopics;
-              });
+              // Delete the topic from the cached react-query data
+              availableTopics.deleteTopic(deletingTopic.id);
+              // Invalidate all other keys...
+              availableTopics.invalidateAllKeysExcept([availableTopics.queryKey]);
+              /* // UNUSED: Delete the topic from the topics context and roadcast the event (?)
+               * topicsContext.setTopics((topics) => {
+               *   const updatedTopics = topics.filter(({ id }) => id != deletingTopic.id);
+               *   // Dispatch a custom event with the deleted topic info
+               *   const detail: TDeletedTopicDetail = {
+               *     deletedTopicId: deletingTopic.id,
+               *     topicsCount: updatedTopics.length,
+               *   };
+               *   const event = new CustomEvent<TDeletedTopicDetail>(deletedTopicEventName, {
+               *     detail,
+               *     bubbles: true,
+               *   });
+               *   setTimeout(() => window.dispatchEvent(event), 100);
+               *   // Return updated data
+               *   return updatedTopics;
+               * });
+               */
+              // Resolve added data
               resolve(deletingTopic);
+              // Hide modal (go back)
               hideModal();
             })
             .catch((error) => {
@@ -97,7 +93,7 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
           });
         });
       }),
-    [deletingTopic, hideModal, topicsContext],
+    [availableTopics, deletingTopic, hideModal],
   );
 
   const topicName = deletingTopic?.name;

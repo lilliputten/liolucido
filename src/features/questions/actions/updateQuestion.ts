@@ -5,7 +5,7 @@ import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
 import { TQuestion, TQuestionData } from '@/features/questions/types';
 
-export async function updateQuestion(question: TQuestionData) {
+export async function updateQuestion(questionData: TQuestionData) {
   if (isDev) {
     // DEBUG: Emulate network delay
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -16,24 +16,32 @@ export async function updateQuestion(question: TQuestionData) {
   if (!userId) {
     throw new Error('Undefined user');
   }
-  if (!question.text) {
+  if (!questionData.text) {
     throw new Error('Not specified question text');
   }
   // Check user rights to delete the question...
-  const topic = await prisma.topic.findUnique({
-    where: { id: question.topicId },
+  const question = await prisma.question.findUnique({
+    where: { id: questionData.id },
+    include: { topic: true },
   });
+  if (!question) {
+    throw new Error('Not found question to update');
+  }
+  const topic = question.topic;
   if (!topic) {
-    throw new Error('Not found owner topic for the deleting question');
+    throw new Error('Not found owner topic for the updating question');
   }
   // Check if the current user is allowed to update the topic?
   if (userId !== topic?.userId && user.role !== 'ADMIN') {
-    throw new Error('Current user is not allowed to delete the question');
+    throw new Error('Current user is not allowed to update the question');
   }
   try {
+    // NOTE: Remove the automatic fields
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, _count, createdAt, updatedAt, ...updateData } = questionData as TQuestion;
     const updatedQuestion = await prisma.question.update({
-      where: { id: question.id },
-      data: question,
+      where: { id: questionData.id },
+      data: updateData,
     });
     return updatedQuestion as TQuestion;
   } catch (error) {

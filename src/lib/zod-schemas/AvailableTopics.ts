@@ -1,0 +1,35 @@
+import { z } from 'zod';
+
+import { TGetResults } from '@/shared/types/generic/api';
+import { TopicIncludeParamsSchema } from '@/lib/zod-schemas';
+import { TAvailableTopic } from '@/features/topics/types';
+import { TopicOrderByWithRelationInputSchema } from '@/generated/prisma';
+
+export const zTopicTopicIds = z.array(z.string()).optional();
+export type TTopicTopicIds = z.infer<typeof zTopicTopicIds>;
+
+export const zTopicOrderBy = z
+  .union([TopicOrderByWithRelationInputSchema.array(), TopicOrderByWithRelationInputSchema])
+  .optional();
+export type TTopicOrderBy = z.infer<typeof zTopicOrderBy>;
+
+export const GetAvailableTopicsParamsSchema = TopicIncludeParamsSchema.extend({
+  /** Skip records (start from the nth record), default = 0 */
+  skip: z.coerce.number().int().nonnegative().optional(),
+  /** Amount of records to return, default = {itemsLimit} */
+  take: z.coerce.number().int().positive().optional(),
+  /** Get all users' data not only your own (admins only: will return no data for non-admins) ??? */
+  adminMode: z.coerce.boolean().optional(),
+  /** Display only current user's topics */
+  showOnlyMyTopics: z.coerce.boolean().optional(),
+  /** Sort by parameter, default: `{ updatedAt: 'desc' }`, packed json string */
+  // orderBy: TopicFindManyArgsSchema.shape.orderBy, // This approach doesn't work
+  orderBy: zTopicOrderBy,
+  /** Include only listed topic ids */
+  topicIds: zTopicTopicIds, // z.array(z.string()).optional(),
+  // See also "include" parameters from `TopicIncludeParamsSchema`...
+});
+
+export type TGetAvailableTopicsParams = z.infer<typeof GetAvailableTopicsParamsSchema>;
+
+export type TGetAvailableTopicsResults = TGetResults<TAvailableTopic>;

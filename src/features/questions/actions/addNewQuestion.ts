@@ -8,6 +8,8 @@ import { TQuestion } from '../types';
 
 /* TODO: To broadcast a client message to refresh topics data, including other tabs? */
 
+/* TODO: Use the same parameters for "include" data, as in `getAvailableQuestionById`, see `IncludedTopicSelect` */
+
 export async function addNewQuestion(newQuestion: TNewQuestion) {
   try {
     if (isDev) {

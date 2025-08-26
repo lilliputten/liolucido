@@ -1,56 +1,109 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import { useAnswersContext } from '@/contexts/AnswersContext/AnswersContext';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
-import { TAnswer, TAnswerId } from '@/features/answers/types';
+import { TAnswerId } from '@/features/answers/types';
+import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
+import {
+  useAvailableAnswerById,
+  useAvailableQuestionById,
+  useAvailableTopicById,
+  useGoBack,
+} from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ViewAnswerContent } from './ViewAnswerContent';
 
 interface TViewAnswerCardProps extends TPropsWithClassName {
+  topicId: TTopicId;
+  questionId: TQuestionId;
   answerId: TAnswerId;
 }
 
 export function ViewAnswerCard(props: TViewAnswerCardProps) {
-  const { className, answerId } = props;
+  const { manageScope } = useManageTopicsStore();
+  const { className, topicId, questionId, answerId } = props;
+
+  if (!answerId) {
+    throw new Error('No answer specified');
+  }
+
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
   React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
-  const router = useRouter();
-  const answersContext = useAnswersContext();
-  const { answers } = answersContext;
-  const answer: TAnswer | undefined = React.useMemo(
-    () => answers.find(({ id }) => id === answerId),
-    [answers, answerId],
+
+  // Calculate paths...
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+  const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  const answersListRoutePath = `${questionRoutePath}/answers`;
+  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
+  // const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(answersListRoutePath);
+
+  const availableTopicQuery = useAvailableTopicById({ id: topicId });
+  const {
+    topic,
+    // isFetched: isTopicFetched,
+    // isLoading: isTopicLoading,
+  } = availableTopicQuery;
+  // const isTopicLoadingOverall = !topic && (!isTopicFetched || isTopicLoading);
+
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    question,
+    // isFetched: isQuestionFetched,
+    // isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  // const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
+
+  const availableAnswerQuery = useAvailableAnswerById({
+    id: answerId,
+    // availableAnswersQueryKey,
+    // includeQuestion: availableAnswersQueryProps.includeQuestion,
+  });
+  const { answer, isFetched: isAnswerFetched, isLoading: isAnswerLoading } = availableAnswerQuery;
+  const isAnswerLoadingOverall = !answer && (!isAnswerFetched || isAnswerLoading);
+
+  const answerCardContent = isAnswerLoadingOverall ? (
+    <div
+      className={cn(
+        isDev && '__ViewAnswerCard_Form_Skeleton', // DEBUG
+        'flex size-full flex-1 flex-col gap-4 p-6',
+      )}
+    >
+      <Skeleton className="h-8 w-full rounded-lg" />
+      {generateArray(1).map((i) => (
+        <Skeleton key={i} className="h-20 w-full rounded-lg" />
+      ))}
+    </div>
+  ) : answer ? (
+    <ViewAnswerContent
+      topicId={topicId}
+      questionId={questionId}
+      answer={answer}
+      goBack={goBack}
+      toolbarPortalRoot={toolbarPortalRoot}
+    />
+  ) : (
+    <PageError
+      className={cn(
+        isDev && '__ViewAnswerCard_Form_Error', // DEBUG
+      )}
+      title="No answer found"
+    />
   );
-  if (!answerId || !answer) {
-    throw new Error('No such answer exists');
-  }
-  const goBack = useGoBack(answersContext.routePath);
-
-  // Add Answer Modal
-  const handleAddAnswer = React.useCallback(() => {
-    router.push(`${answersContext.routePath}/add`);
-  }, [router, answersContext]);
-
-  // Delete Answer Modal
-  const handleDeleteAnswer = React.useCallback(() => {
-    const hasAnswer = answersContext.answers.find(({ id }) => id === answer.id);
-    if (hasAnswer) {
-      router.push(`${answersContext.routePath}/delete?answerId=${answer.id}&from=ViewAnswerCard`);
-    } else {
-      toast.error('The requested answer does not exist.');
-      router.replace(answersContext.routePath);
-    }
-  }, [router, answersContext, answer]);
 
   return (
     <Card
@@ -69,22 +122,21 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
       >
         <div
           className={cn(
-            isDev && '__EditAnswerCard_TitleWrapper', // DEBUG
+            isDev && '__ViewAnswerCard_TitleWrapper', // DEBUG
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
           <AnswersBreadcrumbs
             className={cn(
-              isDev && '__EditAnswerCard_Breadcrumbs', // DEBUG
+              isDev && '__ViewAnswerCard_Breadcrumbs', // DEBUG
             )}
-            answerId={answerId}
-            inactiveAnswer
+            scope={manageScope}
+            isLoading={!topic || !question || !answer}
+            topic={topic}
+            question={question}
+            answer={answer}
+            inactiveLast
           />
-          {/* // UNUSED: Title
-            <CardTitle className="flex flex-1 items-center overflow-hidden">
-              <span className="truncate">Show Answer</span>
-            </CardTitle>
-            */}
         </div>
         <div
           ref={toolbarPortalRef}
@@ -92,22 +144,18 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
             isDev && '__ViewAnswerCard_Toolbar', // DEBUG
             'flex flex-wrap items-center gap-2',
           )}
-        />
+        >
+          {isAnswerLoadingOverall &&
+            generateArray(4).map((i) => <Skeleton key={i} className="h-9 w-24 rounded" />)}
+        </div>
       </CardHeader>
-
       <CardContent
         className={cn(
           isDev && '__ViewAnswerCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ViewAnswerContent
-          answer={answer}
-          goBack={goBack}
-          handleDeleteAnswer={handleDeleteAnswer}
-          handleAddAnswer={handleAddAnswer}
-          toolbarPortalRoot={toolbarPortalRoot}
-        />
+        {answerCardContent}
       </CardContent>
     </Card>
   );

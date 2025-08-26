@@ -62,7 +62,7 @@ export function EditAnswerFormActions(props: TProps) {
         </Button>
       )}
       {handleAddAnswer && (
-        <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2 px-4">
+        <Button variant="ghost" size="sm" onClick={handleAddAnswer} className="flex gap-2">
           <Icons.add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Answer</span>

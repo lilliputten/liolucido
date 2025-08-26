@@ -1,17 +1,18 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext';
 import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
+import { useGoToTheRoute } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { ManageTopicQuestionsListCard } from './ManageTopicQuestionsListCard';
 
 interface TTopicsListProps {
+  topicId: TTopicId;
   showAddModal?: boolean;
   deleteQuestionId?: TQuestionId;
   editQuestionId?: TQuestionId;
@@ -19,14 +20,20 @@ interface TTopicsListProps {
 }
 
 export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
-  const router = useRouter();
-  const { showAddModal, deleteQuestionId, editQuestionId, editAnswersQuestionId } = props;
-  const questionsContext = useQuestionsContext();
+  const { topicId, showAddModal, deleteQuestionId, editQuestionId, editAnswersQuestionId } = props;
+
+  const { manageScope } = useManageTopicsStore();
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+  const questionsListRoutePath = `${topicRoutePath}/questions`;
+
+  const goToTheRoute = useGoToTheRoute();
 
   // Add New Question Modal
   const openAddQuestionModal = React.useCallback(() => {
-    router.push(questionsContext.routePath + '/add');
-  }, [router, questionsContext]);
+    const url = `${questionsListRoutePath}/add`;
+    goToTheRoute(url, true);
+  }, [goToTheRoute, questionsListRoutePath]);
   React.useEffect(() => {
     if (showAddModal) {
       openAddQuestionModal();
@@ -36,15 +43,10 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   // Delete Question Modal
   const openDeleteQuestionModal = React.useCallback(
     (questionId: TQuestionId) => {
-      const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
-      if (hasQuestion) {
-        router.push(`${questionsContext.routePath}/delete?questionId=${questionId}`);
-      } else {
-        toast.error('The requested question does not exist.');
-        router.replace(questionsContext.routePath);
-      }
+      const url = `${questionsListRoutePath}/delete?questionId=${questionId}`;
+      goToTheRoute(url);
     },
-    [router, questionsContext],
+    [goToTheRoute, questionsListRoutePath],
   );
   React.useEffect(() => {
     if (deleteQuestionId) {
@@ -55,15 +57,10 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   // Edit Question Card
   const openEditQuestionCard = React.useCallback(
     (questionId: TQuestionId) => {
-      const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
-      if (hasQuestion) {
-        router.push(`${questionsContext.routePath}/${questionId}/edit`);
-      } else {
-        toast.error('The requested question does not exist.');
-        router.replace(questionsContext.routePath);
-      }
+      const url = `${questionsListRoutePath}/${questionId}/edit`;
+      goToTheRoute(url);
     },
-    [router, questionsContext],
+    [goToTheRoute, questionsListRoutePath],
   );
   React.useEffect(() => {
     if (editQuestionId) {
@@ -74,18 +71,12 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   // Edit Answers Page
   const openEditAnswersPage = React.useCallback(
     (questionId: TQuestionId) => {
-      const hasQuestion = questionsContext.questions.find(({ id }) => id === questionId);
-      if (hasQuestion) {
-        router.push(`${questionsContext.routePath}/${questionId}/answers`);
-      } else {
-        toast.error('The requested question does not exist.');
-        router.replace(questionsContext.routePath);
-      }
+      const url = `${questionsListRoutePath}/${questionId}/answers`;
+      goToTheRoute(url);
     },
-    [router, questionsContext],
+    [goToTheRoute, questionsListRoutePath],
   );
   React.useEffect(() => {
-    // Use another id (`editAnswersQuestionId`)?
     if (editAnswersQuestionId) {
       openEditAnswersPage(editAnswersQuestionId);
     }
@@ -97,7 +88,7 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
         isDev && '__ManageTopicQuestionsListWrapper_Card', // DEBUG
         'relative flex flex-1 flex-col overflow-hidden',
       )}
-      questions={questionsContext.questions}
+      topicId={topicId}
       handleDeleteQuestion={openDeleteQuestionModal}
       handleEditQuestion={openEditQuestionCard}
       handleAddQuestion={openAddQuestionModal}

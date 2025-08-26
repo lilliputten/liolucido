@@ -1,5 +1,5 @@
 /**
- * @module /static/layoyut-init-theme.js
+ * @module /static/layout-init-theme.js
  * @desc Load saved theme color ASAP...
  * This piece of code should be installed into the topmost layout with strategy="beforeInteractive"
  * @see https://nextjs.org/docs/messages/no-before-interactive-script-outside-document

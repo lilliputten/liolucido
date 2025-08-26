@@ -4,28 +4,26 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
+import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
-import { TTopicId } from '@/features/topics/types';
+import { useGoBack } from '@/hooks';
 
 import { WorkoutTopicContent } from './WorkoutTopicContent';
 import { WorkoutTopicContentActions } from './WorkoutTopicContentActions';
 
-interface TWorkoutTopicProps extends TPropsWithClassName {
-  topicId: TTopicId;
-}
-
-export function WorkoutTopic(props: TWorkoutTopicProps) {
-  const { className, topicId } = props;
+export function WorkoutTopic(props: TPropsWithClassName) {
+  const { className } = props;
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const { topic } = useWorkoutContext();
-  const goBack = useGoBack(`/topics/available/${topicId}`); // topicsContext.routePath);
-  if (!topicId || !topic) {
+  const routePath = topicsRoutes[manageScope];
+  const goBack = useGoBack(`${routePath}/${topic.id}`); // topicsContext.routePath);
+  if (!topic.id || !topic) {
     throw new Error('No such topic exists');
   }
 
@@ -61,8 +59,8 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
                 isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
                 'flex-1',
               )}
+              scope={manageScope}
               topic={topic}
-              topicId={topicId}
               lastItem={{
                 content: 'Workout',
                 // link: workout?.started && !workout?.finished ? questionsContext.routePath : undefined,
@@ -78,7 +76,12 @@ export function WorkoutTopic(props: TWorkoutTopicProps) {
               <WorkoutTopicContentActions topic={topic} goBack={goBack} />
             </div>
           </div>
-          <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" showDescription />
+          <TopicHeader
+            scope={TopicsManageScopeIds.AVAILABLE_TOPICS}
+            topic={topic}
+            className="flex-1 max-sm:flex-col-reverse"
+            showDescription
+          />
           <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
         </div>
       </CardHeader>

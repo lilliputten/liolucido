@@ -1,9 +1,12 @@
+// import { TDefinedUserId } from '@/features/users/types/TUser';
+import { ExtendedUser } from '@/@types/next-auth';
+
+import { TApiResponse } from '@/shared/types/api';
 import { TSettings } from '@/features/settings/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
 
 export interface SettingsContextData {
   /** Current user */
-  userId?: TDefinedUserId;
+  user?: ExtendedUser;
   /** The settings data */
   settings: TSettings;
   setLocale: (locale: TSettings['locale']) => Promise<TSettings>;
@@ -13,7 +16,9 @@ export interface SettingsContextData {
   /** Set settings in the context */
   // setSettings: (settings: TSettings) => void; // React.Dispatch<React.SetStateAction<TSettings>>;
   /** Save settings on the server (if user authorized) and locally */
-  updateAndSaveSettings: (settings: TSettings) => Promise<TSettings>; // React.Dispatch<React.SetStateAction<TSettings>>;
+  updateAndSaveSettings: (
+    settings: TSettings,
+  ) => Promise<TApiResponse<TSettings> | { ok: true; data: TSettings }>; // React.Dispatch<React.SetStateAction<TSettings>>;
   /** Reset locally saved settings (on user logout, as a case) */
   resetLocalSettings: () => void;
   /** User data has been loaded */

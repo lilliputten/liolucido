@@ -1,6 +1,7 @@
 import ms from 'ms';
 import { useFormatter, useTranslations } from 'next-intl';
 
+import { dayMs, halfYearMs, hourMs, minuteMs } from '@/constants';
 import { defaultLocale, TLocale } from '@/i18n/types';
 
 /* // TODO: Translations:
@@ -23,23 +24,50 @@ import { defaultLocale, TLocale } from '@/i18n/types';
 
 type TIntlTranslator = (key: string) => string;
 
-const minDateLimit = 1000 * 60;
-const hourDateLimit = minDateLimit * 60;
-const dayDateLimit = hourDateLimit * 24;
-const relativeDateLimit = dayDateLimit;
-// const halfMonthLimit = dayDateLimit * 15;
-const halfYearLimit = dayDateLimit * 30 * 6;
+/** Use relative date format if lesser time passed */
+const relativeDateLimit = dayMs;
+// export const halfMonthLimit = dayMs * 15;
+
+/** Workaround for cases when date has been passed as an ISO string or en empty value (now) */
+export function ensureDate(date?: Date | string): Date {
+  if (!date) {
+    return new Date();
+  }
+  if (typeof date === 'string') {
+    return new Date(date);
+  }
+  return date;
+}
 
 /** Return numeric date epochs difference. The returned value is positive if 'b' is the later than 'a'. Returns zero if the dates are equal. */
-export function compareDates(a: Date, b: Date) {
+export function compareDates(a: Date | string, b: Date | string) {
+  // Workaround for cases when date has been passed as an ISO string
+  a = ensureDate(a);
+  b = ensureDate(b);
+
   return b.getTime() - a.getTime();
 }
 
 export function getFormattedRelativeDate(
   format: ReturnType<typeof useFormatter>,
-  date: Date = new Date(),
-  now: Date = new Date(),
+  date?: Date | string,
+  now?: Date | string,
 ) {
+  // Workaround for cases when date has been passed as an ISO string
+  date = ensureDate(date);
+  now = ensureDate(now);
+
+  /*
+   * // DEBUG
+   * console.log('[dates:getFormattedRelativeDate]', {
+   *   format,
+   *   date,
+   *   now,
+   * });
+   * if (typeof date.getTime !== 'function') {
+   *   debugger;
+   * }
+   */
   const diff = now.getTime() - date.getTime();
   if (diff < relativeDateLimit) {
     // Return relative date
@@ -48,22 +76,30 @@ export function getFormattedRelativeDate(
   // Return full date
   return format.dateTime(date, {
     // Show a year only if half a year passed
-    year: diff >= halfYearLimit ? 'numeric' : undefined,
+    year: diff >= halfYearMs ? 'numeric' : undefined,
     month: 'short',
     day: 'numeric',
   });
 }
 
-export function useFormattedRelativeDate(date?: Date, now?: Date) {
+export function useFormattedRelativeDate(date?: Date | string, now?: Date | string) {
+  // Workaround for cases when date has been passed as an ISO string
+  date = ensureDate(date);
+  now = ensureDate(now);
+
   const format = useFormatter();
   return getFormattedRelativeDate(format, date, now);
 }
 
 export function getNativeFormattedRelativeDate(
-  date: Date = new Date(),
-  now: Date = new Date(),
+  date: Date | string = new Date(),
+  now: Date | string = new Date(),
   locale: TLocale = defaultLocale,
 ) {
+  // Workaround for cases when date has been passed as an ISO string
+  date = ensureDate(date);
+  now = ensureDate(now);
+
   const rtf = new Intl.RelativeTimeFormat(locale, { style: 'short' });
   const diff = now.getTime() - date.getTime();
   const absDiff = Math.abs(diff);
@@ -74,12 +110,12 @@ export function getNativeFormattedRelativeDate(
     if (absDiff < 1000 * 60) {
       // Less than 1 minute ago
       return rtf.format(-Math.round(absDiff / 1000), 'seconds');
-    } else if (absDiff < hourDateLimit) {
+    } else if (absDiff < hourMs) {
       // Less than 1 hour ago
-      return rtf.format(-Math.round(absDiff / minDateLimit), 'minutes');
+      return rtf.format(-Math.round(absDiff / minuteMs), 'minutes');
     } else {
       // Less than 1 day ago
-      return rtf.format(-Math.round(absDiff / hourDateLimit), 'hours');
+      return rtf.format(-Math.round(absDiff / hourMs), 'hours');
     }
   }
 
@@ -89,26 +125,51 @@ export function getNativeFormattedRelativeDate(
     if (absDiff < 1000 * 60) {
       // Less than 1 minute in future
       return rtf.format(Math.round(absDiff / 1000), 'seconds');
-    } else if (absDiff < hourDateLimit) {
+    } else if (absDiff < hourMs) {
       // Less than 1 hour in future
-      return rtf.format(Math.round(absDiff / minDateLimit), 'minutes');
+      return rtf.format(Math.round(absDiff / minuteMs), 'minutes');
     } else {
       // Less than 1 day in future
-      return rtf.format(Math.round(absDiff / hourDateLimit), 'hours');
+      return rtf.format(Math.round(absDiff / hourMs), 'hours');
     }
   }
 
   // Return full date for dates older than a day (both past and future)
   const formatter = new Intl.DateTimeFormat(locale, {
-    year: absDiff >= halfYearLimit ? 'numeric' : undefined,
+    year: absDiff >= halfYearMs ? 'numeric' : undefined,
     month: 'short',
     day: 'numeric',
   });
   return formatter.format(date);
 }
 
-export function formatDate(input: string | number, locale: TLocale = defaultLocale): string {
-  const date = new Date(input);
+export function formatDateTag(input?: string | number | Date, omitTime: boolean = false): string {
+  const date = !input ? new Date() : input instanceof Date ? input : new Date(input);
+  // const pad = (n: number) => (n < 10 ? '0' + n : n);
+  const numPad = (n: number, pad: number = 2) => String(n).padStart(pad, '0');
+  const formattedDate = [
+    // date...
+    date.getFullYear(),
+    numPad(date.getMonth()),
+    numPad(date.getDate()),
+  ]
+    .filter(Boolean)
+    .join('-');
+  const formattedTime =
+    !omitTime &&
+    [
+      numPad(date.getHours()),
+      numPad(date.getMinutes()),
+      numPad(date.getSeconds()),
+      numPad(date.getMilliseconds(), 3),
+    ]
+      .filter(Boolean)
+      .join(':');
+  return [formattedDate, formattedTime].filter(Boolean).join(',');
+}
+
+export function formatDate(input: string | number | Date, locale: TLocale = defaultLocale): string {
+  const date = input instanceof Date ? input : new Date(input);
   return date.toLocaleDateString(locale, {
     month: 'long',
     day: 'numeric',
@@ -117,7 +178,10 @@ export function formatDate(input: string | number, locale: TLocale = defaultLoca
 }
 
 // Utils from precedent.dev
-export const timeAgo = (timestamp: Date, timeOnly?: boolean): string => {
+export const timeAgo = (timestamp: Date | string, timeOnly?: boolean): string => {
+  // Workaround for cases when date has been passed as an ISO string
+  timestamp = ensureDate(timestamp);
+
   if (!timestamp) {
     return 'never';
   }

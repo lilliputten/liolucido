@@ -2,15 +2,17 @@
 'use server';
 
 import { cache } from 'react';
+import { ExtendedUser } from '@/@types/next-auth';
 
 import { auth } from '@/auth';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
-import { TOptionalExtendedUser } from '@/features/users/types/TUser';
+
+// import { TExtendedUser } from '@/features/users/types/TUser';
 
 /** Server: Get user data from auth data.
  * Use `useSessionUser` fro client components.
  */
-export const getCurrentUser = cache<() => Promise<TOptionalExtendedUser>>(async () => {
+export const getCurrentUser = cache<() => Promise<ExtendedUser | undefined>>(async () => {
   const session = await auth();
   const user = session?.user;
   if (!user) {

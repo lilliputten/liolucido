@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { prisma } from '@/lib/db';
-import { getCurrentUser } from '@/lib/session';
-import { UserTopicWorkoutSchema } from '@/generated/prisma';
-
-const updateWorkoutSchema = UserTopicWorkoutSchema.omit({
-  userId: true,
-  topicId: true,
-  createdAt: true,
-  updatedAt: true,
-}).partial();
+import { TApiResponse } from '@/shared/types/api';
+import { deleteWorkout } from '@/features/workouts/actions/deleteWorkout';
+import { getWorkout } from '@/features/workouts/actions/getWorkout';
+import { updateWorkout } from '@/features/workouts/actions/updateWorkout';
 
 /** GET /api/workouts/[topicId] - Get specific workout */
 export async function GET(
@@ -18,31 +12,40 @@ export async function GET(
   { params }: { params: Promise<{ topicId: string }> },
 ) {
   try {
-    const user = await getCurrentUser();
-    if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { topicId } = await params;
 
-    const workout = await prisma.userTopicWorkout.findUnique({
-      where: {
-        userId_topicId: {
-          userId: user.id,
-          topicId,
-        },
-      },
-    });
+    const workout = await getWorkout(topicId);
 
     if (!workout) {
-      return NextResponse.json({ error: 'Workout not found' }, { status: 404 });
+      const response: TApiResponse<null> = {
+        data: null,
+        ok: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Workout not found',
+        },
+      };
+      return NextResponse.json(response, { status: 404 });
     }
 
-    return NextResponse.json(workout);
+    const response: TApiResponse<typeof workout> = {
+      data: workout,
+      ok: true,
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[API /workouts/[topicId] GET]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const isAuthError = error instanceof Error && error.message === 'Authentication required';
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: isAuthError ? 'UNAUTHORIZED' : 'INTERNAL_ERROR',
+        message: isAuthError ? error.message : 'Failed to fetch workout',
+        details: { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
+    return NextResponse.json(response, { status: isAuthError ? 401 : 500 });
   }
 }
 
@@ -52,35 +55,44 @@ export async function PUT(
   { params }: { params: Promise<{ topicId: string }> },
 ) {
   try {
-    const user = await getCurrentUser();
-    if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { topicId } = await params;
     const body = await request.json();
-    const updateData = updateWorkoutSchema.parse(body);
+    const workout = await updateWorkout(topicId, body);
 
-    const workout = await prisma.userTopicWorkout.update({
-      where: {
-        userId_topicId: {
-          userId: user.id,
-          topicId,
-        },
-      },
-      data: updateData,
-    });
+    const response: TApiResponse<typeof workout> = {
+      data: workout,
+      ok: true,
+    };
 
-    return NextResponse.json(workout);
+    return NextResponse.json(response);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[API /workouts/[topicId] PUT]', error);
+    const isAuthError = error instanceof Error && error.message === 'Authentication required';
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code:
+          error instanceof z.ZodError
+            ? 'VALIDATION_ERROR'
+            : isAuthError
+              ? 'UNAUTHORIZED'
+              : 'INTERNAL_ERROR',
+        message:
+          error instanceof z.ZodError
+            ? 'Invalid workout data'
+            : isAuthError
+              ? error.message
+              : 'Failed to update workout',
+        details:
+          error instanceof z.ZodError
+            ? { errors: error.errors }
+            : { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
 
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 400 });
-    }
-
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(response, {
+      status: error instanceof z.ZodError ? 400 : isAuthError ? 401 : 500,
+    });
   }
 }
 
@@ -90,26 +102,27 @@ export async function DELETE(
   { params }: { params: Promise<{ topicId: string }> },
 ) {
   try {
-    const user = await getCurrentUser();
-    if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { topicId } = await params;
+    await deleteWorkout(topicId);
 
-    await prisma.userTopicWorkout.delete({
-      where: {
-        userId_topicId: {
-          userId: user.id,
-          topicId,
-        },
-      },
-    });
+    const response: TApiResponse<{ success: boolean }> = {
+      data: { success: true },
+      ok: true,
+    };
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(response);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[API /workouts/[topicId] DELETE]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const isAuthError = error instanceof Error && error.message === 'Authentication required';
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: isAuthError ? 'UNAUTHORIZED' : 'INTERNAL_ERROR',
+        message: isAuthError ? error.message : 'Failed to delete workout',
+        details: { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
+
+    return NextResponse.json(response, { status: isAuthError ? 401 : 500 });
   }
 }

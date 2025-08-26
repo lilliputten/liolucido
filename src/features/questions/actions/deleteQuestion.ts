@@ -3,11 +3,11 @@
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
-import { TQuestion } from '@/features/questions/types';
+import { TQuestionId } from '@/features/questions/types';
 
 /* TODO: To broadcast a client message to refresh topics data, including other tabs? */
 
-export async function deleteQuestion(question: TQuestion) {
+export async function deleteQuestion(questionId: TQuestionId) {
   // Check user rights to delete the question...?
   const user = await getCurrentUser();
   const userId = user?.id;
@@ -15,15 +15,20 @@ export async function deleteQuestion(question: TQuestion) {
     throw new Error('Undefined user');
   }
   // Check user rights to delete the question...
-  const topic = await prisma.topic.findUnique({
-    where: { id: question.topicId },
+  const question = await prisma.question.findUnique({
+    where: { id: questionId },
+    include: { topic: true },
   });
+  if (!question) {
+    throw new Error('Not found question to delete');
+  }
+  const topic = question.topic;
   if (!topic) {
     throw new Error('Not found owner topic for the deleting question');
   }
   // Check if the current user is allowed to delete the topic?
   if (userId !== topic?.userId && user.role !== 'ADMIN') {
-    throw new Error('Current user not allowed to delete the question');
+    throw new Error('Current user is not allowed to delete the question');
   }
   try {
     if (isDev) {

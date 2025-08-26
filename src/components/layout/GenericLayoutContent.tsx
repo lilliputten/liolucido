@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ExtendedUser } from '@/@types/next-auth';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
 import { NavItemBase } from '@/shared/types/site/NavItem';
@@ -9,15 +10,14 @@ import { cn } from '@/lib/utils';
 import { NavBar } from '@/components/layout/NavBar';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { isDev } from '@/constants';
-import { TExtendedUser } from '@/features/users/types/TUser';
 
 import { DashboardSidebar, MobileSheetSidebar, MobileSheetWrapper } from './DashboardSidebar';
 
 interface TGenericLayoutContentProps extends TPropsWithChildren {
-  user?: TExtendedUser;
+  user?: ExtendedUser;
 }
 
-function checkIfLinkIsAllowedForUser(user: TExtendedUser | undefined, navItem: NavItemBase) {
+function checkIfLinkIsAllowedForUser(user: ExtendedUser | undefined, navItem: NavItemBase) {
   const { authorizedOnly } = navItem;
   if (!authorizedOnly) {
     return true;

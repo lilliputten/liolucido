@@ -1,33 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { prisma } from '@/lib/db';
-import { getCurrentUser } from '@/lib/session';
+import { TApiResponse } from '@/shared/types/api';
+import { getQuestionAnswers } from '@/features/answers/actions';
 
+/** GET /api/questions/[questionId]/answers - Get answers for a question */
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ questionId: string }> },
 ) {
   try {
-    const user = await getCurrentUser();
-    if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { questionId } = await params;
+    const answers = await getQuestionAnswers(questionId);
 
-    const answers = await prisma.answer.findMany({
-      where: { questionId },
-      select: {
-        id: true,
-        text: true,
-        isCorrect: true,
-      },
-    });
+    const response: TApiResponse<typeof answers> = {
+      data: answers,
+      ok: true,
+    };
 
-    return NextResponse.json(answers);
+    return NextResponse.json(response);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[API /questions/[questionId]/answers GET]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    debugger; // eslint-disable-line no-debugger
+
+    const response: TApiResponse<null> = {
+      data: null,
+      ok: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error instanceof Error ? error.message : 'Failed to fetch answers',
+        details: { error: error instanceof Error ? error.message : String(error) },
+      },
+    };
+
+    return NextResponse.json(response, { status: 500 });
   }
 }

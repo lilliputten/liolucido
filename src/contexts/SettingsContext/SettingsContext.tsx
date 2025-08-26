@@ -6,12 +6,13 @@ import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 
 import { defaultThemeColor } from '@/config/themeColors';
+import { handleApiResponse } from '@/lib/api';
 import { deleteCookie, setCookie } from '@/lib/helpers/cookies';
 import { removeFalsyValues, removeNullUndefinedValues } from '@/lib/helpers/objects';
-import { useSwitchRouterLocale } from '@/hooks/useSwitchRouterLocale';
-import { getSettings, updateSettings } from '@/features/settings/actions';
+import { getSettings } from '@/features/settings/actions';
 import { defaultSettings, settingsSchema, TSettings } from '@/features/settings/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
+import { useSwitchRouterLocale } from '@/hooks';
+// import { TDefinedUserId } from '@/features/users/types/TUser';
 import { defaultLocale, TLocale } from '@/i18n/types';
 
 import { SettingsContextData } from './SettingsContextDefinitions';
@@ -20,7 +21,7 @@ const SettingsContext = React.createContext<SettingsContextData | undefined>(und
 
 interface SettingsContextProviderProps {
   children: React.ReactNode;
-  userId?: TDefinedUserId;
+  user?: SettingsContextData['user'];
 }
 
 function getLocalSettings() {
@@ -50,7 +51,8 @@ type TMemo = {
   setAppTheme?: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export function SettingsContextProvider({ children, userId }: SettingsContextProviderProps) {
+export function SettingsContextProvider({ children, user }: SettingsContextProviderProps) {
+  const userId = user?.id;
   const memo = React.useMemo<TMemo>(() => ({ settings: { ...defaultSettings } }), []);
   const [settings, setSettings] = React.useState<TSettings>(memo.settings);
   const [inited, setInited] = React.useState(false);
@@ -138,37 +140,39 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   /** Save settings on the server (if user authorized) and locally */
   const updateAndSaveSettings = React.useCallback(
-    (settings: TSettings) => {
+    async (settings: TSettings) => {
       // Save local data and apply the data first
       setAndMemoizeSettings(settings);
       // Then invoke (if authorized) the save procedure on the server
       if (!userId) {
-        return Promise.resolve(settings);
+        return { ok: true, data: settings } as const;
       }
-      /* // DEBUG
-       * return new Promise<TSettings>((resolve) => setTimeout(resolve, 3000, settings));
-       */
-      const savePromise = updateSettings(settings);
-      /* // ALT: Using api route
-       * const savePromise = fetch('/api/settings', {
-       *   method: 'PUT',
-       *   headers: { 'Content-Type': 'application/json' },
-       *   body: JSON.stringify(settings),
-       * }).then((res) => {
-       *   console.log('[SettingsContext:updateAndSaveSettings] done', {
-       *     res,
-       *   });
-       *   if (!res.ok) {
-       *     throw new Error(`HTTP ${res.status}`);
-       *   }
-       *   return res.json();
-       * });
-       */
-      toast.promise(savePromise, {
-        loading: 'Saving settings...',
-        success: 'Successfully saved settings.',
-        error: 'Can not save settings.',
+      const savePromise = handleApiResponse(
+        fetch('/api/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings),
+        }),
+        {
+          debugDetails: {
+            initiator: 'SettingsContext',
+            action: 'updateSettings',
+          },
+        },
+      ).then((result) => {
+        if (result.ok && result.data) {
+          return { ok: true, data: result.data as TSettings } as const;
+        }
+        throw new Error('Failed to update settings');
       });
+      toast.promise(
+        savePromise.then((r) => (r.ok && r.data ? r.data : settings)),
+        {
+          loading: 'Saving settings...',
+          success: 'Successfully saved settings.',
+          error: 'Can not save settings.',
+        },
+      );
       return savePromise;
     },
     [setAndMemoizeSettings, userId],
@@ -176,19 +180,21 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   /** Set and save locale */
   const setLocale = React.useCallback(
-    (locale: TSettings['locale'] = defaultLocale) => {
+    async (locale: TSettings['locale'] = defaultLocale) => {
       const updatedSettings = { ...memo.settings, locale };
-      return updateAndSaveSettings(updatedSettings);
+      const result = await updateAndSaveSettings(updatedSettings);
+      return result.ok && result.data ? result.data : updatedSettings;
     },
     [memo, updateAndSaveSettings],
   );
 
   /** Set and save theme */
   const setTheme = React.useCallback(
-    (theme: TSettings['theme'] = defaultTheme) => {
+    async (theme: TSettings['theme'] = defaultTheme) => {
       // memo.setAppTheme?.(theme);
       const updatedSettings = { ...memo.settings, theme };
-      return updateAndSaveSettings(updatedSettings);
+      const result = await updateAndSaveSettings(updatedSettings);
+      return result.ok && result.data ? result.data : updatedSettings;
     },
     [memo, updateAndSaveSettings],
   );
@@ -253,7 +259,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
 
   const settingsContext = React.useMemo<SettingsContextData>(
     () => ({
-      userId,
+      user,
       settings,
       setLocale,
       setTheme,
@@ -266,7 +272,7 @@ export function SettingsContextProvider({ children, userId }: SettingsContextPro
       userInited,
     }),
     [
-      userId,
+      user,
       settings,
       setLocale,
       setTheme,

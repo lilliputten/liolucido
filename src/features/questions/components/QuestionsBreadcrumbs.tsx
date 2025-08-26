@@ -3,46 +3,78 @@
 import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
+import { truncateMarkdown } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
-import { truncate } from '@/lib/helpers/strings';
+import { capitalizeString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
-import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
-import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
-  TTopicsBreadcrumbsProps,
-  useTopicsBreadcrumbsItems,
-} from '@/features/topics/components/TopicsBreadcrumbs';
+  Breadcrumbs,
+  BreadcrumbsItem,
+  TBreadcrumbsItemProps,
+} from '@/components/layout/Breadcrumbs';
+import { isDev } from '@/constants';
+import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { TQuestion } from '@/features/questions/types';
+import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TTopic } from '@/features/topics/types';
 
-export interface TQuestionsBreadcrumbsProps extends TTopicsBreadcrumbsProps {
-  questionId?: TQuestionId;
-  inactiveQuestions?: boolean;
-  inactiveQuestion?: boolean;
+interface TBreadcrumbsProps {
+  scope: TTopicsManageScopeId;
+  topic?: TTopic; // The topic is required by might by undefined while loading, then display skeleton
+  question?: TQuestion;
+  lastItem?: TBreadcrumbsItemProps | BreadcrumbsItem;
+  inactiveLast?: boolean;
+  isLoading?: boolean;
 }
 
-export function useQuestionsBreadcrumbsItems(props: TQuestionsBreadcrumbsProps) {
-  const { questionId, inactiveQuestions, inactiveQuestion, ...rest } = props;
-  const questionsContext = useQuestionsContext();
-  const { questions, topicId, routePath } = questionsContext;
-  const topicItems = useTopicsBreadcrumbsItems({ topicId, ...rest });
-  const question: TQuestion | undefined = React.useMemo(
-    () => (questionId ? questions.find(({ id }) => id === questionId) : undefined),
-    [questions, questionId],
-  );
+export function useQuestionsBreadcrumbsItems(props: TBreadcrumbsProps) {
+  const { scope, topic, question, lastItem, isLoading } = props;
+  const topicsListRoutePath = topicsRoutes[scope];
+  const topicRoutePath = topic && `${topicsListRoutePath}/${topic.id}`;
+  const questionsListRoutePath = topicRoutePath && `${topicRoutePath}/questions`;
+  const questionRoutePath =
+    question && questionsListRoutePath && `${questionsListRoutePath}/${question.id}`;
+  // TODO: Use i18n translations
+  const listTitle = capitalizeString(scope) + ' Questions' + (isDev ? '*' : '');
+  const topicItems = useTopicsBreadcrumbsItems({ scope, topic });
+  if (isLoading) {
+    return [];
+  }
   const items = filterOutEmpties<TBreadcrumbsItemProps>([
-    { link: inactiveQuestions ? undefined : routePath, content: 'Questions' },
-    !!question && {
-      link: inactiveQuestion ? undefined : `${routePath}/${question.id}`,
-      content: truncate(question.text, 20),
+    { link: questionsListRoutePath, content: listTitle },
+    question && {
+      link: questionRoutePath,
+      content: truncateMarkdown(question.text, 50),
     },
+    lastItem,
   ]);
   return [...topicItems, ...items];
 }
 
-export function QuestionsBreadcrumbs(props: TQuestionsBreadcrumbsProps & TPropsWithClassName) {
-  const { className, ...rest } = props;
-  const items = useQuestionsBreadcrumbsItems(rest);
+export function QuestionsBreadcrumbs(props: TBreadcrumbsProps & TPropsWithClassName) {
+  const { className, inactiveLast, isLoading } = props;
+  const items = useQuestionsBreadcrumbsItems(props);
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          isDev && '__QuestionsBreadcrumbs_Skeleton', // DEBUG
+          'flex gap-2',
+        )}
+      >
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-6 w-32 rounded" />
+        ))}
+      </div>
+    );
+  }
+  if (inactiveLast && items.length) {
+    const lastIdx = items.length - 1;
+    if (items[lastIdx].link) {
+      items[lastIdx] = { ...items[lastIdx], link: undefined };
+    }
+  }
   return (
     <Breadcrumbs
       className={cn(

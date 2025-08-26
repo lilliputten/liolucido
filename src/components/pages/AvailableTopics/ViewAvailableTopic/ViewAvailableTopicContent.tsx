@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
@@ -21,6 +22,7 @@ interface TViewAvailableTopicContentProps {
 }
 
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
+  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const {
     topic,
     className,
@@ -59,7 +61,11 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
             className,
           )}
         >
-          <TopicHeader topic={topic} className="flex-1 max-sm:flex-col-reverse" />
+          <TopicHeader
+            scope={manageScope}
+            topic={topic}
+            className="flex-1 max-sm:flex-col-reverse"
+          />
           {!!description && (
             <div id="description" className="truncate">
               <MarkdownText>{description}</MarkdownText>

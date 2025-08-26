@@ -1,50 +1,54 @@
 'use client';
 
 import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Modal } from '@/components/ui/modal';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { addNewTopic } from '@/features/topics/actions/addNewTopic';
 import { TNewTopic, TTopic } from '@/features/topics/types';
+import {
+  useAvailableTopicsByScope,
+  useGoBack,
+  useGoToTheRoute,
+  useMediaQuery,
+  useModalTitle,
+  useUpdateModalVisibility,
+} from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { AddTopicForm } from './AddTopicForm';
 
+const urlPostfix = '/add';
+
 export function AddTopicModal() {
-  const router = useRouter();
+  const { manageScope } = useManageTopicsStore();
+  const routePath = `/topics/${manageScope}`;
   const [isVisible, setVisible] = React.useState(false);
-  const hideModal = React.useCallback(() => {
-    setVisible(false);
-    router.back();
-    // TODO: Add no-history failback
-  }, [router]);
   const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
-  const topicsContext = useTopicsContext();
+  const availableTopicsQuery = useAvailableTopicsByScope({ manageScope });
 
   // Check if we're still on the add route
   const pathname = usePathname();
-  const isAddRoute = pathname?.endsWith('/add');
+  /** Should the modal be visible? */
+  const shouldBeVisible = pathname?.endsWith(urlPostfix);
 
-  // Check if the modal should be visible
-  React.useEffect(() => {
-    setVisible(isAddRoute);
-    if (isAddRoute) {
-      const originalTitle = document.title;
-      document.title = 'Add a Topic';
-      return () => {
-        setVisible(false);
-        document.title = originalTitle;
-      };
-    }
-  }, [isAddRoute]);
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(routePath);
+
+  const hideModal = React.useCallback(() => {
+    setVisible(false);
+    goBack();
+  }, [goBack]);
+
+  useModalTitle('Add a Topic', shouldBeVisible);
+  useUpdateModalVisibility(setVisible, shouldBeVisible);
 
   const handleAddTopic = React.useCallback(
     (newTopic: TNewTopic) => {
@@ -52,15 +56,16 @@ export function AddTopicModal() {
         return startUpdating(() => {
           const promise = addNewTopic(newTopic)
             .then((addedTopic) => {
-              // Update topics list
-              topicsContext.setTopics((topics) => topics.concat(addedTopic));
+              // Add the created item to the cached react-query data
+              availableTopicsQuery.addNewTopic(addedTopic, true);
+              // Invalidate all other keys...
+              availableTopicsQuery.invalidateAllKeysExcept([availableTopicsQuery.queryKey]);
+              // Resolve added data
               resolve(addedTopic);
-              // NOTE: Close the modal first
+              // Close the modal first
               setVisible(false);
               // Then navigate to the edit page after a short delay to ensure modal is closed
-              setTimeout(() => {
-                router.push(`${topicsContext.routePath}/${addedTopic.id}`);
-              }, 100);
+              setTimeout(() => goToTheRoute(`${routePath}/${addedTopic.id}`, true), 100);
               return addedTopic;
             })
             .catch((error) => {
@@ -80,7 +85,7 @@ export function AddTopicModal() {
         });
       });
     },
-    [topicsContext, router],
+    [availableTopicsQuery, routePath, goToTheRoute],
   );
 
   return (

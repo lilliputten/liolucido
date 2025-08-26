@@ -1,58 +1,68 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
+import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { useQuestionsContext } from '@/contexts/QuestionsContext/QuestionsContext';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
-import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { TQuestionId } from '@/features/questions/types';
+import { TTopicId } from '@/features/topics/types';
+import { useAvailableTopicById } from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-import { ViewQuestionContent } from './ViewQuestionContent';
+import { ViewQuestionContentActions } from './ViewQuestionContentActions';
+import { ViewQuestionContentSummary } from './ViewQuestionContentSummary';
 
 interface TViewQuestionCardProps extends TPropsWithClassName {
+  topicId: TTopicId;
   questionId: TQuestionId;
 }
 
 export function ViewQuestionCard(props: TViewQuestionCardProps) {
-  const { className, questionId } = props;
-  const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
-  const router = useRouter();
-  const questionsContext = useQuestionsContext();
-  const { questions } = questionsContext;
-  const question: TQuestion | undefined = React.useMemo(
-    () => questions.find(({ id }) => id === questionId),
-    [questions, questionId],
-  );
-  if (!questionId || !question) {
+  const { manageScope } = useManageTopicsStore();
+  const { className, topicId, questionId } = props;
+
+  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
+  const {
+    question,
+    isFetched: isQuestionFetched,
+    isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
+
+  // const topicsListRoutePath = `/topics/${manageScope}`;
+  // const questionsListRoutePath = `${topicsListRoutePath}/${topicId}/questions`;
+
+  const availableTopicQuery = useAvailableTopicById({ id: topicId });
+  const { data: topic } = availableTopicQuery;
+
+  // No data loaded yet: display skeleton
+  if (isQuestionLoadingOverall) {
+    return (
+      <div
+        className={cn(
+          isDev && '__ViewQuestionCard_Skeleton', // DEBUG
+          'flex flex-1 flex-col gap-4 py-4',
+          className,
+        )}
+      >
+        <Skeleton className="h-8 w-48 rounded-lg" />
+        <Skeleton className="h-8 w-full rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!question) {
     throw new Error(`No such question exists: ${questionId}`);
   }
-  const goBack = useGoBack(questionsContext.routePath);
-
-  // Add Question Modal
-  const handleAddQuestion = React.useCallback(() => {
-    router.push(`${questionsContext.routePath}/add`);
-  }, [router, questionsContext]);
-
-  // Delete Question Modal
-  const handleDeleteQuestion = React.useCallback(() => {
-    const hasQuestion = questionsContext.questions.find(({ id }) => id === question.id);
-    if (hasQuestion) {
-      router.push(
-        `${questionsContext.routePath}/delete?questionId=${question.id}&from=ViewQuestionCard`,
-      );
-    } else {
-      toast.error('The requested question does not exist.');
-      router.replace(questionsContext.routePath);
-    }
-  }, [router, questionsContext, question]);
 
   return (
     <Card
@@ -66,7 +76,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
       <CardHeader
         className={cn(
           isDev && '__ViewQuestionCard_Header', // DEBUG
-          'item-start flex flex-col gap-4 md:flex-row',
+          'item-start flex flex-col gap-4 lg:flex-row',
         )}
       >
         <div
@@ -79,37 +89,25 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
             className={cn(
               isDev && '__EditQuestionCard_Breadcrumbs', // DEBUG
             )}
-            questionId={questionId}
-            inactiveQuestion
+            scope={manageScope}
+            isLoading={!topic}
+            topic={topic}
+            question={question}
+            inactiveLast
           />
-          {/* // UNUSED: Title
-            <CardTitle className="flex flex-1 items-center overflow-hidden">
-              <span className="truncate">Show Question</span>
-            </CardTitle>
-            */}
         </div>
-        <div
-          ref={toolbarPortalRef}
-          className={cn(
-            isDev && '__ViewQuestionCard_Toolbar', // DEBUG
-            'flex flex-wrap items-center gap-2',
-          )}
-        />
+        <ViewQuestionContentActions question={question} />
       </CardHeader>
 
       <CardContent
         className={cn(
           isDev && '__ViewQuestionCard_Content', // DEBUG
-          'relative flex flex-1 flex-col overflow-hidden px-0',
+          'relative flex w-full flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ViewQuestionContent
-          question={question}
-          goBack={goBack}
-          handleDeleteQuestion={handleDeleteQuestion}
-          handleAddQuestion={handleAddQuestion}
-          toolbarPortalRoot={toolbarPortalRoot}
-        />
+        <ScrollArea>
+          <ViewQuestionContentSummary question={question} />
+        </ScrollArea>
       </CardContent>
     </Card>
   );

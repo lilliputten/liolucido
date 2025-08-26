@@ -89,7 +89,8 @@ export function SettingsForm(props: TSettingsFormProps) {
       startTransition(() => {
         const savePromise = updateAndSaveSettings(editedSettings);
         return savePromise
-          .then((updatedSettings) => {
+          .then((result) => {
+            const updatedSettings = result.ok && result.data ? result.data : editedSettings;
             const settings: TSettings = settingsSchema.parse(
               removeNullUndefinedValues(updatedSettings),
             );

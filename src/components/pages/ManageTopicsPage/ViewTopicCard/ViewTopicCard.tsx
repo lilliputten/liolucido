@@ -1,57 +1,100 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { useGoBack } from '@/hooks/useGoBack';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { useTopicsContext } from '@/contexts/TopicsContext/TopicsContext';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TTopicId } from '@/features/topics/types';
+import {
+  useAvailableTopicById,
+  useAvailableTopicsByScope,
+  useGoBack,
+  useGoToTheRoute,
+} from '@/hooks';
+import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-import { ViewTopicContent } from './ViewTopicContent';
+import { ViewTopicContentActions } from './ViewTopicContentActions';
+import { ViewTopicContentSummary } from './ViewTopicContentSummary';
 
 interface TViewTopicCardProps extends TPropsWithClassName {
   topicId: TTopicId;
 }
 
 export function ViewTopicCard(props: TViewTopicCardProps) {
+  const { manageScope } = useManageTopicsStore();
+  const topicsListRoutePath = `/topics/${manageScope}`;
+  const goBack = useGoBack(topicsListRoutePath);
+  const goToTheRoute = useGoToTheRoute();
   const { className, topicId } = props;
-  const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
-  const [toolbarPortalRoot, setToolbarPortalRoot] = React.useState<HTMLDivElement | null>(null);
-  React.useEffect(() => setToolbarPortalRoot(toolbarPortalRef.current), [toolbarPortalRef]);
-  const router = useRouter();
-  const topicsContext = useTopicsContext();
-  const { topics } = topicsContext;
-  const topic: TTopic | undefined = React.useMemo(
-    () => topics.find(({ id }) => id === topicId),
-    [topics, topicId],
-  );
-  if (!topicId || !topic) {
-    throw new Error('No such topic exists');
-  }
-  const goBack = useGoBack(topicsContext.routePath);
+  const availableTopics = useAvailableTopicsByScope({ manageScope });
+  const {
+    allTopics,
+    isFetched: isTopicsFetched,
+    // isLoading: isTopicsLoading,
+    queryKey: availableTopicsQueryKey,
+    queryProps: availableTopicsQueryProps,
+  } = availableTopics;
+
+  const availableTopicQuery = useAvailableTopicById({
+    id: topicId,
+    availableTopicsQueryKey,
+    // ...availableTopicsQueryProps,
+    includeWorkout: availableTopicsQueryProps.includeWorkout,
+    includeUser: availableTopicsQueryProps.includeUser,
+    includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
+  });
+  const {
+    topic,
+    isFetched: isTopicFetched,
+    isLoading: isTopicLoading,
+    // isCached: isTopicCached,
+  } = availableTopicQuery;
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
-    const hasTopic = !!topicsContext.topics.find(({ id }) => id === topic.id);
-    if (hasTopic) {
-      router.push(`${topicsContext.routePath}/delete?topicId=${topic.id}&from=ViewTopicCard`);
-    } else {
-      toast.error('The requested topic does not exist.');
-      router.replace(topicsContext.routePath);
-    }
-  }, [router, topicsContext, topic]);
+    const url = `${topicsListRoutePath}/delete?topicId=${topicId}&from=ViewTopicCard`;
+    goToTheRoute(url);
+  }, [goToTheRoute, topicsListRoutePath, topicId]);
 
-  /* // Add Topic Modal
-   * const handleAddQuestion = React.useCallback(() => {
-   *   router.push(`${topicsContext.routePath}/${topic.id}/questions/add`);
-   * }, [router, topicsContext, topic]);
-   */
+  // No data loaded yet: display skeleton
+  if (!topic && (!isTopicsFetched || !isTopicFetched || isTopicLoading)) {
+    return (
+      <div
+        className={cn(
+          isDev && '__EditTopicCard_Skeleton', // DEBUG
+          'size-full',
+          'flex flex-1 flex-col gap-4 py-4',
+          className,
+        )}
+      >
+        <Skeleton className="h-8 w-48 rounded-lg" />
+        <Skeleton className="h-8 w-full rounded-lg" />
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  // Error: topic hasn't been found
+  if (!topicId || !topic) {
+    const error = new Error('No such topic exists');
+    // eslint-disable-next-line no-console
+    console.error('[ViewTopicCard]', error.message, {
+      topicId,
+      topic,
+      isFetched: isTopicsFetched,
+      allTopics,
+      error,
+    });
+    debugger; // eslint-disable-line no-debugger
+    throw error;
+  }
 
   return (
     <Card
@@ -78,8 +121,9 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}
-            topicId={topicId}
-            inactiveTopic
+            scope={manageScope}
+            topic={topic}
+            inactiveLast
           />
           {/* // UNUSED: Title
             <CardTitle className="flex flex-1 items-center overflow-hidden">
@@ -88,27 +132,27 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
             */}
         </div>
         <div
-          ref={toolbarPortalRef}
           className={cn(
             isDev && '__ViewTopicCard_Toolbar', // DEBUG
             'flex flex-wrap items-center gap-2',
           )}
-        />
+        >
+          <ViewTopicContentActions
+            topic={topic}
+            goBack={goBack}
+            handleDeleteTopic={handleDeleteTopic}
+          />
+        </div>
       </CardHeader>
-
       <CardContent
         className={cn(
           isDev && '__ViewTopicCard_Content', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden px-0',
         )}
       >
-        <ViewTopicContent
-          topic={topic}
-          goBack={goBack}
-          handleDeleteTopic={handleDeleteTopic}
-          // handleAddQuestion={handleAddQuestion}
-          toolbarPortalRoot={toolbarPortalRoot}
-        />
+        <ScrollArea>
+          <ViewTopicContentSummary topic={topic} />
+        </ScrollArea>
       </CardContent>
     </Card>
   );
