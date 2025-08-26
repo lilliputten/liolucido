@@ -15,7 +15,6 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { useAnswersContext } from '@/contexts/AnswersContext';
 import { TAnswer } from '@/features/answers/types';
 import { TTopicId } from '@/features/topics/types';
 import { useAvailableTopicById, useSessionUser } from '@/hooks';
@@ -31,19 +30,6 @@ export function ViewAnswerContentSummary({
   const { manageScope } = useManageTopicsStore();
   const format = useFormatter();
   const user = useSessionUser();
-
-  // TODO: Remove after implementing `useAvailableAnswers`
-  const answersContext = useAnswersContext();
-
-  /* // UNUSED: AvailableTopics
-   * const availableTopics = useAvailableTopicsByScope({ manageScope });
-   * const {
-   *   isFetched: isTopicsFetched,
-   *   // isLoading: isTopicsLoading,
-   *   queryKey: availableTopicsQueryKey,
-   *   queryProps: availableTopicsQueryProps,
-   * } = availableTopics;
-   */
 
   const questionId = answer.questionId;
 
@@ -66,12 +52,6 @@ export function ViewAnswerContentSummary({
   const isTopicLoadingOverall =
     !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
 
-  /*
-   * const question = React.useMemo(() => {
-   *   return questionsContext.questions.find((q) => q.id === answer.questionId);
-   * }, [questionsContext.questions, answer.questionId]);
-   */
-
   const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
   const {
     question,
@@ -79,8 +59,6 @@ export function ViewAnswerContentSummary({
     isLoading: isQuestionLoading,
   } = availableQuestionQuery;
   const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
-
-  const totalAnswersCount = answersContext.answers.length;
 
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
 
@@ -115,11 +93,15 @@ export function ViewAnswerContentSummary({
         {topic.description && (
           <p className="text-sm opacity-50">{truncateMarkdown(topic.description, 100)}</p>
         )}
-        {!!topic._count?.questions && (
-          <p className="text-sm opacity-50">
-            <span className="opacity-50">Total questions:</span> {topic._count?.questions}
-          </p>
-        )}
+        <p className="text-sm opacity-50">
+          {topic._count?.questions ? (
+            <span>
+              <span className="opacity-50">Total questions:</span> {topic._count?.questions}
+            </span>
+          ) : (
+            <span className="opacity-50">No questions:</span>
+          )}
+        </p>
       </div>
     </div>
   ) : null;
@@ -139,7 +121,7 @@ export function ViewAnswerContentSummary({
       <div className="flex flex-wrap gap-2">
         <Badge
           // variant={answer.isCorrect ? 'default' : 'secondary'}
-          className={answer.isCorrect ? 'bg-green-500' : ''}
+          className={answer.isCorrect ? 'bg-green-500' : 'bg-red-500'}
         >
           <Icons.CircleCheck className="mr-1 h-3 w-3" />
           {answer.isCorrect ? 'Correct' : 'Incorrect'}
@@ -186,7 +168,13 @@ export function ViewAnswerContentSummary({
       <div className="flex flex-col gap-2 rounded-lg bg-slate-500/10 p-3">
         <p className="font-medium">{truncateMarkdown(question.text, 100)}</p>
         <p className="text-sm opacity-50">
-          <span className="opacity-50">Total answers:</span> {totalAnswersCount}
+          {question._count?.answers ? (
+            <span>
+              <span className="opacity-50">Total answers:</span> {question._count.answers}
+            </span>
+          ) : (
+            <span className="opacity-50">No answers</span>
+          )}
         </p>
       </div>
     </div>

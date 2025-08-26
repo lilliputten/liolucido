@@ -1,15 +1,17 @@
 > 2025.08.24
 
-useAnswersContext -> useAvailableAnswers
+```javascript
+
+useAnswersContext -> useAvailableAnswers, useAvailableAnswerById
 AnswersBreadcrumbs -> AnswersScopeBreadcrumbs
 
-useQuestionsContext -> useAvailableQuestions
+useQuestionsContext -> useAvailableQuestions, useAvailableQuestionById
 QuestionsBreadcrumbs -> QuestionsScopeBreadcrumbs
 
-useTopicsContext -> useAvailableTopicsByScope (-> useAvailableTopics)
+useTopicsContext -> useAvailableTopicsByScope (-> useAvailableTopics), useAvailableTopicById
 TopicsBreadcrumbs -> TopicsScopeBreadcrumbs
 
-paths:
+// Paths
 
 const { manageScope } = useManageTopicsStore();
 
@@ -22,3 +24,5 @@ const answersListRoutePath = `${questionRoutePath}/answers`;
 const answerRoutePath = `${answersListRoutePath}/${answerId}`;
 
 questionsContext.routePath -> questionsListRoutePath
+
+```

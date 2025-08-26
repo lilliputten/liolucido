@@ -5,6 +5,7 @@ export function filterOutEmpties<T = unknown>(list: PossiblyEmpty<T>[]) {
   return list.filter(Boolean) as T[];
 }
 
-export function generateArray(n: number) {
-  return [...Array(n)].map((_, i) => i);
+/** Generate an empty array of given size */
+export function generateArray(size: number) {
+  return [...Array(size)].map((_, i) => i);
 }

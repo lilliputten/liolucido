@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { generateArray } from '@/lib/helpers';
@@ -11,11 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import { useAnswersContext } from '@/contexts/AnswersContext';
-import {
-  AnswersBreadcrumbs,
-  AnswersScopeBreadcrumbs,
-} from '@/features/answers/components/AnswersBreadcrumbs';
+import { AnswersScopeBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
@@ -72,8 +66,6 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
   const [toolbarPortalNode, setToolbarPortalNode] = React.useState<HTMLDivElement | null>(null);
   const [hasDeleted, setHasDeleted] = React.useState(false);
 
-  const router = useRouter();
-
   const availableTopicQuery = useAvailableTopicById({ id: topicId });
   const {
     topic,
@@ -118,8 +110,9 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
 
   // Add Answer Modal
   const handleAddAnswer = React.useCallback(() => {
-    router.push(`${answersListRoutePath}/add`);
-  }, [answersListRoutePath, router]);
+    const url = `${answersListRoutePath}/add`;
+    goToTheRoute(url);
+  }, [answersListRoutePath, goToTheRoute]);
 
   // Delete Answer Modal
   const handleDeleteAnswer = React.useCallback(() => {
