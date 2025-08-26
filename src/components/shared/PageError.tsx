@@ -22,6 +22,8 @@ interface TErrorProps {
   reset?: () => void;
   className?: string;
   iconName?: TIconsKey;
+  padded?: boolean;
+  border?: boolean;
 }
 
 // NOTE: Only plain string should be passed from the server components
@@ -36,6 +38,8 @@ export function PageError(props: TErrorProps) {
     iconName = 'warning',
     extraActions,
     ExtraActions,
+    padded = true,
+    border = true,
   } = props;
   const router = useRouter();
 
@@ -71,7 +75,9 @@ export function PageError(props: TErrorProps) {
     <ErrorPlaceHolder
       className={cn(
         isDev && '__PageError', // DEBUG
-        'm-6 overflow-auto',
+        'overflow-auto',
+        padded && 'm-6',
+        !border && 'border-none',
         className,
       )}
     >

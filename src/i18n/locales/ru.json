@@ -59,6 +59,9 @@
     "title": "Настройки - TrainWizzz!",
     "description": "Настройки приложения"
   },
+  "InfoPage": {
+    "title": "Информация"
+  },
   "WelcomePage": {
     "title": "Добро пожаловать - TrainWizzz!"
   },

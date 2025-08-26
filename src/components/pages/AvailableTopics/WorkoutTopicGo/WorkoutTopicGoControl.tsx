@@ -10,11 +10,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { useGoToTheRoute } from '@/hooks';
 
-export function WorkoutTopicControl() {
+interface TProps {
+  startWorkout: () => void;
+}
+
+export function WorkoutTopicGoControl(props: TProps) {
   const format = useFormatter();
-  const { topic, workout, pending, createWorkout, startWorkout } = useWorkoutContext();
+  const { startWorkout } = props;
+  const { topic, workout, pending, createWorkout } = useWorkoutContext();
+  // const { topicId } = workout;
 
   const isWorkoutInProgress = workout?.started && !workout?.finished;
+
+  const workoutRoutePath = `${availableTopicsRoute}/${topic.id}/workout`;
+  const workoutGoRoutePath = `${workoutRoutePath}/go`;
 
   const goToTheRoute = useGoToTheRoute();
 
@@ -38,14 +47,8 @@ export function WorkoutTopicControl() {
     );
   }
 
-  const handleResumeWorkout = () => {
-    const url = `${availableTopicsRoute}/${topic.id}/workout/go`;
-    goToTheRoute(url);
-  };
-
-  const handleStartWorkout = () => {
-    startWorkout();
-    setTimeout(handleResumeWorkout, 10);
+  const resumeWorkout = () => {
+    goToTheRoute(workoutGoRoutePath);
   };
 
   return (
@@ -59,8 +62,8 @@ export function WorkoutTopicControl() {
       </p>
       <div className="flex gap-2">
         <Button
-          data-testid="__WorkoutTopicControl_Start_Button"
-          onClick={isWorkoutInProgress ? handleResumeWorkout : handleStartWorkout}
+          data-testid="__WorkoutTopicGoControl_Start_Button"
+          onClick={isWorkoutInProgress ? resumeWorkout : startWorkout}
           variant="default"
         >
           {workout.finished

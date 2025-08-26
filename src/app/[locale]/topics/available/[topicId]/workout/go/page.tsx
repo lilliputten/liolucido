@@ -1,5 +1,5 @@
 import { cn, constructMetadata } from '@/lib/utils';
-import { AvailableTopicsPageWrapper, WorkoutTopic } from '@/components/pages/AvailableTopics';
+import { AvailableTopicsPageWrapper, WorkoutTopicGo } from '@/components/pages/AvailableTopics';
 import { PageHeader } from '@/components/pages/shared';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
@@ -10,26 +10,28 @@ type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId:
 
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
-  const title = 'Workout Topic Review';
+  const title = 'Workout Topic';
   return constructMetadata({
     locale,
     title,
   });
 }
 
-export default async function ViewTopicPage({ params }: TAwaitedProps) {
+export default async function ViewTopicGoPage({ params }: TAwaitedProps) {
   const { topicId } = await params;
 
   if (!topicId) {
     return <PageError error={'Not topic specified.'} />;
   }
 
+  // TODO: Check if no active workout and then go to workout review/control page (on the client, because the user might be unauthorized)
+
   return (
     <AvailableTopicsPageWrapper>
-      <PageHeader heading={'Workout Topic Review'} />
-      <WorkoutTopic
+      <PageHeader heading={'Workout Topic'} />
+      <WorkoutTopicGo
         className={cn(
-          isDev && '__page_ViewTopicPage', // DEBUG
+          isDev && '__page_ViewTopicGoPage', // DEBUG
         )}
         // topicId={topicId}
       />

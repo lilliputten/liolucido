@@ -14,7 +14,7 @@ export function InfoVisualBlock(props: TPropsWithClassName) {
         className,
         // 'm-4',
         'gap-4',
-        'flex flex-1 flex-col',
+        'flex flex-col',
         'items-stretch',
         'justify-center',
       )}
@@ -23,6 +23,11 @@ export function InfoVisualBlock(props: TPropsWithClassName) {
         // priority
         src={svgArt}
         alt="Data illustration"
+        className={cn(
+          isDev && '__InfoVisualBlock_Art', // DEBUG
+          'mx-auto mt-4',
+          'sm:max-w-lg',
+        )}
       />
       {/*
       <div

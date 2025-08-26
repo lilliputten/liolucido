@@ -26,10 +26,9 @@ export function WelcomeVisualBlock(props: TPropsWithClassName) {
         className={cn(
           isDev && '__WelcomeVisualBlock_Art', // DEBUG
           'mx-auto mt-4',
-          'max-w-lg',
+          'sm:max-w-lg',
         )}
       />
-
       {/* // XXX: Alternate layout: the art as a background
       <div
         className={cn(
@@ -45,7 +44,6 @@ export function WelcomeVisualBlock(props: TPropsWithClassName) {
         }}
       />
       */}
-
       <SmallWelcomeText />
     </div>
   );

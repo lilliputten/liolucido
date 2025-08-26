@@ -6,13 +6,13 @@ type TAwaitedProps = TAwaitedLocaleProps<{
   topicId: string;
 }>;
 
-type TWorkoutTopicLayoutProps = TAwaitedProps & {
+type TWorkoutTopicGoLayoutProps = TAwaitedProps & {
   children: React.ReactNode;
 };
 
 // const scope: TTopicsManageScopeId = TopicsManageScopeIds.AVAILABLE_TOPICS;
 
-export async function WorkoutTopicLayout(props: TWorkoutTopicLayoutProps) {
+export async function WorkoutTopicGoLayout(props: TWorkoutTopicGoLayoutProps) {
   const { children, params } = props;
   const resolvedParams = await params;
   const { topicId } = resolvedParams;
