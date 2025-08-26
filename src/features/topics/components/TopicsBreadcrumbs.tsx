@@ -16,7 +16,7 @@ import { isDev } from '@/constants';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TTopic } from '@/features/topics/types';
 
-interface TScopeBreadcrumbsProps {
+interface TBreadcrumbsProps {
   scope: TTopicsManageScopeId;
   topic?: TTopic | BreadcrumbsItem;
   lastItem?: TBreadcrumbsItemProps | BreadcrumbsItem;
@@ -24,7 +24,7 @@ interface TScopeBreadcrumbsProps {
   isLoading?: boolean;
 }
 
-export function useTopicsScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps) {
+export function useTopicsBreadcrumbsItems(props: TBreadcrumbsProps) {
   const { scope, topic, lastItem } = props;
   const topicsListRoutePath = topicsRoutes[scope];
   // TODO: Use i18n translation by `scope`
@@ -44,14 +44,14 @@ export function useTopicsScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps) {
   return items;
 }
 
-export function TopicsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWithClassName) {
+export function TopicsBreadcrumbs(props: TBreadcrumbsProps & TPropsWithClassName) {
   const { className, isLoading, inactiveLast } = props;
-  const items = useTopicsScopeBreadcrumbsItems(props);
+  const items = useTopicsBreadcrumbsItems(props);
   if (isLoading) {
     return (
       <div
         className={cn(
-          isDev && '__TopicsScopeBreadcrumbs_Skeleton', // DEBUG
+          isDev && '__TopicsBreadcrumbs_Skeleton', // DEBUG
           'flex gap-2',
         )}
       >
@@ -70,7 +70,7 @@ export function TopicsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWit
   return (
     <Breadcrumbs
       className={cn(
-        isDev && '__TopicsScopeBreadcrumbs', // DEBUG
+        isDev && '__TopicsBreadcrumbs', // DEBUG
         className,
       )}
       items={items}

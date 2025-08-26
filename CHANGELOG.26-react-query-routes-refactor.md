@@ -1,3 +1,92 @@
+https://github.com/lilliputten/trainwizzz/issues/26
+Migrate data interchage methods to react query
+26-react-query
+2025.08.26
+
+- Added zod schemas.
+- Replaced all `*Context` via `Available*(s)` hooks.
+- Migrated all data fetch invocations to react-query hooks.
+- Returned all `*ScopeBreadcrumbs` to `*Breadcrumbs`.
+
+---
+
+- Added api response wrapper, with tests.
+- Added sample api wrapper usage snippet, injected api wrapper on WorkoutQuestionContainer component, improved api wrapper errors processing. Added debouncing of api messages.
+- Added `invalidateReactQueryKeys` handler to invalidate react query keys, in the future.
+- IN PROGRESS: apiWrapper migration stage 1: Server & client parts migrated to a new scheme.
+- Added some missed TApiResponse usage cases.
+- Rolled back TApiResponse approach form server side action functions.
+- Remove usage of `TApiResponse` data from the server action functions and leave it only in api routes. Created missed coresponding api routes (with `TApiResponse` usage) and replaced all invocations of these functions by fetching of data from these api routes. Added workaround for date functions to allow processing of ISO date strings instead of date objects (api routes return ISO strings, server functions provide date objects from prisma).
+- Added react query.
+- Used `useInvalidateReactQueryKeys` hook to obtain react query invalidate callback.
+- Prepared to use react query in `AvailableTopicsListWrapper` (using `api/topics` route (which implements call to the `src/features/topics/actions/getAvailableTopics` server function).
+- Added react query's `useInfiniteQuery` to the available topics page and it's subcomponents.
+- Added react query hook `useAnswers` to the `WorkoutQuestionContainer`. Fixed tests. Updated usage of `QueryKey` in the invalidation hooks.
+- Minor changes.
+- Updated `getAvailableTopics` server function to be a universal one for getting topics data (added `topicIds`, `includeSortWorkouts`, `adminMode` parameters, added tests). Using `ExtendedUser` instead `TExtendedUser`, when possible (to check).
+- Updated `getAvailableTopics` tests: it's impossible to sort by multiple relation -- previous `includeSortWorkouts` is removed. Added test for `includeWorkout` parameter.
+- Added zustand store of `ManageTopicsStore`, extracted `ScrollAreaInfinite` component for support paginated data loading (eg, via react query `useInfiniteQuery`). Added the `ManageTopicsStore` to the `ManageTopicsListWrapper` component and it's descendants.
+- Partially replaced `useTopicsContext` with `useAvailableTopicsByScope` in ManageTopicsList\* components (in progress). Upgraded `useAvailableTopics` hook. Updated typings for `getAvailableTopics` (via zod/typescript), see `TTopic.ts` and `getAvailableTopicsSchema.ts`). Extracted reused `ScrollAreaInfinite` component to allow incremental paginated scroll (ready to integrate with react query `useInfiniteQuery` hook). Updated urls composing logic (it's allowed to create them part-by-part, from multiple chunks).
+- Updated `useAvailableTopics` logic: used cached callbacks (returned from the custom hook) instead of independent functions, extracted helpers, updated router hooks, finished `AddTopicModal`.
+- Replaced topics context in DeleteTopicModal. Updated modals opening logic in `ManageTopicsPageModalsWrapper`.
+- Finished replacing topics context in all the components. Completely removed basic `TopicsContext` module (`TopicsContextDefinitions` still remained).
+- (IN PROGRESS) Added react query hook `useAvailableTopicById` for load available topic, possibly cached in the `useAvailableTopicsByScope`.
+- (IN PROGRESS) Updated react query hook `useAvailableTopicById`, added server funciton `getAvailableTopicById`, which accepts parameters for customizable prisma result (to include different data, like questions count, workout, user).
+- Added corresponding api route for getting available topic data. Extracted (some) zod schemes (to the `src/lib/zod-schemes` folder). Fixed wrong loading skeleton displaying in the `ViewTopicCard` component. Implemented fetching of the topic data in the `ViewAnswerContentSummary` component via `useAvailableTopicById` smart hook (linked to `useAvailableTopicsByScope` to use cached topics data). Fixed get topics api route (added missed `includeWorkout` parameter). Added get topic data api route parameterized method (uses `getAvailableTopicById` server function). Removed some redundant usages of allTopics data (to extra check if the specified topic record exists or not): in select language page, as example.
+- Replaced fetching of current topic data from cached topics by `useAvailableTopicById` react-query hook.
+- Refactored hook imports.
+- Refactored TGetAvailableTopicsResults: using common `items` instead of more specific `topics` (to create shared helpers and generic types).
+- IN PROGRESS: Added basic types and core server function for "get available questions" hooks support.
+- Finished core server functions for "get available questions/question" hooks support.
+- Partially replace questions context with `useAvailableQuestions` and `useAvailableQuestionById`. Added infinite scroll on the `ManageTopicQuestionsListCard`.
+- Created scope breadcrumbs for questions and answers.
+- Partially replaced questions context on: ViewQuestionCard, AddQuestionModal.
+- Partially replaced questions context on DeleteQuestionModal.
+- Partially replaced questions context on EditQuestionCard, updated events processing on the DeleteQuestionModal, fixed `updateQuestion` server function.
+- Fully replaced questions context on EditQuestionCard, updated events processing on the DeleteQuestionModal, fixed `updateQuestion` server function. Removed (commented out) unused bradcrumbs' components and helpers.
+- Removed questions context from everywhere. Added options to fetch embedded questions (for topics) and answers (for questions) Available requests.
+- Renamed `zod-schemes` -> `zod-schemas`.
+- Added basic types and server functions for AvaialbleAnswer(s) interface.
+- Added `useAvailableAnswers` and `useAvailableAnswerById` react-query hooks.
+- Added AvailableAnswer(s) on the `ManageTopicQuestionAnswersListCard` page and its subcomponents. Removed unused code from `TopicsBreadcrumbs` and `QuestionsBreadcrumbs`. Updated button styles. Updated queryKey's for `useAvailableAnswers` and `useAvailableQuestions` (include crsp parent entity id: `questionId` and `topicId` respectively).
+- Replaced AnswersContext via AvailableAnswer(s) in the `AddAnswerModal` and `DeleteAnswerModal`.
+- Extracted workout server actions from routes, fixed prisma scheme to really auto update `updatedAt` fields (updated some server functions to not override db values).
+- Replaced AnswersContext via AvailableAnswer(s) in the `ManageTopicQuestionAnswers` component, updated question and answer edit forms and cards.
+- Replaced AnswersContext via AvailableAnswer(s) in the all remained components. (`ManageTopicQuestionAnswers` subcomponents).
+
+## Work, queries and todos
+
+### Refactoring process
+
+```javascript
+
+useAnswersContext -> useAvailableAnswers, useAvailableAnswerById
+AnswersBreadcrumbs -> AnswersScopeBreadcrumbs
+
+useQuestionsContext -> useAvailableQuestions, useAvailableQuestionById
+QuestionsBreadcrumbs -> QuestionsScopeBreadcrumbs
+
+useTopicsContext -> useAvailableTopicsByScope (-> useAvailableTopics), useAvailableTopicById
+TopicsBreadcrumbs -> TopicsScopeBreadcrumbs
+
+// Paths
+
+const { manageScope } = useManageTopicsStore();
+
+// Calculate paths...
+const topicsListRoutePath = `/topics/${manageScope}`;
+const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
+const questionsListRoutePath = `${topicRoutePath}/questions`;
+const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+const answersListRoutePath = `${questionRoutePath}/answers`;
+const answerRoutePath = `${answersListRoutePath}/${answerId}`;
+
+questionsContext.routePath -> questionsListRoutePath
+
+```
+
+### Queries
+
 Ok, Let's try to replace all direct calls to server functions and client fetch
 
 Don't forget to add eslint comments and debugger stoppers for all console.error call occurencies:

@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { QuestionsScopeBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
+import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
 import { useAvailableTopicById } from '@/hooks';
@@ -85,7 +85,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <QuestionsScopeBreadcrumbs
+          <QuestionsBreadcrumbs
             className={cn(
               isDev && '__EditQuestionCard_Breadcrumbs', // DEBUG
             )}

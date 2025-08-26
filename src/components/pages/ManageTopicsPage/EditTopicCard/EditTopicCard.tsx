@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';
 import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
@@ -72,7 +72,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
           'item-start flex flex-col gap-4',
         )}
       >
-        <TopicsScopeBreadcrumbs
+        <TopicsBreadcrumbs
           className={cn(
             isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
           )}

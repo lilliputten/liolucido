@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { isDev } from '@/constants';
-import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopicId } from '@/features/topics/types';
 import {
   useAvailableTopicById,
@@ -117,7 +117,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <TopicsScopeBreadcrumbs
+          <TopicsBreadcrumbs
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}

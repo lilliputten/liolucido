@@ -10,7 +10,7 @@ import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
-import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { useGoBack } from '@/hooks';
 
 import { WorkoutTopicContent } from './WorkoutTopicContent';
@@ -54,7 +54,7 @@ export function WorkoutTopic(props: TPropsWithClassName) {
               'flex flex-1 gap-2 max-md:flex-col md:items-center',
             )}
           >
-            <TopicsScopeBreadcrumbs
+            <TopicsBreadcrumbs
               className={cn(
                 isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
                 'flex-1',

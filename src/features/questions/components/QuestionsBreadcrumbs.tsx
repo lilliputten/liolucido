@@ -16,10 +16,10 @@ import {
 import { isDev } from '@/constants';
 import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TQuestion } from '@/features/questions/types';
-import { useTopicsScopeBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
+import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic } from '@/features/topics/types';
 
-interface TScopeBreadcrumbsProps {
+interface TBreadcrumbsProps {
   scope: TTopicsManageScopeId;
   topic?: TTopic; // The topic is required by might by undefined while loading, then display skeleton
   question?: TQuestion;
@@ -28,7 +28,7 @@ interface TScopeBreadcrumbsProps {
   isLoading?: boolean;
 }
 
-export function useQuestionsScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps) {
+export function useQuestionsBreadcrumbsItems(props: TBreadcrumbsProps) {
   const { scope, topic, question, lastItem, isLoading } = props;
   const topicsListRoutePath = topicsRoutes[scope];
   const topicRoutePath = topic && `${topicsListRoutePath}/${topic.id}`;
@@ -37,7 +37,7 @@ export function useQuestionsScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps)
     question && questionsListRoutePath && `${questionsListRoutePath}/${question.id}`;
   // TODO: Use i18n translations
   const listTitle = capitalizeString(scope) + ' Questions' + (isDev ? '*' : '');
-  const topicItems = useTopicsScopeBreadcrumbsItems({ scope, topic });
+  const topicItems = useTopicsBreadcrumbsItems({ scope, topic });
   if (isLoading) {
     return [];
   }
@@ -52,14 +52,14 @@ export function useQuestionsScopeBreadcrumbsItems(props: TScopeBreadcrumbsProps)
   return [...topicItems, ...items];
 }
 
-export function QuestionsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TPropsWithClassName) {
+export function QuestionsBreadcrumbs(props: TBreadcrumbsProps & TPropsWithClassName) {
   const { className, inactiveLast, isLoading } = props;
-  const items = useQuestionsScopeBreadcrumbsItems(props);
+  const items = useQuestionsBreadcrumbsItems(props);
   if (isLoading) {
     return (
       <div
         className={cn(
-          isDev && '__QuestionsScopeBreadcrumbs_Skeleton', // DEBUG
+          isDev && '__QuestionsBreadcrumbs_Skeleton', // DEBUG
           'flex gap-2',
         )}
       >
@@ -78,7 +78,7 @@ export function QuestionsScopeBreadcrumbs(props: TScopeBreadcrumbsProps & TProps
   return (
     <Breadcrumbs
       className={cn(
-        isDev && '__QuestionsScopeBreadcrumbs', // DEBUG
+        isDev && '__QuestionsBreadcrumbs', // DEBUG
         className,
       )}
       items={items}

@@ -23,7 +23,7 @@ import {
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';
-import { AnswersScopeBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
+import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
@@ -420,7 +420,7 @@ export function ManageTopicQuestionAnswersListCard(
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <AnswersScopeBreadcrumbs
+          <AnswersBreadcrumbs
             className={cn(
               isDev && '__ManageTopicQuestionAnswersListCard_Breadcrumbs', // DEBUG
             )}

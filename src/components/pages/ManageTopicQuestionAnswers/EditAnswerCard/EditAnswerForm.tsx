@@ -94,9 +94,6 @@ export function EditAnswerForm(props: TEditAnswerFormProps) {
             error: 'Can not save the answer data.',
           });
           const updatedAnswer = await promise;
-          console.log('[EditAnswerForm]', {
-            updatedAnswer,
-          });
           // Update the item to the cached react-query data
           availableAnswersQuery.updateAnswer(updatedAnswer);
           // TODO: Update or invalidate all other possible AvailableAnswer and AvailableAnswers cached data

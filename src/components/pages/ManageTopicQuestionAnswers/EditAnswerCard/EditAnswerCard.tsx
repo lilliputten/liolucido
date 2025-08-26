@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import { AnswersScopeBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
+import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
@@ -195,7 +195,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <AnswersScopeBreadcrumbs
+          <AnswersBreadcrumbs
             className={cn(
               isDev && '__EditAnswerCard_Breadcrumbs', // DEBUG
             )}

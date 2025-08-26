@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import { QuestionsScopeBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
+import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
 import { useAvailableTopicById, useGoBack, useGoToTheRoute } from '@/hooks';
@@ -199,7 +199,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <QuestionsScopeBreadcrumbs
+          <QuestionsBreadcrumbs
             className={cn(
               isDev && '__ManageTopicQuestionsListCard_Breadcrumbs', // DEBUG
             )}

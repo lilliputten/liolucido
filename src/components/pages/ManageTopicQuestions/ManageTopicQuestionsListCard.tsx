@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/table';
 import { Icons } from '@/components/shared/icons';
 import { isDev } from '@/constants';
-import { QuestionsScopeBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
+import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
 import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
@@ -367,7 +367,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <QuestionsScopeBreadcrumbs
+          <QuestionsBreadcrumbs
             className={cn(
               isDev && '__ManageTopicQuestionsListCard_Breadcrumbs', // DEBUG
             )}

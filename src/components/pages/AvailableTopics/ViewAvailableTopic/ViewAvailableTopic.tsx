@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
-import { TopicsScopeBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
+import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic } from '@/features/topics/types';
 import { useGoBack } from '@/hooks';
 
@@ -46,7 +46,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
-          <TopicsScopeBreadcrumbs
+          <TopicsBreadcrumbs
             className={cn(
               isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
             )}
