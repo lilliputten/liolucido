@@ -5,4 +5,4 @@ export interface TGetResults<T> {
   totalCount: number;
 }
 
-export type TGetResultsIniniteQueryData<T> = InfiniteData<TGetResults<T>, unknown>;
+export type TGetResultsInfiniteQueryData<T> = InfiniteData<TGetResults<T>, unknown>;

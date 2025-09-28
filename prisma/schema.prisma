@@ -32,7 +32,7 @@ model Account {
   session_state String?
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   provider          String
   providerAccountId String @map("provider_account_id")
@@ -118,7 +118,7 @@ model UserSettings {
   langCustom Boolean? @map("lang_custom") // Is the language a custom one?
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([userId])
   @@map("user_settings")
@@ -154,7 +154,7 @@ model Topic {
   answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -181,7 +181,7 @@ model Question {
   answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   topicId String @map("topic_id")
   topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
@@ -210,7 +210,7 @@ model Answer {
   // answersCountMax    Int?     @map("answers_count_max")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   questionId String   @map("question_id")
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
@@ -231,7 +231,7 @@ model UserTopicWorkout {
   // favorite Boolean? // TODO: Allow adding dd to the favorites list
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   startedAt  DateTime? @map("started_at")
   finishedAt DateTime? @map("finished_at")
@@ -268,7 +268,7 @@ model UserTopicWorkout {
 //   topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
 //
 //   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+//   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 //
 //   favorite Boolean @default(false)
 //   passed   Boolean @default(false)
@@ -286,7 +286,7 @@ model UserTopicWorkout {
 //   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 //
 //   createdAt DateTime @default(now()) @map("created_at")
-//   updatedAt DateTime @updatedAt @map("updated_at")
+//   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 //
 //   answered Boolean @default(false)
 //   repeat   Boolean @default(false)
