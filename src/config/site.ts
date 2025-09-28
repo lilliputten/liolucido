@@ -5,7 +5,7 @@ import appInfoModule from '@/app-info.json';
 const siteUrl = envClient.NEXT_PUBLIC_APP_URL;
 
 export const siteConfig: SiteConfig = {
-  name: 'TrainWizzz!',
+  name: 'líolúcido!',
   description: 'NextJS application for memorizing answers to questions',
   versionInfo: appInfoModule.versionInfo,
   url: siteUrl,

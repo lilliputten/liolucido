@@ -46,24 +46,24 @@
     "help": "Пришлите мне текст, и я покажу его в жирном начертании.\n\nВы можете изменить мой язык, используя команду /language."
   },
   "RootPage": {
-    "title": "Редактор - TrainWizzz!",
+    "title": "Редактор - líolúcido!",
     "about": "На страницу О"
   },
   "DataPage": {
-    "title": "Редактор данных - TrainWizzz!"
+    "title": "Редактор данных - líolúcido!"
   },
   "TestPage": {
-    "title": "Test - TrainWizzz!"
+    "title": "Test - líolúcido!"
   },
   "SettingsPage": {
-    "title": "Настройки - TrainWizzz!",
+    "title": "Настройки - líolúcido!",
     "description": "Настройки приложения"
   },
   "InfoPage": {
     "title": "Информация"
   },
   "WelcomePage": {
-    "title": "Добро пожаловать - TrainWizzz!"
+    "title": "Добро пожаловать - líolúcido!"
   },
   "SmallWelcomeText": {
     "content": "<p>Это небольшое приложение-викторина для работы с карточками для запоминания и повторения информации. Взгляните на небольшую <infolink>инструкцию</infolink>.\n</p>",

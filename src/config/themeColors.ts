@@ -4,9 +4,9 @@
 
 import colors from 'tailwindcss/colors';
 
-export const primaryColor = '#818';
+export const primaryColor = '#48f'; //colors.blue['500']; // '#818';
 export const primaryForegroundColor = '#fff';
-export const secondaryColor = '#fb1';
+export const secondaryColor = '#fa3';
 export const secondaryForegroundColor = '#000';
 
 type TPredefinedColor = keyof typeof colors;
@@ -63,7 +63,9 @@ const predefinedColorsData = predefinedColors.reduce(
   {} as Record<TPredefinedColor, TThemeColorData>,
 );
 export const themeColorData: Record<string, TThemeColorData> = {
-  brand: { color: primaryColor, fix: 18 },
+  brand: { color: primaryColor,
+    // fix: 18,
+  },
   ...predefinedColorsData,
 };
 // Fixes for all the predefined colors

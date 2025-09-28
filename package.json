@@ -170,7 +170,7 @@
     "clear-all": "echo --Clear all cache and temp files-- && rimraf node_modules/.cache .next && jest --clearCache && echo Cleared cache",
     "dev-entry": "echo --Run nextjs server in iisnode mode-- && node iisnode-nextjs-entry.js",
     "dev": "echo --Run nextjs server in development mode-- && next dev",
-    "dev-https": "next dev --experimental-https",
+    "dev-https": "echo --Run nextjs server in https mode-- && next dev --experimental-https",
     "build": "echo --Build the project-- && next build",
     "start": "echo --Start the project-- && next start",
     "lint": "next lint",

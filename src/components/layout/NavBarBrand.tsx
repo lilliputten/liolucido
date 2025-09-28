@@ -1,14 +1,19 @@
 'use client';
 
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
+import { useTheme } from 'next-themes';
 
 import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
 import { infoRoute, welcomeRoute } from '@/config/routesConfig';
 import { siteConfig } from '@/config/site';
 import { getAllRouteSynonyms } from '@/lib/routes';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/shared/Logo';
+import logoSvg from '@/assets/logo/logo-full-line-w.svg';
+import logoWhiteSvg from '@/assets/logo/logo-full-line-w.svg';
+import logoImageSvg from '@/assets/logo/logo-image.svg';
+import logoTextSvg from '@/assets/logo/logo-text-w.svg';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
@@ -47,9 +52,32 @@ function BrandWrapper(props: TPropsWithChildrenAndClassName & NavBarBrandProps) 
 }
 
 export function NavBarBrand(props: NavBarBrandProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   return (
     <BrandWrapper {...props} className="h-12">
-      <Logo className="size-16" />
+      {/*
+      <Image
+        src={logoImageSvg}
+        className="h-12 w-auto"
+        // width={logoSize}
+        // height={logoSize}
+        // alt="Logo"
+        alt={siteConfig.name}
+        // priority={false}
+      />
+      */}
+      <Image
+        // src={logoTextSvg}
+        src={isDark ? logoWhiteSvg : logoSvg}
+        className="h-14"
+        // width={logoSize}
+        // height={32}
+        priority={false}
+        alt={siteConfig.name}
+      />
+      {/*
+
       <h1
         role="heading"
         data-testid="NavBarBrandTitle"
@@ -65,6 +93,7 @@ export function NavBarBrand(props: NavBarBrandProps) {
       >
         {siteConfig.name}
       </h1>
+      */}
     </BrandWrapper>
   );
 }

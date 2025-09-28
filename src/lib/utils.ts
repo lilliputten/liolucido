@@ -36,7 +36,7 @@ export function constructMetadata({
       'Next.js',
       'React',
       'Prisma',
-      'TrainWizzz!',
+      'líolúcido!',
       'Data',
       'Editor',
       'Sample',

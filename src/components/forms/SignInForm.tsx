@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { signIn, SignInOptions } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
@@ -9,7 +10,8 @@ import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Icons, IconType } from '@/components/shared/icons';
-import { Logo } from '@/components/shared/Logo';
+import logoWhiteSvg from '@/assets/logo/logo-image-w.svg';
+import logoSvg from '@/assets/logo/logo-image.svg';
 import { isDev } from '@/constants';
 
 type TSignInParameters = Parameters<typeof signIn>;
@@ -83,8 +85,16 @@ export function SignInFormHeader(props: TSignInFormHeaderProps) {
   const t = useTranslations('SignInForm');
   return (
     <>
-      <a href={siteConfig.url}>
+      <a href={siteConfig.url} className="transition hover:opacity-80">
+        {/*
         <Logo className="size-32" dark={dark} />
+         */}
+        <Image
+          src={dark ? logoWhiteSvg : logoSvg}
+          className="h-24 w-auto"
+          alt={siteConfig.name}
+          priority={false}
+        />
       </a>
       <h3 className="font-urban text-app-orange text-2xl font-bold">{t('sign-in')}</h3>
       <p className="text-center text-sm">{t('intro')}</p>
