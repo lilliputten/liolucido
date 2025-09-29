@@ -1,22 +1,24 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { SettingsForm } from '@/components/pages/SettingsPage/SettingsForm';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TDefinedUserId } from '@/features/users/types/TUser';
 
-import { SettingsForm } from './SettingsForm';
 import { SettingsLoading } from './SettingsLoading';
 
 const saveScrollHash = getRandomHashString();
 
-type TSettingsCardProps = TPropsWithClassName & {
+type TSettingsPageContentProps = TPropsWithClassName & {
   userId?: TDefinedUserId;
 };
 type TChildProps = {
@@ -28,7 +30,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
     <div
       ref={toolbarPortalRef}
       className={cn(
-        isDev && '__SettingsCard_Toolbar', // DEBUG
+        isDev && '__SettingsPageContent_Toolbar', // DEBUG
         'flex flex-wrap gap-2',
       )}
     >
@@ -48,7 +50,7 @@ function Header(props: TChildProps) {
   return (
     <CardHeader
       className={cn(
-        isDev && '__SettingsCard_Header', // DEBUG
+        isDev && '__SettingsPageContent_Header', // DEBUG
         'flex flex-row flex-wrap items-start',
       )}
     >
@@ -58,32 +60,40 @@ function Header(props: TChildProps) {
   );
 }
 
-export function SettingsCard(props: TSettingsCardProps) {
+export function SettingsPageContent(props: TSettingsPageContentProps) {
   const { className, userId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const { settings, ready } = useSettingsContext();
+  const t = useTranslations('SettingsPage');
   if (!ready) {
     return <SettingsLoading />;
   }
   return (
-    <Card
-      className={cn(
-        isDev && '__SettingsCard', // DEBUG
-        'relative flex flex-1 flex-col overflow-hidden',
-        className,
-      )}
-    >
-      <Header toolbarPortalRef={toolbarPortalRef} />
-      <CardContent
+    <>
+      <DashboardHeader
+        heading={t('title')}
+        text={t('description')}
+        // className="text-theme-500"
+      />
+      <Card
         className={cn(
-          isDev && '__SettingsCard_Content', // DEBUG
-          'relative flex flex-1 flex-col overflow-hidden px-0',
+          isDev && '__SettingsPageContent', // DEBUG
+          'relative flex flex-1 flex-col overflow-hidden',
+          className,
         )}
       >
-        <ScrollArea saveScrollKey="SettingsCard" saveScrollHash={saveScrollHash}>
-          <SettingsForm settings={settings} userId={userId} toolbarPortalRef={toolbarPortalRef} />
-        </ScrollArea>
-      </CardContent>
-    </Card>
+        <Header toolbarPortalRef={toolbarPortalRef} />
+        <CardContent
+          className={cn(
+            isDev && '__SettingsPageContent_Content', // DEBUG
+            'relative flex flex-1 flex-col overflow-hidden px-0',
+          )}
+        >
+          <ScrollArea saveScrollKey="SettingsPageContent" saveScrollHash={saveScrollHash}>
+            <SettingsForm settings={settings} userId={userId} toolbarPortalRef={toolbarPortalRef} />
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    </>
   );
 }

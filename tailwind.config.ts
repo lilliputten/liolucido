@@ -27,11 +27,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: 'var(--backgroundColor)',
+        background: 'rgb(var(--backgroundColorRGB) / <alpha-value>)',
         foreground: 'var(--foregroundColor)',
         ...primaryColorSpread,
         ...secondaryColorSpread,
-        border: 'var(--borderColor)',
+        border: 'rgba(var(--color-theme-500-RGB) / 10%)',
         input: 'var(--inputColor)',
         ring: 'var(--ringColor)',
         'background-light': 'var(--backgroundLightColor)',
@@ -44,18 +44,18 @@ export default {
         },
         // Theme colors
         'theme-foreground': '#fff',
-        theme: 'rgb(var(--theme-color-500-RGB))',
-        'theme-50': 'rgb(var(--theme-color-50-RGB))',
-        'theme-100': 'rgb(var(--theme-color-100-RGB))',
-        'theme-200': 'rgb(var(--theme-color-200-RGB))',
-        'theme-300': 'rgb(var(--theme-color-300-RGB))',
-        'theme-400': 'rgb(var(--theme-color-400-RGB))',
-        'theme-500': 'rgb(var(--theme-color-500-RGB))',
-        'theme-600': 'rgb(var(--theme-color-600-RGB))',
-        'theme-700': 'rgb(var(--theme-color-700-RGB))',
-        'theme-800': 'rgb(var(--theme-color-800-RGB))',
-        'theme-900': 'rgb(var(--theme-color-900-RGB))',
-        'theme-950': 'rgb(var(--theme-color-950-RGB))',
+        theme: 'rgb(var(--color-theme-500-RGB))',
+        'theme-50': 'rgb(var(--color-theme-50-RGB))',
+        'theme-100': 'rgb(var(--color-theme-100-RGB))',
+        'theme-200': 'rgb(var(--color-theme-200-RGB))',
+        'theme-300': 'rgb(var(--color-theme-300-RGB))',
+        'theme-400': 'rgb(var(--color-theme-400-RGB))',
+        'theme-500': 'rgb(var(--color-theme-500-RGB))',
+        'theme-600': 'rgb(var(--color-theme-600-RGB))',
+        'theme-700': 'rgb(var(--color-theme-700-RGB))',
+        'theme-800': 'rgb(var(--color-theme-800-RGB))',
+        'theme-900': 'rgb(var(--color-theme-900-RGB))',
+        'theme-950': 'rgb(var(--color-theme-950-RGB))',
         success: {
           DEFAULT: 'var(--appSuccessColor)',
           foreground: 'var(--appSuccessForegroundColor)',
@@ -69,8 +69,8 @@ export default {
           foreground: 'var(--mutedForegroundColor)',
         },
         accent: {
-          DEFAULT: 'var(--accentColor)',
-          foreground: 'var(--accentForegroundColor)',
+          DEFAULT: 'var(--color-theme)', // 'var(--accentColor)',
+          foreground: 'var(--color-theme-foreground)', // 'var(--accentForegroundColor)',
         },
         popover: {
           DEFAULT: 'var(--popoverColor)',
@@ -79,6 +79,7 @@ export default {
         card: {
           DEFAULT: 'var(--cardColor)',
           foreground: 'var(--cardForegroundColor)',
+          // background: 'red',
         },
       },
       backgroundImage: {

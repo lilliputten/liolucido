@@ -104,7 +104,9 @@ async function RootLayout(props: TRootLayoutProps) {
       <body
         className={cn(
           'flex flex-col',
-          'bg-background font-default antialiased',
+          // 'bg-background',
+          'font-default antialiased',
+          'decorative-gradient',
           fontDefault.variable,
           fontHeading.variable,
           fontMono.variable,

@@ -12,8 +12,6 @@ import { getAllRouteSynonyms } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import logoSvg from '@/assets/logo/logo-full-line-w.svg';
 import logoWhiteSvg from '@/assets/logo/logo-full-line-w.svg';
-import logoImageSvg from '@/assets/logo/logo-image.svg';
-import logoTextSvg from '@/assets/logo/logo-text-w.svg';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';

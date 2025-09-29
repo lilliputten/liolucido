@@ -47,17 +47,17 @@
 }
 
 @mixin defineThemeSpread($color, $fix: 0%) {
-  --theme-color-50-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 45%))};
-  --theme-color-100-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 40%))};
-  --theme-color-200-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 30%))};
-  --theme-color-300-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 20%))};
-  --theme-color-400-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 10%))};
-  --theme-color-500-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix))};
-  --theme-color-600-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 10%))};
-  --theme-color-700-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 20%))};
-  --theme-color-800-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 30%))};
-  --theme-color-900-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 40%))};
-  --theme-color-950-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 45%))};
+  --color-theme-50-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 45%))};
+  --color-theme-100-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 40%))};
+  --color-theme-200-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 30%))};
+  --color-theme-300-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 20%))};
+  --color-theme-400-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 10%))};
+  --color-theme-500-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix))};
+  --color-theme-600-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 10%))};
+  --color-theme-700-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 20%))};
+  --color-theme-800-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 30%))};
+  --color-theme-900-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 40%))};
+  --color-theme-950-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix + 45%))};
 }
 @mixin defineThemeColor($id, $color, $fix: 0%) {
   --color-#{'' + $id}-50-RGB: #{rgbComponents(color.adjust($color, $lightness: $fix - 45%))};

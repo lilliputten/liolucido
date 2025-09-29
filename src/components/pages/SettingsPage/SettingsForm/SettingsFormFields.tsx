@@ -270,7 +270,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                 <Label htmlFor={langCodeKey}>Topics language</Label>
                 <Button
                   id={langCodeKey}
-                  variant="outline"
+                  variant="outlineBackground"
                   onClick={selectLanguage}
                   className="flex w-full justify-stretch gap-4 text-left"
                 >

@@ -38,7 +38,7 @@ export function NavBar(props: NavBarProps) {
         'z-40',
         'flex',
         'w-full',
-        'bg-theme-400',
+        'bg-theme-400/70 backdrop-blur',
         commonXPaddingTwStyle,
         'justify-stretch',
         'transition-all',

@@ -55,14 +55,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     // Turbopack configuration (optional)
   },
-  // experimental: {
-  //   // serverActions: {
-  //   //   allowedOrigins: [
-  //   //     'https://03ql4p7l-3000.euw.devtunnels.ms/',
-  //   //   ],
-  //   // },
-  //   // scrollRestoration: true,
-  // },
   compress: !isDev, // In favor of xtunnel (it loses `gzip` header)
   reactStrictMode: true,
   webpack: (config) => {

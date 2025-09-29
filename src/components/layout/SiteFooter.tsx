@@ -14,7 +14,7 @@ export function SiteFooter(_props: SiteFooterProps) {
         isDev && '__SiteFooter', // DEBUG
         'flex',
         'w-full',
-        'bg-muted',
+        'bg-theme-400/70 text-white backdrop-blur',
         commonXPaddingTwStyle,
         'max-sm:justify-center',
       )}

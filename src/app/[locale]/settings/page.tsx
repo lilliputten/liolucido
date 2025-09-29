@@ -1,3 +1,25 @@
-import { SettingsPage } from '@/components/pages/SettingsPage';
+import { getTranslations } from 'next-intl/server';
 
-export default SettingsPage;
+import { getCurrentUser } from '@/lib/session';
+import { constructMetadata } from '@/lib/utils';
+import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { SettingsPageContent } from './SettingsPageContent';
+
+export async function generateMetadata({ params }: TAwaitedLocaleProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'SettingsPage' });
+  const title = t('title');
+  const description = t('description');
+  return constructMetadata({
+    locale,
+    title,
+    description,
+  });
+}
+
+export default async function SettingsPage() {
+  const user = await getCurrentUser();
+  const userId = user?.id;
+  return <SettingsPageContent userId={userId} />;
+}

@@ -1,13 +1,21 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
+import { isDev } from '@/constants';
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        'overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm',
+        isDev && '__Card', // DEBUG
+        'overflow-hidden rounded-lg border text-card-foreground shadow-sm',
+        // 'bg-card',
+        'bg-background/50',
+        // 'decorative-gradient',
+        'decorative-card',
+        // 'inset-shadow-sm inset-shadow-indigo-500',
+        // 'bg-welcome-radial-gradient',
         className,
       )}
       {...props}
@@ -52,7 +60,15 @@ CardDescription.displayName = 'CardDescription';
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('__CardContent p-6 pt-0', className)} {...props} />
+    <div
+      ref={ref}
+      className={cn(
+        isDev && '__CardContent', // DEBUG
+        'p-6 pt-0',
+        className,
+      )}
+      {...props}
+    />
   ),
 );
 CardContent.displayName = 'CardContent';
@@ -61,7 +77,11 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('__CardFooter flex items-center p-6 pt-0', className)}
+      className={cn(
+        isDev && '__CardFooter', // DEBUG
+        'flex items-center p-6 pt-0',
+        className,
+      )}
       {...props}
     />
   ),

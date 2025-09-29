@@ -63,7 +63,8 @@ const predefinedColorsData = predefinedColors.reduce(
   {} as Record<TPredefinedColor, TThemeColorData>,
 );
 export const themeColorData: Record<string, TThemeColorData> = {
-  brand: { color: primaryColor,
+  brand: {
+    color: primaryColor,
     // fix: 18,
   },
   ...predefinedColorsData,

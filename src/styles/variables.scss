@@ -35,11 +35,11 @@ $ringLightColor: #0a0a0a;
 
 // Themed colors (dark)
 
-$backgroundDarkColor: #0a0a0a;
+$backgroundDarkColor: #101828;
 $foregroundDarkColor: #fafafa;
-$cardDarkColor: #0a0a0a;
+$cardDarkColor: $backgroundDarkColor;
 $cardForegroundDarkColor: #fafafa;
-$popoverDarkColor: #0a0a0a;
+$popoverDarkColor: $backgroundDarkColor;
 $popoverForegroundDarkColor: #fafafa;
 $mutedDarkColor: #111;
 $mutedForegroundDarkColor: #a3a3a3;
