@@ -21,8 +21,43 @@ const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       isDev && '__SelectTrigger', // DEBUG
-      'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-      'transition hover:bg-theme hover:text-theme-foreground',
+      'flex',
+      'h-10',
+      'w-full',
+      'items-center',
+      'justify-between',
+      'rounded-md',
+      'border',
+      'border-input',
+      'bg-background/50',
+      'px-3',
+      'py-2',
+      'text-sm',
+      'ring-offset-background',
+      'placeholder:text-muted-foreground',
+      'focus:outline-none',
+      'focus:ring-2',
+      'focus:ring-ring',
+      'focus:ring-offset-2',
+      'disabled:cursor-not-allowed',
+      'disabled:opacity-50',
+      'transition',
+      'active:bg-theme active:text-theme-foreground',
+      'hover:bg-theme/20',
+      'hover:ring-2 hover:ring-theme-500/50',
+      // 'focus:ring-0',
+      // 'focus:ring-offset-0',
+      // 'focus-visible:outline-none',
+      // 'focus-visible:border-2',
+      // 'focus-visible:ring-theme/50',
+      // 'focus-visible:ring-2',
+      // 'focus-visible:ring-offset-2',
+      // 'focus:ring-offset-2',
+      'data-[state=open]:bg-theme/20',
+      'data-[state=open]:ring-2',
+      'data-[state=open]:ring-theme/50',
+      'data-[state=open]:ring-offset-2',
+      '[&>span]:line-clamp-1',
       className,
     )}
     {...props}
@@ -83,6 +118,7 @@ const SelectContent = React.forwardRef<
         'relative z-50 max-h-96 min-w-32 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
+        '[&>div]:flex [&>div]:flex-col [&>div]:gap-1',
         className,
       )}
       position={position}
@@ -110,7 +146,11 @@ const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn('__SelectLabel py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
+    className={cn(
+      isDev && '__SelectLabel', // DEBUG
+      'py-1.5 pl-8 pr-2 text-sm font-semibold',
+      className,
+    )}
     {...props}
   />
 ));
@@ -124,7 +164,27 @@ const SelectItem = React.forwardRef<
     ref={ref}
     className={cn(
       isDev && '__SelectItem', // DEBUG
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative',
+      'flex',
+      'w-full',
+      'cursor-pointer',
+      'select-none',
+      'items-center',
+      'rounded-sm',
+      'py-1.5',
+      'pl-8',
+      'pr-2',
+      'text-sm',
+      'outline-none',
+      'hover:bg-theme/20 data-[highlighted]:bg-theme/20',
+      'data-[state=checked]:bg-theme/10',
+      'data-[state=checked]:data-[highlighted]:bg-theme/30',
+      'data-[state=checked]:hover:bg-theme/30',
+      // 'active:bg-theme active:text-theme-foreground',
+      'focus:bg-accent',
+      'focus:text-accent-foreground',
+      'data-[disabled]:pointer-events-none',
+      'data-[disabled]:opacity-50',
       className,
     )}
     {...props}
@@ -146,7 +206,11 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn('__SelectSeparator -mx-1 my-1 h-px bg-muted', className)}
+    className={cn(
+      isDev && '__SelectSeparator', // DEBUG
+      '-mx-1 my-1 h-px bg-muted',
+      className,
+    )}
     {...props}
   />
 ));
@@ -158,7 +222,11 @@ const SelectIcon = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Icon
     ref={ref}
-    className={cn('__SelectIcon -mx-1 my-1 h-px bg-muted', className)}
+    className={cn(
+      isDev && '__SelectIcon', // DEBUG
+      '-mx-1 my-1 h-px bg-muted',
+      className,
+    )}
     {...props}
   />
 ));

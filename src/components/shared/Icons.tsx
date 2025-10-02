@@ -262,6 +262,7 @@ export const Icons = {
   logout: LogOut,
   media: Image,
   menu: EllipsisVertical,
+  MenuVertical: EllipsisVertical,
   messages: MessagesSquare,
   minus: Minus,
   moon: Moon,

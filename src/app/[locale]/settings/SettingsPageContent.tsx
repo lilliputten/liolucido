@@ -73,19 +73,23 @@ export function SettingsPageContent(props: TSettingsPageContentProps) {
       <DashboardHeader
         heading={t('title')}
         text={t('description')}
-        // className="text-theme-500"
+        className={cn(
+          isDev && '__SettingsPageContent_CardContent', // DEBUG
+          'mx-4',
+        )}
       />
       <Card
         className={cn(
-          isDev && '__SettingsPageContent', // DEBUG
+          isDev && '__SettingsPageContent_Card', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden',
+          'mx-4',
           className,
         )}
       >
         <Header toolbarPortalRef={toolbarPortalRef} />
         <CardContent
           className={cn(
-            isDev && '__SettingsPageContent_Content', // DEBUG
+            isDev && '__SettingsPageContent_CardContent', // DEBUG
             'relative flex flex-1 flex-col overflow-hidden px-0',
           )}
         >

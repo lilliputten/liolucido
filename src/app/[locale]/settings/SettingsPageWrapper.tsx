@@ -29,7 +29,7 @@ export function SettingsPageWrapper(props: TProps) {
       )}
       // scrollable={!inSkeleton}
       limitWidth
-      xPadded
+      // xPadded
       vPadded
     >
       {children}

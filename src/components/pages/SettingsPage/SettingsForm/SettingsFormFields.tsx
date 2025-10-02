@@ -20,6 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -29,6 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
@@ -66,6 +68,9 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   const { className, form, selectLanguage } = props;
   // Create unique keys for labels
   const tNavLocaleSwitcher = useTranslations('NavLocaleSwitcher');
+
+  const testInputKey = React.useId();
+  const testTextareaKey = React.useId();
   const showOnlyMyTopicsKey = React.useId();
   const localeKey = React.useId();
   const themeColorKey = React.useId();
@@ -102,6 +107,47 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                 />
               </FormControl>
               <FormHint>Disable showing all public topics, show only my personal ones.</FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* testInput */}
+        <FormField
+          name="testInput"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={testInputKey}>Test input</Label>
+              <FormControl>
+                <Input
+                  id={testInputKey}
+                  placeholder="Test input"
+                  {...field}
+                  // onChange={(ev) => field.onChange(Number(ev.target.value) || '')}
+                />
+              </FormControl>
+              <FormHint>Test input</FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* testTextarea */}
+        <FormField
+          name="testTextarea"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={testTextareaKey}>Test textarea</Label>
+              <FormControl>
+                <Textarea
+                  id={testTextareaKey}
+                  placeholder="Test textarea"
+                  rows={5}
+                  {...field}
+                  // onChange={(ev) => field.onChange(ev)}
+                />
+              </FormControl>
+              <FormHint>Test textarea</FormHint>
               <FormMessage />
             </FormItem>
           )}
@@ -156,7 +202,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                     })}
                   </SelectContent>
                 </Select>
-                <FormHint>Select the application language.</FormHint>
+                <FormHint>Select the application theme.</FormHint>
                 <FormMessage />
               </FormItem>
             );
@@ -211,7 +257,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                     })}
                   </SelectContent>
                 </Select>
-                <FormHint>Select the application language.</FormHint>
+                <FormHint>Select the application key theme color.</FormHint>
                 <FormMessage />
               </FormItem>
             );
@@ -270,7 +316,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                 <Label htmlFor={langCodeKey}>Topics language</Label>
                 <Button
                   id={langCodeKey}
-                  variant="outlineBackground"
+                  variant="ghostForm"
                   onClick={selectLanguage}
                   className="flex w-full justify-stretch gap-4 text-left"
                 >

@@ -32,8 +32,11 @@ export default {
         ...primaryColorSpread,
         ...secondaryColorSpread,
         border: 'rgba(var(--color-theme-500-RGB) / 10%)',
-        input: 'var(--inputColor)',
-        ring: 'var(--ringColor)',
+        input: 'rgba(var(--color-theme-500-RGB) / 20%)',
+        // input: 'var(--inputColor)',
+        ring: 'rgba(var(--color-theme-500-RGB) / 50%)',
+        // : 'var(--ringColor)',
+        // ring: 'var(--ringColor)',
         'background-light': 'var(--backgroundLightColor)',
         'foreground-light': 'var(--foregroundLightColor)',
         'background-dark': 'var(--backgroundDarkColor)',
@@ -73,7 +76,8 @@ export default {
           foreground: 'var(--color-theme-foreground)', // 'var(--accentForegroundColor)',
         },
         popover: {
-          DEFAULT: 'var(--popoverColor)',
+          DEFAULT: 'rgb(var(--popoverColorRGB) / <alpha-value>)',
+          // DEFAULT: 'var(--popoverColor)',
           foreground: 'var(--popoverForegroundColor)',
         },
         card: {
