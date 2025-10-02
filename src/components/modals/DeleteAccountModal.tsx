@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
 import { Modal } from '@/components/ui/modal';
 import { UserAvatar } from '@/components/shared/user-avatar';

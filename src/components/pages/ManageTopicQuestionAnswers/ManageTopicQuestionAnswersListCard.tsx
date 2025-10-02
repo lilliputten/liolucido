@@ -7,7 +7,7 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';

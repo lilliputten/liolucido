@@ -4,8 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
 import { useGoBack } from '@/hooks';

@@ -4,8 +4,8 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Icons } from '@/components/shared/Icons';
 import { TQuestion } from '@/features/questions/types';
 
 import { TFormData } from './types';

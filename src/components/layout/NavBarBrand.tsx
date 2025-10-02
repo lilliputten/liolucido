@@ -68,7 +68,7 @@ export function NavBarBrand(props: NavBarBrandProps) {
       <Image
         // src={logoTextSvg}
         src={isDark ? logoWhiteSvg : logoSvg}
-        className="h-14"
+        className="h-14 w-auto"
         // width={logoSize}
         // height={32}
         priority={false}

@@ -5,13 +5,13 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/DropdownMenu';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { routing } from '@/i18n/routing';

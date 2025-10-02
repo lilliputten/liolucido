@@ -18,8 +18,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Icons } from '@/components/shared/icons';
+} from '@/components/ui/DropdownMenu';
+import { Icons } from '@/components/shared/Icons';
 
 export function NavTgSignInButton() {
   const { data: session, status } = useSession();

@@ -8,9 +8,9 @@ import { TReactNode } from '@/shared/types/generic';
 import { rootRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { ErrorPlaceHolder } from '@/components/shared/ErrorPlaceHolder';
-import { Icons, TIconsKey } from '@/components/shared/icons';
+import { Icons, TIconsKey } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useGoBack } from '@/hooks';
 

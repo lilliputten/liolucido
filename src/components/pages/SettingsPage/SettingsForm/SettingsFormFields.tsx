@@ -18,7 +18,7 @@ import {
   TSystemThemeId,
 } from '@/config/themes';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import {
@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { FormHint } from '@/components/blocks/FormHint';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TSettings } from '@/features/settings/types';
 import { localesList } from '@/i18n/types';

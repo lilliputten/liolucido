@@ -8,7 +8,7 @@ import * as z from 'zod';
 
 import { TLanguageId } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { predefinedLanguages } from '@/constants/languages';
 import { TTopicLanguageData } from '@/features/topics/types';
 

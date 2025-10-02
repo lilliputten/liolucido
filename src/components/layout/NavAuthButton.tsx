@@ -6,10 +6,10 @@ import { useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ModalContext } from '@/components/modals/providers';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 import { NavUserAccount } from './NavUserAccount';

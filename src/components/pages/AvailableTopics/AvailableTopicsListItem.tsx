@@ -3,10 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';

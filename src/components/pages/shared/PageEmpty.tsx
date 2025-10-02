@@ -1,8 +1,8 @@
 import { TPropsWithClassName, TReactNode } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { EmptyPlaceholder } from '@/components/shared/EmptyPlaceholder';
-import { Icons, TIconsKey } from '@/components/shared/icons';
+import { Icons, TIconsKey } from '@/components/shared/Icons';
 
 interface TPageEmptyProps extends TPropsWithClassName {
   title: string;

@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { UseFormReturn } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TSettings } from '@/features/settings/types';

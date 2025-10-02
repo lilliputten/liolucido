@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/separator';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
 import { useSessionUser } from '@/hooks';

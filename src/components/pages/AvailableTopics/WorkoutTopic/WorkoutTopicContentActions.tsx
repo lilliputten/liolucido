@@ -3,8 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Icons } from '@/components/shared/Icons';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TTopic } from '@/features/topics/types';
 import { useSessionUser } from '@/hooks';

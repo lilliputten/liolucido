@@ -14,7 +14,7 @@ import { isDev } from '@/constants';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
-import { Icons } from '../shared/icons';
+import { Icons } from '../shared/Icons';
 
 interface NavBarProps {
   large?: boolean;

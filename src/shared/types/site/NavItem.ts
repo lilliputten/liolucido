@@ -1,6 +1,6 @@
 import { TUserRole } from '@/shared/types/db/TUserRole';
 import { TRoutePath } from '@/config/routesConfig';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 
 export interface NavItemBase {
   titleId: string; // Id for i18n

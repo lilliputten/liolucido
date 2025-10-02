@@ -5,9 +5,9 @@ import Link from 'next/link';
 
 import { myTopicsRoute, rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import { PageEmpty } from '@/components/pages/shared';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { useAvailableTopicsByScope, useGoBack } from '@/hooks';

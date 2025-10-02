@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 
 import { cn } from '@/lib/utils';
 
-import { Icons } from '../shared/icons';
+import { Icons } from '../shared/Icons';
 
 interface MarkdownProps {
   children: string;

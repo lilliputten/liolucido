@@ -4,9 +4,9 @@ import React from 'react';
 
 import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { TTopicId } from '@/features/topics/types';

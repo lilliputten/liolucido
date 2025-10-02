@@ -4,8 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button, buttonVariants } from '@/components/ui/Button';
+import { Icons } from '@/components/shared/Icons';
 import { TTopic } from '@/features/topics/types';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 

@@ -7,9 +7,9 @@ import * as z from 'zod';
 
 import { TLanguage, TLanguageId } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { TTopicLanguageData } from '@/features/topics/types';
 
 import { maxIdLength, maxNameLength, minIdLength, minNameLength } from './constants';

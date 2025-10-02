@@ -4,8 +4,8 @@ import React from 'react';
 
 import { TReactNode } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons, TIconsKey } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Icons, TIconsKey } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 export interface TConfirmFormProps {

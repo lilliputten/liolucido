@@ -6,17 +6,17 @@ import { useTheme } from 'next-themes';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { defaultSystemTheme, systemThemeIcons, TSystemThemeId } from '@/config/themes';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/DropdownMenu';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 
-import { Icons } from '../shared/icons';
+import { Icons } from '../shared/Icons';
 
 interface TNavModeToggleProps extends TPropsWithClassName {
   onPrimary?: boolean;

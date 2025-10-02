@@ -4,8 +4,8 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Icons } from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';

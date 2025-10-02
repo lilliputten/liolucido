@@ -7,7 +7,6 @@ import { isDev } from '@/constants';
 
 interface TSignInModalProps {
   showSignInModal: boolean;
-  // setShowSignInModal: (v: boolean) => void; // Dispatch<SetStateAction<boolean>>;
   setShowSignInModal: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -28,16 +27,15 @@ function SignInModal(props: TSignInModalProps) {
       isVisible={showSignInModal}
       toggleModal={setShowSignInModal}
       className={cn(
-        // prettier-ignore
-        isDev && '__SignInModal',
+        isDev && '__SignInModal', // DEBUG
         'text-center',
         'text-theme-foreground',
+        'bg-theme-500',
       )}
     >
       <div className="w-full bg-theme">
         <div
           className={cn(
-            // prettier-ignore
             'flex',
             'flex-col',
             'items-center',

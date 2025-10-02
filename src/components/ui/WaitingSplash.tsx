@@ -1,7 +1,7 @@
 import { useTheme } from 'next-themes';
 
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { secondaryColor } from '@/styles/cssVariables';
 import { isDev } from '@/constants';
 

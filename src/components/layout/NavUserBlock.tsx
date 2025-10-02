@@ -10,8 +10,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { Icons } from '@/components/shared/icons';
+} from '@/components/ui/DropdownMenu';
+import { Icons } from '@/components/shared/Icons';
 import { UserAvatar } from '@/components/shared/user-avatar';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';

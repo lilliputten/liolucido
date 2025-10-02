@@ -5,7 +5,7 @@ import { useFormatter } from 'next-intl';
 
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/shared/icons';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
 

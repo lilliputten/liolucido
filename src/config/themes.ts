@@ -1,4 +1,4 @@
-import { Icon, Icons } from '@/components/shared/icons';
+import { Icon, Icons } from '@/components/shared/Icons';
 
 export const systemThemeIds = ['light', 'dark', 'system'] as const;
 export type TSystemThemeId = (typeof systemThemeIds)[number];

@@ -3,8 +3,8 @@
 import React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Icons } from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 export interface TDeleteTopicFormProps {

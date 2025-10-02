@@ -5,8 +5,8 @@ import { useSession } from 'next-auth/react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Icons } from '@/components/shared/icons';
+import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import { Icons } from '@/components/shared/Icons';
 import { UserAvatar } from '@/components/shared/user-avatar';
 import { isDev } from '@/constants';
 

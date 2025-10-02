@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 
 import { TReactNode } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { TIconsKey } from '@/components/shared/icons';
+import { TIconsKey } from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 
