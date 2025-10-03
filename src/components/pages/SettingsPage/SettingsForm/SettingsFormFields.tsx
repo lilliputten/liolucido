@@ -37,7 +37,7 @@ import { isDev } from '@/constants';
 import { TSettings } from '@/features/settings/types';
 import { localesList } from '@/i18n/types';
 
-import { TFormData } from './types';
+import { TSettingsFormData } from './types';
 
 const extendedLocalesList = ['auto', ...localesList];
 
@@ -46,7 +46,7 @@ interface TSettingsFormFieldsProps {
   isSubmitEnabled?: boolean;
   isPending?: boolean;
   onCancel?: (ev: React.MouseEvent) => void;
-  form: UseFormReturn<TFormData>;
+  form: UseFormReturn<TSettingsFormData>;
   className?: string;
   selectLanguage: (ev: React.MouseEvent) => void;
 }
@@ -90,7 +90,13 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   };
 
   return (
-    <div className={cn('flex w-full flex-col gap-6 px-6 py-2 md:flex-row', className)}>
+    <div
+      className={cn(
+        isDev && '__SettingsFormFields', // DEBUG
+        'flex w-full flex-col gap-6 px-8 md:flex-row',
+        className,
+      )}
+    >
       <FormSection>
         {/* showOnlyMyTopics */}
         <FormField

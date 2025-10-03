@@ -24,13 +24,12 @@ const Input = React.forwardRef<
         'bg-background/50',
         'px-3',
         'py-2',
-        'text-base',
         'ring-offset-background',
         'file:border-0',
         'file:bg-transparent',
-        'file:text-sm',
+        // 'file:text-sm',
         'file:font-medium',
-        'placeholder:text-muted-foreground',
+        'placeholder:text-foreground/10',
         'transition',
         // 'hover:bg-background',
         'hover:ring-2 hover:ring-theme-500/50',
@@ -41,7 +40,6 @@ const Input = React.forwardRef<
         'focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed',
         'disabled:opacity-50',
-        'md:text-sm',
         className,
       )}
       ref={ref}

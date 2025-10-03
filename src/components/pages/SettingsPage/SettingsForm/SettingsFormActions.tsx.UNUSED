@@ -13,15 +13,15 @@ import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TSettings } from '@/features/settings/types';
 import { useSessionUser } from '@/hooks';
 
-import { TFormData } from './types';
+import { TSettingsFormData } from './types';
 
 interface TProps {
   settings: TSettings;
+  form: UseFormReturn<TSettingsFormData>;
   isSubmitEnabled?: boolean;
   isPending?: boolean;
   onCancel?: (ev: React.MouseEvent) => void;
-  form: UseFormReturn<TFormData>;
-  onSubmit: (data: TFormData) => void;
+  onSubmit: (data: TSettingsFormData) => void;
 }
 
 export function SettingsFormActions(props: TProps) {

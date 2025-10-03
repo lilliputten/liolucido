@@ -14,20 +14,19 @@ const buttonVariants = cva(
     // 'focus-visible:ring-2',
     // 'focus-visible:ring-ring',
     // 'focus-visible:ring-offset-2',
-    'disabled:opacity-50',
+    'disabled:opacity-30',
     'disabled:cursor-default',
     'disabled:pointer-events-none',
     // 'ring-offset-background',
     'select-none',
-    // 'active:scale-[0.98]',
     'transition',
   ),
   {
     variants: {
       variant: {
         default: 'bg-theme text-theme-foreground hover:bg-theme/90',
-        primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        theme: 'bg-theme text-theme-foreground hover:bg-theme/90',
+        primary: 'bg-primary text-primary-foreground hover:bg-primary-400',
+        theme: 'bg-theme text-theme-foreground hover:bg-theme-400',
         destructive: 'bg-destructive hover:opacity-90 text-destructive-foreground',
         success: 'bg-success hover:opacity-90 text-success-foreground',
         outline: 'border border-input hover:bg-accent hover:text-accent-foreground',

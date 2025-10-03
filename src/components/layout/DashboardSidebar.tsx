@@ -111,7 +111,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="ml-auto size-9 opacity-50 hover:bg-theme hover:text-theme-foreground hover:opacity-100 lg:size-8"
+                      className="ml-auto', 'size-9', 'opacity-50', 'hover:bg-theme', 'hover:text-theme-foreground', 'hover:opacity-100', 'lg:size-8"
                       onClick={toggleSidebar}
                       // title="Expand panel"
                     >
@@ -161,12 +161,16 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 key={`link-${item.titleId}`}
                                 href={item.disabled ? '#' : item.href}
                                 className={cn(
-                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme hover:text-theme-foreground',
-                                  isCurrentPath
-                                    ? 'bg-theme-500/10 hover:text-theme-foreground'
-                                    : 'text-muted-foreground',
-                                  item.disabled &&
-                                    'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
+                                  'flex',
+                                  'items-center',
+                                  'gap-3',
+                                  'rounded-md',
+                                  'p-2',
+                                  'text-sm',
+                                  'font-medium',
+                                  'hover:bg-theme/20',
+                                  isCurrentPath && 'bg-theme-500/10 hover:bg-theme/30',
+                                  item.disabled && 'pointer-events-none cursor-default opacity-30',
                                 )}
                               >
                                 <Icon className="size-5" />
@@ -184,12 +188,10 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                     key={`link-tooltip-${item.titleId}`}
                                     href={item.disabled ? '#' : item.href}
                                     className={cn(
-                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-theme',
-                                      isCurrentPath
-                                        ? 'bg-theme-500/10 hover:text-theme-foreground'
-                                        : 'text-muted-foreground hover:text-theme-foreground',
+                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-theme/20',
+                                      isCurrentPath && 'bg-theme-500/10 hover:bg-theme/30',
                                       item.disabled &&
-                                        'pointer-events-none cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
+                                        'pointer-events-none cursor-default opacity-30',
                                     )}
                                   >
                                     <span className="flex size-full items-center justify-center">
@@ -283,8 +285,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
                   className={cn(
                     'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme hover:text-theme-foreground',
                     isCurrentPath ? 'bg-theme-500/10' : 'text-muted-foreground',
-                    item.disabled &&
-                      'pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
+                    item.disabled && 'pointer-events-none cursor-default opacity-30',
                   )}
                 >
                   <Icon className="size-5" />

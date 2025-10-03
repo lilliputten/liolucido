@@ -1,3 +1,3 @@
 import { TSettings } from '@/features/settings/types';
 
-export type TFormData = TSettings;
+export type TSettingsFormData = TSettings;

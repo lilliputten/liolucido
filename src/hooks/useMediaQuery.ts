@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import { TDevice } from '@/shared/types/ui/TDevice';
+
 export function useMediaQuery() {
-  const [device, setDevice] = useState<'mobile' | 'sm' | 'tablet' | 'desktop' | null>(null);
+  const [device, setDevice] = useState<TDevice | null>(null);
   const [dimensions, setDimensions] = useState<{
     width: number;
     height: number;

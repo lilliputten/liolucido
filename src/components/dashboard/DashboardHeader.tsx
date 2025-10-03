@@ -5,22 +5,17 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
 
-import { DashboardMenu } from './DashboardMenu';
+import { DashboardActions, TActionMenuItem } from './DashboardActions';
 
 interface DashboardHeaderProps {
   heading: string;
   text?: string;
-  // children?: React.ReactNode;
   className?: string;
+  actions?: TActionMenuItem[];
 }
 
 export function DashboardHeader(props: DashboardHeaderProps) {
-  const {
-    className,
-    heading,
-    text,
-    // children,
-  } = props;
+  const { className, heading, text, actions } = props;
   return (
     <div
       className={cn(
@@ -36,9 +31,9 @@ export function DashboardHeader(props: DashboardHeaderProps) {
         )}
       >
         <h1 className="font-heading text-2xl font-semibold text-theme">{heading}</h1>
-        {text && <p className="text-base text-muted-foreground">{text}</p>}
+        {text && <p className="text-base opacity-50">{text}</p>}
       </div>
-      <DashboardMenu />
+      <DashboardActions actions={actions} />
     </div>
   );
 }

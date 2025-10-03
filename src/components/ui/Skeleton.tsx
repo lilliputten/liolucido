@@ -9,7 +9,8 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
         isDev && '__Skeleton',
         className,
         'animate-pulse rounded-md',
-        'bg-muted',
+        'bg-theme-500/20',
+        'backdrop-sepia-[20%]',
       )}
       {...props}
     />

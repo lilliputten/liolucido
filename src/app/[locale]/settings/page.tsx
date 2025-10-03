@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/session';
 import { constructMetadata } from '@/lib/utils';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
-import { SettingsPageContent } from './SettingsPageContent';
+import { SettingsPage } from './SettingsPage';
 
 export async function generateMetadata({ params }: TAwaitedLocaleProps) {
   const { locale } = await params;
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: TAwaitedLocaleProps) {
   });
 }
 
-export default async function SettingsPage() {
+export default async function SettingsPageIndex() {
   const user = await getCurrentUser();
   const userId = user?.id;
-  return <SettingsPageContent userId={userId} />;
+  return <SettingsPage userId={userId} />;
 }

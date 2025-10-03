@@ -51,12 +51,14 @@ export function ConfirmForm(props: TConfirmFormProps) {
     <div
       className={cn(
         isDev && '__ConfirmForm', // DEBUG
-        'flex w-full flex-col gap-4',
+        'flex w-full flex-col gap-6',
         className,
       )}
     >
       {children}
+      {/*
       <div className="flex flex-col justify-between"></div>
+      */}
       {/* Actions */}
       <div className="flex w-full gap-4">
         <Button

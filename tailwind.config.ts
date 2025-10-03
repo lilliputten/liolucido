@@ -68,8 +68,8 @@ export default {
           DEFAULT: 'var(--errorColor)',
         },
         muted: {
-          DEFAULT: 'var(--mutedColor)',
-          foreground: 'var(--mutedForegroundColor)',
+          DEFAULT: 'rgba(var(--color-theme-500-RGB) / 15%)',
+          foreground: 'var(--color-theme-foreground)', // 'var(--accentForegroundColor)',
         },
         accent: {
           DEFAULT: 'var(--color-theme)', // 'var(--accentColor)',
