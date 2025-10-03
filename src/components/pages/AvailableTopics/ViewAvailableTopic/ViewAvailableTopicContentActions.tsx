@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/Button';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { TTopic } from '@/features/topics/types';
 import { useSessionUser } from '@/hooks';
 
@@ -58,7 +58,7 @@ export function ViewAvailableTopicContentActions(props: TViewAvailableTopicConte
           href={`${myTopicRoutePath}/${topic.id}`}
           className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
         >
-          <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Edit className="hidden size-4 opacity-50 sm:flex" />
           <span>Manage Topic</span>
         </Link>
       )}

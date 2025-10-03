@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/Button';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { TTopic } from '@/features/topics/types';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -46,14 +46,14 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
         href={`${routePath}/${topic.id}/edit`}
         className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
-        <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
+        <Icons.Edit className="hidden size-4 opacity-50 sm:flex" />
         <span>Edit</span>
       </Link>
       <Link
         href={`${routePath}/${topic.id}/questions`}
         className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex gap-2')}
       >
-        <Icons.questions className="hidden size-4 opacity-50 sm:flex" />
+        <Icons.Questions className="hidden size-4 opacity-50 sm:flex" />
         <span>Questions</span>
       </Link>
       {allowedTraining && (
@@ -67,12 +67,12 @@ export function ViewTopicContentActions(props: TViewTopicContentActionsProps) {
       )}
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
-          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
           Add New Question
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
-        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+        <Icons.Trash className="hidden size-4 opacity-50 sm:flex" />
         <span>Delete Topic</span>
       </Button>
     </>

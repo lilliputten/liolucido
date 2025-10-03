@@ -10,11 +10,10 @@ import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
 import { NavBarBrand } from '@/components/layout/NavBarBrand';
 import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
-
-import { Icons } from '../shared/Icons';
 
 interface NavBarProps {
   large?: boolean;
@@ -117,7 +116,7 @@ export function NavBar(props: NavBarProps) {
               'text-theme-foreground hover:bg-theme-400/50',
             )}
           >
-            <Icons.github className="size-6" />
+            <Icons.Github className="size-6" />
             <span className="sr-only">GitHub</span>
           </Link>
           <NavTgSignInButton />

@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -65,13 +65,13 @@ function Toolbar(props: TToolbarProps) {
         )}
         onClick={handleReload}
       >
-        <Icons.refresh
+        <Icons.Refresh
           className={cn('hidden size-4 opacity-50 sm:flex', isReloading && 'animate-spin')}
         />
         <span>Reload</span>
       </Button>
       <Button variant="ghost" size="sm" onClick={handleAddTopic} className="flex gap-2">
-        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+        <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Topic</span>
         </span>
@@ -191,7 +191,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Edit Questions"
             title="Edit Questions"
           >
-            <Icons.questions className="size-5" />
+            <Icons.Questions className="size-5" />
           </Button>
           <Button
             variant="ghost"
@@ -201,7 +201,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Edit"
             title="Edit"
           >
-            <Icons.edit className="size-4" />
+            <Icons.Edit className="size-4" />
           </Button>
           <Button
             variant="ghost"
@@ -211,7 +211,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
             aria-label="Delete"
             title="Delete"
           >
-            <Icons.trash className="size-4" />
+            <Icons.Trash className="size-4" />
           </Button>
         </div>
       </TableCell>

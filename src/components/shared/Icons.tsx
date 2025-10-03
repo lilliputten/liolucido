@@ -1,93 +1,100 @@
-// NOTE: See stock icons at:
-// https://lucide.dev/icons/
-// node_modules/lucide-react/dist/lucide-react.d.ts
+// NOTE: See stock icons at: https://lucide.dev/icons/
 
-import {
-  AlertTriangle,
+// Data definitions: node_modules/lucide-react/dist/lucide-react.d.ts
+
+import React from 'react';
+import * as icons from 'lucide-react';
+
+import { IconProps, IconType } from './IconTypes';
+
+// Stock lucide icons...
+export const {
   ArrowLeft,
   ArrowRight,
-  ArrowUpRight,
-  BookOpen,
   Bot,
   Braces,
   CalendarDays,
   ChartNoAxesGantt,
   Check,
   CheckIcon,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
   CircleCheck,
   CircleUserRound,
   Columns3,
-  Copy,
-  CreditCard,
-  Dot,
-  EllipsisVertical,
   ExternalLink,
   Eye,
   EyeOff,
-  File,
   FileQuestion,
-  FileText,
   Flag,
   FolderKanban,
   Hand,
   Hash,
-  HelpCircle,
-  Home,
-  Image,
   Languages,
-  Laptop,
   LayoutDashboard,
-  LayoutPanelLeft,
   Library,
-  LineChart,
   ListChecks,
-  ListTodo,
-  Loader2,
   LogOut,
-  LucideIcon,
-  LucideProps,
   Menu,
   MessageCircleQuestion,
-  MessagesSquare,
-  Minus,
-  Moon,
-  MoreVertical,
-  Package,
   PanelLeftClose,
   PanelRightClose,
   Pencil,
-  Plus,
-  Puzzle,
-  RefreshCw,
   Rows3,
-  Search,
-  Settings,
   Shield,
   ShieldAlert,
   ShieldCheck,
   SquareChartGantt,
   SquareDashedKanban,
   SquareLibrary,
-  SunMedium,
   Tags,
+  XIcon,
+  ArrowUpRight,
+  BookOpen,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Copy,
+  Dot,
+  Home,
+  Laptop,
+  LineChart,
+  Minus,
+  Moon,
+  Package,
+  Plus,
+  Search,
+  Settings,
   Trash,
   User,
-  X,
-  XIcon,
-} from 'lucide-react';
+} = icons;
 
-export type Icon = LucideIcon;
-
-export type IconProps = LucideProps;
-export type IconType = (p: IconProps) => JSX.Element;
+// Renamed icons...
+export const Add = icons.Plus;
+export const AllTopics = icons.SquareLibrary;
+export const Answers = icons.ListChecks;
+export const Billing = icons.CreditCard;
+export const Close = icons.X;
+export const Dashboard = icons.LayoutPanelLeft;
+export const Edit = icons.Pencil;
+export const Ellipsis = icons.MoreVertical;
+export const Help = icons.HelpCircle;
+export const Logo = icons.Puzzle;
+export const Logout = icons.LogOut;
+export const Media = icons.Image;
+export const MenuVertical = icons.EllipsisVertical;
+export const Messages = icons.MessagesSquare;
+export const Page = icons.File;
+export const Post = icons.FileText;
+export const Questions = icons.ListTodo;
+export const Refresh = icons.RefreshCw;
+export const Remove = icons.Minus;
+export const Spinner = icons.Loader2;
+export const Sun = icons.SunMedium;
+export const Topics = icons.Library;
+export const Warning = icons.AlertTriangle;
 
 // Custom icons...
-
-const github = ({ ...props }: IconProps) => (
+export const Github: IconType = ({ ...props }: IconProps) => (
   <svg
     aria-hidden="true"
     focusable="false"
@@ -104,8 +111,7 @@ const github = ({ ...props }: IconProps) => (
     />
   </svg>
 );
-
-const yandex = ({ ...props }: IconProps) => (
+export const Yandex: IconType = ({ ...props }: IconProps) => (
   <svg
     aria-hidden="true"
     focusable="false"
@@ -123,8 +129,7 @@ const yandex = ({ ...props }: IconProps) => (
     />
   </svg>
 );
-
-const google = ({ ...props }: IconProps) => (
+export const Google: IconType = ({ ...props }: IconProps) => (
   <svg
     aria-hidden="true"
     focusable="false"
@@ -141,8 +146,7 @@ const google = ({ ...props }: IconProps) => (
     />
   </svg>
 );
-
-const nextjs = ({ ...props }: IconProps) => (
+export const NextJs: IconType = ({ ...props }: IconProps) => (
   <svg
     aria-hidden="true"
     focusable="false"
@@ -159,8 +163,7 @@ const nextjs = ({ ...props }: IconProps) => (
     />
   </svg>
 );
-
-const twitter = ({ ...props }: IconProps) => (
+export const Twitter: IconType = ({ ...props }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -177,8 +180,7 @@ const twitter = ({ ...props }: IconProps) => (
     />
   </svg>
 );
-
-const telegram = ({ ...props }: IconProps) => (
+export const Telegram: IconType = ({ ...props }: IconProps) => (
   <svg
     aria-hidden="true"
     focusable="false"
@@ -194,97 +196,3 @@ const telegram = ({ ...props }: IconProps) => (
     />
   </svg>
 );
-
-export const Icons = {
-  ArrowLeft,
-  ArrowRight,
-  Bot,
-  Braces,
-  CalendarDays,
-  ChartNoAxesGantt,
-  Check,
-  CheckIcon,
-  CircleCheck,
-  CircleUserRound,
-  Columns3,
-  ExternalLink,
-  Eye,
-  EyeOff,
-  FileQuestion,
-  Flag,
-  FolderKanban,
-  Hand,
-  Hash,
-  Languages,
-  LayoutDashboard,
-  Library,
-  ListChecks,
-  LogOut,
-  Menu,
-  MessageCircleQuestion,
-  PanelLeftClose,
-  PanelRightClose,
-  Pencil,
-  Rows3,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
-  SquareChartGantt,
-  SquareDashedKanban,
-  SquareLibrary,
-  Tags,
-  XIcon,
-  add: Plus,
-  allTopics: SquareLibrary,
-  answers: ListChecks,
-  arrowUpRight: ArrowUpRight,
-  billing: CreditCard,
-  bookOpen: BookOpen,
-  check: Check,
-  chevronDown: ChevronDown,
-  chevronLeft: ChevronLeft,
-  chevronRight: ChevronRight,
-  chevronUp: ChevronUp,
-  close: X,
-  copy: Copy,
-  dashboard: LayoutPanelLeft,
-  dot: Dot,
-  edit: Pencil,
-  ellipsis: MoreVertical,
-  github,
-  google,
-  help: HelpCircle,
-  home: Home,
-  languages: Languages,
-  laptop: Laptop,
-  lineChart: LineChart,
-  logo: Puzzle,
-  logout: LogOut,
-  media: Image,
-  menu: EllipsisVertical,
-  MenuVertical: EllipsisVertical,
-  messages: MessagesSquare,
-  minus: Minus,
-  moon: Moon,
-  nextjs,
-  package: Package,
-  page: File,
-  plus: Plus,
-  post: FileText,
-  questions: ListTodo,
-  refresh: RefreshCw,
-  remove: Minus,
-  search: Search,
-  settings: Settings,
-  spinner: Loader2,
-  sun: SunMedium,
-  telegram,
-  topics: Library,
-  trash: Trash,
-  twitter,
-  user: User,
-  warning: AlertTriangle,
-  yandex,
-};
-
-export type TIconsKey = keyof typeof Icons;

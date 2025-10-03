@@ -5,7 +5,7 @@ import { UseFormReturn } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { TQuestion } from '@/features/questions/types';
 
 import { TFormData } from './types';
@@ -32,7 +32,7 @@ export function EditQuestionFormActions(props: TProps) {
     onSubmit,
   } = props;
   const { isDirty } = form.formState;
-  const Icon = isPending ? Icons.spinner : Icons.check;
+  const Icon = isPending ? Icons.Spinner : Icons.Check;
   const handleSubmit = form.handleSubmit(onSubmit);
   return (
     <>
@@ -56,7 +56,7 @@ export function EditQuestionFormActions(props: TProps) {
           className="gap-2"
           disabled={!isDirty}
         >
-          <Icons.close className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Close className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Reset <span className="hidden sm:inline-flex">changes</span>
           </span>
@@ -64,14 +64,14 @@ export function EditQuestionFormActions(props: TProps) {
       )}
       {handleAddQuestion && (
         <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
-          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Question</span>
           </span>
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteQuestion} className="gap-2">
-        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+        <Icons.Trash className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Delete <span className="hidden sm:inline-flex">Question</span>
         </span>

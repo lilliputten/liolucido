@@ -1,7 +1,8 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Icons, TIconsKey } from '@/components/shared/Icons';
+
+import { TGenericIcon } from './IconTypes';
 
 type ErrorPlaceHolderProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -32,17 +33,18 @@ export function ErrorPlaceHolder({
   );
 }
 
-interface ErrorPlaceHolderIconProps extends Partial<React.SVGProps<SVGSVGElement>> {
-  name: TIconsKey;
+interface ErrorPlaceHolderIconProps {
+  /*extends IconProps*/ /*extends Partial<React.SVGProps<SVGSVGElement>>*/ icon: TGenericIcon;
+  className?: string;
   ref?: ((instance: SVGSVGElement | null) => void) | React.RefObject<SVGSVGElement> | null;
 }
 
 ErrorPlaceHolder.Icon = function ErrorPlaceHolderIcon({
-  name,
+  icon: Icon,
   className,
   ...props
 }: ErrorPlaceHolderIconProps) {
-  const Icon = Icons[name];
+  // const Icon = Icons[Icon];
   if (Icon) {
     return (
       <div className="error-gradient-background flex size-20 items-center justify-center rounded-full text-white">

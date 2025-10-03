@@ -1,7 +1,7 @@
 import { AvatarProps } from '@radix-ui/react-avatar';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { User } from '@/generated/prisma';
 
 interface UserAvatarProps extends AvatarProps {
@@ -16,7 +16,7 @@ export function UserAvatar({ user, ...props }: UserAvatarProps) {
       ) : (
         <AvatarFallback>
           <span className="sr-only">{user.name}</span>
-          <Icons.user className="size-4" />
+          <Icons.User className="size-4" />
         </AvatarFallback>
       )}
     </Avatar>

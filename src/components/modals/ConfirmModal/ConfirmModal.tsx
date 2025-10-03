@@ -18,7 +18,7 @@ interface TConfirmModalProps
     | 'confirmButtonText'
     | 'confirmButtonBusyText'
     | 'cancelButtonText'
-    | 'confirmButtonIconName'
+    | 'confirmButtonIcon'
   > {
   children?: TReactNode;
   dialogDescription?: TReactNode;
@@ -41,7 +41,7 @@ export function ConfirmModal(props: TConfirmModalProps) {
     confirmButtonVariant,
     confirmButtonText,
     confirmButtonBusyText,
-    confirmButtonIconName,
+    confirmButtonIcon,
     cancelButtonText,
   } = props;
   const { isMobile } = useMediaQuery();
@@ -77,7 +77,7 @@ export function ConfirmModal(props: TConfirmModalProps) {
           confirmButtonVariant={confirmButtonVariant}
           confirmButtonText={confirmButtonText}
           confirmButtonBusyText={confirmButtonBusyText}
-          confirmButtonIconName={confirmButtonIconName}
+          confirmButtonIcon={confirmButtonIcon}
           cancelButtonText={cancelButtonText}
         >
           {children}

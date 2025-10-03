@@ -1,7 +1,7 @@
 import { useTheme } from 'next-themes';
 
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { secondaryColor } from '@/styles/cssVariables';
 import { isDev } from '@/constants';
 
@@ -48,7 +48,7 @@ export function WaitingSplash(props: TWaitingSplashProps) {
           isLight ? 'bg-background-light' : 'bg-background-dark',
         )}
       />
-      <Icons.spinner
+      <Icons.Spinner
         className={cn(
           // prettier-ignore
           'size-8',

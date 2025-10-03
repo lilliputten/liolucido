@@ -13,7 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TTopic } from '@/features/topics/types';
 
@@ -164,10 +164,10 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                   {langCode && <span className="opacity-50">{langCode}</span>}
                   {langCustom && (
                     <span className="opacity-50">
-                      <Icons.edit className="size-3" />
+                      <Icons.Edit className="size-3" />
                     </span>
                   )}
-                  {langCode && <Icons.close onClick={resetLang} className="size-4" />}
+                  {langCode && <Icons.Close onClick={resetLang} className="size-4" />}
                 </Button>
                 <FormHint>An optional predefined or custom language for the topic.</FormHint>
                 <FormMessage />

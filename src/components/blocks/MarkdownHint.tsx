@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 
 export function MarkdownHint() {
   return (

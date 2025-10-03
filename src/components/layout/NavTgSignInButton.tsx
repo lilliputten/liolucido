@@ -19,13 +19,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 
 export function NavTgSignInButton() {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
-    return <Icons.refresh className="size-6 animate-spin" />;
+    return <Icons.Refresh className="size-6 animate-spin" />;
   }
 
   if (status === 'authenticated') {
@@ -46,7 +46,7 @@ export function NavTgSignInButton() {
           <DropdownMenuItem disabled>Test 2</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>
-            <Icons.logout className="mr-2 size-4" />
+            <Icons.Logout className="mr-2 size-4" />
             Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>

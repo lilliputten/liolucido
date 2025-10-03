@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 
@@ -36,7 +36,7 @@ export default function Error({
   const extraActions = (
     <>
       <Button onClick={goToTopicsRoot} className="flex gap-2">
-        <Icons.topics className="size-4" />
+        <Icons.Topics className="size-4" />
         <span>Available topics</span>
       </Button>
     </>

@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/DropdownMenu';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { UserAvatar } from '@/components/shared/user-avatar';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';
@@ -158,7 +158,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
                 // 'disabled', // UNUSED
               )}
             >
-              <Icons.settings className="size-4" />
+              <Icons.Settings className="size-4" />
               <p className="text-sm">{t('Settings')}</p>
             </Link>
           </MenuItem>

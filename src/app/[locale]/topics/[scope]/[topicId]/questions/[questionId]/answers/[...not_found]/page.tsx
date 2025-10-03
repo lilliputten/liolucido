@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import NotFoundScreen from '@/components/pages/shared/NotFoundScreen';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +25,7 @@ export default function NotFound() {
           isDev && '__AnswerNotFoundPage_Screen', // DEBUG
           'w-full',
         )}
-        iconName="answers"
+        icon={Icons.Answers}
         title="Wrong answer component requested"
       />
     </PageWrapper>

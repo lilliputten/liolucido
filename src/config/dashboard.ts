@@ -1,5 +1,6 @@
 import { UserRoles } from '@/shared/types/db/TUserRole';
 import { SidebarNavItem } from '@/shared/types/site/NavItem';
+import * as Icons from '@/components/shared/Icons';
 
 import {
   adminRoute,
@@ -20,10 +21,10 @@ export const sidebarLinks: SidebarNavItem[] = [
     titleId: 'My Data',
     authorizedOnly: true,
     items: [
-      { href: myTopicsRoute, icon: 'topics', titleId: 'My Topics' },
+      { href: myTopicsRoute, icon: Icons.Topics, titleId: 'My Topics' },
       {
         href: allTopicsRoute,
-        icon: 'allTopics',
+        icon: Icons.AllTopics,
         titleId: 'All Topics',
         authorizedOnly: UserRoles.ADMIN,
       },
@@ -33,29 +34,29 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     titleId: 'Application',
     items: [
-      { href: availableTopicsRoute, icon: 'Library', titleId: 'Available Topics' },
-      // { href: availableTopicsRoute, icon: 'Braces', titleId: 'Data' },
-      { href: welcomeRoute, icon: 'Hand', titleId: 'Welcome' },
+      { href: availableTopicsRoute, icon: Icons.Library, titleId: 'Available Topics' },
+      // { href: availableTopicsRoute, icon: Icons.Braces, titleId: 'Data' },
+      { href: welcomeRoute, icon: Icons.Hand, titleId: 'Welcome' },
       {
         href: adminRoute,
-        icon: 'laptop',
+        icon: Icons.Laptop,
         titleId: 'Admin Panel',
         authorizedOnly: UserRoles.ADMIN,
         disabled: true,
       },
-      { href: dashboardRoute, icon: 'dashboard', titleId: 'Dashboard', disabled: true },
-      { href: chartsRoute, icon: 'lineChart', titleId: 'Charts', disabled: true },
+      { href: dashboardRoute, icon: Icons.Dashboard, titleId: 'Dashboard', disabled: true },
+      { href: chartsRoute, icon: Icons.LineChart, titleId: 'Charts', disabled: true },
     ],
   },
   {
     titleId: 'Options',
     items: [
-      { href: settingsRoute, icon: 'settings', titleId: 'Settings' },
-      { href: rootRoute, icon: 'home', titleId: 'Homepage' },
-      { href: rootRoute, icon: 'bookOpen', titleId: 'Documentation', disabled: true },
+      { href: settingsRoute, icon: Icons.Settings, titleId: 'Settings' },
+      { href: rootRoute, icon: Icons.Home, titleId: 'Homepage' },
+      { href: rootRoute, icon: Icons.BookOpen, titleId: 'Documentation', disabled: true },
       {
         href: rootRoute,
-        icon: 'messages',
+        icon: Icons.Messages,
         titleId: 'Support',
         authorizedOnly: UserRoles.USER,
         disabled: true,

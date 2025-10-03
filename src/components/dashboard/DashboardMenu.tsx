@@ -3,18 +3,24 @@
 import React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonProps } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useMediaQuery } from '@/hooks';
 
 interface DashboardMenuProps {
   className?: string;
+}
+
+interface TActionItem {
+  id: string;
+  buttonProps: ButtonProps;
+  // Icon:
 }
 
 export function DashboardMenu(props: DashboardMenuProps) {
@@ -60,11 +66,11 @@ export function DashboardMenu(props: DashboardMenuProps) {
       </Button>
       */}
       <Button variant="ghostTheme" className="flex gap-2">
-        <Icons.add className="size-4 opacity-50" />
+        <Icons.Add className="size-4 opacity-50" />
         <span className="flex flex-1 truncate">Add new</span>
       </Button>
-      <Button variant="ghostTheme" size="sm" className="flex gap-2">
-        <Icons.check className="size-4 opacity-50" />
+      <Button variant="ghostTheme" className="flex gap-2">
+        <Icons.Check className="size-4 opacity-50" />
         <span className="flex flex-1 truncate">Save</span>
       </Button>
     </div>
@@ -79,8 +85,6 @@ export function DashboardMenu(props: DashboardMenuProps) {
         aria-label="Show Menu"
         className={cn(
           isDev && '__AllowedUsersPage_DropdownMenuTrigger', // DEBUG
-          // 'focus-visible:ring-2',
-          // 'rounded-full',
         )}
       >
         <Button
@@ -89,7 +93,7 @@ export function DashboardMenu(props: DashboardMenuProps) {
           title="Show menu"
           className={cn(
             isDev && '__AllowedUsersPage_DropdownMenuToggle', // DEBUG
-            'hover:bg-theme/20',
+            // 'hover:bg-theme/20',
             'active:bg-theme active:text-theme-foreground',
             'ring-offset-background',
             'focus:ring-2',

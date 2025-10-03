@@ -1,11 +1,11 @@
 import { TUserRole } from '@/shared/types/db/TUserRole';
 import { TRoutePath } from '@/config/routesConfig';
-import { Icons } from '@/components/shared/Icons';
+import { TGenericIcon } from '@/components/shared/IconTypes';
 
 export interface NavItemBase {
   titleId: string; // Id for i18n
   authorizedOnly?: TUserRole | boolean;
-  icon?: keyof typeof Icons;
+  icon?: TGenericIcon;
 }
 export interface NavItem extends NavItemBase {
   href: TRoutePath;

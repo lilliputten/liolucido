@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';
 import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
@@ -99,14 +99,14 @@ function Toolbar(props: TToolbarActionsProps) {
         )}
         onClick={() => refetchAnswers()}
       >
-        <Icons.refresh
+        <Icons.Refresh
           className={cn('hidden size-4 opacity-50 sm:flex', isAnswersRefetching && 'animate-spin')}
         />
         <span>Reload</span>
       </Button>
       <Button variant="ghost" size="sm">
         <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
-          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Answer</span>
           </span>
@@ -226,7 +226,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
             title="Edit"
           >
             <Link className="flex" href={`${answerRoutePath}/edit`}>
-              <Icons.edit className="size-4" />
+              <Icons.Edit className="size-4" />
             </Link>
           </Button>
           <Button
@@ -241,7 +241,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
               className="flex"
               href={`${answersListRoutePath}/delete?answerId=${answer.id}&from=ManageTopicQuestionAnswersListCard`}
             >
-              <Icons.trash className="size-4" />
+              <Icons.Trash className="size-4" />
             </Link>
           </Button>
         </div>
@@ -304,7 +304,7 @@ export function ManageTopicQuestionAnswersListCardContent(
     return (
       <PageEmpty
         className="size-full flex-1"
-        iconName="answers"
+        icon={Icons.Answers}
         title="No answers have been created yet"
         description="You dont have any answers yet. Add any answer to your profile."
         framed={false}
@@ -312,7 +312,7 @@ export function ManageTopicQuestionAnswersListCardContent(
           <>
             <Button>
               <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
-                <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+                <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
                 Add New Answer
               </Link>
             </Button>

@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
@@ -84,13 +84,13 @@ function Toolbar(
         )}
         onClick={handleReload}
       >
-        <Icons.refresh
+        <Icons.Refresh
           className={cn('hidden size-4 opacity-50 sm:flex', isRefetching && 'animate-spin')}
         />
         <span>Reload</span>
       </Button>
       <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
-        <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+        <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
         <span>
           Add <span className="hidden sm:inline-flex">New Question</span>
         </span>
@@ -182,7 +182,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
             aria-label="Edit Answers"
             title="Edit Answers"
           >
-            <Icons.answers className="size-5" />
+            <Icons.Answers className="size-5" />
           </Button>
           <Button
             variant="ghost"
@@ -192,7 +192,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
             aria-label="Edit"
             title="Edit"
           >
-            <Icons.edit className="size-4" />
+            <Icons.Edit className="size-4" />
           </Button>
           <Button
             variant="ghost"
@@ -202,7 +202,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
             aria-label="Delete"
             title="Delete"
           >
-            <Icons.trash className="size-4" />
+            <Icons.Trash className="size-4" />
           </Button>
         </div>
       </TableCell>
@@ -260,14 +260,14 @@ export function ManageTopicQuestionsListCardContent(
     return (
       <PageEmpty
         className="size-full flex-1"
-        iconName="questions"
+        icon={Icons.Questions}
         title="No questions have been created yet"
         description="You dont have any questions yet. Add any question to your profile."
         framed={false}
         buttons={
           <>
             <Button onClick={handleAddQuestion} className="flex gap-2">
-              <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+              <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
               Add New Question
             </Button>
           </>

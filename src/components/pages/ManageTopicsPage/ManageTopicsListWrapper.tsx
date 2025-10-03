@@ -6,7 +6,7 @@ import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { TTopicId } from '@/features/topics/types';
@@ -73,7 +73,7 @@ export function ManageTopicsListWrapper(props: TTopicsListProps) {
         className="size-full flex-1"
         // onButtonClick={openAddTopicModal}
         // buttonTitle="Add Topic"
-        iconName="topics"
+        icon={Icons.Topics}
         title="No topics have been created yet"
         description="You dont have any topics yet. Add any topic to your profile."
         buttons={
@@ -83,7 +83,7 @@ export function ManageTopicsListWrapper(props: TTopicsListProps) {
               Go Back
             </Button>
             <Button onClick={openAddTopicModal} className="flex gap-2">
-              <Icons.topics className="hidden size-4 opacity-50 sm:flex" />
+              <Icons.Topics className="hidden size-4 opacity-50 sm:flex" />
               Add Topic
             </Button>
           </>

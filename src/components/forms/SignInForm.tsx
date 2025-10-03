@@ -9,10 +9,12 @@ import { myTopicsRoute } from '@/config/routesConfig';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Icons, IconType } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import logoWhiteSvg from '@/assets/logo/logo-image-w.svg';
 import logoSvg from '@/assets/logo/logo-image.svg';
 import { isDev } from '@/constants';
+
+import { TGenericIcon } from '../shared/IconTypes';
 
 type TSignInParameters = Parameters<typeof signIn>;
 export type TSignInProvider = TSignInParameters[0];
@@ -22,7 +24,7 @@ interface OAuthSignInButtonProps {
   onSignInStart?: (provider: TSignInProvider) => void;
   onSignInDone?: (provider: TSignInProvider) => void;
   provider: TSignInProvider;
-  ProviderIcon: IconType; // React.FC;
+  ProviderIcon: TGenericIcon; // React.FC;
   text: string;
   /** Rendered inside a body or in the app header */
   inBody?: boolean;
@@ -55,7 +57,7 @@ function OAuthSignInButton(props: OAuthSignInButtonProps) {
   }, [onSignInStart, onSignInDone, provider]);
 
   const icon = isThisClicked ? (
-    <Icons.spinner className="mr-2 size-4 animate-spin" />
+    <Icons.Spinner className="mr-2 size-4 animate-spin" />
   ) : (
     <ProviderIcon className="mr-2 size-4" />
   );
@@ -131,7 +133,7 @@ export function SignInForm(props: TSignInFormProps) {
         onSignInStart={handleSignInStart}
         onSignInDone={onSignInDone}
         provider="github"
-        ProviderIcon={Icons.github}
+        ProviderIcon={Icons.Github}
         text={t('sign-in-with-github')}
         // inBody={inBody}
       />
@@ -140,7 +142,7 @@ export function SignInForm(props: TSignInFormProps) {
         onSignInStart={handleSignInStart}
         onSignInDone={onSignInDone}
         provider="yandex"
-        ProviderIcon={Icons.yandex}
+        ProviderIcon={Icons.Yandex}
         text={t('sign-in-with-yandex')}
         // inBody={inBody}
       />
@@ -149,7 +151,7 @@ export function SignInForm(props: TSignInFormProps) {
         onSignInStart={handleSignInStart}
         onSignInDone={onSignInDone}
         provider="google"
-        ProviderIcon={Icons.google}
+        ProviderIcon={Icons.Google}
         text={t('sign-in-with-google')}
         // inBody={inBody}
       />
@@ -159,7 +161,7 @@ export function SignInForm(props: TSignInFormProps) {
         onSignInStart={handleSignInStart}
         onSignInDone={onSignInDone}
         provider="telegram-auth"
-        ProviderIcon={Icons.telegram}
+        ProviderIcon={Icons.Telegram}
         text={t('sign-in-with-telegram')}
         // inBody={inBody}
       />

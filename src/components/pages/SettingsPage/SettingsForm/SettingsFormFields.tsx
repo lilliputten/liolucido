@@ -32,7 +32,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormHint } from '@/components/blocks/FormHint';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TSettings } from '@/features/settings/types';
 import { localesList } from '@/i18n/types';
@@ -330,10 +330,10 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                   {langCode && <span className="opacity-50">{langCode}</span>}
                   {langCustom && (
                     <span className="opacity-50">
-                      <Icons.edit className="size-3" />
+                      <Icons.Edit className="size-3" />
                     </span>
                   )}
-                  {langCode && <Icons.close onClick={resetLang} className="size-4" />}
+                  {langCode && <Icons.Close onClick={resetLang} className="size-4" />}
                 </Button>
                 <FormHint>
                   Specify a language if you want to see the topics only for this specific language.

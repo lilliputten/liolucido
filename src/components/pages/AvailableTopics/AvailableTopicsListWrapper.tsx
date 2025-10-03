@@ -7,7 +7,7 @@ import { myTopicsRoute, rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { PageEmpty } from '@/components/pages/shared';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
@@ -60,7 +60,7 @@ export function AvailableTopicsListWrapper() {
               href={myTopicsRoute}
               className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}
             >
-              <Icons.topics className="hidden size-4 opacity-50 sm:flex" />
+              <Icons.Topics className="hidden size-4 opacity-50 sm:flex" />
               <span>Manage or create your own topics</span>
             </Link>
           </>

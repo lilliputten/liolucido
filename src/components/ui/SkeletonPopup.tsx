@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 function SkeletonPopup({ className }: React.HTMLAttributes<HTMLDivElement>) {
@@ -13,7 +13,7 @@ function SkeletonPopup({ className }: React.HTMLAttributes<HTMLDivElement>) {
         className,
       )}
     >
-      <Icons.spinner className="size-8 animate-spin" />
+      <Icons.Spinner className="size-8 animate-spin" />
     </div>
   );
 }

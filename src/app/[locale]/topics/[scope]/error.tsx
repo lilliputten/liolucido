@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
@@ -40,12 +40,12 @@ export default function Error({
       {routePath && (
         <>
           <Button onClick={goToTopicsRoot} className="flex gap-2">
-            <Icons.topics className="size-4" />
+            <Icons.Topics className="size-4" />
             <span>To the topics list</span>
           </Button>
           {/*
           <Link href={routePath} className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}>
-            <Icons.topics className="size-4" />
+            <Icons.Topics className="size-4" />
             <span>To the topics list</span>
           </Link>
           */}

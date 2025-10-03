@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/Button';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TTopic } from '@/features/topics/types';
 import { useSessionUser } from '@/hooks';
@@ -38,7 +38,7 @@ export function WorkoutTopicGoContentActions(props: TWorkoutTopicGoContentAction
         <>
           <Button variant="ghost" size="sm">
             <Link href={`/topics/my/${topic.id}`} className="flex gap-2">
-              <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
+              <Icons.Edit className="hidden size-4 opacity-50 sm:flex" />
               <span>Manage Topic</span>
             </Link>
           </Button>
@@ -48,7 +48,7 @@ export function WorkoutTopicGoContentActions(props: TWorkoutTopicGoContentAction
                 href={`/topics/my/${topic.id}/questions/${currentQuestionId}`}
                 className="flex gap-2"
               >
-                <Icons.questions className="hidden size-4 opacity-50 sm:flex" />
+                <Icons.Questions className="hidden size-4 opacity-50 sm:flex" />
                 <span>Manage Question</span>
               </Link>
             </Button>

@@ -37,7 +37,7 @@ function Toolbar({ toolbarPortalRef }: TChildProps) {
       {/* TODO: Place other shared buttons here
       <Button disabled variant="ghost" size="sm" className="flex gap-2">
         <Link href="#" className="flex items-center gap-2">
-          <Icons.check className="hidden size-4 sm:block" />
+          <Icons.Check className="hidden size-4 sm:block" />
           <span>Save</span>
         </Link>
       </Button>

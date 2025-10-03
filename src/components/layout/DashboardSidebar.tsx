@@ -19,7 +19,7 @@ import { UpgradeCard } from '@/components/dashboard/UpgradeCard';
 import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
 import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useMediaQuery } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
@@ -151,7 +151,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     )}
                     {/* Show sections menu */}
                     {section.items.map((item) => {
-                      const Icon = Icons[item.icon || 'ArrowRight'];
+                      const Icon = item.icon || Icons.ArrowRight;
                       const isCurrentPath = comparePathsWithoutLocalePrefix(item.href, path);
                       return (
                         item.href && (
@@ -265,7 +265,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
         <section key={section.titleId} className="flex flex-col gap-0.5">
           <p className="mb-4 text-xs uppercase text-muted-foreground">{section.titleId}</p>
           {section.items.map((item) => {
-            const Icon = Icons[item.icon || 'ArrowRight'];
+            const Icon = item.icon || Icons.ArrowRight;
             if (!item.href) {
               return null;
             }

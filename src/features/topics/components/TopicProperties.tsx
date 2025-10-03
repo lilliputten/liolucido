@@ -5,7 +5,7 @@ import { useFormatter } from 'next-intl';
 
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
 
@@ -68,7 +68,7 @@ export function TopicProperties(props: TTopicPropertiesProps & TTopicPropertiesO
     >
       {!!questionsCount && (
         <span id="questions" className="flex items-center gap-1" title="Questions count">
-          <Icons.questions className="mr-1 size-4 opacity-50" /> {questionsCount}
+          <Icons.Questions className="mr-1 size-4 opacity-50" /> {questionsCount}
         </span>
       )}
       {!!(langName || langCode) && (

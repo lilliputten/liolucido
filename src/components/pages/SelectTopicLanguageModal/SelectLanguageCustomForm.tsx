@@ -9,7 +9,7 @@ import { TLanguage, TLanguageId } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { TTopicLanguageData } from '@/features/topics/types';
 
 import { maxIdLength, maxNameLength, minIdLength, minNameLength } from './constants';
@@ -111,7 +111,7 @@ export const SelectLanguageCustomForm: React.FC<TProps> = (props) => {
               disabled={!isSubmitEnabled}
               className="flex shrink-0 gap-2"
             >
-              <Icons.check className="size-4" />
+              <Icons.Check className="size-4" />
               <span>Select</span>
             </Button>
           </div>

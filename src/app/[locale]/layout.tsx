@@ -12,7 +12,7 @@ import '@/styles/root.scss';
 import { defaultThemeColor } from '@/config/themeColors';
 import { getCurrentUser } from '@/lib/session';
 import { cn, constructMetadata } from '@/lib/utils';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/Toaster';
 import { GenericLayout } from '@/components/layout/GenericLayout';
 import ModalProvider from '@/components/modals/providers';
 import { ReactQueryClientProvider } from '@/components/providers/ReactQueryClientProvider';

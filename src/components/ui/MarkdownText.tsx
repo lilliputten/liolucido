@@ -5,8 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { cn } from '@/lib/utils';
-
-import { Icons } from '../shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 
 interface MarkdownProps {
   children: string;

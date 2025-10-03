@@ -7,7 +7,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { TSettings } from '@/features/settings/types';
@@ -38,8 +38,8 @@ export function SettingsFormActions(props: TProps) {
       setReloadConfirmModalVisible(false);
     });
   };
-  const ReLoadingIcon = isReLoading ? Icons.spinner : Icons.refresh;
-  const SaveIcon = isPending ? Icons.spinner : Icons.check;
+  const ReLoadingIcon = isReLoading ? Icons.Spinner : Icons.Refresh;
+  const SaveIcon = isPending ? Icons.Spinner : Icons.Check;
   const handleSubmit = form.handleSubmit(onSubmit);
   return (
     <>
@@ -92,7 +92,7 @@ export function SettingsFormActions(props: TProps) {
           className="flex gap-2"
           disabled={!isDirty}
         >
-          <Icons.close className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Close className="hidden size-4 opacity-50 sm:flex" />
           <span>Reset changes</span>
         </Button>
       )}

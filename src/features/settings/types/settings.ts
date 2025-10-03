@@ -12,13 +12,13 @@ import * as z from 'zod';
  */
 
 export const settingsSchema = z.object({
+  testInput: z.string().optional(),
+  testTextarea: z.string().optional(),
   userId: z.string().optional(),
   locale: z.string().optional(),
   // locale: z.union([z.literal('ru'), z.literal('en')]),
   // locale: z.union(localeUnion).optional(),
   // theme: z.union(themeUnion).optional(),
-  testInput: z.string().optional(),
-  testTextarea: z.string().optional(),
   theme: z.string().optional(),
   themeColor: z.string().optional(),
   showOnlyMyTopics: z.boolean().optional(),

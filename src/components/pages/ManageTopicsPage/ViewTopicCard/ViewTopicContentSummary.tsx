@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/separator';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
 import { useSessionUser } from '@/hooks';
@@ -50,7 +50,7 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
                 variant="default"
                 className="cursor-pointer bg-theme-500 hover:bg-theme-500/80"
               >
-                <Icons.questions className="mr-1 size-3 opacity-50" />
+                <Icons.Questions className="mr-1 size-3 opacity-50" />
                 Questions: {topic._count.questions}
               </Badge>
             </Link>
@@ -65,7 +65,7 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
           </Badge>
           {topic.langName && (
             <Badge variant="outline">
-              <Icons.languages className="mr-1 size-3 opacity-50" />
+              <Icons.Languages className="mr-1 size-3 opacity-50" />
               {topic.langName} {topic.langCode && `(${topic.langCode})`}
             </Badge>
           )}
@@ -109,7 +109,7 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
           </div>
           {!!compareDates(topic.updatedAt, topic.createdAt) && (
             <div className="flex items-center gap-2">
-              <Icons.edit className="size-4 text-muted-foreground opacity-50" />
+              <Icons.Edit className="size-4 text-muted-foreground opacity-50" />
               <span className="text-muted-foreground">Modified:</span>
               <span>{getFormattedRelativeDate(format, topic.updatedAt)}</span>
             </div>
@@ -129,7 +129,7 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
           ) : (
             topic.user && (
               <>
-                <Icons.user className="size-4 text-muted-foreground opacity-50" />
+                <Icons.User className="size-4 text-muted-foreground opacity-50" />
                 <span className="text-muted-foreground">Topic created by:</span>
                 <span>{topic.user.name || topic.user.email || 'Unknown'}</span>
               </>

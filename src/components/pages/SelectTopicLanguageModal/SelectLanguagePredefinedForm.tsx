@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { predefinedLanguages } from '@/constants/languages';
 import { TTopicLanguageData } from '@/features/topics/types';
 
@@ -140,7 +140,7 @@ export const SelectLanguagePredefinedForm: React.FC<TProps> = (props) => {
               disabled={!isSubmitEnabled}
               className="flex shrink-0 gap-2"
             >
-              <Icons.check className="size-4" />
+              <Icons.Check className="size-4" />
               <span>Select</span>
             </Button>
           </div>

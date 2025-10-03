@@ -13,7 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
-import { Icons } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAnswer, TNewAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
@@ -87,7 +87,7 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
   const textKey = React.useId();
   const isCorrectKey = React.useId();
 
-  const Icon = isPending ? Icons.spinner : Icons.check;
+  const Icon = isPending ? Icons.Spinner : Icons.Check;
   const buttonText = isPending ? 'Adding' : 'Add';
 
   return (
@@ -159,7 +159,7 @@ export function AddAnswerForm(props: TAddAnswerFormProps) {
             <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
           </Button>
           <Button variant="ghost" onClick={onClose} className="gap-2">
-            <Icons.close className="hidden size-4 opacity-50 sm:flex" />
+            <Icons.Close className="hidden size-4 opacity-50 sm:flex" />
             <span>Cancel</span>
           </Button>
         </div>
