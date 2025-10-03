@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Modal } from '@/components/ui/modal';
+import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
+import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
 import { addNewTopic } from '@/features/topics/actions/addNewTopic';
 import { TNewTopic, TTopic } from '@/features/topics/types';

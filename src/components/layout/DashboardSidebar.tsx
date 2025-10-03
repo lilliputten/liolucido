@@ -9,11 +9,12 @@ import { TPropsWithChildren } from '@/shared/types/generic';
 import { SidebarNavItem } from '@/shared/types/site/NavItem';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { DialogDescription } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Sheet, SheetContent } from '@/components/ui/Sheet';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { ProjectSwitcher } from '@/components/dashboard/ProjectSwitcher';
 import { UpgradeCard } from '@/components/dashboard/UpgradeCard';
 import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
@@ -24,7 +25,6 @@ import { isDev } from '@/constants';
 import { useMediaQuery } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
 
-import { DialogDescription } from '../ui/dialog';
 import { NavBarBrand } from './NavBarBrand';
 
 interface DashboardSidebarProps {

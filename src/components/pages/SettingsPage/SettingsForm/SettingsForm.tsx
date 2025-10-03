@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { removeNullUndefinedValues } from '@/lib/helpers/objects';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Form } from '@/components/ui/form';
+import { Form } from '@/components/ui/Form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';

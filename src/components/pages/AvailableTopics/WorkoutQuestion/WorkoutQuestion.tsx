@@ -4,8 +4,8 @@ import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Progress } from '@/components/ui/Progress';
+import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 

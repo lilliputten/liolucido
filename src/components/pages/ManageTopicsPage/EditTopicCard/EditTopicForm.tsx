@@ -11,7 +11,7 @@ import { APIError } from '@/shared/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { cn } from '@/lib/utils';
-import { Form } from '@/components/ui/form';
+import { Form } from '@/components/ui/Form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { TAvailableTopic, TTopic } from '@/features/topics/types';

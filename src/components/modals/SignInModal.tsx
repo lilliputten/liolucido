@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 
 import { cn } from '@/lib/utils';
-import { Modal } from '@/components/ui/modal';
+import { Modal } from '@/components/ui/Modal';
 import { SignInForm, SignInFormHeader, TSignInProvider } from '@/components/forms/SignInForm';
 import { isDev } from '@/constants';
 

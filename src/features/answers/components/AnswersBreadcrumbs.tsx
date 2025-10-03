@@ -7,7 +7,7 @@ import { truncateMarkdown } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { capitalizeString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import {
   Breadcrumbs,
   BreadcrumbsItem,

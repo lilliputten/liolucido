@@ -4,8 +4,8 @@ import React from 'react';
 
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { isDev } from '@/constants';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';

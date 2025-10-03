@@ -6,9 +6,9 @@ import { useFormatter } from 'next-intl';
 
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/Badge';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@/components/ui/Separator';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';

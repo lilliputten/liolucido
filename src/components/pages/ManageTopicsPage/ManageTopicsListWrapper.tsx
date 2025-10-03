@@ -5,7 +5,7 @@ import React from 'react';
 import { rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/Card';
 import * as Icons from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';

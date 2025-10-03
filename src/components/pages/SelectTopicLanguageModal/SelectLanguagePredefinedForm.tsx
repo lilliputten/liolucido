@@ -9,14 +9,14 @@ import * as z from 'zod';
 import { TLanguageId } from '@/shared/types/language';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/Label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/Select';
 import * as Icons from '@/components/shared/Icons';
 import { predefinedLanguages } from '@/constants/languages';
 import { TTopicLanguageData } from '@/features/topics/types';

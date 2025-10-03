@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { SettingsForm } from '@/components/pages/SettingsPage/SettingsForm';

@@ -7,9 +7,9 @@ import * as z from 'zod';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
+import { Label } from '@/components/ui/Label';
+import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import * as Icons from '@/components/shared/Icons';

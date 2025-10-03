@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { isDev } from '@/constants';
 
 interface TProps {

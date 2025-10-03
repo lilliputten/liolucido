@@ -9,7 +9,7 @@ import * as z from 'zod';
 
 import { APIError } from '@/shared/types/api';
 import { cn } from '@/lib/utils';
-import { Form } from '@/components/ui/form';
+import { Form } from '@/components/ui/Form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';

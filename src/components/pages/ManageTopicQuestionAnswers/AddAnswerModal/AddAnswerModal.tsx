@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
 import { cn } from '@/lib/utils';
-import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Modal } from '@/components/ui/modal';
+import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
+import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
 import { addNewAnswer } from '@/features/answers/actions';
 import { TNewAnswer } from '@/features/answers/types';

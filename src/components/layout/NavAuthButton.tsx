@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { ModalContext } from '@/components/modals/providers';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';

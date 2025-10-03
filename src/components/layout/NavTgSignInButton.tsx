@@ -10,7 +10,7 @@ import {
 } from 'next-auth/react';
 
 import { envClient } from '@/env/envClient';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -7,7 +7,7 @@ import { X } from 'lucide-react';
 import { Drawer } from 'vaul';
 
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { isDev } from '@/constants';
 import { useMediaQuery } from '@/hooks';
 

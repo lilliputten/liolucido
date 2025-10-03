@@ -8,10 +8,10 @@ import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Switch } from '@/components/ui/switch';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { Switch } from '@/components/ui/Switch';
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/ui/Table';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';

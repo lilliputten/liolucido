@@ -6,7 +6,7 @@ import { TPropsWithClassName } from '@/shared/types/generic';
 import { capitalizeString, truncateString } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import {
   Breadcrumbs,
   BreadcrumbsItem,

@@ -4,9 +4,9 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Modal } from '@/components/ui/modal';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
+import { Modal } from '@/components/ui/Modal';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { isDev } from '@/constants';
 import {
   selectTopicEventName,

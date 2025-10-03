@@ -5,11 +5,11 @@ import { UseFormReturn } from 'react-hook-form';
 
 import { TPropsWithChildren } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Switch } from '@/components/ui/Switch';
+import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { isDev } from '@/constants';

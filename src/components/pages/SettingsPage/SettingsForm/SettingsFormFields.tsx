@@ -19,18 +19,18 @@ import {
 } from '@/config/themes';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui/Select';
+import { Switch } from '@/components/ui/Switch';
+import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';

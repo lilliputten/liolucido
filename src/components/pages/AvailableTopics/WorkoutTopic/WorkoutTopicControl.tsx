@@ -6,7 +6,7 @@ import { useFormatter } from 'next-intl';
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { useGoToTheRoute } from '@/hooks';
 

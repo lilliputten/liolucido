@@ -7,10 +7,10 @@ import * as z from 'zod';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
+import { Label } from '@/components/ui/Label';
+import { Switch } from '@/components/ui/Switch';
+import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import * as Icons from '@/components/shared/Icons';
