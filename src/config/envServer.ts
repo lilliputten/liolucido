@@ -11,7 +11,6 @@ const envSchema = z.object({
   // App
   VERCEL_ENV: z.string().optional(),
   NODE_ENV: z.string().optional(),
-  NEXT_PUBLIC_LOCAL: z.string().optional(),
   NEXT_PUBLIC_APP_URL: z.string().optional(),
   // Vercel
   VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
@@ -73,7 +72,6 @@ export const {
   // App
   VERCEL_ENV,
   NODE_ENV,
-  NEXT_PUBLIC_LOCAL,
   NEXT_PUBLIC_APP_URL,
   // Vercel
   VERCEL_PROJECT_PRODUCTION_URL,
@@ -104,14 +102,15 @@ export const {
 } = envServer;
 
 export const EMAIL_USE_SSL = ensureBoolean(process.env.EMAIL_USE_SSL);
+export const SET_FIRST_USER_ADMIN = ensureBoolean(process.env.SET_FIRST_USER_ADMIN);
+export const USE_ALLOWED_USERS = ensureBoolean(process.env.USE_ALLOWED_USERS);
 
 export const isVercel = !!envServer.VERCEL_URL;
 export const isVercelPreview = isVercel && VERCEL_ENV === 'preview';
 export const isVercelProduction =
   isVercel && VERCEL_ENV === 'production' && !!envServer.VERCEL_PROJECT_PRODUCTION_URL;
 
-export const isLocal = !isVercel && ensureBoolean(envServer.NEXT_PUBLIC_LOCAL);
-export const isDev = !isVercel && (envServer.NODE_ENV === 'development' || !!isLocal);
+export const isDev = envServer.NODE_ENV === 'development';
 
 // Derived variables
 export const PUBLIC_URL = isVercel
@@ -122,9 +121,13 @@ export const PUBLIC_URL = isVercel
 export const WEBHOOK_HOST = envServer.WEBHOOK_HOST || PUBLIC_URL;
 
 export const BOT_USERNAME =
-  isDev && envServer.BOT_USERNAME_TEST ? envServer.BOT_USERNAME_TEST : envServer.BOT_USERNAME;
+  (isDev || isVercelPreview) && envServer.BOT_USERNAME_TEST
+    ? envServer.BOT_USERNAME_TEST
+    : envServer.BOT_USERNAME;
 export const BOT_TOKEN =
-  isDev && envServer.BOT_TOKEN_TEST ? envServer.BOT_TOKEN_TEST : envServer.BOT_TOKEN;
+  (isDev || isVercelPreview) && envServer.BOT_TOKEN_TEST
+    ? envServer.BOT_TOKEN_TEST
+    : envServer.BOT_TOKEN;
 
 /* // DEBUG: Show environment (will appear in build logs)
  * console.log('[envServer]', {

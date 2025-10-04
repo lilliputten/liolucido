@@ -3,9 +3,9 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { ErrorLike } from '@/shared/types/errors';
 import { TReactNode } from '@/shared/types/generic';
 import { rootRoute } from '@/config/routesConfig';
+import { ErrorLike } from '@/lib/errors';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';

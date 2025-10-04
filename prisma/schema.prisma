@@ -84,6 +84,11 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
 
+  // Extra optional paramteres (for telegram bot auth provideer)
+  name   String?
+  locale String?
+  image  String?
+
   @@unique([identifier, token])
   @@map("verification_tokens")
 }
@@ -95,6 +100,17 @@ model TelegramSession {
   value String // Session data in json string
 
   @@map("telegram_session")
+}
+
+// Allowed users
+model AllowedUser {
+  id    Int    @id @default(autoincrement())
+  // id    String @id @default(cuid())
+  type  String @default("EMAIL") // EMAIL (value:String), TELEGRAM (value:Int)
+  value String @default("")
+
+  @@unique([type, value])
+  @@map("allowed_users")
 }
 
 // User settings

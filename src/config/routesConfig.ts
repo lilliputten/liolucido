@@ -1,3 +1,4 @@
+export const authErrorRoute = '/auth/error';
 export const adminRoute = '/admin';
 export const chartsRoute = '/charts';
 export const dashboardRoute = '/dashboard';

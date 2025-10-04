@@ -53,7 +53,7 @@ const buttonVariants = cva(
         // ghostOnPrimary: 'text-primary-foreground hover:bg-primary-400/50',
         ghostOnTheme: 'text-theme-foreground hover:bg-theme-400/50',
         link: 'text-theme underline-offset-4 hover:underline',
-        disabled: 'cursor-default border border-input bg-transparent text-foreground/50',
+        disabled: 'cursor-default border border-input bg-transparent text-foreground opacity-30',
       },
       size: {
         default: 'h-10 px-4 py-2',
