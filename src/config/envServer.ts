@@ -1,11 +1,17 @@
 // This file should only be used in server components
+// NOTE: Using relative imports only, as it's used in `next.config.ts`
 
 import { z } from 'zod';
 
-import { ensureBoolean } from '@/lib/helpers/types';
+import { ensureBoolean } from '../lib/helpers/types';
 
-// import appInfo from '@/app-info.json';
-// export const versionInfo = appInfo.versionInfo;
+if (typeof window !== 'undefined') {
+  const error = new Error('The "envServer" should be used only in server components');
+  // eslint-disable-next-line no-console
+  console.error('[envServer]', error);
+  debugger; // eslint-disable-line no-debugger
+  throw error;
+}
 
 const envSchema = z.object({
   // App

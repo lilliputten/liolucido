@@ -2,90 +2,91 @@ import React, { Dispatch, SetStateAction } from 'react';
 
 import { cn } from '@/lib/utils';
 import { Modal } from '@/components/ui/Modal';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { SignInForm, SignInFormHeader, TSignInProvider } from '@/components/forms/SignInForm';
 import { isDev } from '@/constants';
 
 interface TSignInModalProps {
-  showSignInModal: boolean;
-  setShowSignInModal: Dispatch<SetStateAction<boolean>>;
+  isVisible: boolean;
+  setVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 function SignInModal(props: TSignInModalProps) {
-  const { showSignInModal, setShowSignInModal } = props;
+  const { isVisible, setVisible } = props;
 
   const handleSignInDone = React.useCallback(
     (_provider: TSignInProvider) => {
       setTimeout(() => {
-        setShowSignInModal(false);
+        setVisible(false);
       }, 400);
     },
-    [setShowSignInModal],
+    [setVisible],
   );
 
   return (
     <Modal
-      isVisible={showSignInModal}
-      toggleModal={setShowSignInModal}
+      isVisible={isVisible}
+      toggleModal={setVisible}
       className={cn(
         isDev && '__SignInModal', // DEBUG
         'text-center',
         'text-theme-foreground',
-        'bg-theme-500',
+        'flex flex-1 flex-col justify-around',
+        'overflow-hidden sm:max-h-[90%]',
       )}
     >
-      <div className="w-full bg-theme">
+      <div
+        className={cn(
+          isDev && '__SignInModal_Inner', // DEBUG
+          'flex w-full flex-1 flex-col justify-center',
+          'overflow-hidden',
+        )}
+      >
         <div
           className={cn(
-            'flex',
-            'flex-col',
-            'items-center',
-            'justify-center',
-            'space-y-3',
-            'bg-theme',
-            'border-b',
-            'border-theme-400',
-            'px-4',
-            'py-6',
-            'pt-8',
-            'md:px-16',
+            isDev && '__SignInModal_InnerHeader', // DEBUG
+            'flex flex-col items-center justify-center',
+            'space-y-3 border-b px-4 py-4 md:px-16',
+            'border-theme-400 bg-theme',
           )}
         >
           <SignInFormHeader />
         </div>
-        <div
+        <ScrollArea
           className={cn(
-            // prettier-ignore
-            'flex',
-            'flex-col',
-            'space-y-4',
-            'bg-theme-400',
-            'px-4',
-            'py-8',
-            'md:px-16',
+            isDev && '__SignInModal_Scroll', // DEBUG
+            'flex flex-1 flex-col items-center justify-center',
+          )}
+          viewportClassName={cn(
+            isDev && '__SignInModal_ScrollViewport', // DEBUG
+            'px-4 py-8 md:px-16 flex flex-col bg-theme-600',
+            '[&>div]:!flex',
+            '[&>div]:justify-center',
+            '[&>div]:flex-col',
+            '[&>div]:gap-4',
+            '[&>div]:flex-1',
           )}
         >
           <SignInForm onSignInDone={handleSignInDone} />
-        </div>
+        </ScrollArea>
       </div>
     </Modal>
   );
 }
 
 export function useSignInModal() {
-  const [showSignInModal, setShowSignInModal] = React.useState(false);
+  const [isVisible, setVisible] = React.useState(false);
 
   const SignInModalCallback = React.useCallback(() => {
-    return (
-      <SignInModal showSignInModal={showSignInModal} setShowSignInModal={setShowSignInModal} />
-    );
-  }, [showSignInModal, setShowSignInModal]);
+    return <SignInModal isVisible={isVisible} setVisible={setVisible} />;
+  }, [isVisible, setVisible]);
 
   return React.useMemo(
     () => ({
-      showSignInModal,
-      setShowSignInModal,
+      isVisible,
+      setVisible,
       SignInModal: SignInModalCallback,
     }),
-    [showSignInModal, setShowSignInModal, SignInModalCallback],
+    [isVisible, setVisible, SignInModalCallback],
   );
 }

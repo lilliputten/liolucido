@@ -1,4 +1,6 @@
-import { bot } from './core/botSinglton';
+import { getBot } from '@/features/bot/core/getBot';
+
+const bot = getBot();
 
 // DEBUG: Mirror all the texts
 bot.on('message:text', async (ctx) => {

@@ -24,7 +24,7 @@ interface TNavAuthButtonProps extends TPropsWithClassName {
 export function NavUserAuthButton(props: TNavAuthButtonProps) {
   const { onPrimary, onSidebar, isUser, className } = props;
   const { data: session, status } = useSession();
-  const { setShowSignInModal } = useContext(ModalContext);
+  const { setVisible: setSignInModalVisible } = useContext(ModalContext);
   const t = useTranslations('NavAuthButton');
   const hasValidUser = !!isUser && !!session && status === 'authenticated';
   return (
@@ -48,7 +48,7 @@ export function NavUserAuthButton(props: TNavAuthButtonProps) {
           className="gap-2 px-5 md:flex"
           variant={onPrimary ? 'ghostOnTheme' : 'ghost'}
           size="sm"
-          onClick={() => setShowSignInModal(true)}
+          onClick={() => setSignInModalVisible(true)}
         >
           <span>{t('sign-in')}</span>
           <Icons.ArrowRight className="size-4" />

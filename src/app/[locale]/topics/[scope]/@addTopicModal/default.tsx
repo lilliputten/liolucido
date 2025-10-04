@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-import { AddTopicModal } from '@/components/pages/ManageTopicsPage';
+import { AddTopicModal } from '@/components/pages/ManageTopicsPage/AddTopicModal';
 import { topicsRoutes } from '@/contexts/TopicsContext';
 
 export default function AddTopicModalDefault() {

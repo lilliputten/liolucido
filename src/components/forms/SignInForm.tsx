@@ -5,16 +5,20 @@ import Image from 'next/image';
 import { signIn, SignInOptions } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
-import { publicAppUrl, siteTitle } from '@/config/env';
-import { myTopicsRoute } from '@/config/routesConfig';
+import { siteTitle } from '@/config/env';
+import { myTopicsRoute, rootRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
+import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import * as Icons from '@/components/shared/Icons';
+import { TGenericIcon } from '@/components/shared/IconTypes';
 import logoWhiteSvg from '@/assets/logo/logo-image-w.svg';
 import logoSvg from '@/assets/logo/logo-image.svg';
 import { isDev } from '@/constants';
+import { Link } from '@/i18n/routing';
 
-import { TGenericIcon } from '../shared/IconTypes';
+import { EmailSignInForm } from './EmailSignInForm';
+import { TelegramSignIn } from './TelegramSignIn';
 
 type TSignInParameters = Parameters<typeof signIn>;
 export type TSignInProvider = TSignInParameters[0];
@@ -80,26 +84,31 @@ function OAuthSignInButton(props: OAuthSignInButtonProps) {
 
 interface TSignInFormHeaderProps {
   dark?: boolean;
+  inBody?: boolean;
 }
 
 export function SignInFormHeader(props: TSignInFormHeaderProps) {
-  const { dark } = props;
+  const { dark, inBody } = props;
   const t = useTranslations('SignInForm');
+  const Title = inBody ? 'h3' : DialogTitle;
+  const Descr = inBody ? 'p' : DialogDescription;
   return (
     <>
-      <a href={publicAppUrl} className="transition hover:opacity-80">
-        {/*
+      {false && !inBody && (
+        <Link href={rootRoute} className="transition hover:opacity-80">
+          {/*
         <Logo className="size-32" dark={dark} />
          */}
-        <Image
-          src={dark ? logoWhiteSvg : logoSvg}
-          className="h-24 w-auto"
-          alt={siteTitle}
-          priority={false}
-        />
-      </a>
-      <h3 className="font-urban text-app-orange text-2xl font-bold">{t('sign-in')}</h3>
-      <p className="text-center text-sm">{t('intro')}</p>
+          <Image
+            src={dark ? logoWhiteSvg : logoSvg}
+            className="h-24 w-auto"
+            alt={siteTitle}
+            priority={false}
+          />
+        </Link>
+      )}
+      <Title className="font-urban text-2xl font-bold">{t('sign-in')}</Title>
+      <Descr className="text-center text-sm">{t('intro')}</Descr>
     </>
   );
 }
@@ -112,7 +121,7 @@ interface TSignInFormProps {
 }
 
 export function SignInForm(props: TSignInFormProps) {
-  const { onSignInStart, onSignInDone } = props;
+  const { onSignInStart, onSignInDone, inBody } = props;
   const [currentProvider, setCurrentProvider] = React.useState<TSignInProvider>(undefined);
   const t = useTranslations('SignInForm');
 
@@ -155,18 +164,10 @@ export function SignInForm(props: TSignInFormProps) {
         text={t('sign-in-with-google')}
         // inBody={inBody}
       />
-      {/* // NOTE: Temporarily don't use telegram login, as it's buggy (see `team-tree-app` project for an example of `telegram-auth` usage)
-      <OAuthSignInButton
-        currentProvider={currentProvider}
-        onSignInStart={handleSignInStart}
-        onSignInDone={onSignInDone}
-        provider="telegram-auth"
-        ProviderIcon={Icons.Telegram}
-        text={t('sign-in-with-telegram')}
-        // inBody={inBody}
-      />
-      */}
-      {/* TODO: Email login section (resend) */}
+      {/* Telegram login section */}
+      <TelegramSignIn inBody={inBody} />
+      {/* Email login section */}
+      <EmailSignInForm inBody={inBody} />
     </>
   );
 }

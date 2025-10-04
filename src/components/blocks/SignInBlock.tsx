@@ -36,7 +36,7 @@ export function SignInBlock(props: TPropsWithClassName) {
           'md:px-16',
         )}
       >
-        <SignInFormHeader dark={isDark} />
+        <SignInFormHeader dark={isDark} inBody />
       </div>
       <div
         className={cn(

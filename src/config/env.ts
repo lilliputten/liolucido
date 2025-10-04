@@ -1,5 +1,7 @@
 // This file should only be used in client components
-import appInfo from '@/app-info.json';
+// NOTE: Using relative imports only, as it's used in `next.config.ts`
+
+import appInfo from '../app-info.json';
 
 // System
 export const versionInfo = appInfo.versionInfo;

@@ -1,5 +1,5 @@
-export * from './AddTopicModal';
-export * from './DeleteTopicModal';
+// export * from './AddTopicModal';
+// export * from './DeleteTopicModal';
 export * from './EditTopicCard';
 export * from './ManageTopicsLayout';
 export * from './ManageTopicsLoading';

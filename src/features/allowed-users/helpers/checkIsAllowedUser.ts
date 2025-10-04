@@ -30,6 +30,8 @@ export async function checkIsAllowedUser(
     return undefined;
   }
 
+  // TODO: Also check for blocked users
+
   // Check ids for telegram provider
   if (provider === 'telegram') {
     const tgId = Number(providerAccountId);

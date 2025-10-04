@@ -1,13 +1,14 @@
-import { CommandContext, InlineKeyboard } from 'grammy';
+import { InlineKeyboard } from 'grammy';
 import { getTranslations } from 'next-intl/server';
 
+import { TCommandContext } from '@/features/bot/core/botTypes';
+import { getBot } from '@/features/bot/core/getBot';
+import { getContextLocale } from '@/features/bot/helpers/getContextLocale';
 import { defaultLocale, localesList } from '@/i18n/types';
 
-import { bot } from './core/botSinglton';
-import { BotContext } from './core/botTypes';
-import { getContextLocale } from './helpers/getContextLocale';
+const bot = getBot();
 
-bot.command('language', async (ctx: CommandContext<BotContext>) => {
+bot.command('language', async (ctx: TCommandContext) => {
   const locale = getContextLocale(ctx);
   const tNavLocaleSwitcher = await getTranslations({
     locale: defaultLocale,

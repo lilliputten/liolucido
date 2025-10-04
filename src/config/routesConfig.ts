@@ -7,6 +7,7 @@ export const availableTopicsRoute = '/topics/available'; // Example
 export const allTopicsRoute = '/topics/all';
 export const myTopicsRoute = '/topics/my';
 export const rootRoute = '/';
+export const startRoute = '/start';
 export const settingsRoute = '/settings';
 export const welcomeRoute = '/welcome';
 

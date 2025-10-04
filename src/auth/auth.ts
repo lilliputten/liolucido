@@ -136,7 +136,7 @@ export const nextAuthApp = NextAuth({
       }
 
       // Set first user as admin if this is a new user
-      if (isNewUser && SET_FIRST_USER_ADMIN) {
+      if (isNewUser && (SET_FIRST_USER_ADMIN || isDev)) {
         await setFirstUserAsAdmin(token.sub);
       }
 

@@ -1,12 +1,15 @@
-import { CommandContext, InlineKeyboard } from 'grammy';
+import { InlineKeyboard } from 'grammy';
 import { getTranslations } from 'next-intl/server';
 
-import { webAppUrl } from './core/botConstants';
-import { bot } from './core/botSinglton';
-import { BotContext } from './core/botTypes';
-import { getContextLocale } from './helpers/getContextLocale';
+import { TCommandContext } from '@/features/bot/core/botTypes';
+import { getBot } from '@/features/bot/core/getBot';
+import { getContextLocale } from '@/features/bot/helpers/getContextLocale';
 
-bot.command('start', async (ctx: CommandContext<BotContext>) => {
+import { webAppUrl } from './core/botConstants';
+
+const bot = getBot();
+
+bot.command('start', async (ctx: TCommandContext) => {
   const locale = getContextLocale(ctx);
   const t = await getTranslations({ locale, namespace: 'Bot' });
   const keyboard = new InlineKeyboard().webApp(t('openApp'), webAppUrl);

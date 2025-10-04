@@ -1,16 +1,17 @@
 import { TelegramUserData } from '@telegram-auth/server';
-import { CallbackQueryContext, CommandContext, InlineKeyboard } from 'grammy';
+import { CallbackQueryContext, InlineKeyboard } from 'grammy';
 import { getFormatter, getTranslations } from 'next-intl/server';
 
 import { prisma } from '@/lib/db';
+import { BotContext, TCommandContext } from '@/features/bot/core/botTypes';
+import { getBot } from '@/features/bot/core/getBot';
+import { getContextLocale } from '@/features/bot/helpers/getContextLocale';
+import { getTelegramUserAvatarUrl } from '@/features/bot/helpers/getTelegramUserAvatarUrl';
 import { createUserOrUpdateTelegramUser } from '@/features/users/actions';
 
-import { bot } from './core/botSinglton';
-import { BotContext } from './core/botTypes';
-import { getContextLocale } from './helpers/getContextLocale';
-import { getTelegramUserThumbnailUrl } from './helpers/getTelegramUserThumbnailUrl';
+const bot = getBot();
 
-bot.command('status', async (ctx: CommandContext<BotContext>) => {
+bot.command('status', async (ctx: TCommandContext) => {
   const locale = getContextLocale(ctx);
   const tNavLocaleSwitcher = await getTranslations({
     locale: locale,
@@ -98,7 +99,7 @@ async function createAccountQueryCallback(
   }
   const msg = await ctx.reply(t('creatingAccount'));
   const user = ctx.from;
-  const photoUrl = await getTelegramUserThumbnailUrl(ctx, user.id);
+  const photoUrl = await getTelegramUserAvatarUrl(user.id);
   const tgUser: TelegramUserData = {
     ...user,
     photo_url: photoUrl,

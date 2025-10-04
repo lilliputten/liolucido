@@ -1,0 +1,31 @@
+{
+  "update": {
+    "update_id": 786342181,
+    "message": {
+      "message_id": 1,
+      "from": {
+        "id": 490398083,
+        "is_bot": false,
+        "first_name": "Ig",
+        "username": "lilliputten",
+        "language_code": "en"
+      },
+      "chat": { "id": 490398083, "first_name": "Ig", "username": "lilliputten", "type": "private" },
+      "date": 1758141907,
+      "text": "/start",
+      "entities": [{ "offset": 0, "length": 6, "type": "bot_command" }]
+    }
+  },
+  "api": { "token": "XXX", "raw": {}, "config": {} },
+  "me": {
+    "id": 8435159977,
+    "is_bot": true,
+    "first_name": "Next AI Helper (Local)",
+    "username": "NextAiHelperLocalBot",
+    "can_join_groups": true,
+    "can_read_all_group_messages": false,
+    "supports_inline_queries": false,
+    "can_connect_to_business": false,
+    "has_main_web_app": false
+  }
+}
