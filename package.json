@@ -1,12 +1,12 @@
 {
-  "name": "trainwizzz",
-  "description": "Answers memorizing application",
+  "name": "liolucido",
+  "description": "NextJS memory training application",
   "keywords": [],
   "author": "lilliputten@gmail.com",
   "license": "ISC",
   "version": "0.0.2",
   "timestamp": "2025.08.01 22:20:29 +0300",
-  "changed": "2025.08.17, 03:57",
+  "changed": "2025.10.04, 21:05",
   "private": false,
   "main": "src/app/page.tsx",
   "lint-staged": {
@@ -118,6 +118,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-tailwindcss": "^3.18.0",
     "eslint-plugin-yml": "^1.18.0",
+    "glob": "^11.0.3",
     "globals": "^16.2.0",
     "grammy": "^1.36.3",
     "husky": "^9.1.7",

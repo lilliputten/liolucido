@@ -76,7 +76,7 @@ export function EditAnswerFormActions(props: TProps) {
       <Button
         type="button"
         size="sm"
-        variant={isSubmitEnabled ? 'success' : 'disable'}
+        variant={isSubmitEnabled ? 'success' : 'disabled'}
         disabled={!isSubmitEnabled}
         className="gap-2"
         onClick={handleSubmit}

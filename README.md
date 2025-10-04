@@ -1,11 +1,11 @@
 <!--
  @since 2025.07.05
- @changed 2025.07.05, 23:26
+ @changed 2025.10.04, 21:06
 -->
 
-# NextJS application for memorizing answers to questions
+# líolúcido
 
-The minmal nextjs setup for IIS iisnode produciton environment
+NextJS memory training application
 
 ## Build info (auto-generated)
 
@@ -13,9 +13,9 @@ The minmal nextjs setup for IIS iisnode produciton environment
 
 ## Resources
 
-- Vercel deployment: https://trainwizzz.vercel.app/
-- Repository: https://github.com/lilliputten/trainwizzz/
-- Project reference: https://lilliputten.com/projects/2025/trainwizzz/
+- Vercel deployment: https://liolucido.vercel.app/
+- Repository: https://github.com/lilliputten/liolucido/
+- Project reference: https://lilliputten.com/projects/2025/liolucido/
 
 ## Installation
 

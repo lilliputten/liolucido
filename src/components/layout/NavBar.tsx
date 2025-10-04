@@ -103,24 +103,6 @@ export function NavBar(props: NavBarProps) {
           )}
         >
           {/* Right header for extra stuff */}
-          {/* TODO: Put github link to the footer
-          <Link
-            href={siteConfig.links.github}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(
-              'inline-flex',
-              'items-center',
-              'justify-center',
-              'size-8 rounded-sm px-0',
-              'text-theme-foreground hover:bg-theme-400/50',
-            )}
-          >
-            <Icons.Github className="size-6" />
-            <span className="sr-only">GitHub</span>
-          </Link>
-          <NavTgSignInButton />
-          */}
           <NavModeToggle onPrimary />
           <NavLocaleSwitcher onPrimary />
           <NavUserAuthButton isUser={isUser} onPrimary />

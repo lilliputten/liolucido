@@ -136,7 +136,7 @@ export const SelectLanguagePredefinedForm: React.FC<TProps> = (props) => {
           <div className="flex w-full gap-4">
             <Button
               type="submit"
-              variant={isSubmitEnabled ? 'default' : 'disable'}
+              variant={isSubmitEnabled ? 'default' : 'disabled'}
               disabled={!isSubmitEnabled}
               className="flex shrink-0 gap-2"
             >

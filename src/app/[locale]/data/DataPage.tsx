@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { cn, constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
+import { cn } from '@/lib/utils';
 import { DemoList } from '@/components/debug/DemoList';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { isDev } from '@/constants';

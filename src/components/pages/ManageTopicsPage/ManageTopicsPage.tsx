@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 
-import { constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
 import { topicsNamespaces, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TTopicId } from '@/features/topics/types';
 import { TAwaitedLocaleProps } from '@/i18n/types';

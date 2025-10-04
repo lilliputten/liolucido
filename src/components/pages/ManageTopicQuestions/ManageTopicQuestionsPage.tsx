@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 
-import { constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
 import { PageError } from '@/components/shared/PageError';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TQuestionId } from '@/features/questions/types';

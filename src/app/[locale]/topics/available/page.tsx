@@ -1,4 +1,4 @@
-import { constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
 import { AvailableTopicsPageModalsWrapper } from '@/components/pages/AvailableTopics/AvailableTopicsPageModalsWrapper';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 

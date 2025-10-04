@@ -1,4 +1,4 @@
-import { siteConfig } from '@/config/site';
+import { siteTitle, versionInfo } from '@/config/env';
 import { commonXPaddingTwStyle } from '@/config/ui';
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
@@ -34,11 +34,11 @@ export function SiteFooter(_props: SiteFooterProps) {
         // large={large}
       >
         <div className="flex flex-row items-center gap-3 gap-y-0 max-sm:flex-col">
-          <span className="font-normal">{siteConfig.name} </span>
-          <span className="text-xs opacity-50">{siteConfig.versionInfo}</span>
+          <span className="font-normal">{siteTitle} </span>
+          <span className="text-xs opacity-50">{versionInfo}</span>
         </div>
         {/* // Right side
-        <div className="text-xs">{siteConfig.versionInfo}</div>
+        <div className="text-xs">{versionInfo}</div>
         */}
       </div>
     </div>

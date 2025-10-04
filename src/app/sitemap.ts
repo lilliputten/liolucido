@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
+import { publicAppUrl } from '@/config/env';
 import { pathnames } from '@/config/routesConfig';
-import { siteConfig } from '@/config/site';
 import { getPathname, routing } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
@@ -24,5 +24,5 @@ function getRouteEntry(href: Href) {
 
 function getFullUrl(href: Href, locale?: TLocale) {
   const pathname = locale ? getPathname({ locale, href }) : href;
-  return siteConfig.url + pathname;
+  return publicAppUrl + pathname;
 }

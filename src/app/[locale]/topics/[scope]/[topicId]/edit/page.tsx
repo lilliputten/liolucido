@@ -1,4 +1,4 @@
-import { constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
 import { EditTopicCard, ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';
 import { PageHeader } from '@/components/pages/shared';
 import { PageError } from '@/components/shared/PageError';

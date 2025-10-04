@@ -1,7 +1,7 @@
 import { AuthDataValidator, objectToAuthDataMap } from '@telegram-auth/server';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { envServer } from '@/env/envServer';
+import { envServer } from '@/config/envServer';
 import { getErrorText } from '@/lib/helpers/strings';
 import { createUserOrUpdateTelegramUser } from '@/features/users/actions/';
 

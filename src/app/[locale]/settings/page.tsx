@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 
+import { constructMetadata } from '@/lib/constructMetadata';
 import { getCurrentUser } from '@/lib/session';
-import { constructMetadata } from '@/lib/utils';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 import { SettingsPage } from './SettingsPage';

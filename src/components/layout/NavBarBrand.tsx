@@ -6,8 +6,8 @@ import { useLocale } from 'next-intl';
 import { useTheme } from 'next-themes';
 
 import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
+import { siteTitle } from '@/config/env';
 import { infoRoute, welcomeRoute } from '@/config/routesConfig';
-import { siteConfig } from '@/config/site';
 import { getAllRouteSynonyms } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import logoSvg from '@/assets/logo/logo-full-line-w.svg';
@@ -54,28 +54,13 @@ export function NavBarBrand(props: NavBarBrandProps) {
   const isDark = resolvedTheme === 'dark';
   return (
     <BrandWrapper {...props} className="h-12">
-      {/*
       <Image
-        src={logoImageSvg}
-        className="h-12 w-auto"
-        // width={logoSize}
-        // height={logoSize}
-        // alt="Logo"
-        alt={siteConfig.name}
-        // priority={false}
-      />
-      */}
-      <Image
-        // src={logoTextSvg}
         src={isDark ? logoWhiteSvg : logoSvg}
         className="h-14 w-auto"
-        // width={logoSize}
-        // height={32}
         priority={false}
-        alt={siteConfig.name}
+        alt={siteTitle}
       />
       {/*
-
       <h1
         role="heading"
         data-testid="NavBarBrandTitle"
@@ -89,7 +74,7 @@ export function NavBarBrand(props: NavBarBrandProps) {
           'text-ellipsis',
         )}
       >
-        {siteConfig.name}
+        {siteTitle}
       </h1>
       */}
     </BrandWrapper>

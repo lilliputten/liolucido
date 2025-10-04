@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { signIn, SignInOptions } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
+import { publicAppUrl, siteTitle } from '@/config/env';
 import { myTopicsRoute } from '@/config/routesConfig';
-import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import * as Icons from '@/components/shared/Icons';
@@ -87,14 +87,14 @@ export function SignInFormHeader(props: TSignInFormHeaderProps) {
   const t = useTranslations('SignInForm');
   return (
     <>
-      <a href={siteConfig.url} className="transition hover:opacity-80">
+      <a href={publicAppUrl} className="transition hover:opacity-80">
         {/*
         <Logo className="size-32" dark={dark} />
          */}
         <Image
           src={dark ? logoWhiteSvg : logoSvg}
           className="h-24 w-auto"
-          alt={siteConfig.name}
+          alt={siteTitle}
           priority={false}
         />
       </a>

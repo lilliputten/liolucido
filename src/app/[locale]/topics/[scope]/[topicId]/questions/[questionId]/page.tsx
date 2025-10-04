@@ -1,4 +1,5 @@
-import { cn, constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
+import { cn } from '@/lib/utils';
 // import { ManageQuestionsPageWrapper } from '@/components/pages/ManageTopicQuestions';
 import { ViewQuestionCard } from '@/components/pages/ManageTopicQuestions/ViewQuestionCard/ViewQuestionCard';
 import { ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';

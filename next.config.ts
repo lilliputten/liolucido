@@ -11,8 +11,8 @@ import {
 } from './src/config/themeColors';
 
 // Import environments to ensure if they're ok
-import './src/env/envServer';
-import './src/env/envClient';
+import './src/config/envServer';
+import './src/config/env';
 
 const isDev = process.env.NODE_ENV === 'development';
 
