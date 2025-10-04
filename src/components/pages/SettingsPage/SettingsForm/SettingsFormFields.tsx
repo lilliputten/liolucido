@@ -69,8 +69,10 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   // Create unique keys for labels
   const tNavLocaleSwitcher = useTranslations('NavLocaleSwitcher');
 
-  const testInputKey = React.useId();
-  const testTextareaKey = React.useId();
+  /* // DEBUG: Sample text fields, see src/features/settings/types/settings.ts
+   * const testInputKey = React.useId();
+   * const testTextareaKey = React.useId();
+   */
   const showOnlyMyTopicsKey = React.useId();
   const localeKey = React.useId();
   const themeColorKey = React.useId();
@@ -117,7 +119,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
             </FormItem>
           )}
         />
-        {/* testInput */}
+        {/* // DEBUG: Sample text fields, see src/features/settings/types/settings.ts
         <FormField
           name="testInput"
           control={form.control}
@@ -137,7 +139,6 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
             </FormItem>
           )}
         />
-        {/* testTextarea */}
         <FormField
           name="testTextarea"
           control={form.control}
@@ -158,6 +159,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
             </FormItem>
           )}
         />
+        */}
       </FormSection>
       <FormSection>
         {/* theme */}

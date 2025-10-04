@@ -22,7 +22,7 @@ export function ActionButton(props: TActionItem) {
     id,
     pending,
     disabled,
-    variant = 'ghostTheme',
+    variant = 'ghost',
     icon,
     content,
     iconProps = {},
@@ -40,7 +40,7 @@ export function ActionButton(props: TActionItem) {
       className={cn('flex gap-2', buttonClassName)}
       onClick={onClick}
       disabled={isDisabled}
-      variant={isDisabled ? 'ghostTheme' : variant}
+      variant={isDisabled ? 'ghost' : variant}
       {...restButtonProps}
     >
       {Icon && (
