@@ -47,6 +47,7 @@ export function TelegramSignInForm({
               'w-full rounded border px-5 py-2 transition focus:outline-none focus:ring-2',
               'rounded-full rounded-e-none',
               'bg-background text-foreground',
+              'h-9',
               hasInvalidFormat
                 ? 'border-red-500 focus:ring-red-500'
                 : 'border-gray-500/20 focus:ring-theme-500',
@@ -54,6 +55,7 @@ export function TelegramSignInForm({
           />
           <Button
             type="submit"
+            size="icon"
             disabled={!isSubmitEnabled}
             variant="theme"
             rounded="full"
@@ -61,6 +63,7 @@ export function TelegramSignInForm({
               isDev && '__TelegramSignInForm_Button', // DEBUG
               'rounded-s-none',
               'flex gap-2',
+              'h-9',
             )}
           >
             <ArrowRight className="size-4" />

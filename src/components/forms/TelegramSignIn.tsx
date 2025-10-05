@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import QRCode from 'react-qr-code';
 
+import { TPropsWithClassName } from '@/shared/types/generic';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ExternalLink, Telegram } from '@/components/shared/Icons';
@@ -49,11 +50,24 @@ function TelegramQRCode({ telegramUrl }: { telegramUrl: string }) {
   );
 }
 
-export function TelegramSignIn({ inBody }: { inBody?: boolean }) {
+interface TProps extends TPropsWithClassName {
+  inBody?: boolean;
+  isLogging?: boolean;
+}
+
+export function TelegramSignIn({ className, inBody, isLogging }: TProps) {
   const { BOT_USERNAME } = useEnv();
   const telegramUrl = `https://t.me/${BOT_USERNAME}?start=/authorize`;
   return (
-    <>
+    <div
+      className={cn(
+        isDev && '__TelegramSignIn', // DEBUG
+        'flex flex-col gap-3',
+        // 'text-foreground',
+        isLogging && 'pointer-events-none opacity-50',
+        className,
+      )}
+    >
       <p className="mt-2 text-center text-sm font-medium">Or use Telegram</p>
       <TelegramSignInButton telegramUrl={telegramUrl} />
       <TelegramQRCode telegramUrl={telegramUrl} />
@@ -71,6 +85,6 @@ export function TelegramSignIn({ inBody }: { inBody?: boolean }) {
         , and select the <code>/authorize</code> command to obtain an authorization token.
       </p>
       <TelegramSignInForm inBody={inBody} />
-    </>
+    </div>
   );
 }

@@ -59,7 +59,7 @@ export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) 
       hideModal={hideModal}
       className={cn(
         isDev && '__SelectTopicLanguageModal', // DEBUG
-        'gap-0',
+        'gap-0 text-white',
         // isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -67,7 +67,7 @@ export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) 
         className={cn(
           isDev && '__SelectTopicLanguageModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
-          'flex flex-col border-b bg-accent px-8 py-4',
+          'flex flex-col border-b bg-theme px-8 py-4 text-theme-foreground',
         )}
       >
         <DialogTitle className="DialogTitle">Select Language</DialogTitle>
@@ -75,7 +75,7 @@ export function SelectTopicLanguageModal(props: TSelectTopicLanguageModalProps) 
           Choose a language for a topic
         </DialogDescription>
       </div>
-      <div className="flex flex-col px-8 py-4">
+      <div className="flex flex-col px-8 py-4 text-foreground">
         <Tabs
           className={cn(
             isDev && '__SelectTopicLanguageModal_Tabs', // DEBUG

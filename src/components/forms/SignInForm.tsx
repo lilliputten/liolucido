@@ -165,9 +165,9 @@ export function SignInForm(props: TSignInFormProps) {
         // inBody={inBody}
       />
       {/* Telegram login section */}
-      <TelegramSignIn inBody={inBody} />
+      <TelegramSignIn inBody={inBody} isLogging={!!currentProvider} />
       {/* Email login section */}
-      <EmailSignInForm inBody={inBody} />
+      <EmailSignInForm inBody={inBody} isLogging={!!currentProvider} />
     </>
   );
 }

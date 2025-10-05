@@ -30,7 +30,12 @@ export const defaultValues: TEmailSignInData = {
   email: __debugUseTestEmail && isDev ? 'lilliputten@yandex.ru' : '',
 };
 
-export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWithClassName) {
+interface TProps extends TPropsWithClassName {
+  inBody?: boolean;
+  isLogging?: boolean;
+}
+
+export function EmailSignInForm({ className, isLogging }: TProps) {
   const [isSubmitting, startSubmitting] = React.useTransition();
   const [message, setMessage] = React.useState<string>('');
   const [error, setError] = React.useState<string>('');
@@ -93,6 +98,8 @@ export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWith
       className={cn(
         isDev && '__EmailSignInForm', // DEBUG
         'flex flex-col gap-3',
+        // 'text-foreground',
+        isLogging && 'pointer-events-none opacity-50',
         className,
       )}
     >
@@ -111,6 +118,7 @@ export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWith
               'w-full rounded border px-5 py-2 transition focus:outline-none focus:ring-2',
               'rounded-full rounded-e-none',
               'bg-background text-foreground',
+              'h-9',
               errors.email
                 ? 'border-red-500 focus:ring-red-500'
                 : 'border-gray-500/20 focus:ring-theme-500',
@@ -118,6 +126,7 @@ export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWith
           />
           <Button
             type="submit"
+            size="icon"
             disabled={!isSumbitAvailable}
             variant="theme"
             rounded="full"
@@ -125,6 +134,7 @@ export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWith
               isDev && '__EmailSignInForm_Button', // DEBUG
               'rounded-s-none',
               'flex gap-2',
+              'h-9',
             )}
           >
             <SubmitIcon className={cn('size-4', isSubmitting && 'animate-spin')} />

@@ -59,12 +59,13 @@ function SignInModal(props: TSignInModalProps) {
           )}
           viewportClassName={cn(
             isDev && '__SignInModal_ScrollViewport', // DEBUG
-            'px-4 py-8 md:px-16 flex flex-col bg-theme-600',
+            'px-4 py-8 md:px-16 flex flex-col bg-theme-300',
             '[&>div]:!flex',
             '[&>div]:justify-center',
             '[&>div]:flex-col',
             '[&>div]:gap-4',
             '[&>div]:flex-1',
+            '[&_.text-content_a]:text-theme-700',
           )}
         >
           <SignInForm onSignInDone={handleSignInDone} />
