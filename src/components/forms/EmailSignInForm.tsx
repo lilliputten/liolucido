@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, Spinner } from '@/components/shared/Icons';
 import { isDev } from '@/config';
-import { getAllAllowedEmails } from '@/features/allowed-users/actions/getAllAllowedEmails';
+import { checkIsAllowedEmail } from '@/features/allowed-users/helpers/checkIsAllowedEmail';
 
 export const emailSignInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -24,37 +24,16 @@ export type TEmailSignInData = z.infer<typeof emailSignInSchema>;
 
 export type TEmailSignInFormType = ReturnType<typeof useForm<TEmailSignInData>>;
 
+const __debugUseTestEmail = false;
+
 export const defaultValues: TEmailSignInData = {
-  email: isDev ? 'lilliputten@yandex.ru' : '',
+  email: __debugUseTestEmail && isDev ? 'lilliputten@yandex.ru' : '',
 };
 
 export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWithClassName) {
-  const [isStarting, startStarting] = React.useTransition();
   const [isSubmitting, startSubmitting] = React.useTransition();
   const [message, setMessage] = React.useState<string>('');
   const [error, setError] = React.useState<string>('');
-
-  const [validEmails, setValidEmails] = React.useState<string[] | undefined>();
-
-  // Efect: Initialize
-  React.useEffect(() => {
-    startStarting(async () => {
-      try {
-        const validEmails = await getAllAllowedEmails();
-        setValidEmails(validEmails);
-      } catch (error) {
-        const errMsg = ['Cannot get valid emails list', getErrorText(error)]
-          .filter(Boolean)
-          .join(': ');
-        // eslint-disable-next-line no-console
-        console.error('[EmailSignInForm:Effect]', errMsg, { error });
-        debugger; // eslint-disable-line no-debugger
-        setError(errMsg);
-        // setMessage(errMsg);
-        toast.error(errMsg);
-      }
-    });
-  }, []);
 
   const form = useForm<TEmailSignInData>({
     mode: 'onChange',
@@ -65,33 +44,30 @@ export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWith
   const { register, handleSubmit, formState } = form;
   const { errors, isValid, isReady } = formState;
 
-  const isAllReady = !!validEmails && isReady;
-  const isSumbitAvailable = isAllReady && isValid && !isSubmitting && !isStarting;
+  const isAllReady = isReady;
+  const isSumbitAvailable = isAllReady && isValid && !isSubmitting;
   const SubmitIcon = isSubmitting ? Spinner : ArrowRight;
 
   const onSubmit = handleSubmit((data) => {
     const { email } = data;
-    if (!validEmails?.includes(email)) {
-      const errMsg =
-        'This email is not allowed to be authorized on this site. Reach the administrator to be included in the white list.';
-      setError(errMsg);
-      toast.error(errMsg);
-      return;
-    }
     setError('');
     setMessage('');
     startSubmitting(async () => {
       try {
+        const rejectReason = await checkIsAllowedEmail(email);
+        if (rejectReason) {
+          throw new Error(
+            `You're currently not allowed to use the application (reject code: ${rejectReason}).`,
+          );
+        }
         const result = await signIn('nodemailer', {
           email,
           redirect: false,
           callbackUrl: startRoute,
         });
-
         if (!result || result?.error) {
           throw result?.error;
         }
-
         const msg = 'A login message has been sent. Check your email for a sign-in link.';
         setMessage(msg);
         toast.success(msg);
@@ -161,7 +137,12 @@ export function EmailSignInForm({ className }: { inBody?: boolean } & TPropsWith
       </div>
 
       {message && !error && <p className={cn('text-center text-sm text-green-500')}>{message}</p>}
-      {error && <p className={cn('text-center text-sm text-red-500')}>{error}</p>}
+      {error && (
+        <div className={cn('text-center text-sm text-red-500')}>
+          <p>{error}</p>
+          <p>Reach administrator via the "Contacts" page.</p>
+        </div>
+      )}
     </form>
   );
 }

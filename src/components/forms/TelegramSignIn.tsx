@@ -50,15 +50,15 @@ function TelegramQRCode({ telegramUrl }: { telegramUrl: string }) {
 }
 
 export function TelegramSignIn({ inBody }: { inBody?: boolean }) {
-  const { botUsername } = useEnv();
-  const telegramUrl = `https://t.me/${botUsername}?start=/authorize`;
+  const { BOT_USERNAME } = useEnv();
+  const telegramUrl = `https://t.me/${BOT_USERNAME}?start=/authorize`;
   return (
     <>
       <p className="mt-2 text-center text-sm font-medium">Or use Telegram</p>
       <TelegramSignInButton telegramUrl={telegramUrl} />
       <TelegramQRCode telegramUrl={telegramUrl} />
       <p className="text-content text-center text-sm">
-        Click the button above, use the QR code, or go to the <code>@{botUsername}</code>{' '}
+        Click the button above, use the QR code, or go to the <code>@{BOT_USERNAME}</code>{' '}
         <Link
           target="_blank"
           rel="noopener noreferrer"

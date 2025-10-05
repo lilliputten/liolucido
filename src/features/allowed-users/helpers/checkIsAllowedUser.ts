@@ -1,10 +1,13 @@
+'use server';
+
 import { AdapterUser } from '@auth/core/adapters';
 import { Account, Profile, User } from '@auth/core/types';
 
 import { USE_ALLOWED_USERS } from '@/config/envServer';
 
-import { getAllAllowedEmails, getAllAllowedTelegramIds } from '../actions';
 import { TUserRejectReason } from '../types/TUserRejectReason';
+import { checkIsAllowedEmail } from './checkIsAllowedEmail';
+import { checkIsAllowedTelegramUser } from './checkIsAllowedTelegramUser';
 
 // see object paramater in the `signIn` handler in the `src/auth/auth.ts` module
 type TCheckIsAllowedUser = {
@@ -34,29 +37,13 @@ export async function checkIsAllowedUser(
 
   // Check ids for telegram provider
   if (provider === 'telegram') {
-    const tgId = Number(providerAccountId);
-    if (!tgId) {
-      return 'NO_TELEGRAM_ID';
-    }
-    const tgIds = await getAllAllowedTelegramIds();
-    if (!tgIds.includes(tgId)) {
-      return 'REJECTED_TELEGRAM_ID';
-    }
-    return undefined;
+    return await checkIsAllowedTelegramUser(providerAccountId);
   }
 
   // Check for valid email
   const userEmail = user.email;
   const profileEmail = profile?.email;
-  const email = userEmail || profileEmail;
+  const email = userEmail || profileEmail || undefined;
 
-  const validEmails = await getAllAllowedEmails();
-  if (!email) {
-    return 'NO_EMAIL';
-  }
-  if (!validEmails.includes(email)) {
-    return 'REJECTED_EMAIL';
-  }
-
-  return undefined;
+  return checkIsAllowedEmail(email);
 }

@@ -9,7 +9,7 @@ import {
 import { prisma } from '@/lib/db';
 import { isDev } from '@/config';
 import { minuteMs } from '@/constants';
-import { getAllAllowedTelegramIds } from '@/features/allowed-users/actions/getAllAllowedTelegramIds';
+import { checkIsAllowedTelegramUser } from '@/features/allowed-users/helpers/checkIsAllowedTelegramUser';
 import { TCommandContext } from '@/features/bot/core/botTypes';
 import { getTelegramUserAvatarUrl } from '@/features/bot/helpers/getTelegramUserAvatarUrl';
 
@@ -24,12 +24,13 @@ export async function authorizeCommand(ctx: TCommandContext) {
   }
 
   if (USE_ALLOWED_USERS) {
-    const allowedTelegramIds = await getAllAllowedTelegramIds();
-    if (!allowedTelegramIds.includes(id)) {
+    const rejectReason = await checkIsAllowedTelegramUser(id);
+    if (rejectReason) {
       return await ctx.reply(
         [
+          `You're currently not allowed to use the application (reject code: ${rejectReason}).`,
           'The bot is running in test mode, and only whitelisted users are allowed to participate.',
-          `Reach the administrator (@${BOT_ADMIN_USERNAME}), and ask him to whitelist your ID (${id}).`,
+          `Reach the administrator (@${BOT_ADMIN_USERNAME}), and ask to whitelist your ID (${id}).`,
         ].join('\n\n'),
       );
     }

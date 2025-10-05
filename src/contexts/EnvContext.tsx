@@ -3,19 +3,19 @@
 import React from 'react';
 
 interface EnvContextType {
-  botUsername: string;
+  BOT_USERNAME: string;
 }
 
 const EnvContext = React.createContext<EnvContextType | undefined>(undefined);
 
 export function EnvProvider({
   children,
-  botUsername,
+  BOT_USERNAME,
 }: {
   children: React.ReactNode;
-  botUsername: string;
+  BOT_USERNAME: string;
 }) {
-  return <EnvContext.Provider value={{ botUsername }}>{children}</EnvContext.Provider>;
+  return <EnvContext.Provider value={{ BOT_USERNAME }}>{children}</EnvContext.Provider>;
 }
 
 export function useEnv() {

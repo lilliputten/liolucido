@@ -119,7 +119,7 @@ async function RootLayout(props: TRootLayoutProps) {
       >
         <ReactQueryClientProvider>
           <SessionProvider>
-            <EnvProvider botUsername={BOT_USERNAME}>
+            <EnvProvider BOT_USERNAME={BOT_USERNAME}>
               <NextIntlClientProvider messages={messages}>
                 <ThemeProvider
                   attribute="class"
