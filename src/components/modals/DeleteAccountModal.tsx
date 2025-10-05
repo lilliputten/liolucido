@@ -8,7 +8,7 @@ import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { UserAvatar } from '@/components/shared/user-avatar';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 
 function DeleteAccountModal({
   showDeleteAccountModal,
@@ -18,6 +18,7 @@ function DeleteAccountModal({
   setShowDeleteAccountModal: Dispatch<SetStateAction<boolean>>;
 }) {
   const { data: session } = useSession();
+  const user = session?.user;
   const [deleting, setDeleting] = useState(false);
   const invalidateKeys = useInvalidateReactQueryKeys();
 
@@ -75,12 +76,7 @@ function DeleteAccountModal({
       className="gap-0"
     >
       <div className="flex flex-col items-center justify-center space-y-3 border-b p-4 pt-8 sm:px-16">
-        <UserAvatar
-          user={{
-            name: session?.user?.name || null,
-            image: session?.user?.image || null,
-          }}
-        />
+        <UserAvatar user={user} />
         <h3 className="text-lg font-semibold">Delete Account</h3>
         <p className="text-center text-sm text-muted-foreground">
           <b>Warning:</b> This will permanently delete your account and your active subscription!

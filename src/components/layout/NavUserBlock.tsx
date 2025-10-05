@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/DropdownMenu';
 import * as Icons from '@/components/shared/Icons';
-import { UserAvatar } from '@/components/shared/user-avatar';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';
 
@@ -89,12 +89,12 @@ export function NavUserBlock(props: TNavUserBlockProps) {
         className={cn(
           isDev && '__NavUserBlock_UserName', // DEBUG
           'flex items-center justify-start gap-3',
-          !onSidebar && 'px-2',
+          !onSidebar && 'px-2 py-1',
         )}
       >
         {onSidebar && (
           <UserAvatar
-            user={{ name: user.name || null, image: user.image || null }}
+            user={user}
             className={cn(
               isDev && '__NavUserBlock_UserAvatar', // DEBUG
               className,
