@@ -1,5 +1,5 @@
-import { UserRoles } from '@/shared/types/db/TUserRole';
-import { SidebarNavItem } from '@/shared/types/site/NavItem';
+import { UserRoles } from '@/lib/types/db/TUserRole';
+import { SidebarNavItem } from '@/lib/types/site/NavItem';
 import * as Icons from '@/components/shared/Icons';
 
 import {

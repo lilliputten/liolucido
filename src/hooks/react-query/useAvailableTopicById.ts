@@ -2,8 +2,8 @@ import React from 'react';
 import { QueryKey, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
-import { TAvailableTopicsResultsQueryData } from '@/shared/types/react-query';
+import { APIError } from '@/lib/types/api';
+import { TAvailableTopicsResultsQueryData } from '@/lib/types/react-query';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';

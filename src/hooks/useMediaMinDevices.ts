@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { TMediaWidth } from '@/shared/types/ui/TMediaWidth';
+import { TMediaWidth } from '@/lib/types/ui/TMediaWidth';
 
 export function useMediaMinDevices() {
   const [mediaWidths, setMediaWidths] = useState<TMediaWidth[]>([]);

@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { APIError } from '@/shared/types/api';
+import { APIError } from '@/lib/types/api';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Form } from '@/components/ui/Form';

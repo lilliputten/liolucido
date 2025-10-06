@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { TApiResponse } from '@/shared/types/api';
+import { TApiResponse } from '@/lib/types/api';
 import { getAvailableQuestions } from '@/features/questions/actions';
 
 /** GET /api/topics/[topicId]/questions - Get questions for a topic */

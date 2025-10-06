@@ -1,4 +1,4 @@
-import { TUserRole } from '@/shared/types/db/TUserRole';
+import { TUserRole } from '@/lib/types/db/TUserRole';
 import { TRoutePath } from '@/config/routesConfig';
 import { TGenericIcon } from '@/components/shared/IconTypes';
 

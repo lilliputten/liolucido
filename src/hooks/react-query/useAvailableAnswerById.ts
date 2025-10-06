@@ -2,8 +2,8 @@ import React from 'react';
 import { QueryKey, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
-import { TAvailableAnswersResultsQueryData } from '@/shared/types/react-query';
+import { APIError } from '@/lib/types/api';
+import { TAvailableAnswersResultsQueryData } from '@/lib/types/react-query';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableAnswerByIdParams } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';

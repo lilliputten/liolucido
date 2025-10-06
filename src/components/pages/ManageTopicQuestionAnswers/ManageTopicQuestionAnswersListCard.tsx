@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
+import { APIError } from '@/lib/types/api';
 import { TPropsWithClassName } from '@/lib/types';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';

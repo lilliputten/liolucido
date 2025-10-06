@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
+import { APIError } from '@/lib/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { Button } from '@/components/ui/Button';

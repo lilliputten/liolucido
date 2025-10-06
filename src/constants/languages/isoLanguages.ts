@@ -1,9 +1,9 @@
-import { TLanguage } from '@/shared/types/language';
+import { TLanguage } from '@/lib/types/language';
 
 import jsonLanguages from './ISO-639-1-language.json';
 
 /* // Derive types (is it required?)
- * import { ArrayElement } from '@/shared/types/ts';
+ * import { ArrayElement } from '@/lib/types/ts';
  * type TISOLanguages = typeof jsonLanguages;
  * type TISOLanguage = ArrayElement<TISOLanguages>;
  */

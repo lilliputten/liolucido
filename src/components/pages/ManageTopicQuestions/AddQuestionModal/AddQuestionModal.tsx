@@ -4,7 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
+import { APIError } from '@/lib/types/api';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';

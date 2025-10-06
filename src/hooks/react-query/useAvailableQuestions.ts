@@ -11,8 +11,8 @@ import {
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
-import { TAllUsedKeys, TAvailableQuestionsResultsQueryData } from '@/shared/types/react-query';
+import { APIError } from '@/lib/types/api';
+import { TAllUsedKeys, TAvailableQuestionsResultsQueryData } from '@/lib/types/react-query';
 import {
   addNewItemToQueryCache,
   deleteItemFromQueryCache,

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { TApiResponse } from '@/shared/types/api';
+import { TApiResponse } from '@/lib/types/api';
 import { deleteWorkout } from '@/features/workouts/actions/deleteWorkout';
 import { getWorkout } from '@/features/workouts/actions/getWorkout';
 import { updateWorkout } from '@/features/workouts/actions/updateWorkout';

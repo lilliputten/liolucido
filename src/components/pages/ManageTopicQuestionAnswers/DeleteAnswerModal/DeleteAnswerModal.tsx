@@ -4,7 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
+import { APIError } from '@/lib/types/api';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deleteAnswer } from '@/features/answers/actions';
 import { TAnswerId } from '@/features/answers/types';

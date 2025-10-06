@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { TDevice } from '@/shared/types/ui/TDevice';
+import { TDevice } from '@/lib/types/ui/TDevice';
 
 export function useMediaQuery() {
   const [device, setDevice] = useState<TDevice | null>(null);

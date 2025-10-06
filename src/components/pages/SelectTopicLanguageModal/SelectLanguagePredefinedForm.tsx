@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { TLanguageId } from '@/shared/types/language';
+import { TLanguageId } from '@/lib/types/language';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';

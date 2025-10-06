@@ -7,7 +7,7 @@ import {
   TApiResponse,
   TApiWrapperResult,
   TServiceMessage,
-} from '@/shared/types/api';
+} from '@/lib/types/api';
 
 import { processMessages } from './processMessages';
 
