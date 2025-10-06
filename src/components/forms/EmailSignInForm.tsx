@@ -7,9 +7,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { startRoute } from '@/config/routesConfig';
 import { getErrorText } from '@/lib/helpers';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, Spinner } from '@/components/shared/Icons';

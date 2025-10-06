@@ -5,9 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { removeNullUndefinedValues } from '@/lib/helpers';
 import { getErrorText, getRandomHashString } from '@/lib/helpers/strings';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/Card';
 import { ScrollArea } from '@/components/ui/ScrollArea';

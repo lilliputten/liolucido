@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { getRandomHashString, truncateString } from '@/lib/helpers/strings';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';

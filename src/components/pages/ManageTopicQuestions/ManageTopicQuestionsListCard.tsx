@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Button } from '@/components/ui/Button';

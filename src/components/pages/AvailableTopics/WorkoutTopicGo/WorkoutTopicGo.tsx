@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { availableTopicsRoute } from '@/config/routesConfig';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { isDev } from '@/constants';

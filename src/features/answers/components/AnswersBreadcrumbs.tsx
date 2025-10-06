@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { truncateMarkdown } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { capitalizeString } from '@/lib/helpers/strings';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import {

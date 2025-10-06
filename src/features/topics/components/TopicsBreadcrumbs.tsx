@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { capitalizeString, truncateString } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import {

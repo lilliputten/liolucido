@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { rootRoute } from '@/config/routesConfig';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight } from '@/components/shared/Icons';

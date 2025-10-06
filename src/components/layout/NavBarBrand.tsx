@@ -5,10 +5,10 @@ import { usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useTheme } from 'next-themes';
 
-import { TPropsWithChildrenAndClassName } from '@/lib/types';
 import { siteTitle } from '@/config/env';
 import { infoRoute, welcomeRoute } from '@/config/routesConfig';
 import { getAllRouteSynonyms } from '@/lib/routes';
+import { TPropsWithChildrenAndClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import logoSvg from '@/assets/logo/logo-full-line-w.svg';
 import logoWhiteSvg from '@/assets/logo/logo-full-line-w.svg';

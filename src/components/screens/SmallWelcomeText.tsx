@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { allTopicsRoute, infoRoute, myTopicsRoute } from '@/config/routesConfig';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
 import { useSessionUser } from '@/hooks';

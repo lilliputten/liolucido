@@ -3,10 +3,10 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { TReactNode } from '@/lib/types';
 import { rootRoute } from '@/config/routesConfig';
 import { ErrorLike } from '@/lib/errors';
 import { getErrorText } from '@/lib/helpers/strings';
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ErrorPlaceHolder } from '@/components/shared/ErrorPlaceHolder';
