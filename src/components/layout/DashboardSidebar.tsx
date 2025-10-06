@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DialogTitle } from '@radix-ui/react-dialog';
 
-import { TPropsWithChildren } from '@/lib/types';
 import { SidebarNavItem } from '@/lib/types/site/NavItem';
 import { getRandomHashString } from '@/lib/helpers/strings';
+import { TPropsWithChildren } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -18,8 +18,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { ProjectSwitcher } from '@/components/dashboard/ProjectSwitcher';
 import { UpgradeCard } from '@/components/dashboard/UpgradeCard';
 import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
-import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
-import { NavModeToggle } from '@/components/layout/NavModeToggle';
+import { NavLocaleSwitcherBlock } from '@/components/layout/NavLocaleSwitcherBlock';
+import { NavModeToggleBlock } from '@/components/layout/NavModeToggleBlock';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useMediaQuery } from '@/hooks';
@@ -323,9 +323,14 @@ export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetPr
         <MenuSections {...props} />
 
         {/* TODO: Show menu if collapsed */}
-        <div className={cn(isDev && '__DashboardSidebar_ExtraMenu', 'flex gap-2')}>
-          <NavModeToggle onSidebar />
-          <NavLocaleSwitcher onSidebar />
+        <div
+          className={cn(
+            isDev && '__DashboardSidebar_ExtraMenu', // DEBUG
+            'flex flex-col gap-2',
+          )}
+        >
+          <NavModeToggleBlock onSidebar />
+          <NavLocaleSwitcherBlock onSidebar />
         </div>
 
         {/* User menu */}

@@ -45,8 +45,8 @@ export function UserAvatar({ user, className, ...props }: UserAvatarProps) {
           <span
             className={cn(
               isDev && '__UserAvatar_AdminIcon', // DEBUG
-              'absolute size-3 rounded-full bg-red-500',
-              'border-2 border-theme-500/80',
+              'absolute size-2 rounded-full bg-red-500',
+              'border-1 border-theme-500/80',
               'right-0 top-0',
             )}
           />

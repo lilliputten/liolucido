@@ -44,18 +44,6 @@ export function useAvailableAnswerById(props: TUseAvailableAnswerByIdProps) {
 
   const isCached = !!cachedAnswer;
 
-  /* console.log('[useAvailableAnswerById:DEBUG]', {
-   *   availableAnswersQueryKey,
-   *   answerId,
-   *   queryProps,
-   *   queryHash,
-   *   queryKey,
-   *   availableAnswersData,
-   *   cachedAnswer,
-   *   isCached,
-   * });
-   */
-
   // Only fetch if the answer is not cached
   const query = useQuery<TAvailableAnswer>({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps

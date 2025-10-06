@@ -46,24 +46,24 @@
     "help": "Пришлите мне текст, и я покажу его в жирном начертании.\n\nВы можете изменить мой язык, используя команду /language."
   },
   "RootPage": {
-    "title": "Редактор - líolúcido!",
-    "about": "На страницу О"
+    "title": "líolúcido!",
+    "about": "Главная страница"
   },
   "DataPage": {
-    "title": "Редактор данных - líolúcido!"
+    "title": "Редактор данных"
   },
   "TestPage": {
-    "title": "Test - líolúcido!"
+    "title": "Test"
   },
   "SettingsPage": {
-    "title": "Настройки - líolúcido!",
+    "title": "Настройки",
     "description": "Настройки приложения"
   },
   "InfoPage": {
     "title": "Информация"
   },
   "WelcomePage": {
-    "title": "Добро пожаловать - líolúcido!"
+    "title": "Добро пожаловать"
   },
   "SmallWelcomeText": {
     "content": "<p>Это небольшое приложение-викторина для работы с карточками для запоминания и повторения информации. Взгляните на небольшую <infolink>инструкцию</infolink>.\n</p>",

@@ -3,8 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
 import { defaultSystemTheme, systemThemeIcons, TSystemThemeId } from '@/config/themes';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import {
@@ -17,29 +17,16 @@ import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 
+import { NavModeToggleBlock } from './NavModeToggleBlock';
+
 interface TNavModeToggleProps extends TPropsWithClassName {
   onPrimary?: boolean;
   onSidebar?: boolean;
 }
 
 export function NavModeToggle(props: TNavModeToggleProps) {
-  const {
-    onPrimary,
-    //  onSidebar,
-    className,
-  } = props;
-  const {
-    theme: currentTheme = defaultSystemTheme,
-    themes,
-    // setTheme: setAppTheme,
-  } = useTheme();
-  // const ThemeIcon = systemThemeIcons[currentTheme as TSystemThemeId];
-  const { setTheme } = useSettingsContext();
+  const { onPrimary, onSidebar, className } = props;
   const t = useTranslations('NavModeToggle');
-  const handleThemeChange = (theme: string) => {
-    // setAppTheme(theme);
-    setTheme(theme);
-  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild aria-label={t('label')}>
@@ -59,24 +46,7 @@ export function NavModeToggle(props: TNavModeToggleProps) {
           <span className="sr-only">{t('label')}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {themes.map((thisTheme) => {
-          const ThemeIcon = systemThemeIcons[thisTheme as TSystemThemeId];
-          return (
-            <DropdownMenuItem
-              key={thisTheme}
-              onClick={() => handleThemeChange(thisTheme)}
-              disabled={thisTheme === currentTheme}
-            >
-              {ThemeIcon && <ThemeIcon className="mr-2 size-4" />}
-              <span>{t(thisTheme)}</span>
-            </DropdownMenuItem>
-          );
-        })}
-        {/*
-        <DropdownMenuArrow />
-        */}
-      </DropdownMenuContent>
+      <NavModeToggleBlock align="end" onPrimary={onPrimary} onSidebar={onSidebar} />
     </DropdownMenu>
   );
 }

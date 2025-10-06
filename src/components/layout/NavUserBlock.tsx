@@ -3,8 +3,8 @@
 import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { settingsRoute } from '@/config/routesConfig';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenuContent,
@@ -99,7 +99,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
               isDev && '__NavUserBlock_UserAvatar', // DEBUG
               className,
               'size-8 rounded-full bg-theme-300/25',
-              isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
+              // isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
               onSidebar && 'flex',
             )}
           />

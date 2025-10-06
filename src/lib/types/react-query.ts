@@ -4,7 +4,7 @@ import { TAvailableAnswer } from '@/features/answers/types';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { TAvailableTopic } from '@/features/topics/types';
 
-import { TGetResultsInfiniteQueryData } from './generic/api';
+import { TGetResultsInfiniteQueryData } from './api';
 
 export type TAllUsedKeys = Record<string, QueryKey>;
 export type TQueryClient = ReturnType<typeof useQueryClient>;
