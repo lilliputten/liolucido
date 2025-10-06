@@ -18,10 +18,6 @@ export function NavModeToggleBlock(props: TSidebarBlockProps) {
   const { theme: currentTheme = defaultSystemTheme, themes } = useTheme();
   const { setTheme } = useSettingsContext();
   const t = useTranslations('NavModeToggle');
-  const handleThemeChange = (theme: string) => {
-    // setAppTheme(theme);
-    setTheme(theme);
-  };
   return (
     <Wrapper
       data-theme={currentTheme}
@@ -42,7 +38,7 @@ export function NavModeToggleBlock(props: TSidebarBlockProps) {
               'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1.5 text-sm hover:bg-theme-500 hover:text-white',
             )}
             disabled={thisTheme === currentTheme}
-            onSelect={() => handleThemeChange(thisTheme)}
+            onSelect={() => setTheme(thisTheme)}
           >
             {ThemeIcon && <ThemeIcon className="mr-2 size-4" />}
             <span>{t(thisTheme)}</span>

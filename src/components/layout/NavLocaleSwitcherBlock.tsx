@@ -3,15 +3,8 @@
 import React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+import { DropdownMenuContent, DropdownMenuItem } from '@/components/ui/DropdownMenu';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { routing } from '@/i18n/routing';
@@ -25,7 +18,6 @@ export function NavLocaleSwitcherBlock(props: TSidebarBlockProps) {
   const Wrapper = onSidebar ? SidebarWrapper : DropdownMenuContent;
   const MenuItem = onSidebar ? SidebarMenuItem : DropdownMenuItem;
 
-  // NOTE: This one doesn't change on real locale change
   const locale = useLocale();
 
   const { setLocale } = useSettingsContext();

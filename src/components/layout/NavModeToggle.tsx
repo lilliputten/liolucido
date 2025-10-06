@@ -1,21 +1,13 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useTheme } from 'next-themes';
 
-import { defaultSystemTheme, systemThemeIcons, TSystemThemeId } from '@/config/themes';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { useSettingsContext } from '@/contexts/SettingsContext';
 
 import { NavModeToggleBlock } from './NavModeToggleBlock';
 
