@@ -1,5 +1,11 @@
-import { QueryKey } from '@tanstack/react-query';
+import { InfiniteData, QueryKey } from '@tanstack/react-query';
 
+export interface TGetResults<T> {
+  items: T[];
+  totalCount: number;
+}
+
+export type TGetResultsInfiniteQueryData<T> = InfiniteData<TGetResults<T>, unknown>;
 // Core API response types
 export interface TApiResponse<T = unknown> {
   data: T | null;

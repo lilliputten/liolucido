@@ -3,7 +3,7 @@
 import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { settingsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import {

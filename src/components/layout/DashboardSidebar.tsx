@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DialogTitle } from '@radix-ui/react-dialog';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
-import { SidebarNavItem } from '@/shared/types/site/NavItem';
+import { TPropsWithChildren } from '@/lib/types';
+import { SidebarNavItem } from '@/lib/types/site/NavItem';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';

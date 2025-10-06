@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { TReactNode } from '@/shared/types/generic';
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { Modal } from '@/components/ui/Modal';

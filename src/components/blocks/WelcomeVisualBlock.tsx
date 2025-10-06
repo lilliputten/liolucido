@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SmallWelcomeText } from '@/components/screens/SmallWelcomeText';
 import svgArt from '@/assets/arts/login-blue.svg';

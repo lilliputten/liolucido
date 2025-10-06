@@ -3,7 +3,7 @@
 import React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import {

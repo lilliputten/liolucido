@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';

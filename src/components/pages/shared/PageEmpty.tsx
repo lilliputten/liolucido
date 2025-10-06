@@ -1,4 +1,4 @@
-import { TPropsWithClassName, TReactNode } from '@/shared/types/generic';
+import { TPropsWithClassName, TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { EmptyPlaceholder } from '@/components/shared/EmptyPlaceholder';

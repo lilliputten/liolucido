@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
+import { TPropsWithChildren } from '@/lib/types';
 import { getCurrentUser } from '@/lib/session';
 
 import { GenericLayoutContent } from './GenericLayoutContent';

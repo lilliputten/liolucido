@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useTheme } from 'next-themes';
 
-import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
+import { TPropsWithChildrenAndClassName } from '@/lib/types';
 import { siteTitle } from '@/config/env';
 import { infoRoute, welcomeRoute } from '@/config/routesConfig';
 import { getAllRouteSynonyms } from '@/lib/routes';

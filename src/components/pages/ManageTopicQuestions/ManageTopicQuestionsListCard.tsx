@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';

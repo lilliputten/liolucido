@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 
 import { APIError } from '@/shared/types/api';
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';

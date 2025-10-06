@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { TGetResults } from '@/shared/types/generic/api';
+import { TGetResults } from '@/lib/types/api';
 import { TAllowedUser } from '@/features/allowed-users/types';
 import { AllowedUserOrderByWithRelationInputSchema } from '@/generated/prisma';
 

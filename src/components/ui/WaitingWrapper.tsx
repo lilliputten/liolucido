@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTheme } from 'next-themes';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
+import { TPropsWithChildren } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
 

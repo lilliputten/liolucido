@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';

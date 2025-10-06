@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { TReactNode } from '@/shared/types/generic';
+import { TReactNode } from '@/lib/types';
 import { rootRoute } from '@/config/routesConfig';
 import { ErrorLike } from '@/lib/errors';
 import { getErrorText } from '@/lib/helpers/strings';

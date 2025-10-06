@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';

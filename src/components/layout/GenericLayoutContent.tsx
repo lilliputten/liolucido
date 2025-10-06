@@ -3,7 +3,7 @@
 import React from 'react';
 import { ExtendedUser } from '@/@types/next-auth';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
+import { TPropsWithChildren } from '@/lib/types';
 import { NavItemBase } from '@/shared/types/site/NavItem';
 import { sidebarLinks } from '@/config/dashboard';
 import { cn } from '@/lib/utils';

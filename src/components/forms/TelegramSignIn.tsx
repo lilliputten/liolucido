@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import QRCode from 'react-qr-code';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ExternalLink, Telegram } from '@/components/shared/Icons';

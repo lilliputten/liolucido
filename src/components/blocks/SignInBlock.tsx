@@ -1,6 +1,6 @@
 import { useTheme } from 'next-themes';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SignInForm, SignInFormHeader } from '@/components/forms/SignInForm';
 import { isDev } from '@/constants';

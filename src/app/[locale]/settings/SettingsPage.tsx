@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { removeNullUndefinedValues } from '@/lib/helpers';
 import { getErrorText, getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';

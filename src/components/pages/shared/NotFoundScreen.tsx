@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-import { TReactNode } from '@/shared/types/generic';
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { TGenericIcon } from '@/components/shared/IconTypes';
 import { PageError } from '@/components/shared/PageError';

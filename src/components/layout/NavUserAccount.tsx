@@ -3,7 +3,7 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import * as Icons from '@/components/shared/Icons';

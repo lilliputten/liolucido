@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';

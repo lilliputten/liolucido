@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SignInBlock } from '@/components/blocks/SignInBlock';
 import { WelcomeVisualBlock } from '@/components/blocks/WelcomeVisualBlock';

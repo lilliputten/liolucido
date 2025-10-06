@@ -1,7 +1,7 @@
 // Using client side in order to regenerate save scroll hash on each app open
 'use client';
 
-import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
+import { TPropsWithChildrenAndClassName } from '@/lib/types';
 import { getRandomHashString } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
