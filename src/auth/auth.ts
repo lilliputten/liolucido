@@ -33,6 +33,7 @@ const invalidEmailRoute = '/demo-info';
 
 export const nextAuthApp = NextAuth({
   debug: isDev,
+  // trustHost: true,
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
@@ -84,29 +85,22 @@ export const nextAuthApp = NextAuth({
         }
         return `${invalidEmailRoute}?reason=${rejectReason}`;
       }
-      /* console.log('[auth:callbacks:signIn] success', {
-       *   email,
-       *   profileEmail,
-       *   provider,
-       *   type,
-       *   providerAccountId,
-       *   user,
-       *   account,
-       *   profile,
-       *   credentials,
-       * });
-       */
+      console.log('[auth:callbacks:signIn] success', {
+        email,
+        profileEmail,
+        provider,
+        type,
+        providerAccountId,
+      });
       return true;
     },
 
     async session(params) {
       const { token, session } = params;
-      /* console.log('[auth:callbacks:session]', {
-       *   token,
-       *   session,
-       *   params,
-       * });
-       */
+      console.log('[auth:callbacks:session]', {
+        token,
+        session,
+      });
       const user = session.user as unknown as TExtendedUser;
       if (user) {
         if (token.sub) {
@@ -130,6 +124,11 @@ export const nextAuthApp = NextAuth({
       const token = params.token as JWT;
       const { trigger } = params;
       const isNewUser = trigger === 'signUp';
+
+      console.log('[auth:callbacks:jwt]', {
+        token,
+        params,
+      });
 
       if (!token.sub) {
         return token;

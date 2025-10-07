@@ -28,6 +28,7 @@ export default {
       clientSecret: GITHUB_CLIENT_SECRET,
     }),
     Yandex({
+      // NOTE: Possible next-auth error: InvalidCheck: pkceCodeVerifier value could not be parsed.
       clientId: YANDEX_CLIENT_ID,
       clientSecret: YANDEX_CLIENT_SECRET,
     }),
@@ -40,12 +41,11 @@ export default {
         host: EMAIL_HOST,
         port: EMAIL_PORT,
         auth: { user: EMAIL_HOST_USER, pass: EMAIL_HOST_PASSWORD },
+        tls: {
+          rejectUnauthorized: false,
+        },
       },
       from: `"${EMAIL_FROM_NAME}" <${EMAIL_FROM || EMAIL_HOST_USER}>`,
-      // Optionally set maxAge for magic link expiration (in seconds)
-      // maxAge: 24 * 60 * 60, // 24 hours
-      // sendVerificationRequest // https://next-auth.js.org/providers/email#customizing-emails
-      // normalizeIdentifier // https://next-auth.js.org/providers/email#normalizing-the-email-address
     }),
     TelegramProvider(),
   ],
