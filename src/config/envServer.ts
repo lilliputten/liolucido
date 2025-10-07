@@ -53,7 +53,8 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   YANDEX_CLIENT_ID: z.string().min(1),
   YANDEX_CLIENT_SECRET: z.string().min(1),
-  EMAIL_FROM: z.string().min(1),
+  EMAIL_FROM_NAME: z.string().min(1),
+  EMAIL_FROM: z.string().optional(),
   EMAIL_HOST: z.string().min(1),
   EMAIL_PORT: z.coerce.number(),
   // EMAIL_USE_SSL: z.coerce.boolean().optional(), // Will be converted below via ensureBoolean
@@ -99,6 +100,7 @@ export const {
   YANDEX_CLIENT_ID,
   YANDEX_CLIENT_SECRET,
   // Email
+  EMAIL_FROM_NAME,
   EMAIL_FROM,
   EMAIL_HOST,
   EMAIL_PORT,

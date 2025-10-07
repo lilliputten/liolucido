@@ -6,6 +6,7 @@ import Yandex from 'next-auth/providers/yandex';
 
 import {
   EMAIL_FROM,
+  EMAIL_FROM_NAME,
   EMAIL_HOST,
   EMAIL_HOST_PASSWORD,
   EMAIL_HOST_USER,
@@ -40,7 +41,7 @@ export default {
         port: EMAIL_PORT,
         auth: { user: EMAIL_HOST_USER, pass: EMAIL_HOST_PASSWORD },
       },
-      from: EMAIL_FROM,
+      from: `"${EMAIL_FROM_NAME}" <${EMAIL_FROM || EMAIL_HOST_USER}>`,
       // Optionally set maxAge for magic link expiration (in seconds)
       // maxAge: 24 * 60 * 60, // 24 hours
       // sendVerificationRequest // https://next-auth.js.org/providers/email#customizing-emails
