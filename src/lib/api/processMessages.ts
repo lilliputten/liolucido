@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-import { TServiceMessage } from '@/shared/types/api';
+import { TServiceMessage } from '@/lib/types/api';
 
 // Track displayed messages to prevent duplicates in Strict Mode
 const displayedMessages = new Set<string>();

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { generateArray } from '@/lib/helpers';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';

@@ -2,11 +2,9 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
-import { generateArray } from '@/lib/helpers';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { InfoVisualBlock } from '@/components/blocks/InfoVisualBlock';
-// import { SignInBlock } from '@/components/blocks/SignInBlock';
 import { UseScrollableLayout } from '@/components/shared/ScrollableLayout';
 import { isDev } from '@/constants';
 
@@ -34,7 +32,7 @@ export function InfoScreen(props: TPropsWithClassName & { isLoggedUser: boolean 
           className={cn(
             isDev && '__InfoScreen_Gradient', // DEBUG
             'absolute bottom-0 left-0 right-0 top-0 lg:overflow-hidden',
-            'welcome-screen-gradient',
+            'decorative-gradient',
             // 'pointer-events-none',
           )}
         />

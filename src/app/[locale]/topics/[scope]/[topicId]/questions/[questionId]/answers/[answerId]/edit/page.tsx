@@ -1,4 +1,4 @@
-import { constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
 import { EditAnswerCard } from '@/components/pages/ManageTopicQuestionAnswers';
 import { ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';
 import { PageHeader } from '@/components/pages/shared';

@@ -2,10 +2,11 @@
 
 import React from 'react';
 
-import { TReactNode } from '@/shared/types/generic';
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons, TIconsKey } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import * as Icons from '@/components/shared/Icons';
+import { TGenericIcon } from '@/components/shared/IconTypes';
 import { isDev } from '@/constants';
 
 export interface TConfirmFormProps {
@@ -17,7 +18,7 @@ export interface TConfirmFormProps {
   confirmButtonVariant?: React.ComponentProps<typeof Button>['variant'];
   confirmButtonText?: string;
   confirmButtonBusyText?: string;
-  confirmButtonIconName?: TIconsKey;
+  confirmButtonIcon?: TGenericIcon;
   cancelButtonText?: string;
 }
 
@@ -31,7 +32,7 @@ export function ConfirmForm(props: TConfirmFormProps) {
     confirmButtonVariant,
     confirmButtonText = 'Ok',
     confirmButtonBusyText,
-    confirmButtonIconName = 'check',
+    confirmButtonIcon = Icons.Check,
     cancelButtonText = 'Cancel',
   } = props;
 
@@ -42,7 +43,7 @@ export function ConfirmForm(props: TConfirmFormProps) {
     ev.preventDefault();
   };
 
-  const Icon = isPending ? Icons.spinner : Icons[confirmButtonIconName];
+  const Icon = isPending ? Icons.Spinner : confirmButtonIcon;
   const buttonText =
     !isPending || !confirmButtonBusyText ? confirmButtonText : confirmButtonBusyText;
 
@@ -50,12 +51,14 @@ export function ConfirmForm(props: TConfirmFormProps) {
     <div
       className={cn(
         isDev && '__ConfirmForm', // DEBUG
-        'flex w-full flex-col gap-4',
+        'flex w-full flex-col gap-6',
         className,
       )}
     >
       {children}
+      {/* // UNUSED: Delimiter
       <div className="flex flex-col justify-between"></div>
+      */}
       {/* Actions */}
       <div className="flex w-full gap-4">
         <Button
@@ -67,7 +70,7 @@ export function ConfirmForm(props: TConfirmFormProps) {
           <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
         </Button>
         <Button variant="ghost" onClick={onClose} className="gap-2">
-          <Icons.close className="size-4" />
+          <Icons.Close className="size-4" />
           <span>{cancelButtonText}</span>
         </Button>
       </div>

@@ -3,11 +3,11 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Icons } from '@/components/shared/icons';
-import { UserAvatar } from '@/components/shared/user-avatar';
+import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import * as Icons from '@/components/shared/Icons';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 import { isDev } from '@/constants';
 
 import { NavUserBlock } from './NavUserBlock';
@@ -46,13 +46,13 @@ export function NavUserAccount(props: TNavUserAccountProps) {
         )}
       >
         <UserAvatar
-          user={{ name: user.name || null, image: user.image || null }}
+          user={user}
           className={cn(
             isDev && '__NavUserAccount_UserAvatar', // DEBUG
+            // 'size-8 rounded-full bg-theme-300/25',
+            // isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
+            // onSidebar && 'flex',
             className,
-            'size-8 rounded-full bg-theme-300/25',
-            isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
-            onSidebar && 'flex',
           )}
         />
         {onSidebar && (

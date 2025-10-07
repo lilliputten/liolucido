@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { availableTopicsRoute, welcomeRoute } from '@/config/routesConfig';
+import { constructMetadata } from '@/lib/constructMetadata';
 import { getCurrentUser } from '@/lib/session';
-import { constructMetadata } from '@/lib/utils';
 import { defaultLocale, TAwaitedLocaleProps } from '@/i18n/types';
 
 export async function generateMetadata({ params }: TAwaitedLocaleProps) {

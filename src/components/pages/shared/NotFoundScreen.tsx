@@ -2,9 +2,9 @@
 
 import { usePathname } from 'next/navigation';
 
-import { TReactNode } from '@/shared/types/generic';
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { TIconsKey } from '@/components/shared/icons';
+import { TGenericIcon } from '@/components/shared/IconTypes';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 
@@ -13,11 +13,11 @@ import { isDev } from '@/constants';
 interface TNotFoundScreenProps {
   title?: TReactNode;
   className?: string;
-  iconName?: TIconsKey;
+  icon?: TGenericIcon;
 }
 
 export default function NotFoundScreen(props: TNotFoundScreenProps) {
-  const { title, className, iconName } = props;
+  const { title, className, icon } = props;
   const pathname = usePathname();
   const titleContent = title || (
     <>
@@ -30,7 +30,7 @@ export default function NotFoundScreen(props: TNotFoundScreenProps) {
         isDev && '__NotFoundScreen', // DEBUG
         className,
       )}
-      iconName={iconName}
+      icon={icon}
       title={titleContent}
     />
   );

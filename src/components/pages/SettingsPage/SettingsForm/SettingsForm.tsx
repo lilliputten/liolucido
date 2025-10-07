@@ -2,14 +2,12 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createPortal } from 'react-dom';
-import { useForm } from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
 
 import { removeNullUndefinedValues } from '@/lib/helpers/objects';
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Form } from '@/components/ui/form';
+import { Form } from '@/components/ui/Form';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
@@ -17,32 +15,22 @@ import { settingsSchema, TSettings } from '@/features/settings/types';
 import { selectTopicEventName, TSelectTopicLanguageData } from '@/features/topics/types';
 import { TDefinedUserId } from '@/features/users/types/TUser';
 
-import { SettingsFormActions } from './SettingsFormActions';
 import { SettingsFormFields } from './SettingsFormFields';
-import { TFormData } from './types';
+import { TSettingsFormData } from './types';
 
 interface TSettingsFormProps {
   settings: TSettings;
+  form: UseFormReturn<TSettingsFormData>;
   className?: string;
-  toolbarPortalRef: React.RefObject<HTMLDivElement>;
   userId?: TDefinedUserId;
 }
 
 export function SettingsForm(props: TSettingsFormProps) {
-  const { settings, className, userId, toolbarPortalRef } = props;
+  const { form, settings, className, userId } = props;
   const { updateAndSaveSettings, inited, userInited } = useSettingsContext();
   const router = useRouter();
   const [isPending, startTransition] = React.useTransition();
 
-  const formSchema = React.useMemo(() => settingsSchema, []);
-
-  // @see https://react-hook-form.com/docs/useform
-  const form = useForm<TFormData>({
-    mode: 'onChange', // 'all', // Validation strategy before submitting behaviour.
-    criteriaMode: 'all', // Display all validation errors or one at a time.
-    resolver: zodResolver(formSchema),
-    values: settings,
-  });
   // @see https://react-hook-form.com/docs/useform/formstate
   const { isDirty, isValid } = form.formState;
 
@@ -81,7 +69,7 @@ export function SettingsForm(props: TSettingsFormProps) {
   const isWaiting = isPending || !isReady;
 
   const handleFormSubmit = React.useCallback(
-    (formData: TFormData) => {
+    (formData: TSettingsFormData) => {
       const editedSettings: TSettings = {
         ...settings,
         ...formData,
@@ -111,41 +99,27 @@ export function SettingsForm(props: TSettingsFormProps) {
   const handleCancel = undefined;
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleFormSubmit)}
-          className={cn(
-            isDev && '__SettingsForm', // DEBUG
-            'flex w-full flex-col gap-4 overflow-hidden',
-            isWaiting && 'pointer-events-none opacity-50',
-            className,
-          )}
-        >
-          <ScrollArea>
-            <SettingsFormFields
-              settings={settings}
-              form={form}
-              isSubmitEnabled={isSubmitEnabled}
-              isPending={isWaiting}
-              onCancel={handleCancel}
-              selectLanguage={selectLanguage}
-            />
-          </ScrollArea>
-        </form>
-      </Form>
-      {toolbarPortalRef.current &&
-        createPortal(
-          <SettingsFormActions
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleFormSubmit)}
+        className={cn(
+          isDev && '__SettingsForm', // DEBUG
+          'flex w-full flex-col gap-4 overflow-hidden',
+          isWaiting && 'pointer-events-none opacity-50',
+          className,
+        )}
+      >
+        <ScrollArea>
+          <SettingsFormFields
             settings={settings}
             form={form}
             isSubmitEnabled={isSubmitEnabled}
-            isPending={isPending}
+            isPending={isWaiting}
             onCancel={handleCancel}
-            onSubmit={handleFormSubmit}
-          />,
-          toolbarPortalRef.current,
-        )}
-    </>
+            selectLanguage={selectLanguage}
+          />
+        </ScrollArea>
+      </form>
+    </Form>
   );
 }

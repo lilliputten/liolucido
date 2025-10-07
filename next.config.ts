@@ -11,8 +11,8 @@ import {
 } from './src/config/themeColors';
 
 // Import environments to ensure if they're ok
-import './src/env/envServer';
-import './src/env/envClient';
+import './src/config/envServer';
+import './src/config/env';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -52,13 +52,8 @@ const nextConfig: NextConfig = {
     additionalData: scssVariables,
     silenceDeprecations: ['legacy-js-api'],
   },
-  experimental: {
-    // serverActions: {
-    //   allowedOrigins: [
-    //     'https://03ql4p7l-3000.euw.devtunnels.ms/',
-    //   ],
-    // },
-    // scrollRestoration: true,
+  turbopack: {
+    // Turbopack configuration (optional)
   },
   compress: !isDev, // In favor of xtunnel (it loses `gzip` header)
   reactStrictMode: true,

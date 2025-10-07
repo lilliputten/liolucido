@@ -5,21 +5,21 @@ import React from 'react';
 import { useSignInModal } from '@/components/modals/SignInModal';
 
 export const ModalContext = React.createContext<{
-  setShowSignInModal: React.Dispatch<React.SetStateAction<boolean>>;
-  showSignInModal: boolean;
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  isVisible: boolean;
 }>({
-  setShowSignInModal: () => {},
-  showSignInModal: false,
+  setVisible: () => {},
+  isVisible: false,
 });
 
 export default function ModalProvider({ children }: { children: React.ReactNode }) {
-  const { showSignInModal, SignInModal, setShowSignInModal } = useSignInModal();
+  const { isVisible, SignInModal, setVisible } = useSignInModal();
 
   return (
     <ModalContext.Provider
       value={{
-        showSignInModal,
-        setShowSignInModal,
+        isVisible,
+        setVisible,
       }}
     >
       <SignInModal />

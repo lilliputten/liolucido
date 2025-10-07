@@ -1,7 +1,7 @@
 // import { TDefinedUserId } from '@/features/users/types/TUser';
 import { ExtendedUser } from '@/@types/next-auth';
 
-import { TApiResponse } from '@/shared/types/api';
+import { TApiResponse } from '@/lib/types/api';
 import { TSettings } from '@/features/settings/types';
 
 export interface SettingsContextData {

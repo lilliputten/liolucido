@@ -3,9 +3,9 @@
 import React from 'react';
 import { ExtendedUser } from '@/@types/next-auth';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
-import { NavItemBase } from '@/shared/types/site/NavItem';
+import { NavItemBase } from '@/lib/types/site/NavItem';
 import { sidebarLinks } from '@/config/dashboard';
+import { TPropsWithChildren } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { NavBar } from '@/components/layout/NavBar';
 import { SiteFooter } from '@/components/layout/SiteFooter';

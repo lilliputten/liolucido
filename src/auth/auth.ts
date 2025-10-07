@@ -3,12 +3,20 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 
+import { SET_FIRST_USER_ADMIN, USE_ALLOWED_USERS } from '@/config/envServer';
+import { authErrorRoute, welcomeRoute } from '@/config/routesConfig';
 import { prisma } from '@/lib/db';
-import { isDev } from '@/constants';
+import { isDev } from '@/config';
+import { checkIsAllowedUser } from '@/features/allowed-users/helpers/checkIsAllowedUser';
+import { TUserRejectReason } from '@/features/allowed-users/types/TUserRejectReason';
 import { getUserById } from '@/features/users/actions/';
+import { setFirstUserAsAdmin } from '@/features/users/helpers/setFirstUserAsAdmin';
 import { TExtendedUser } from '@/features/users/types/TUser';
 
 import authConfig from './auth.config.server';
+import { sessionMaxAge, sessionUpdateAge } from './constants';
+
+const invalidEmailRoute = '/demo-info';
 
 /* // UNUSED: Workaround for make sure that `auth.config.server` is used only on server.
  * // Use different imports for server and client
@@ -24,47 +32,73 @@ import authConfig from './auth.config.server';
  */
 
 export const nextAuthApp = NextAuth({
-  debug: false && isDev,
+  debug: isDev,
   adapter: PrismaAdapter(prisma),
-  session: { strategy: 'jwt' },
+  session: {
+    strategy: 'jwt',
+    maxAge: sessionMaxAge,
+    updateAge: sessionUpdateAge,
+  },
   pages: {
     // @see https://next-auth.js.org/configuration/pages
-    // signIn: '/login', // TODO: Add login page (see examples in `wordwizzz-saas` project)
-    // error: "/auth/error",
+    signIn: welcomeRoute, // <-- /api/auth/signin
+    error: authErrorRoute, // <-- /api/auth/error
+    // signOut: '/auth/signout',
   },
   callbacks: {
-    async signIn(_params) {
-      /* // Got params for 'telegram` here:
-       * {
-       *   "user": {
-       *     "id": "490398083",
-       *     "email": "490398083",
-       *     "name": "Ig ",
-       *     "image": "https://t.me/i/userpic/320/3meBKT_rsGqbt3HOAqNHdAIWEQYHGeW3m86yeYhZiUo.jpg"
-       *   },
-       *   "account": {
-       *     "providerAccountId": "490398083",
-       *     "type": "credentials",
-       *     "provider": "telegram-auth"
-       *   },
-       *   "credentials": {
-       *     "csrfToken": "ac76870b50b256c123f85ff1a5bf46dac39f9c2b74c1a57cfa9bc852d3740688",
-       *     "callbackUrl": "/data"
-       *   }
-       * }
-       */
-      /*
-       * const { user, account, profile, email, credentials } = _params;
-       * console.log('[auth:callbacks:signIn]', {
+    async signIn(params) {
+      const {
+        user,
+        account,
+        profile,
+        // email: verificationEmail, // { verificationRequest?: boolean }
+        credentials,
+      } = params;
+      const { provider, type, providerAccountId } = account || {};
+      const userEmail = user.email;
+      const profileEmail = profile?.email;
+      const email = userEmail || profileEmail;
+
+      const rejectReason: TUserRejectReason | undefined = USE_ALLOWED_USERS
+        ? await checkIsAllowedUser(params)
+        : undefined;
+
+      if (rejectReason) {
+        // eslint-disable-next-line no-console
+        console.warn('[auth:callbacks:signIn] Sing in rejected:', {
+          rejectReason,
+          email,
+          userEmail,
+          profileEmail,
+          provider,
+          type,
+          providerAccountId,
+          user,
+          account,
+          profile,
+          credentials,
+        });
+        // debugger; // eslint-disable-line no-debugger
+        if (provider === 'nodemailer' && type === 'email') {
+          throw rejectReason;
+        }
+        return `${invalidEmailRoute}?reason=${rejectReason}`;
+      }
+      /* console.log('[auth:callbacks:signIn] success', {
+       *   email,
+       *   profileEmail,
+       *   provider,
+       *   type,
+       *   providerAccountId,
        *   user,
        *   account,
        *   profile,
-       *   email,
        *   credentials,
        * });
        */
       return true;
     },
+
     async session(params) {
       const { token, session } = params;
       /* console.log('[auth:callbacks:session]', {
@@ -91,35 +125,21 @@ export const nextAuthApp = NextAuth({
       }
       return session;
     },
+
     async jwt(params) {
       const token = params.token as JWT;
-      // const { token } = params;
-      /* // Values for telegram login:
-       * {
-       *   "token": {
-       *     "name": "Ig ",
-       *     "email": "490398083",
-       *     "picture": "https://t.me/i/userpic/320/3meBKT_rsGqbt3HOAqNHdAIWEQYHGeW3m86yeYhZiUo.jpg",
-       *     "sub": "490398083"
-       *   },
-       *   "user": {
-       *     "id": "490398083",
-       *     "email": "490398083",
-       *     "name": "Ig ",
-       *     "image": "https://t.me/i/userpic/320/3meBKT_rsGqbt3HOAqNHdAIWEQYHGeW3m86yeYhZiUo.jpg"
-       *   },
-       *   "account": {
-       *     "providerAccountId": "490398083",
-       *     "type": "credentials",
-       *     "provider": "telegram-auth"
-       *   },
-       *   "isNewUser": false,
-       *   "trigger": "signIn"
-       * }
-       */
+      const { trigger } = params;
+      const isNewUser = trigger === 'signUp';
+
       if (!token.sub) {
         return token;
       }
+
+      // Set first user as admin if this is a new user
+      if (isNewUser && (SET_FIRST_USER_ADMIN || isDev)) {
+        await setFirstUserAsAdmin(token.sub);
+      }
+
       const dbUser = await getUserById(token.sub);
       if (!dbUser) {
         return token;

@@ -164,7 +164,7 @@ Generic recomendations:
 
 - Don't add duplicated imports.
 
-- Keep also in mind that you have to import types from '@shared', like `import { APIError } from '@/shared/types/api';`.
+- Keep also in mind that you have to import types from '@shared', like `import { APIError } from '@/lib/types/api';`.
 
 ---
 

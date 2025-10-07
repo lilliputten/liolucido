@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from 'next/navigation';
 
-import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage';
+import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage/DeleteTopicModal';
 import { topicsRoutes } from '@/contexts/TopicsContext';
 
 export default function DeleteTopicModalDefault() {

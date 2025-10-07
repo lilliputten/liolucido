@@ -1,14 +1,21 @@
+'use client';
+
+import React from 'react';
+
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
+
+import { DashboardActions, TActionMenuItem } from './DashboardActions';
 
 interface DashboardHeaderProps {
   heading: string;
   text?: string;
-  children?: React.ReactNode;
   className?: string;
+  actions?: TActionMenuItem[];
 }
 
-export function DashboardHeader({ className, heading, text, children }: DashboardHeaderProps) {
+export function DashboardHeader(props: DashboardHeaderProps) {
+  const { className, heading, text, actions } = props;
   return (
     <div
       className={cn(
@@ -17,11 +24,16 @@ export function DashboardHeader({ className, heading, text, children }: Dashboar
         className,
       )}
     >
-      <div className="flex flex-col gap-1">
-        <h1 className="font-heading text-2xl font-semibold">{heading}</h1>
-        {text && <p className="text-base text-muted-foreground">{text}</p>}
+      <div
+        className={cn(
+          isDev && '__DashboardHeader_Header', // DEBUG
+          'flex flex-col gap-1',
+        )}
+      >
+        <h1 className="font-heading text-2xl font-semibold text-theme">{heading}</h1>
+        {text && <p className="text-base opacity-50">{text}</p>}
       </div>
-      {children}
+      <DashboardActions actions={actions} />
     </div>
   );
 }

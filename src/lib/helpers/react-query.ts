@@ -1,7 +1,7 @@
 import { QueryKey } from '@tanstack/react-query';
 
-import { TGetResults, TGetResultsInfiniteQueryData } from '@/shared/types/generic/api';
-import { TAllUsedKeys, TQueryClient } from '@/shared/types/react-query';
+import { TGetResults, TGetResultsInfiniteQueryData } from '@/lib/types/api';
+import { TAllUsedKeys, TQueryClient } from '@/lib/types/react-query';
 
 /** Stringify react-query data key (unknown[] -> string) */
 export function stringifyQueryKey(qk: QueryKey) {

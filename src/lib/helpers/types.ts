@@ -9,6 +9,7 @@ export function ensureBoolean(value?: boolean | number | string | null) {
     return Boolean(value);
   }
   if (typeof value === 'string') {
+    value = value.trim();
     if (['0', 'false', 'no'].includes(value.toLowerCase())) {
       return false;
     }

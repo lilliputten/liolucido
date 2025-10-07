@@ -4,4 +4,3 @@ Split workout page to "view workout" (and its stats) and to "do workout"
 2025.08.27
 
 - Split workout page into two pieces: workout review and workout go.
-

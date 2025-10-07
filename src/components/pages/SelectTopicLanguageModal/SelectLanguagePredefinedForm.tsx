@@ -6,18 +6,18 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { TLanguageId } from '@/shared/types/language';
+import { TLanguageId } from '@/lib/types/language';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/Button';
+import { Label } from '@/components/ui/Label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Icons } from '@/components/shared/icons';
+} from '@/components/ui/Select';
+import * as Icons from '@/components/shared/Icons';
 import { predefinedLanguages } from '@/constants/languages';
 import { TTopicLanguageData } from '@/features/topics/types';
 
@@ -136,11 +136,11 @@ export const SelectLanguagePredefinedForm: React.FC<TProps> = (props) => {
           <div className="flex w-full gap-4">
             <Button
               type="submit"
-              variant={isSubmitEnabled ? 'default' : 'disable'}
+              variant={isSubmitEnabled ? 'default' : 'disabled'}
               disabled={!isSubmitEnabled}
               className="flex shrink-0 gap-2"
             >
-              <Icons.check className="size-4" />
+              <Icons.Check className="size-4" />
               <span>Select</span>
             </Button>
           </div>

@@ -214,13 +214,13 @@
     );
   }
 
-  .welcome-screen-gradient {
+  .decorative-gradient {
     // position: relative;
     overflow: hidden;
     background: radial-gradient(
       70% 60% at 40% 60%,
-      rgba(var(--theme-color-500-RGB) / 25%) 0%,
-      rgba(var(--theme-color-500-RGB) / 10%) 100%
+      rgba(var(--color-theme-500-RGB) / 25%) 0%,
+      rgba(var(--color-theme-500-RGB) / 10%) 100%
     );
     &:before {
       overflow: hidden;
@@ -233,17 +233,28 @@
       transform: rotate(-30deg);
       background: radial-gradient(
         50% 20% at 70% 50%,
-        rgba(var(--color-blue-400-RGB) / 20%) 0%,
-        rgba(var(--color-blue-300-RGB) / 2%) 100%
+        rgba(var(--color-purple-400-RGB) / 20%) 0%,
+        rgba(var(--color-purple-300-RGB) / 2%) 100%
       );
     }
+  }
+
+  .decorative-card {
+    // --tw-ring-shadow: inset 0 0 3em rgba(var(--color-theme-500-RGB) / 30%);
+    --tw-ring-shadow: inset 0 0 2em rgba(var(--backgroundColorRGB) / 50%);
+    // background: linear-gradient(300deg, rgba(var(--color-theme-500-RGB) / 30%), transparent 70%),
+    /*
+     * linear-gradient(217deg, rgba(255 0 0 / 10%), transparent 70%),
+     *   linear-gradient(127deg, rgba(var(--color-theme-500-RGB) / 10%), transparent 70%),
+     *   linear-gradient(90deg, rgba(0 0 255 / 10%), transparent 70%);
+     */
   }
 
   .text-gradient-brand {
     background: linear-gradient(
       15deg,
       rgba(var(--primaryColorRGB) / 80%) 0%,
-      rgb(var(--theme-color-500-RGB)) 100%
+      rgb(var(--color-theme-500-RGB)) 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -255,56 +266,60 @@
     opacity: 50%;
     cursor: default;
   }
-}
 
-.text-content {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  ul,
-  ol {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
-  }
-  h1,
-  h2,
-  h3 {
-    color: rgb(var(--theme-color-500-RGB));
-  }
-  h1 {
-    font-size: 2rem;
-  }
-  h2 {
-    font-size: 1.75rem;
-  }
-  h3 {
-    font-size: 1.5rem;
-  }
-  a {
-    color: rgb(var(--theme-color-500-RGB));
-    &:hover {
-      text-decoration: underline;
-      color: rgb(var(--theme-color-600-RGB));
+  .text-content {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    ul,
+    ol {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
+    }
+    h1,
+    h2,
+    h3 {
+      color: rgb(var(--color-theme-500-RGB));
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    h2 {
+      font-size: 1.75rem;
+    }
+    h3 {
+      font-size: 1.5rem;
+    }
+    a {
+      color: rgb(var(--color-theme-500-RGB));
+      &:hover {
+        text-decoration: underline;
+        color: rgb(var(--color-theme-600-RGB));
+      }
     }
   }
-}
 
-// See animation examples in the `tailwind.config.ts`
-// Animate sonner toast spinner
-.sonner-loading-wrapper {
-  animation: rotating-spin 4s linear infinite;
-}
-@keyframes rotating-spin {
-  100% {
-    transform: rotate(360deg);
+  // See animation examples in the `tailwind.config.ts`
+  // Animate sonner toast spinner
+  .sonner-loading-wrapper {
+    animation: rotating-spin 4s linear infinite;
   }
-}
+  @keyframes rotating-spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 
-// Define themes (from global variables `$themes` and `$defaultTheme`, see definitions in the `src/config/themeColors.ts`)
-@include defineAllThemes($themes, $defaultTheme);
-// Define all theme colors to use in scss
-@include defineAllColors($themes, $defaultTheme);
+  // .bg-background-50 {
+  //   background-color: rgba(var(--backgroundColorRGB) / 0.5);
+  // }
+
+  // Define themes (from global variables `$themes` and `$defaultTheme`, see definitions in the `src/config/themeColors.ts`)
+  @include defineAllThemes($themes, $defaultTheme);
+  // Define all theme colors to use in scss
+  @include defineAllColors($themes, $defaultTheme);
+}

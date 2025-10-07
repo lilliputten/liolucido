@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
 import { capitalizeString, truncateString } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import {
   Breadcrumbs,
   BreadcrumbsItem,

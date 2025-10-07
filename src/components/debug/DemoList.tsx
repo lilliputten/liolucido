@@ -1,4 +1,4 @@
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
 

@@ -6,13 +6,17 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
+import { EnvProvider } from '@/contexts/EnvContext';
+
 import '@/styles/globals.scss';
 import '@/styles/root.scss';
 
+import { BOT_USERNAME } from '@/config/envServer';
 import { defaultThemeColor } from '@/config/themeColors';
+import { constructMetadata } from '@/lib/constructMetadata';
 import { getCurrentUser } from '@/lib/session';
-import { cn, constructMetadata } from '@/lib/utils';
-import { Toaster } from '@/components/ui/sonner';
+import { cn } from '@/lib/utils';
+import { Toaster } from '@/components/ui/Toaster';
 import { GenericLayout } from '@/components/layout/GenericLayout';
 import ModalProvider from '@/components/modals/providers';
 import { ReactQueryClientProvider } from '@/components/providers/ReactQueryClientProvider';
@@ -104,7 +108,9 @@ async function RootLayout(props: TRootLayoutProps) {
       <body
         className={cn(
           'flex flex-col',
-          'bg-background font-default antialiased',
+          // 'bg-background',
+          'font-default antialiased',
+          'decorative-gradient',
           fontDefault.variable,
           fontHeading.variable,
           fontMono.variable,
@@ -113,53 +119,55 @@ async function RootLayout(props: TRootLayoutProps) {
       >
         <ReactQueryClientProvider>
           <SessionProvider>
-            <NextIntlClientProvider messages={messages}>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-                storageKey="app-theme"
-              >
-                <ModalProvider>
-                  {/* NOTE: The toaster should be located before the main content */}
-                  <Toaster
-                    // @see https://sonner.emilkowal.ski/toaster#api-reference
-                    expand
-                    richColors
-                    closeButton
-                    // theme="dark"
-                    // invert?: boolean;
-                    // theme?: 'light' | 'dark' | 'system';
-                    // position?: Position;
-                    // hotkey?: string[];
-                    // richColors?: boolean;
-                    // expand?: boolean;
-                    // duration?: number;
-                    // gap?: number;
-                    // visibleToasts?: number;
-                    // closeButton?: boolean;
-                    // toastOptions?: ToastOptions;
-                    // className?: string;
-                    // style?: React.CSSProperties;
-                    // offset?: Offset;
-                    // mobileOffset?: Offset;
-                    // dir?: 'rtl' | 'ltr' | 'auto';
-                    // swipeDirections?: SwipeDirection[];
-                    // icons?: ToastIcons;
-                    // containerAriaLabel?: string;
-                    // pauseWhenPageIsHidden?: boolean;
-                  />
-                  <SettingsContextProvider user={user}>
-                    <GenericLayout>
-                      {/* Core content */}
-                      {children}
-                    </GenericLayout>
-                  </SettingsContextProvider>
-                  <TailwindIndicator />
-                </ModalProvider>
-              </ThemeProvider>
-            </NextIntlClientProvider>
+            <EnvProvider BOT_USERNAME={BOT_USERNAME}>
+              <NextIntlClientProvider messages={messages}>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                  disableTransitionOnChange
+                  storageKey="app-theme"
+                >
+                  <ModalProvider>
+                    {/* NOTE: The toaster should be located before the main content */}
+                    <Toaster
+                      // @see https://sonner.emilkowal.ski/toaster#api-reference
+                      expand
+                      richColors
+                      closeButton
+                      // theme="dark"
+                      // invert?: boolean;
+                      // theme?: 'light' | 'dark' | 'system';
+                      // position?: Position;
+                      // hotkey?: string[];
+                      // richColors?: boolean;
+                      // expand?: boolean;
+                      // duration?: number;
+                      // gap?: number;
+                      // visibleToasts?: number;
+                      // closeButton?: boolean;
+                      // toastOptions?: ToastOptions;
+                      // className?: string;
+                      // style?: React.CSSProperties;
+                      // offset?: Offset;
+                      // mobileOffset?: Offset;
+                      // dir?: 'rtl' | 'ltr' | 'auto';
+                      // swipeDirections?: SwipeDirection[];
+                      // icons?: ToastIcons;
+                      // containerAriaLabel?: string;
+                      // pauseWhenPageIsHidden?: boolean;
+                    />
+                    <SettingsContextProvider user={user}>
+                      <GenericLayout>
+                        {/* Core content */}
+                        {children}
+                      </GenericLayout>
+                    </SettingsContextProvider>
+                    <TailwindIndicator />
+                  </ModalProvider>
+                </ThemeProvider>
+              </NextIntlClientProvider>
+            </EnvProvider>
           </SessionProvider>
         </ReactQueryClientProvider>
       </body>

@@ -5,26 +5,26 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DialogTitle } from '@radix-ui/react-dialog';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
-import { SidebarNavItem } from '@/shared/types/site/NavItem';
+import { SidebarNavItem } from '@/lib/types/site/NavItem';
 import { getRandomHashString } from '@/lib/helpers/strings';
+import { TPropsWithChildren } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { DialogDescription } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Sheet, SheetContent } from '@/components/ui/Sheet';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { ProjectSwitcher } from '@/components/dashboard/ProjectSwitcher';
 import { UpgradeCard } from '@/components/dashboard/UpgradeCard';
 import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
-import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
-import { NavModeToggle } from '@/components/layout/NavModeToggle';
-import { Icons } from '@/components/shared/icons';
+import { NavLocaleSwitcherBlock } from '@/components/layout/NavLocaleSwitcherBlock';
+import { NavModeToggleBlock } from '@/components/layout/NavModeToggleBlock';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useMediaQuery } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
 
-import { DialogDescription } from '../ui/dialog';
 import { NavBarBrand } from './NavBarBrand';
 
 interface DashboardSidebarProps {
@@ -111,7 +111,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="ml-auto size-9 opacity-50 hover:bg-theme hover:text-theme-foreground hover:opacity-100 lg:size-8"
+                      className="ml-auto', 'size-9', 'opacity-50', 'hover:bg-theme', 'hover:text-theme-foreground', 'hover:opacity-100', 'lg:size-8"
                       onClick={toggleSidebar}
                       // title="Expand panel"
                     >
@@ -151,7 +151,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     )}
                     {/* Show sections menu */}
                     {section.items.map((item) => {
-                      const Icon = Icons[item.icon || 'ArrowRight'];
+                      const Icon = item.icon || Icons.ArrowRight;
                       const isCurrentPath = comparePathsWithoutLocalePrefix(item.href, path);
                       return (
                         item.href && (
@@ -161,12 +161,16 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                 key={`link-${item.titleId}`}
                                 href={item.disabled ? '#' : item.href}
                                 className={cn(
-                                  'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme hover:text-theme-foreground',
-                                  isCurrentPath
-                                    ? 'bg-theme-500/10 hover:text-theme-foreground'
-                                    : 'text-muted-foreground',
-                                  item.disabled &&
-                                    'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
+                                  'flex',
+                                  'items-center',
+                                  'gap-3',
+                                  'rounded-md',
+                                  'p-2',
+                                  'text-sm',
+                                  'font-medium',
+                                  'hover:bg-theme/20',
+                                  isCurrentPath && 'bg-theme-500/10 hover:bg-theme/30',
+                                  item.disabled && 'pointer-events-none cursor-default opacity-30',
                                 )}
                               >
                                 <Icon className="size-5" />
@@ -184,12 +188,10 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                     key={`link-tooltip-${item.titleId}`}
                                     href={item.disabled ? '#' : item.href}
                                     className={cn(
-                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-theme',
-                                      isCurrentPath
-                                        ? 'bg-theme-500/10 hover:text-theme-foreground'
-                                        : 'text-muted-foreground hover:text-theme-foreground',
+                                      'flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-theme/20',
+                                      isCurrentPath && 'bg-theme-500/10 hover:bg-theme/30',
                                       item.disabled &&
-                                        'pointer-events-none cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground',
+                                        'pointer-events-none cursor-default opacity-30',
                                     )}
                                   >
                                     <span className="flex size-full items-center justify-center">
@@ -265,7 +267,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
         <section key={section.titleId} className="flex flex-col gap-0.5">
           <p className="mb-4 text-xs uppercase text-muted-foreground">{section.titleId}</p>
           {section.items.map((item) => {
-            const Icon = Icons[item.icon || 'ArrowRight'];
+            const Icon = item.icon || Icons.ArrowRight;
             if (!item.href) {
               return null;
             }
@@ -283,8 +285,7 @@ function MenuSections(props: DashboardSidebarProps & TMobileSheetProps) {
                   className={cn(
                     'flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-theme hover:text-theme-foreground',
                     isCurrentPath ? 'bg-theme-500/10' : 'text-muted-foreground',
-                    item.disabled &&
-                      'pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
+                    item.disabled && 'pointer-events-none cursor-default opacity-30',
                   )}
                 >
                   <Icon className="size-5" />
@@ -322,9 +323,14 @@ export function MobileSheetSidebar(props: DashboardSidebarProps & TMobileSheetPr
         <MenuSections {...props} />
 
         {/* TODO: Show menu if collapsed */}
-        <div className={cn(isDev && '__DashboardSidebar_ExtraMenu', 'flex gap-2')}>
-          <NavModeToggle onSidebar />
-          <NavLocaleSwitcher onSidebar />
+        <div
+          className={cn(
+            isDev && '__DashboardSidebar_ExtraMenu', // DEBUG
+            'flex flex-col gap-2',
+          )}
+        >
+          <NavModeToggleBlock onSidebar />
+          <NavLocaleSwitcherBlock onSidebar />
         </div>
 
         {/* User menu */}

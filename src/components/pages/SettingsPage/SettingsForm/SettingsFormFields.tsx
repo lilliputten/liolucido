@@ -4,7 +4,6 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { UseFormReturn } from 'react-hook-form';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
 import {
   defaultThemeColor,
   themeColorData,
@@ -17,25 +16,26 @@ import {
   systemThemeIds,
   TSystemThemeId,
 } from '@/config/themes';
+import { TPropsWithChildren } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/Button';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
+import { Label } from '@/components/ui/Label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
+} from '@/components/ui/Select';
+import { Switch } from '@/components/ui/Switch';
 import { FormHint } from '@/components/blocks/FormHint';
-import { Icons } from '@/components/shared/icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TSettings } from '@/features/settings/types';
 import { localesList } from '@/i18n/types';
 
-import { TFormData } from './types';
+import { TSettingsFormData } from './types';
 
 const extendedLocalesList = ['auto', ...localesList];
 
@@ -44,7 +44,7 @@ interface TSettingsFormFieldsProps {
   isSubmitEnabled?: boolean;
   isPending?: boolean;
   onCancel?: (ev: React.MouseEvent) => void;
-  form: UseFormReturn<TFormData>;
+  form: UseFormReturn<TSettingsFormData>;
   className?: string;
   selectLanguage: (ev: React.MouseEvent) => void;
 }
@@ -66,6 +66,11 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   const { className, form, selectLanguage } = props;
   // Create unique keys for labels
   const tNavLocaleSwitcher = useTranslations('NavLocaleSwitcher');
+
+  /* // DEBUG: Sample text fields, see src/features/settings/types/settings.ts
+   * const testInputKey = React.useId();
+   * const testTextareaKey = React.useId();
+   */
   const showOnlyMyTopicsKey = React.useId();
   const localeKey = React.useId();
   const themeColorKey = React.useId();
@@ -85,7 +90,13 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   };
 
   return (
-    <div className={cn('flex w-full flex-col gap-6 px-6 py-2 md:flex-row', className)}>
+    <div
+      className={cn(
+        isDev && '__SettingsFormFields', // DEBUG
+        'flex w-full flex-col gap-6 px-8 md:flex-row',
+        className,
+      )}
+    >
       <FormSection>
         {/* showOnlyMyTopics */}
         <FormField
@@ -106,6 +117,47 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
             </FormItem>
           )}
         />
+        {/* // DEBUG: Sample text fields, see src/features/settings/types/settings.ts
+        <FormField
+          name="testInput"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={testInputKey}>Test input</Label>
+              <FormControl>
+                <Input
+                  id={testInputKey}
+                  placeholder="Test input"
+                  {...field}
+                  // onChange={(ev) => field.onChange(Number(ev.target.value) || '')}
+                />
+              </FormControl>
+              <FormHint>Test input</FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="testTextarea"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={testTextareaKey}>Test textarea</Label>
+              <FormControl>
+                <Textarea
+                  id={testTextareaKey}
+                  placeholder="Test textarea"
+                  rows={5}
+                  {...field}
+                  // onChange={(ev) => field.onChange(ev)}
+                />
+              </FormControl>
+              <FormHint>Test textarea</FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        */}
       </FormSection>
       <FormSection>
         {/* theme */}
@@ -156,7 +208,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                     })}
                   </SelectContent>
                 </Select>
-                <FormHint>Select the application language.</FormHint>
+                <FormHint>Select the application theme.</FormHint>
                 <FormMessage />
               </FormItem>
             );
@@ -211,7 +263,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                     })}
                   </SelectContent>
                 </Select>
-                <FormHint>Select the application language.</FormHint>
+                <FormHint>Select the application key theme color.</FormHint>
                 <FormMessage />
               </FormItem>
             );
@@ -270,7 +322,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                 <Label htmlFor={langCodeKey}>Topics language</Label>
                 <Button
                   id={langCodeKey}
-                  variant="outline"
+                  variant="ghostForm"
                   onClick={selectLanguage}
                   className="flex w-full justify-stretch gap-4 text-left"
                 >
@@ -284,10 +336,10 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                   {langCode && <span className="opacity-50">{langCode}</span>}
                   {langCustom && (
                     <span className="opacity-50">
-                      <Icons.edit className="size-3" />
+                      <Icons.Edit className="size-3" />
                     </span>
                   )}
-                  {langCode && <Icons.close onClick={resetLang} className="size-4" />}
+                  {langCode && <Icons.Close onClick={resetLang} className="size-4" />}
                 </Button>
                 <FormHint>
                   Specify a language if you want to see the topics only for this specific language.

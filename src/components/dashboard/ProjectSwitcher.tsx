@@ -6,8 +6,8 @@ import { Check, ChevronsUpDown, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button, buttonVariants } from '@/components/ui/Button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
 
 type ProjectType = {
   title: string;

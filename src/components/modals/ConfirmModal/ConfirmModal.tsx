@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { TReactNode } from '@/shared/types/generic';
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Modal } from '@/components/ui/modal';
+import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
+import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
 import { useMediaQuery } from '@/hooks';
 
@@ -18,7 +18,7 @@ interface TConfirmModalProps
     | 'confirmButtonText'
     | 'confirmButtonBusyText'
     | 'cancelButtonText'
-    | 'confirmButtonIconName'
+    | 'confirmButtonIcon'
   > {
   children?: TReactNode;
   dialogDescription?: TReactNode;
@@ -41,7 +41,7 @@ export function ConfirmModal(props: TConfirmModalProps) {
     confirmButtonVariant,
     confirmButtonText,
     confirmButtonBusyText,
-    confirmButtonIconName,
+    confirmButtonIcon,
     cancelButtonText,
   } = props;
   const { isMobile } = useMediaQuery();
@@ -52,7 +52,8 @@ export function ConfirmModal(props: TConfirmModalProps) {
       hideModal={handleClose}
       className={cn(
         isDev && '__ConfirmModal', // DEBUG
-        'gap-0',
+        'pb-4 text-theme-foreground',
+        // '[&_button[data-id=close]]:text-theme-foreground', // Example: reaching & customizing the nested close button
         isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -60,7 +61,7 @@ export function ConfirmModal(props: TConfirmModalProps) {
         className={cn(
           isDev && '__ConfirmModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
-          'flex flex-col border-b bg-accent px-8 py-4',
+          'flex flex-col border-b bg-theme px-6 py-4 text-theme-foreground',
         )}
       >
         <DialogTitle className="DialogTitle">{dialogTitle}</DialogTitle>
@@ -68,21 +69,22 @@ export function ConfirmModal(props: TConfirmModalProps) {
           {dialogDescription}
         </DialogDescription>
       </div>
-      <div className="flex flex-col px-8 py-4">
-        <ConfirmForm
-          handleConfirm={handleConfirm}
-          className="p-8"
-          handleClose={handleClose}
-          isPending={isPending}
-          confirmButtonVariant={confirmButtonVariant}
-          confirmButtonText={confirmButtonText}
-          confirmButtonBusyText={confirmButtonBusyText}
-          confirmButtonIconName={confirmButtonIconName}
-          cancelButtonText={cancelButtonText}
-        >
-          {children}
-        </ConfirmForm>
-      </div>
+      <ConfirmForm
+        className={cn(
+          isDev && '__ConfirmModal_Form', // DEBUG
+          'flex flex-col px-6 py-4 text-foreground',
+        )}
+        handleConfirm={handleConfirm}
+        handleClose={handleClose}
+        isPending={isPending}
+        confirmButtonVariant={confirmButtonVariant}
+        confirmButtonText={confirmButtonText}
+        confirmButtonBusyText={confirmButtonBusyText}
+        confirmButtonIcon={confirmButtonIcon}
+        cancelButtonText={cancelButtonText}
+      >
+        {children}
+      </ConfirmForm>
     </Modal>
   );
 }

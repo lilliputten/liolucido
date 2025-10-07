@@ -7,11 +7,11 @@ import * as z from 'zod';
 
 import { getErrorText } from '@/lib/helpers/strings';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TNewTopic, TTopic } from '@/features/topics/types';
 
@@ -107,7 +107,7 @@ export function AddTopicForm(props: TAddTopicFormProps) {
 
   const nameKey = React.useId();
 
-  const Icon = isPending ? Icons.spinner : Icons.check;
+  const Icon = isPending ? Icons.Spinner : Icons.Check;
   const buttonText = isPending ? 'Adding' : 'Add';
 
   return (
@@ -147,14 +147,14 @@ export function AddTopicForm(props: TAddTopicFormProps) {
         <div className="flex w-full gap-4">
           <Button
             type="submit"
-            variant={isSubmitEnabled ? 'default' : 'disable'}
+            variant={isSubmitEnabled ? 'default' : 'disabled'}
             disabled={!isSubmitEnabled}
             className="gap-2"
           >
             <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
           </Button>
           <Button variant="ghost" onClick={onClose} className="gap-2">
-            <Icons.close className="size-4" />
+            <Icons.Close className="size-4" />
             <span>Cancel</span>
           </Button>
         </div>

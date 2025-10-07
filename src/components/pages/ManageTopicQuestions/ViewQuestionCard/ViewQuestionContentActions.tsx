@@ -4,8 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TQuestion } from '@/features/questions/types';
 import { useGoBack } from '@/hooks';
@@ -46,19 +46,19 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
       </Button>
       <Button variant="ghost" size="sm">
         <Link href={`${questionsListRoutePath}/${question.id}/edit`} className="flex gap-2">
-          <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Edit className="hidden size-4 opacity-50 sm:flex" />
           <span>Edit</span>
         </Link>
       </Button>
       <Button variant="ghost" size="sm">
         <Link href={`${questionsListRoutePath}/${question.id}/answers`} className="flex gap-2">
-          <Icons.answers className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Answers className="hidden size-4 opacity-50 sm:flex" />
           <span>Answers</span>
         </Link>
       </Button>
       <Button variant="ghost" size="sm">
         <Link href={`${questionsListRoutePath}/add`} className="flex gap-2">
-          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Question</span>
           </span>
@@ -69,7 +69,7 @@ export function ViewQuestionContentActions(props: TViewQuestionContentActionsPro
           href={`${questionsListRoutePath}/delete?questionId=${question.id}&from=ViewQuestionCard`}
           className="flex gap-2"
         >
-          <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Trash className="hidden size-4 opacity-50 sm:flex" />
           <span>Delete Question</span>
         </Link>
       </Button>

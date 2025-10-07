@@ -1,4 +1,4 @@
-import { MainNavItem } from '@/shared/types/site/NavItem';
+import { MainNavItem } from '@/lib/types/site/NavItem';
 
 import { availableTopicsRoute, myTopicsRoute, welcomeRoute } from './routesConfig';
 

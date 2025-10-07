@@ -1,3 +1,3 @@
-import { SettingsLoading } from '@/components/pages/SettingsPage';
+import { SettingsLoading } from './SettingsLoading';
 
 export default SettingsLoading;

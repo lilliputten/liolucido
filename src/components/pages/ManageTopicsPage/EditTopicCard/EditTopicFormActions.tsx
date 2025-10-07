@@ -4,8 +4,8 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import * as Icons from '@/components/shared/Icons';
 import { TTopic } from '@/features/topics/types';
 
 import { TFormData } from './types';
@@ -23,7 +23,7 @@ interface TProps {
 export function EditTopicFormActions(props: TProps) {
   const { isSubmitEnabled, isPending, onCancel, form, onSubmit, handleDeleteTopic } = props;
   const { isDirty } = form.formState;
-  const Icon = isPending ? Icons.spinner : Icons.check;
+  const Icon = isPending ? Icons.Spinner : Icons.Check;
   const buttonText = isPending ? 'Saving' : 'Save';
   const handleSubmit = form.handleSubmit(onSubmit);
   return (
@@ -42,18 +42,18 @@ export function EditTopicFormActions(props: TProps) {
           className="gap-2"
           disabled={!isDirty}
         >
-          <Icons.close className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Close className="hidden size-4 opacity-50 sm:flex" />
           <span>Reset changes</span>
         </Button>
       )}
       <Button variant="destructive" size="sm" onClick={handleDeleteTopic} className="gap-2">
-        <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+        <Icons.Trash className="hidden size-4 opacity-50 sm:flex" />
         <span>Delete Topic</span>
       </Button>
       <Button
         type="button"
         size="sm"
-        variant={isSubmitEnabled ? 'success' : 'disable'}
+        variant={isSubmitEnabled ? 'success' : 'disabled'}
         disabled={!isSubmitEnabled}
         className="gap-2"
         onClick={handleSubmit}

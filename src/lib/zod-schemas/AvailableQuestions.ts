@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { TGetResults } from '@/shared/types/generic/api';
+import { TGetResults } from '@/lib/types/api';
 import { QuestionIncludeParamsSchema } from '@/lib/zod-schemas';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { QuestionOrderByWithRelationInputSchema } from '@/generated/prisma';

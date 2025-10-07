@@ -1,7 +1,8 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/shared/icons';
+
+import { TGenericIcon } from './IconTypes';
 
 type EmptyPlaceholderProps = React.HTMLAttributes<HTMLDivElement> & {
   padded?: boolean;
@@ -30,17 +31,18 @@ export function EmptyPlaceholder({
   );
 }
 
-interface EmptyPlaceholderIconProps extends Partial<React.SVGProps<SVGSVGElement>> {
-  name: keyof typeof Icons;
+interface EmptyPlaceholderIconProps /*extends Partial<React.SVGProps<SVGSVGElement>>*/ {
+  icon: TGenericIcon;
+  className?: string;
   ref?: ((instance: SVGSVGElement | null) => void) | React.RefObject<SVGSVGElement> | null;
 }
 
 EmptyPlaceholder.Icon = function EmptyPlaceholderIcon({
-  name,
+  icon: Icon,
   className,
   ...props
 }: EmptyPlaceholderIconProps) {
-  const Icon = Icons[name];
+  // const Icon = Icons[Icon];
 
   if (!Icon) {
     return null;

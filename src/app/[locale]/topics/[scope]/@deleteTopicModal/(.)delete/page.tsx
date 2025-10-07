@@ -1,4 +1,4 @@
-import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage';
+import { DeleteTopicModal } from '@/components/pages/ManageTopicsPage/DeleteTopicModal';
 
 interface DeleteTopicModalPageProps {
   searchParams: Promise<{ topicId?: string; from?: string }>;

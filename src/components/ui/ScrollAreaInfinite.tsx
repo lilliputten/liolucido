@@ -2,7 +2,7 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Icons } from '@/components/shared/icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 interface TScrollAreaInfiniteProps extends React.ComponentProps<typeof ScrollArea> {
@@ -96,7 +96,7 @@ export function ScrollAreaInfinite(props: TScrollAreaInfiniteProps) {
               !isFetchingNextPage && 'opacity-0',
             )}
           >
-            <Icons.spinner className={cn('size-6', isFetchingNextPage && 'animate-spin')} />
+            <Icons.Spinner className={cn('size-6', isFetchingNextPage && 'animate-spin')} />
           </div>
         )}
       </div>

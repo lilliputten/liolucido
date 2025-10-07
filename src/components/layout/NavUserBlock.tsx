@@ -3,16 +3,16 @@
 import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
 import { settingsRoute } from '@/config/routesConfig';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { Icons } from '@/components/shared/icons';
-import { UserAvatar } from '@/components/shared/user-avatar';
+} from '@/components/ui/DropdownMenu';
+import * as Icons from '@/components/shared/Icons';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';
 
@@ -89,17 +89,17 @@ export function NavUserBlock(props: TNavUserBlockProps) {
         className={cn(
           isDev && '__NavUserBlock_UserName', // DEBUG
           'flex items-center justify-start gap-3',
-          !onSidebar && 'px-2',
+          !onSidebar && 'px-2 py-1',
         )}
       >
         {onSidebar && (
           <UserAvatar
-            user={{ name: user.name || null, image: user.image || null }}
+            user={user}
             className={cn(
               isDev && '__NavUserBlock_UserAvatar', // DEBUG
               className,
               'size-8 rounded-full bg-theme-300/25',
-              isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
+              // isAdmin && 'border-2 border-solid border-lime-400', // Indicate admin role
               onSidebar && 'flex',
             )}
           />
@@ -158,7 +158,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
                 // 'disabled', // UNUSED
               )}
             >
-              <Icons.settings className="size-4" />
+              <Icons.Settings className="size-4" />
               <p className="text-sm">{t('Settings')}</p>
             </Link>
           </MenuItem>

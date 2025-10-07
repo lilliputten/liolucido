@@ -5,11 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { TLanguage, TLanguageId } from '@/shared/types/language';
+import { TLanguage, TLanguageId } from '@/lib/types/language';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import * as Icons from '@/components/shared/Icons';
 import { TTopicLanguageData } from '@/features/topics/types';
 
 import { maxIdLength, maxNameLength, minIdLength, minNameLength } from './constants';
@@ -107,11 +107,11 @@ export const SelectLanguageCustomForm: React.FC<TProps> = (props) => {
           <div className="flex w-full gap-4">
             <Button
               type="submit"
-              variant={isSubmitEnabled ? 'default' : 'disable'}
+              variant={isSubmitEnabled ? 'default' : 'disabled'}
               disabled={!isSubmitEnabled}
               className="flex shrink-0 gap-2"
             >
-              <Icons.check className="size-4" />
+              <Icons.Check className="size-4" />
               <span>Select</span>
             </Button>
           </div>

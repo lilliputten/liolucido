@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { isDev } from '@/constants';
 import { TopicsBreadcrumbs } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic, TTopicId } from '@/features/topics/types';
@@ -96,7 +96,7 @@ export function EditTopicCard(props: TEditTopicCardProps) {
             {/* // Example
             <Button disabled variant="ghost" size="sm" className="flex gap-2">
               <Link href="#" className="flex items-center gap-2">
-                <Icons.refresh className="hidden size-4 sm:block" />
+                <Icons.Refresh className="hidden size-4 sm:block" />
                 <span>Refresh</span>
               </Link>
             </Button>

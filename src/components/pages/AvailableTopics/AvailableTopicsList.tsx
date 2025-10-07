@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
 import { getRandomHashString } from '@/lib/helpers/strings';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { isDev } from '@/constants';

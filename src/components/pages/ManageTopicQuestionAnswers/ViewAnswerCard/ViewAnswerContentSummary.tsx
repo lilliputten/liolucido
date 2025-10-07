@@ -8,12 +8,12 @@ import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Icons } from '@/components/shared/icons';
+import { Separator } from '@/components/ui/Separator';
+import { Skeleton } from '@/components/ui/Skeleton';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAnswer } from '@/features/answers/types';
 import { TTopicId } from '@/features/topics/types';
@@ -82,7 +82,7 @@ export function ViewAnswerContentSummary({
         {isOwner && (
           <Button variant="ghost" size="sm">
             <Link href={`${topicsListPath}/${topic.id}`} className="flex items-center gap-2">
-              <Icons.edit className="size-3" />
+              <Icons.Edit className="size-3" />
               <span>Manage Topic</span>
             </Link>
           </Button>
@@ -159,7 +159,7 @@ export function ViewAnswerContentSummary({
               href={`${questionsListRoutePath}/${question.id}`}
               className="flex items-center gap-2"
             >
-              <Icons.edit className="size-3" />
+              <Icons.Edit className="size-3" />
               <span>Manage Question</span>
             </Link>
           </Button>
@@ -192,7 +192,7 @@ export function ViewAnswerContentSummary({
         ) : (
           topic && (
             <>
-              <Icons.user className="h-4 w-4 opacity-50" />
+              <Icons.User className="h-4 w-4 opacity-50" />
               <span className="opacity-50">Topic created by:</span>
               <span>{topic.user?.name || topic.user?.email || 'Unknown'}</span>
             </>
@@ -213,7 +213,7 @@ export function ViewAnswerContentSummary({
         </div>
         {!!compareDates(answer.updatedAt, answer.createdAt) && (
           <div className="flex items-center gap-2">
-            <Icons.edit className="h-4 w-4 opacity-50" />
+            <Icons.Edit className="h-4 w-4 opacity-50" />
             <span className="opacity-50">Modified:</span>
             <span>{getFormattedRelativeDate(format, answer.updatedAt)}</span>
           </div>

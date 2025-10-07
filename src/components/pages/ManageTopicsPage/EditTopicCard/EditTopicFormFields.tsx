@@ -3,17 +3,17 @@
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { TPropsWithChildren } from '@/shared/types/generic';
+import { TPropsWithChildren } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/Button';
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Switch } from '@/components/ui/Switch';
+import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
-import { Icons } from '@/components/shared/icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TTopic } from '@/features/topics/types';
 
@@ -164,10 +164,10 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                   {langCode && <span className="opacity-50">{langCode}</span>}
                   {langCustom && (
                     <span className="opacity-50">
-                      <Icons.edit className="size-3" />
+                      <Icons.Edit className="size-3" />
                     </span>
                   )}
-                  {langCode && <Icons.close onClick={resetLang} className="size-4" />}
+                  {langCode && <Icons.Close onClick={resetLang} className="size-4" />}
                 </Button>
                 <FormHint>An optional predefined or custom language for the topic.</FormHint>
                 <FormMessage />

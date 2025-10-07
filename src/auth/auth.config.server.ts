@@ -1,35 +1,51 @@
 import type { NextAuthConfig } from 'next-auth';
 import Github from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
+import EmailProvider from 'next-auth/providers/nodemailer';
 import Yandex from 'next-auth/providers/yandex';
 
-import { envServer } from '@/env/envServer';
+import {
+  EMAIL_FROM,
+  EMAIL_HOST,
+  EMAIL_HOST_PASSWORD,
+  EMAIL_HOST_USER,
+  EMAIL_PORT,
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  YANDEX_CLIENT_ID,
+  YANDEX_CLIENT_SECRET,
+} from '@/config/envServer';
 
-// import Resend from 'next-auth/providers/resend';
-// import { sendVerificationRequest } from '@/lib/email';
-
-// import { telegramProvider } from './telegram-provider';
+import TelegramProvider from './telegram/telegram-provider';
 
 export default {
   providers: [
     Github({
-      clientId: envServer.GITHUB_CLIENT_ID,
-      clientSecret: envServer.GITHUB_CLIENT_SECRET,
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
     }),
     Yandex({
-      clientId: envServer.YANDEX_CLIENT_ID,
-      clientSecret: envServer.YANDEX_CLIENT_SECRET,
+      clientId: YANDEX_CLIENT_ID,
+      clientSecret: YANDEX_CLIENT_SECRET,
     }),
     Google({
-      clientId: envServer.GOOGLE_CLIENT_ID,
-      clientSecret: envServer.GOOGLE_CLIENT_SECRET,
+      clientId: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
     }),
-    /* Resend({
-     *   apiKey: env.RESEND_API_KEY,
-     *   from: env.EMAIL_FROM,
-     *   sendVerificationRequest,
-     * }),
-     */
-    // telegramProvider, // NOTE: Temporarily don't use it, as it's buggy
+    EmailProvider({
+      server: {
+        host: EMAIL_HOST,
+        port: EMAIL_PORT,
+        auth: { user: EMAIL_HOST_USER, pass: EMAIL_HOST_PASSWORD },
+      },
+      from: EMAIL_FROM,
+      // Optionally set maxAge for magic link expiration (in seconds)
+      // maxAge: 24 * 60 * 60, // 24 hours
+      // sendVerificationRequest // https://next-auth.js.org/providers/email#customizing-emails
+      // normalizeIdentifier // https://next-auth.js.org/providers/email#normalizing-the-email-address
+    }),
+    TelegramProvider(),
   ],
 } satisfies NextAuthConfig;

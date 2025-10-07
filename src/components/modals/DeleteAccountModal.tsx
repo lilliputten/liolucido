@@ -2,13 +2,13 @@ import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
+import { APIError } from '@/lib/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Modal } from '@/components/ui/modal';
-import { UserAvatar } from '@/components/shared/user-avatar';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Modal } from '@/components/ui/Modal';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 
 function DeleteAccountModal({
   showDeleteAccountModal,
@@ -18,6 +18,7 @@ function DeleteAccountModal({
   setShowDeleteAccountModal: Dispatch<SetStateAction<boolean>>;
 }) {
   const { data: session } = useSession();
+  const user = session?.user;
   const [deleting, setDeleting] = useState(false);
   const invalidateKeys = useInvalidateReactQueryKeys();
 
@@ -75,12 +76,7 @@ function DeleteAccountModal({
       className="gap-0"
     >
       <div className="flex flex-col items-center justify-center space-y-3 border-b p-4 pt-8 sm:px-16">
-        <UserAvatar
-          user={{
-            name: session?.user?.name || null,
-            image: session?.user?.image || null,
-          }}
-        />
+        <UserAvatar user={user} />
         <h3 className="text-lg font-semibold">Delete Account</h3>
         <p className="text-center text-sm text-muted-foreground">
           <b>Warning:</b> This will permanently delete your account and your active subscription!
@@ -118,7 +114,7 @@ function DeleteAccountModal({
           />
         </div>
 
-        <Button variant={deleting ? 'disable' : 'destructive'} disabled={deleting}>
+        <Button variant={deleting ? 'disabled' : 'destructive'} disabled={deleting}>
           Confirm delete account
         </Button>
       </form>

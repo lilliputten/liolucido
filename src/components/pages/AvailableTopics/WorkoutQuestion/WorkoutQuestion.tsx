@@ -2,11 +2,11 @@ import React from 'react';
 
 import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Icons } from '@/components/shared/icons';
+import { Progress } from '@/components/ui/Progress';
+import { Skeleton } from '@/components/ui/Skeleton';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 interface Answer {

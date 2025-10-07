@@ -3,8 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import * as Icons from '@/components/shared/Icons';
 import { TAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
@@ -38,13 +38,13 @@ export function ViewAnswerContentActions(props: TViewAnswerContentActionsProps) 
       </Button>
       <Button variant="ghost" size="sm">
         <Link href={`${answersListRoutePath}/${answer.id}/edit`} className="flex gap-2">
-          <Icons.edit className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Edit className="hidden size-4 opacity-50 sm:flex" />
           <span>Edit</span>
         </Link>
       </Button>
       <Button variant="ghost" size="sm">
         <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
-          <Icons.add className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Add <span className="hidden sm:inline-flex">New Answer</span>
           </span>
@@ -55,7 +55,7 @@ export function ViewAnswerContentActions(props: TViewAnswerContentActionsProps) 
           href={`${answersListRoutePath}/delete?answerId=${answer.id}&from=ViewAnswerContentActions`}
           className="flex gap-2"
         >
-          <Icons.trash className="hidden size-4 opacity-50 sm:flex" />
+          <Icons.Trash className="hidden size-4 opacity-50 sm:flex" />
           <span>
             Delete <span className="hidden sm:inline-flex">Answer</span>
           </span>

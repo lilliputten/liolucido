@@ -1,14 +1,17 @@
 'use client';
 
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
+import { useTheme } from 'next-themes';
 
-import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
+import { siteTitle } from '@/config/env';
 import { infoRoute, welcomeRoute } from '@/config/routesConfig';
-import { siteConfig } from '@/config/site';
 import { getAllRouteSynonyms } from '@/lib/routes';
+import { TPropsWithChildrenAndClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/shared/Logo';
+import logoSvg from '@/assets/logo/logo-full-line-w.svg';
+import logoWhiteSvg from '@/assets/logo/logo-full-line-w.svg';
 import { isDev } from '@/constants';
 import { Link } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
@@ -47,9 +50,17 @@ function BrandWrapper(props: TPropsWithChildrenAndClassName & NavBarBrandProps) 
 }
 
 export function NavBarBrand(props: NavBarBrandProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   return (
     <BrandWrapper {...props} className="h-12">
-      <Logo className="size-16" />
+      <Image
+        src={isDark ? logoWhiteSvg : logoSvg}
+        className="h-14 w-auto"
+        priority={false}
+        alt={siteTitle}
+      />
+      {/*
       <h1
         role="heading"
         data-testid="NavBarBrandTitle"
@@ -63,8 +74,9 @@ export function NavBarBrand(props: NavBarBrandProps) {
           'text-ellipsis',
         )}
       >
-        {siteConfig.name}
+        {siteTitle}
       </h1>
+      */}
     </BrandWrapper>
   );
 }

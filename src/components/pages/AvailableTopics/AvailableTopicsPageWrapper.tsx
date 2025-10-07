@@ -1,4 +1,4 @@
-import { TPropsWithChildrenAndClassName } from '@/shared/types/generic';
+import { TPropsWithChildrenAndClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { isDev } from '@/constants';

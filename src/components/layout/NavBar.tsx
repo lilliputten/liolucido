@@ -10,11 +10,10 @@ import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
 import { NavBarBrand } from '@/components/layout/NavBarBrand';
 import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
-
-import { Icons } from '../shared/icons';
 
 interface NavBarProps {
   large?: boolean;
@@ -38,7 +37,7 @@ export function NavBar(props: NavBarProps) {
         'z-40',
         'flex',
         'w-full',
-        'bg-theme',
+        'bg-theme-400/70 backdrop-blur',
         commonXPaddingTwStyle,
         'justify-stretch',
         'transition-all',
@@ -104,24 +103,6 @@ export function NavBar(props: NavBarProps) {
           )}
         >
           {/* Right header for extra stuff */}
-          {/* TODO: Put github link to the footer
-          <Link
-            href={siteConfig.links.github}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(
-              'inline-flex',
-              'items-center',
-              'justify-center',
-              'size-8 rounded-sm px-0',
-              'text-theme-foreground hover:bg-theme-400/50',
-            )}
-          >
-            <Icons.github className="size-6" />
-            <span className="sr-only">GitHub</span>
-          </Link>
-          <NavTgSignInButton />
-          */}
           <NavModeToggle onPrimary />
           <NavLocaleSwitcher onPrimary />
           <NavUserAuthButton isUser={isUser} onPrimary />

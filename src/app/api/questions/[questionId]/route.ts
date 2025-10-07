@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z, ZodError } from 'zod';
 
-import { TApiResponse } from '@/shared/types/api';
+import { TApiResponse } from '@/lib/types/api';
 import { makeNullableFieldsOptional } from '@/lib/helpers/zod';
 import { QuestionIncludeParamsSchema } from '@/lib/zod-schemas';
 import { updateQuestion } from '@/features/questions/actions';

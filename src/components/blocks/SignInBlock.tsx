@@ -1,10 +1,14 @@
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { useTheme } from 'next-themes';
+
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SignInForm, SignInFormHeader } from '@/components/forms/SignInForm';
 import { isDev } from '@/constants';
 
 export function SignInBlock(props: TPropsWithClassName) {
   const { className } = props;
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   return (
     <div
       className={cn(
@@ -32,7 +36,7 @@ export function SignInBlock(props: TPropsWithClassName) {
           'md:px-16',
         )}
       >
-        <SignInFormHeader dark />
+        <SignInFormHeader dark={isDark} inBody />
       </div>
       <div
         className={cn(

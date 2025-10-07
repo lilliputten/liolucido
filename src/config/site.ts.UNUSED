@@ -1,0 +1,29 @@
+import appInfoModule from '@/app-info.json';
+
+import { publicAppUrl, siteDescription, siteTitle } from './env';
+
+export type SiteConfig = {
+  name: string;
+  description: string;
+  versionInfo: string;
+  url: string;
+  ogImage: string;
+  // mailSupport: string;
+  // links: {
+  //   website: string;
+  //   github: string;
+  // };
+};
+
+export const siteConfig: SiteConfig = {
+  name: siteTitle,
+  description: siteDescription,
+  versionInfo: appInfoModule.versionInfo,
+  url: publicAppUrl,
+  ogImage: `/static/opengraph-image.jpg`,
+  // links: {
+  //   website: siteUrl, // 'https://team-tree-app.vercel.app/',
+  //   github: 'https://github.com/lilliputten/team-tree-app',
+  // },
+  // mailSupport: 'support@example.com',
+};

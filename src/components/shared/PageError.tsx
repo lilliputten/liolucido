@@ -3,14 +3,15 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { ErrorLike } from '@/shared/types/errors';
-import { TReactNode } from '@/shared/types/generic';
 import { rootRoute } from '@/config/routesConfig';
+import { ErrorLike } from '@/lib/errors';
 import { getErrorText } from '@/lib/helpers/strings';
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { ErrorPlaceHolder } from '@/components/shared/ErrorPlaceHolder';
-import { Icons, TIconsKey } from '@/components/shared/icons';
+import * as Icons from '@/components/shared/Icons';
+import { TGenericIcon } from '@/components/shared/IconTypes';
 import { isDev } from '@/constants';
 import { useGoBack } from '@/hooks';
 
@@ -21,7 +22,7 @@ interface TErrorProps {
   error?: ErrorLike; // Error & { message?: string };
   reset?: () => void;
   className?: string;
-  iconName?: TIconsKey;
+  icon?: TGenericIcon;
   padded?: boolean;
   border?: boolean;
 }
@@ -35,7 +36,7 @@ export function PageError(props: TErrorProps) {
     reset,
     className,
     title,
-    iconName = 'warning',
+    icon = Icons.Warning,
     extraActions,
     ExtraActions,
     padded = true,
@@ -81,7 +82,7 @@ export function PageError(props: TErrorProps) {
         className,
       )}
     >
-      <ErrorPlaceHolder.Icon name={iconName} />
+      <ErrorPlaceHolder.Icon icon={icon} />
       <ErrorPlaceHolder.Title>{title || errText}</ErrorPlaceHolder.Title>
       {title && errText && (
         <ErrorPlaceHolder.Description>
@@ -97,18 +98,18 @@ export function PageError(props: TErrorProps) {
           <span>Go back</span>
         </Button>
         <Button onClick={goHome} className="flex gap-2">
-          <Icons.home className="size-4" />
+          <Icons.Home className="size-4" />
           Go home
         </Button>
         {/*
         <Link href={rootRoute} className={cn(buttonVariants({ variant: 'default' }), 'flex gap-2')}>
-          <Icons.home className="size-4" />
+          <Icons.Home className="size-4" />
           <span>Go home</span>
         </Link>
         */}
         {!!reset && (
           <Button onClick={reset} className="flex gap-2">
-            <Icons.refresh className="size-4" />
+            <Icons.Refresh className="size-4" />
             <span>Try again</span>
           </Button>
         )}

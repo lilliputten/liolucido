@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
-import { cn, constructMetadata } from '@/lib/utils';
+import { constructMetadata } from '@/lib/constructMetadata';
+import { cn } from '@/lib/utils';
 import { AvailableTopicsPageWrapper, ViewAvailableTopic } from '@/components/pages/AvailableTopics';
 import { PageHeader } from '@/components/pages/shared';
 import { PageError } from '@/components/shared/PageError';

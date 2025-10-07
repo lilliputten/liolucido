@@ -3,8 +3,8 @@
 import React from 'react';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/Button';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 
 export interface TDeleteTopicFormProps {
@@ -25,7 +25,7 @@ export function DeleteTopicForm(props: TDeleteTopicFormProps) {
     ev.preventDefault();
   };
 
-  const Icon = isPending ? Icons.spinner : Icons.trash;
+  const Icon = isPending ? Icons.Spinner : Icons.Trash;
   const buttonText = isPending ? 'Deleting' : 'Delete';
 
   return (
@@ -44,7 +44,7 @@ export function DeleteTopicForm(props: TDeleteTopicFormProps) {
           <Icon className={cn('size-4', isPending && 'animate-spin')} /> <span>{buttonText}</span>
         </Button>
         <Button variant="ghost" onClick={onClose} className="gap-2">
-          <Icons.close className="size-4" />
+          <Icons.Close className="size-4" />
           <span>Cancel</span>
         </Button>
       </div>

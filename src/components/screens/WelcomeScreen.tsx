@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { TPropsWithClassName } from '@/shared/types/generic';
+import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SignInBlock } from '@/components/blocks/SignInBlock';
 import { WelcomeVisualBlock } from '@/components/blocks/WelcomeVisualBlock';
@@ -30,7 +30,7 @@ export function WelcomeScreen(props: TPropsWithClassName & { isLoggedUser: boole
           className={cn(
             isDev && '__WelcomeScreen_Gradient', // DEBUG
             'absolute bottom-0 left-0 right-0 top-0 lg:overflow-hidden',
-            'welcome-screen-gradient',
+            'decorative-gradient',
           )}
         />
         <WelcomeVisualBlock className="z-10" />

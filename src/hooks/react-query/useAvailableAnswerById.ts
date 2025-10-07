@@ -2,8 +2,8 @@ import React from 'react';
 import { QueryKey, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { APIError } from '@/shared/types/api';
-import { TAvailableAnswersResultsQueryData } from '@/shared/types/react-query';
+import { APIError } from '@/lib/types/api';
+import { TAvailableAnswersResultsQueryData } from '@/lib/types/react-query';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableAnswerByIdParams } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
@@ -43,18 +43,6 @@ export function useAvailableAnswerById(props: TUseAvailableAnswerByIdProps) {
     .find((answer) => answer.id === answerId);
 
   const isCached = !!cachedAnswer;
-
-  /* console.log('[useAvailableAnswerById:DEBUG]', {
-   *   availableAnswersQueryKey,
-   *   answerId,
-   *   queryProps,
-   *   queryHash,
-   *   queryKey,
-   *   availableAnswersData,
-   *   cachedAnswer,
-   *   isCached,
-   * });
-   */
 
   // Only fetch if the answer is not cached
   const query = useQuery<TAvailableAnswer>({

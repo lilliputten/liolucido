@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { TApiResponse } from '@/shared/types/api';
+import { TApiResponse } from '@/lib/types/api';
 import { createWorkout } from '@/features/workouts/actions/createWorkout';
 
 /** POST /api/workouts - Create new workout */

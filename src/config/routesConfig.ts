@@ -1,3 +1,4 @@
+export const authErrorRoute = '/auth/error';
 export const adminRoute = '/admin';
 export const chartsRoute = '/charts';
 export const dashboardRoute = '/dashboard';
@@ -6,6 +7,7 @@ export const availableTopicsRoute = '/topics/available'; // Example
 export const allTopicsRoute = '/topics/all';
 export const myTopicsRoute = '/topics/my';
 export const rootRoute = '/';
+export const startRoute = '/start';
 export const settingsRoute = '/settings';
 export const welcomeRoute = '/welcome';
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { TApiResponse } from '@/shared/types/api';
+import { TApiResponse } from '@/lib/types/api';
 import { getCurrentUser } from '@/lib/session';
 import { updateSettings } from '@/features/settings/actions/updateSettings';
 import { settingsSchema, TSettings } from '@/features/settings/types';
