@@ -1,4 +1,4 @@
-https://github.com/lilliputten/trainwizzz/issues/6
+https://github.com/lilliputten/liolucido/issues/6
 Issue #6: Add ability to edit all topics for admins.
 Branch: 6-edit-all-topics
 

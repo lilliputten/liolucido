@@ -197,7 +197,7 @@
     "test-update-snapshots": "echo --Run tests and update snapshots-- && jest --updateSnapshot",
     "test-watch": "echo --Run tests in a watch mode-- && jest --watch",
     "test:ci": "echo --Run tests in a CI mode-- && jest --ci",
-    "vercel-clean": "vercel remove --safe --yes trainwizzz",
+    "vercel-clean": "vercel remove --safe --yes liolucido",
     "scripts-help": "echo --List all available script commands-- && npm-package-user-scripts-list"
   }
 }
