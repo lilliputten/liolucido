@@ -148,7 +148,7 @@ export function SettingsPage(props: TSettingsPageProps) {
         text={t('description')}
         className={cn(
           isDev && '__SettingsPage_DashboardHeader', // DEBUG
-          'mx-4',
+          'mx-6',
         )}
         actions={actions}
       />
@@ -156,7 +156,7 @@ export function SettingsPage(props: TSettingsPageProps) {
         className={cn(
           isDev && '__SettingsPage_Card', // DEBUG
           'relative flex flex-1 flex-col overflow-hidden',
-          'mx-4',
+          'mx-6',
           className,
         )}
       >

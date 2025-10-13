@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { cn } from '@/lib/utils';
+import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
 
 import { DashboardActions, TActionMenuItem } from './DashboardActions';
@@ -12,28 +13,59 @@ interface DashboardHeaderProps {
   text?: string;
   className?: string;
   actions?: TActionMenuItem[];
+  breadcrumbs?: TBreadcrumbsItemProps[];
 }
 
 export function DashboardHeader(props: DashboardHeaderProps) {
-  const { className, heading, text, actions } = props;
+  const { className, heading, text, actions, breadcrumbs } = props;
+  /* const demoBreadcrumbs = [
+   *   {
+   *     link: '/',
+   *     content: 'Breadcrumb test',
+   *   },
+   *   {
+   *     link: '/aa',
+   *     content: 'Breadcrumb test',
+   *   },
+   *   {
+   *     link: '/bb',
+   *     content: 'Breadcrumb test',
+   *   },
+   * ];
+   */
   return (
     <div
       className={cn(
         isDev && '__DashboardHeader', // DEBUG
-        'flex items-center justify-between',
+        'flex items-center justify-between gap-2',
         className,
       )}
     >
       <div
         className={cn(
-          isDev && '__DashboardHeader_Header', // DEBUG
-          'flex flex-col gap-1',
+          isDev && '__DashboardHeader_Content', // DEBUG
+          'flex flex-1 flex-col gap-1 truncate',
         )}
       >
-        <h1 className="font-heading text-2xl font-semibold text-theme">{heading}</h1>
-        {text && <p className="text-base opacity-50">{text}</p>}
+        {breadcrumbs && (
+          <Breadcrumbs
+            className={cn(
+              isDev && '__DashboardHeader_Breadcrumbs', // DEBUG
+              'truncate',
+            )}
+            items={breadcrumbs}
+          />
+        )}
+        <h1 className="truncate font-heading text-2xl font-semibold text-theme" title={heading}>
+          {heading}
+        </h1>
+        {text && (
+          <p className="truncate text-base opacity-50" title={text}>
+            {text}
+          </p>
+        )}
       </div>
-      <DashboardActions actions={actions} />
+      {actions && <DashboardActions actions={actions} />}
     </div>
   );
 }

@@ -19,10 +19,10 @@ interface TEditTopicCardProps extends TPropsWithClassName {
 }
 
 export function EditTopicCard(props: TEditTopicCardProps) {
+  const { className, topicId } = props;
   const { manageScope } = useManageTopicsStore();
   const routePath = `/topics/${manageScope}`;
   const goBack = useGoBack(routePath);
-  const { className, topicId } = props;
   const toolbarPortalRef = React.useRef<HTMLDivElement>(null);
   const availableTopics = useAvailableTopicsByScope({ manageScope });
   const { allTopics, isFetched } = availableTopics;

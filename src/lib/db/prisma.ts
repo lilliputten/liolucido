@@ -1,19 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 
-declare global {
-  var cachedPrisma: PrismaClient;
-}
-
-export let prisma: PrismaClient;
+const globalForPrisma = globalThis as unknown as {
+  cachedPrisma: PrismaClient | undefined;
+};
 
 const isJest = process.env.JEST_WORKER_ID !== undefined;
 const isProduction = process.env.NODE_ENV !== 'development';
 
-if (isProduction || isJest) {
-  prisma = new PrismaClient();
-} else {
-  if (!global.cachedPrisma) {
-    global.cachedPrisma = new PrismaClient();
-  }
-  prisma = global.cachedPrisma;
+export const prisma = globalForPrisma.cachedPrisma ?? new PrismaClient();
+
+if (!isProduction && !isJest) {
+  globalForPrisma.cachedPrisma = prisma;
 }

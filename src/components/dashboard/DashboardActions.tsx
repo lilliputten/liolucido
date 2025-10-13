@@ -40,8 +40,8 @@ export function DashboardActions(props: DashboardActionsProps) {
   const visibleActions = React.useMemo(
     () =>
       actions
-        ?.map(({ visibleFor, onClick, ...actionProps }) => {
-          if (visibleFor && mediaWidths.includes(visibleFor)) {
+        ?.map(({ visibleFor, hidden, onClick, ...actionProps }) => {
+          if (!hidden && visibleFor && mediaWidths.includes(visibleFor)) {
             const { id } = actionProps;
             return <ActionButton key={id} onClick={() => closeAndRun(onClick)} {...actionProps} />;
           }

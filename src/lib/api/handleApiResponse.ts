@@ -52,7 +52,7 @@ export async function handleApiResponse<T>(
           debugDetails,
         });
       }
-      // debugger; // eslint-disable-line no-debugger
+      debugger; // eslint-disable-line no-debugger
       if (onError) {
         onError(systemError);
         return { data: null, ok: false, error: systemError };

@@ -216,7 +216,7 @@ export function SettingsContextProvider({ children, user }: SettingsContextProvi
     toast.promise(promise, {
       loading: 'Loading settings...',
       success: 'Successfully loaded settings.',
-      error: 'Can not load the settings data.',
+      error: 'Can not load settings data.',
     });
     memo.loadingPromise = promise;
     promise

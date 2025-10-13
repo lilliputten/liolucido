@@ -12,6 +12,7 @@ export interface TActionItem extends Omit<ButtonProps, 'content'> {
   id: string;
   content?: TReactNode;
   pending?: boolean;
+  hidden?: boolean;
   onClick?: () => void;
   icon?: TGenericIcon;
   iconProps?: IconProps;

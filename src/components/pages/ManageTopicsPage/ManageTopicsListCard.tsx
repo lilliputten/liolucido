@@ -84,29 +84,29 @@ function TopicTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
   return (
     <TableHeader>
       <TableRow>
-        <TableHead id="no" className="truncate text-right max-sm:hidden">
+        <TableHead id="no" className="truncate text-right max-md:hidden">
           No
         </TableHead>
         {isAdminMode && isDev && (
-          <TableHead id="topicId" className="truncate max-sm:hidden">
+          <TableHead id="topicId" className="truncate max-md:hidden">
             ID
           </TableHead>
         )}
         <TableHead id="name" className="truncate">
           Topic Name
         </TableHead>
-        <TableHead id="questions" className="truncate max-sm:hidden">
+        <TableHead id="questions" className="truncate max-md:hidden">
           Questions
         </TableHead>
         {isAdminMode && (
-          <TableHead id="topicUser" className="truncate max-sm:hidden">
+          <TableHead id="topicUser" className="truncate max-md:hidden">
             User
           </TableHead>
         )}
-        <TableHead id="language" className="truncate max-sm:hidden">
+        <TableHead id="language" className="truncate max-md:hidden">
           Language
         </TableHead>
-        <TableHead id="keywords" className="truncate max-sm:hidden">
+        <TableHead id="keywords" className="truncate max-md:hidden">
           Keywords
         </TableHead>
       </TableRow>
@@ -141,11 +141,11 @@ function TopicTableRow(props: TTopicTableRowProps) {
   const routePath = `/topics/${manageScope}`;
   return (
     <TableRow className="truncate" data-topic-id={id}>
-      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
+      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-md:hidden">
         <div className="truncate">{idx + 1}</div>
       </TableCell>
       {isAdminMode && isDev && (
-        <TableCell id="topicId" className="max-w-[8em] truncate max-sm:hidden">
+        <TableCell id="topicId" className="max-w-[8em] truncate max-md:hidden">
           <div className="truncate">
             <span className="mr-[2px] opacity-30">#</span>
             {id}
@@ -157,7 +157,7 @@ function TopicTableRow(props: TTopicTableRowProps) {
           {truncateString(name, 40)}
         </Link>
       </TableCell>
-      <TableCell id="questions" className="max-w-[8em] truncate max-sm:hidden">
+      <TableCell id="questions" className="max-w-[8em] truncate max-md:hidden">
         <div className="truncate">
           {questionsCount ? (
             <span className="font-bold">{questionsCount}</span>
@@ -167,18 +167,18 @@ function TopicTableRow(props: TTopicTableRowProps) {
         </div>
       </TableCell>
       {isAdminMode && (
-        <TableCell id="topicUser" className="max-w-[8em] truncate max-sm:hidden">
+        <TableCell id="topicUser" className="max-w-[8em] truncate max-md:hidden">
           <div className="truncate" title={topicUser?.name || undefined}>
             {topicUser?.name || <Skeleton className="h-[2em] w-[8em] rounded-sm" />}
           </div>
         </TableCell>
       )}
-      <TableCell id="language" className="max-w-[8em] truncate max-sm:hidden">
+      <TableCell id="language" className="max-w-[8em] truncate max-md:hidden">
         <div className="truncate">
           {[langName, langCode && `(${langCode})`].filter(Boolean).join(' ')}
         </div>
       </TableCell>
-      <TableCell id="keywords" className="max-w-[8em] truncate max-sm:hidden">
+      <TableCell id="keywords" className="max-w-[8em] truncate max-md:hidden">
         <div className="truncate">{keywords}</div>
       </TableCell>
       <TableCell className="text-right">

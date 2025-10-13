@@ -42,10 +42,10 @@ function RenderBreadcrumbsItem({
     return null;
   }
   if (!link) {
-    return <span className="opacity-50">{content}</span>;
+    return <span className="truncate opacity-50">{content}</span>;
   }
   return (
-    <Link href={link} className="hover:underline">
+    <Link href={link} className="truncate hover:underline">
       {content}
     </Link>
   );
@@ -77,7 +77,7 @@ export function Breadcrumbs(props: TBreadcrumbsProps) {
     <div
       className={cn(
         isDev && '__Breadcrumbs', // DEBUG
-        'flex flex-wrap gap-1 gap-x-3 overflow-hidden',
+        'flex gap-1 gap-x-3 overflow-hidden',
         'text-sm',
         className,
       )}
