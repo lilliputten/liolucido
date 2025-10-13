@@ -57,14 +57,18 @@ export function ActionButton(props: TActionItem) {
   const className = cn('flex gap-2', buttonClassName);
   if (href) {
     return (
-      <Link href={href} className={cn(buttonVariants({ variant, ...restButtonProps }), className)}>
+      <Link
+        id={id}
+        href={href}
+        className={cn(buttonVariants({ variant, ...restButtonProps }), className)}
+      >
         {buttonContent}
       </Link>
     );
   }
   return (
     <Button
-      key={id}
+      id={id}
       className={className}
       onClick={onClick}
       disabled={isDisabled}

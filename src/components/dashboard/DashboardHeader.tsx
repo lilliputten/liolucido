@@ -18,21 +18,6 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader(props: DashboardHeaderProps) {
   const { className, heading, text, actions, breadcrumbs } = props;
-  /* const demoBreadcrumbs = [
-   *   {
-   *     link: '/',
-   *     content: 'Breadcrumb test',
-   *   },
-   *   {
-   *     link: '/aa',
-   *     content: 'Breadcrumb test',
-   *   },
-   *   {
-   *     link: '/bb',
-   *     content: 'Breadcrumb test',
-   *   },
-   * ];
-   */
   return (
     <div
       className={cn(

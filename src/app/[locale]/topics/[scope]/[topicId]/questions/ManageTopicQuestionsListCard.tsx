@@ -3,11 +3,10 @@ import Link from 'next/link';
 
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
-import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { Skeleton } from '@/components/ui/Skeleton';
 import {
@@ -18,86 +17,90 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/Table';
+import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { PageEmpty } from '@/components/pages/shared';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { QuestionsBreadcrumbs } from '@/features/questions/components/QuestionsBreadcrumbs';
+import { useQuestionsBreadcrumbsItems } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
+import { useAvailableTopicById, useGoBack, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
-
-import { PageEmpty } from '../shared/PageEmpty';
 
 const saveScrollHash = getRandomHashString();
 
-interface TManageTopicQuestionsListCardProps extends TPropsWithClassName {
+export interface TManageTopicQuestionsListCardProps {
   topicId: TTopicId;
   // questions: TQuestion[];
   handleDeleteQuestion: (questionId: TQuestionId) => void;
   handleEditQuestion: (questionId: TQuestionId) => void;
   handleAddQuestion: () => void;
   handleEditAnswers: (questionId: TQuestionId) => void;
+  availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
+  availableTopicQuery: ReturnType<typeof useAvailableTopicById>;
 }
 
-interface TToolbarActionsProps {
-  topicId: TTopicId;
-  handleAddQuestion: () => void;
-  handleDeleteTopic?: () => void;
-  goBack: () => void;
-}
-
-function Toolbar(
-  props: TToolbarActionsProps & {
-    availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
-  },
-) {
-  const {
-    availableQuestionsQuery,
-    // topicId,
-    handleAddQuestion,
-    goBack,
-  } = props;
-
-  const { refetch, isRefetching } = availableQuestionsQuery;
-
-  const handleReload = React.useCallback(() => {
-    refetch({ cancelRefetch: true });
-  }, [refetch]);
-
-  return (
-    <div
-      className={cn(
-        isDev && '__ManageTopicQuestionsListCard_Toolbar', // DEBUG
-        'flex flex-wrap gap-2',
-      )}
-    >
-      <Button variant="ghost" size="sm" className="flex gap-2" onClick={goBack}>
-        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
-        <span>Back</span>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className={cn(
-          'flex items-center gap-2 px-4',
-          isRefetching && 'pointer-events-none opacity-50',
-        )}
-        onClick={handleReload}
-      >
-        <Icons.Refresh
-          className={cn('hidden size-4 opacity-50 sm:flex', isRefetching && 'animate-spin')}
-        />
-        <span>Reload</span>
-      </Button>
-      <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
-        <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
-        <span>
-          Add <span className="hidden sm:inline-flex">New Question</span>
-        </span>
-      </Button>
-    </div>
-  );
-}
+/*
+ * interface TToolbarActionsProps {
+ *   topicId: TTopicId;
+ *   handleAddQuestion: () => void;
+ *   // handleDeleteTopic?: () => void;
+ *   goBack: () => void;
+ * }
+ * function Toolbar(
+ *   props: TToolbarActionsProps & {
+ *     availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
+ *   },
+ * ) {
+ *   const {
+ *     availableQuestionsQuery,
+ *     // topicId,
+ *     handleAddQuestion,
+ *     goBack,
+ *   } = props;
+ *
+ *   const { refetch, isRefetching } = availableQuestionsQuery;
+ *
+ *   const handleReload = React.useCallback(() => {
+ *     refetch({ cancelRefetch: true });
+ *   }, [refetch]);
+ *
+ *   return (
+ *     <div
+ *       className={cn(
+ *         isDev && '__ManageTopicQuestionsListCard_Toolbar', // DEBUG
+ *         'flex flex-wrap gap-2',
+ *       )}
+ *     >
+ *       <Button variant="ghost" size="sm" className="flex gap-2" onClick={goBack}>
+ *         <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
+ *         <span>Back</span>
+ *       </Button>
+ *       <Button
+ *         variant="ghost"
+ *         size="sm"
+ *         className={cn(
+ *           'flex items-center gap-2 px-4',
+ *           isRefetching && 'pointer-events-none opacity-50',
+ *         )}
+ *         onClick={handleReload}
+ *       >
+ *         <Icons.Refresh
+ *           className={cn('hidden size-4 opacity-50 sm:flex', isRefetching && 'animate-spin')}
+ *         />
+ *         <span>Reload</span>
+ *       </Button>
+ *       <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
+ *         <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
+ *         <span>
+ *           Add <span className="hidden sm:inline-flex">New Question</span>
+ *         </span>
+ *       </Button>
+ *     </div>
+ *   );
+ * }
+ */
 
 function QuestionTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
   return (
@@ -321,32 +324,102 @@ export function ManageTopicQuestionsListCardContent(
 
 export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCardProps) {
   const {
-    className,
     topicId,
     // handleDeleteQuestion,
     handleAddQuestion,
     // handleEditQuestion,
     // handleEditAnswers,
+    availableQuestionsQuery,
+    availableTopicQuery,
   } = props;
   const { manageScope } = useManageTopicsStore();
+
   const topicsListRoutePath = `/topics/${manageScope}`;
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
   const questionsListRoutePath = `${topicRoutePath}/questions`;
 
-  const availableQuestionsQuery = useAvailableQuestions({ topicId });
+  const { topic } = availableTopicQuery;
+  const { refetch, isRefetching } = availableQuestionsQuery;
 
-  const availableTopicQuery = useAvailableTopicById({ id: topicId });
-  const { data: topic } = availableTopicQuery;
-
-  const goToTheRoute = useGoToTheRoute();
+  // const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(topicsListRoutePath);
 
-  // Delete Topic Modal
-  const handleDeleteTopic = React.useCallback(() => {
-    const url = `${topicsListRoutePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`;
-    goToTheRoute(url);
-  }, [goToTheRoute, topicId, topicsListRoutePath]);
+  const handleReload = React.useCallback(() => {
+    refetch({ cancelRefetch: true });
+  }, [refetch]);
 
+  // // Delete Topic Modal
+  // const handleDeleteTopic = React.useCallback(() => {
+  //   const url = `${topicsListRoutePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`;
+  //   goToTheRoute(url);
+  // }, [goToTheRoute, topicId, topicsListRoutePath]);
+
+  const breadcrumbs = useQuestionsBreadcrumbsItems({
+    scope: manageScope,
+    isLoading: !topic,
+    topic: topic,
+    inactiveLast: true,
+  });
+
+  const actions: TActionMenuItem[] = React.useMemo(
+    () => [
+      {
+        id: 'Back',
+        content: 'Back',
+        variant: 'ghost',
+        icon: Icons.ArrowLeft,
+        visibleFor: 'sm',
+        onClick: goBack,
+      },
+      {
+        id: 'Reload',
+        content: 'Reload',
+        variant: 'ghost',
+        icon: Icons.Refresh,
+        visibleFor: 'md',
+        pending: isRefetching,
+        onClick: handleReload,
+      },
+      {
+        id: 'Add New Question',
+        content: 'Add New Question',
+        variant: 'ghost',
+        icon: Icons.Add,
+        visibleFor: 'md',
+        onClick: handleAddQuestion,
+      },
+    ],
+    [goBack, isRefetching, handleReload, handleAddQuestion],
+  );
+
+  return (
+    <>
+      <DashboardHeader
+        heading="View Questions"
+        // text="Extra long testing text string for text wrap and layout test"
+        className={cn(
+          isDev && '__ManageTopicQuestionsListCard_DashboardHeader', // DEBUG
+          'mx-6',
+        )}
+        breadcrumbs={breadcrumbs}
+        actions={actions}
+      />
+      <Card
+        className={cn(
+          isDev && '__ManageTopicQuestionsListCard_Card', // DEBUG
+          'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
+        )}
+      >
+        <ManageTopicQuestionsListCardContent
+          {...props}
+          questionsListRoutePath={questionsListRoutePath}
+          availableQuestionsQuery={availableQuestionsQuery}
+        />
+      </Card>
+    </>
+  );
+
+  /*
   return (
     <Card
       className={cn(
@@ -376,16 +449,11 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
             topic={topic}
             inactiveLast
           />
-          {/* // UNUSED: Title
-            <CardTitle className="flex flex-1 items-center overflow-hidden">
-              <span className="truncate">Manage Questions</span>
-            </CardTitle>
-            */}
         </div>
         <Toolbar
           topicId={topicId}
           handleAddQuestion={handleAddQuestion}
-          handleDeleteTopic={handleDeleteTopic}
+          // handleDeleteTopic={handleDeleteTopic}
           goBack={goBack}
           availableQuestionsQuery={availableQuestionsQuery}
         />
@@ -404,4 +472,5 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       </CardContent>
     </Card>
   );
+  */
 }

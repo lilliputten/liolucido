@@ -2,14 +2,12 @@
 
 import React from 'react';
 
-import { cn } from '@/lib/utils';
-import { isDev } from '@/constants';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
 import { useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-import { ManageTopicQuestionsListCard } from './ManageTopicQuestionsListCard';
+import { ManageTopicQuestionsPageHolder } from './ManageTopicQuestionsPageHolder';
 
 interface TTopicsListProps {
   topicId: TTopicId;
@@ -83,11 +81,7 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
   }, [editAnswersQuestionId, openEditAnswersPage]);
 
   return (
-    <ManageTopicQuestionsListCard
-      className={cn(
-        isDev && '__ManageTopicQuestionsListWrapper_Card', // DEBUG
-        'relative flex flex-1 flex-col overflow-hidden',
-      )}
+    <ManageTopicQuestionsPageHolder
       topicId={topicId}
       handleDeleteQuestion={openDeleteQuestionModal}
       handleEditQuestion={openEditQuestionCard}
