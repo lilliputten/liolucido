@@ -13,7 +13,7 @@ export function ManageTopicsPageWrapper(props: TProps) {
   const {
     className,
     children,
-    noPadded,
+    // noPadded,
     // inSkeleton,
     // inError,
   } = props;
@@ -31,7 +31,8 @@ export function ManageTopicsPageWrapper(props: TProps) {
       )}
       // scrollable={!inSkeleton}
       limitWidth
-      padded={!noPadded}
+      // padded
+      vPadded
     >
       {children}
     </PageWrapper>

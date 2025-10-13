@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Button, ButtonProps } from '@/components/ui/Button';
+import { Button, ButtonProps, buttonVariants } from '@/components/ui/Button';
 import * as Icons from '@/components/shared/Icons';
 import { IconProps, TGenericIcon } from '@/components/shared/IconTypes';
 
@@ -14,6 +15,7 @@ export interface TActionItem extends Omit<ButtonProps, 'content'> {
   pending?: boolean;
   hidden?: boolean;
   onClick?: () => void;
+  href?: string;
   icon?: TGenericIcon;
   iconProps?: IconProps;
 }
@@ -23,11 +25,12 @@ export function ActionButton(props: TActionItem) {
     id,
     pending,
     disabled,
-    variant = 'ghost',
+    variant: buttonVariant = 'ghost',
     icon,
-    content,
+    content: textContent,
     iconProps = {},
     onClick,
+    href,
     className: buttonClassName,
     ...restButtonProps
   } = props;
@@ -35,15 +38,8 @@ export function ActionButton(props: TActionItem) {
   const Icon = pending ? Icons.Spinner : icon;
   const isDisabled = pending || disabled;
   const isIcon = restButtonProps.size === 'icon';
-  return (
-    <Button
-      key={id}
-      className={cn('flex gap-2', buttonClassName)}
-      onClick={onClick}
-      disabled={isDisabled}
-      variant={isDisabled ? 'ghost' : variant}
-      {...restButtonProps}
-    >
+  const buttonContent = (
+    <>
       {Icon && (
         <Icon
           className={cn(
@@ -54,7 +50,28 @@ export function ActionButton(props: TActionItem) {
           {...restIconProps}
         />
       )}
-      {content && !isIcon && <span className="flex flex-1 truncate">{content}</span>}
+      {textContent && !isIcon && <span className="flex flex-1 truncate">{textContent}</span>}
+    </>
+  );
+  const variant = isDisabled ? 'ghost' : buttonVariant;
+  const className = cn('flex gap-2', buttonClassName);
+  if (href) {
+    return (
+      <Link href={href} className={cn(buttonVariants({ variant, ...restButtonProps }), className)}>
+        {buttonContent}
+      </Link>
+    );
+  }
+  return (
+    <Button
+      key={id}
+      className={className}
+      onClick={onClick}
+      disabled={isDisabled}
+      variant={variant}
+      {...restButtonProps}
+    >
+      {buttonContent}
     </Button>
   );
 }

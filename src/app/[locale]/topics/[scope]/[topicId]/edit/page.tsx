@@ -25,7 +25,7 @@ export default async function EditTopicPageWrapper({ params }: TAwaitedProps) {
   const { topicId } = await params;
 
   if (!topicId) {
-    return <PageError error={'Topic ID not specified.'} />;
+    return <PageError error={'No topic specified'} />;
   }
 
   return (

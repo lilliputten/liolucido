@@ -158,6 +158,10 @@ export function EditTopicPage(props: TEditTopicPageProps) {
         const topic = res.data;
         if (topic) {
           form.reset(topic as TFormData);
+          // Add the created item to the cached react-query data
+          availableTopicsQuery.updateTopic(topic);
+          // Invalidate all other keys...
+          availableTopicsQuery.invalidateAllKeysExcept([availableTopicsQuery.queryKey]);
         }
       })
       .catch((error) => {
@@ -169,7 +173,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
         debugger; // eslint-disable-line no-debugger
         toast.error(message);
       });
-  }, [availableTopicQuery, form]);
+  }, [availableTopicQuery, availableTopicsQuery, form]);
 
   const handleFormSubmit = React.useCallback(
     (formData: TFormData) => {
@@ -369,7 +373,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
     <>
       <DashboardHeader
         heading="Manage Topic Properties"
-        text="Extra long testing text string for text wrap and layout test"
+        // text="Extra long testing text string for text wrap and layout test"
         className={cn(
           isDev && '__EditTopicPage_DashboardHeader', // DEBUG
           'mx-6',

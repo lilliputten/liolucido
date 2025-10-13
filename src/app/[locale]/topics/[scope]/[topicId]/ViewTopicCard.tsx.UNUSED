@@ -66,7 +66,7 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
     return (
       <div
         className={cn(
-          isDev && '__EditTopicCard_Skeleton', // DEBUG
+          isDev && '__ViewTopicCard_Skeleton', // DEBUG
           'size-full',
           'flex flex-1 flex-col gap-4 py-4',
           className,
@@ -113,13 +113,13 @@ export function ViewTopicCard(props: TViewTopicCardProps) {
       >
         <div
           className={cn(
-            isDev && '__EditTopicCard_TitleWrapper', // DEBUG
+            isDev && '__ViewTopicCard_TitleWrapper', // DEBUG
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
           <TopicsBreadcrumbs
             className={cn(
-              isDev && '__EditTopicCard_Breadcrumbs', // DEBUG
+              isDev && '__ViewTopicCard_Breadcrumbs', // DEBUG
             )}
             scope={manageScope}
             topic={topic}

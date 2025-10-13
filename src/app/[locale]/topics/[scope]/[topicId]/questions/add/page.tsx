@@ -1,4 +1,4 @@
-import { ManageTopicQuestionsPage } from '@/components/pages/ManageTopicQuestions';
+import { ManageTopicQuestionsPage } from '@/components/pages/ManageTopicQuestions/ManageTopicQuestionsPage';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
