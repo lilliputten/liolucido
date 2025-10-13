@@ -16,8 +16,6 @@ import {
   maxTextLength,
   minNameLength,
 } from '@/components/pages/ManageTopicsPage/constants';
-import { EditTopicForm } from '@/components/pages/ManageTopicsPage/EditTopicCard/EditTopicForm';
-import { TFormData } from '@/components/pages/ManageTopicsPage/EditTopicCard/types';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { updateTopic } from '@/features/topics/actions';
@@ -34,6 +32,9 @@ import {
   useGoToTheRoute,
 } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
+
+import { EditTopicForm } from './EditTopicForm';
+import { TFormData } from './types';
 
 interface TEditTopicPageProps extends TPropsWithClassName {
   topicId: TTopicId;
@@ -162,7 +163,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
       .catch((error) => {
         const message = 'Cannot update topic data';
         // eslint-disable-next-line no-console
-        console.error('[EditTopicForm:handleReload]', message, {
+        console.error('[EditTopicPage:handleReload]', message, {
           error,
         });
         debugger; // eslint-disable-line no-debugger
@@ -198,7 +199,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
          *   {
          *     onInvalidateKeys: invalidateKeys,
          *     debugDetails: {
-         *       initiator: 'EditTopicForm',
+         *       initiator: 'EditTopicPage',
          *       action: 'updateTopic',
          *       topicId: editedTopic.id,
          *     },
@@ -236,7 +237,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
           const details = error instanceof APIError ? error.details : null;
           const message = 'Cannot save topic data';
           // eslint-disable-next-line no-console
-          console.error('[EditTopicForm]', message, {
+          console.error('[EditTopicPage]', message, {
             details,
             error,
             topicId: editedTopic.id,
@@ -263,18 +264,8 @@ export function EditTopicPage(props: TEditTopicPageProps) {
 
   // Delete Topic Modal
   const handleDeleteTopic = React.useCallback(() => {
-    const url = `${routePath}/delete?topicId=${topic.id}&from=EditTopicForm`;
+    const url = `${routePath}/delete?topicId=${topic.id}&from=EditTopicPage`;
     goToTheRoute(url);
-    /*
-     * const hasTopic = allTopics.find(({ id }) => id === topic.id);
-     * if (hasTopic) {
-     *   const url = `${routePath}/delete?topicId=${topic.id}&from=EditTopicForm`;
-     *   goToTheRoute(url);
-     * } else {
-     *   toast.error('The requested topic does not exist.');
-     *   goToTheRoute(routePath, true);
-     * }
-     */
   }, [goToTheRoute, routePath, topic]);
 
   // Listen for the select language modal custom event
@@ -386,31 +377,20 @@ export function EditTopicPage(props: TEditTopicPageProps) {
         breadcrumbs={breadcrumbs}
         actions={actions}
       />
-      {/*
-      <EditTopicCard topicId={topicId} />
-      */}
       <Card
         className={cn(
           isDev && '__EditTopicCard', // DEBUG
           'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
         )}
       >
-        {/* <CardContent
-          className={cn(
-            isDev && '__EditTopicCard_Content', // DEBUG
-            'relative mt-6 flex flex-1 flex-col overflow-hidden px-0',
-          )}
-        > */}
         <EditTopicForm
           topic={topic}
-          // onCancel={goBack}
           form={form}
           handleFormSubmit={handleFormSubmit}
           handleCancel={handleCancel}
           selectLanguage={selectLanguage}
           isPending={isPending}
         />
-        {/* </CardContent> */}
       </Card>
     </>
   );

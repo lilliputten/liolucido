@@ -12,18 +12,14 @@ import { TTopic } from '@/features/topics/types';
 import { EditTopicFormFields } from './EditTopicFormFields';
 import { TFormData } from './types';
 
-const __debugShowData = false;
-
 interface TEditTopicFormProps {
   topic: TTopic;
   className?: string;
-  onCancel?: () => void;
   handleCancel: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   handleFormSubmit: (formData: TFormData) => void;
   selectLanguage: (ev: React.MouseEvent) => void;
   isPending: boolean;
-  // toolbarPortalRef: React.RefObject<HTMLDivElement>;
 }
 
 export function EditTopicForm(props: TEditTopicFormProps) {
