@@ -1,6 +1,7 @@
-import { ManageTopicQuestionAnswersPage } from '@/components/pages/ManageTopicQuestionAnswers';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import ManageTopicQuestionAnswersPage from '../page';
 
 type TAwaitedProps = TAwaitedLocaleProps<{
   scope: TTopicsManageScopeId;

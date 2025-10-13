@@ -36,12 +36,8 @@ export default async function EditTopicPageWrapper({ params }: TAwaitedProps) {
       innerClassName={cn(
         isDev && '__EditTopicPageWrapper_Inner', // DEBUG
         'w-full rounded-lg gap-4',
-        // !inError && 'border border-solid border-gray-500/30',
       )}
-      // scrollable={!inSkeleton}
       limitWidth
-      // padded
-      vPadded
     >
       <EditTopicPageHolder topicId={topicId} />
     </PageWrapper>

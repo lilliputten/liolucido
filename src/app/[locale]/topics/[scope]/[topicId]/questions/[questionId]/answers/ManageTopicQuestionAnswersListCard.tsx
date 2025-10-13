@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
+import { generateArray } from '@/lib/helpers';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { getRandomHashString } from '@/lib/helpers/strings';
-import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Switch } from '@/components/ui/Switch';
@@ -20,10 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/Table';
+import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { PageEmpty } from '@/components/pages/shared';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';
-import { AnswersBreadcrumbs } from '@/features/answers/components/AnswersBreadcrumbs';
+import { useAnswersBreadcrumbsItems } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
@@ -32,88 +35,19 @@ import {
   useAvailableQuestionById,
   useAvailableTopicById,
   useGoBack,
+  useGoToTheRoute,
   useSessionUser,
 } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-import { PageEmpty } from '../shared/PageEmpty';
-
 const saveScrollHash = getRandomHashString();
 
-interface TManageTopicQuestionAnswersListCardProps extends TPropsWithClassName {
+export interface TManageTopicQuestionAnswersListCardProps {
   topicId: TTopicId;
   questionId: TQuestionId;
-  // handleDeleteAnswer: (answerId: TAnswerId) => void;
-  // handleEditAnswer: (answerId: TAnswerId) => void;
-  // handleAddAnswer: () => void;
-}
-
-interface TToolbarActionsProps {
-  goBack: () => void;
+  availableTopicQuery: ReturnType<typeof useAvailableTopicById>;
+  availableQuestionQuery: ReturnType<typeof useAvailableQuestionById>;
   availableAnswersQuery: ReturnType<typeof useAvailableAnswers>;
-  answersListRoutePath: string;
-}
-
-function Toolbar(props: TToolbarActionsProps) {
-  const { answersListRoutePath, goBack, availableAnswersQuery } = props;
-  const {
-    refetch: refetchAnswers,
-    isRefetching: isAnswersRefetching,
-    isLoading: isAnswersLoading,
-    isFetched: isAnswersFetched,
-  } = availableAnswersQuery;
-  const isOverallLoading = !isAnswersFetched || isAnswersLoading;
-
-  if (isOverallLoading) {
-    return (
-      <div
-        className={cn(
-          isDev && '__ManageTopicQuestionAnswersListCard_Toolbar_Skeleton', // DEBUG
-          'flex gap-2',
-        )}
-      >
-        {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-8 w-24 rounded" />
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={cn(
-        isDev && '__ManageTopicQuestionAnswersListCard_Toolbar', // DEBUG
-        'flex flex-wrap gap-2',
-      )}
-    >
-      <Button variant="ghost" size="sm" className="flex gap-2" onClick={goBack}>
-        <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
-        <span>Back</span>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className={cn(
-          'flex items-center gap-2 px-4',
-          isAnswersRefetching && 'pointer-events-none opacity-50',
-        )}
-        onClick={() => refetchAnswers()}
-      >
-        <Icons.Refresh
-          className={cn('hidden size-4 opacity-50 sm:flex', isAnswersRefetching && 'animate-spin')}
-        />
-        <span>Reload</span>
-      </Button>
-      <Button variant="ghost" size="sm">
-        <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
-          <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
-          <span>
-            Add <span className="hidden sm:inline-flex">New Answer</span>
-          </span>
-        </Link>
-      </Button>
-    </div>
-  );
 }
 
 function AnswerTableHeader({ isAdminMode }: { isAdminMode: boolean }) {
@@ -257,10 +191,10 @@ interface TManageTopicQuestionAnswersListCardContentProps
 }
 
 export function ManageTopicQuestionAnswersListCardContent(
-  props: TManageTopicQuestionAnswersListCardContentProps,
+  props: TManageTopicQuestionAnswersListCardContentProps & { className?: string },
 ) {
   const {
-    // className,
+    className,
     // topicId,
     // questionId,
     availableAnswersQuery,
@@ -293,7 +227,7 @@ export function ManageTopicQuestionAnswersListCardContent(
         )}
       >
         <Skeleton className="h-8 w-full rounded-lg" />
-        {[...Array(3)].map((_, i) => (
+        {generateArray(3).map((_, i) => (
           <Skeleton key={i} className="h-12 w-full rounded-lg" />
         ))}
       </div>
@@ -333,15 +267,16 @@ export function ManageTopicQuestionAnswersListCardContent(
       saveScrollKey="ManageTopicQuestionAnswersListCard"
       saveScrollHash={saveScrollHash}
       className={cn(
-        isDev && '__ManageTopicQuestionAnswersListCard_Scroll', // DEBUG
+        isDev && '__ManageTopicQuestionAnswersListCardContent', // DEBUG
         'relative flex flex-1 flex-col overflow-hidden',
+        className,
       )}
       viewportClassName={cn(
-        isDev && '__ManageTopicQuestionAnswersListCard_Scroll_Viewport', // DEBUG
+        isDev && '__ManageTopicQuestionAnswersListCardContent_Viewport', // DEBUG
         'px-6',
       )}
       containerClassName={cn(
-        isDev && '__ManageTopicQuestionAnswersListCard_Scroll_Container', // DEBUG
+        isDev && '__ManageTopicQuestionAnswersListCardContent_Container', // DEBUG
         'relative w-full flex flex-col gap-4',
       )}
     >
@@ -367,7 +302,13 @@ export function ManageTopicQuestionAnswersListCardContent(
 export function ManageTopicQuestionAnswersListCard(
   props: TManageTopicQuestionAnswersListCardProps,
 ) {
-  const { className, topicId, questionId } = props;
+  const {
+    topicId,
+    questionId,
+    availableTopicQuery,
+    availableQuestionQuery,
+    availableAnswersQuery,
+  } = props;
 
   const { manageScope } = useManageTopicsStore();
 
@@ -379,27 +320,106 @@ export function ManageTopicQuestionAnswersListCard(
   const answersListRoutePath = `${questionRoutePath}/answers`;
   // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
 
-  const availableTopicQuery = useAvailableTopicById({ id: topicId });
   const {
-    data: topic,
+    topic,
     // isFetched: isTopicFetched,
     // isLoading: isTopicLoading,
   } = availableTopicQuery;
   // const isTopicLoadingOverall = !topic && (!isTopicFetched || isTopicLoading);
+  if (!topic) {
+    throw new Error('No topic found');
+  }
 
-  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
   const {
-    data: question,
+    question,
     // isFetched: isQuestionFetched,
     // isLoading: isQuestionLoading,
   } = availableQuestionQuery;
   // const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
+  if (!question) {
+    throw new Error('No question found');
+  }
 
-  const availableAnswersQuery = useAvailableAnswers({ questionId });
-
-  // const goToTheRoute = useGoToTheRoute();
+  const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(questionsListRoutePath);
 
+  const {
+    refetch: refetchAnswers,
+    isRefetching: isAnswersRefetching,
+    // isLoading: isAnswersLoading,
+    // isFetched: isAnswersFetched,
+  } = availableAnswersQuery;
+
+  const actions: TActionMenuItem[] = React.useMemo(
+    () => [
+      {
+        id: 'Back',
+        content: 'Back',
+        variant: 'ghost',
+        icon: Icons.ArrowLeft,
+        visibleFor: 'md',
+        onClick: goBack,
+      },
+      {
+        id: 'Reload',
+        content: 'Reload',
+        variant: 'ghost',
+        icon: Icons.Refresh,
+        visibleFor: 'lg',
+        pending: isAnswersRefetching,
+        onClick: () => refetchAnswers(),
+      },
+      {
+        id: 'Add New Answer',
+        content: 'Add New Answer',
+        variant: 'ghost',
+        icon: Icons.Add,
+        visibleFor: 'lg',
+        onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
+      },
+    ],
+    [goBack, isAnswersRefetching, refetchAnswers, goToTheRoute, answersListRoutePath],
+  );
+
+  const breadcrumbs = useAnswersBreadcrumbsItems({
+    scope: manageScope,
+    isLoading: !topic || !question,
+    topic: topic,
+    question: question,
+    inactiveLast: true,
+  });
+
+  return (
+    <>
+      <DashboardHeader
+        heading="Manage Answers"
+        className={cn(
+          isDev && '__ManageTopicQuestionAnswersListCard_DashboardHeader', // DEBUG
+          'mx-6',
+        )}
+        breadcrumbs={breadcrumbs}
+        actions={actions}
+      />
+      <Card
+        className={cn(
+          isDev && '__ManageTopicQuestionAnswersListCard_Card', // DEBUG
+          'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
+        )}
+      >
+        <ManageTopicQuestionAnswersListCardContent
+          {...props}
+          className={cn(
+            isDev && '__ManageTopicQuestionAnswersListCard_CardContent', // DEBUG
+            'relative flex flex-1 flex-col overflow-hidden px-0',
+          )}
+          answersListRoutePath={answersListRoutePath}
+          availableAnswersQuery={availableAnswersQuery}
+        />
+      </Card>
+    </>
+  );
+
+  /*
   return (
     <Card
       className={cn(
@@ -456,4 +476,5 @@ export function ManageTopicQuestionAnswersListCard(
       </CardContent>
     </Card>
   );
+  */
 }
