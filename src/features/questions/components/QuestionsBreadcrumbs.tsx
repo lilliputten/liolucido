@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { truncateMarkdown } from '@/lib/helpers';
+import { generateArray, truncateMarkdown } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
 import { capitalizeString } from '@/lib/helpers/strings';
 import { TPropsWithClassName } from '@/lib/types';
@@ -63,7 +63,7 @@ export function QuestionsBreadcrumbs(props: TBreadcrumbsProps & TPropsWithClassN
           'flex gap-2',
         )}
       >
-        {[...Array(3)].map((_, i) => (
+        {generateArray(3).map((_, i) => (
           <Skeleton key={i} className="h-6 w-32 rounded" />
         ))}
       </div>

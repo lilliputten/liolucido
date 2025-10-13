@@ -348,12 +348,6 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     refetch({ cancelRefetch: true });
   }, [refetch]);
 
-  // // Delete Topic Modal
-  // const handleDeleteTopic = React.useCallback(() => {
-  //   const url = `${topicsListRoutePath}/delete?topicId=${topicId}&from=ManageTopicQuestionsListCard`;
-  //   goToTheRoute(url);
-  // }, [goToTheRoute, topicId, topicsListRoutePath]);
-
   const breadcrumbs = useQuestionsBreadcrumbsItems({
     scope: manageScope,
     isLoading: !topic,
@@ -396,7 +390,6 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     <>
       <DashboardHeader
         heading="View Questions"
-        // text="Extra long testing text string for text wrap and layout test"
         className={cn(
           isDev && '__ManageTopicQuestionsListCard_DashboardHeader', // DEBUG
           'mx-6',
@@ -418,59 +411,4 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       </Card>
     </>
   );
-
-  /*
-  return (
-    <Card
-      className={cn(
-        isDev && '__ManageTopicQuestionsListCard', // DEBUG
-        'relative flex flex-1 flex-col overflow-hidden',
-        className,
-      )}
-    >
-      <CardHeader
-        className={cn(
-          isDev && '__ManageTopicQuestionsListCard_Header', // DEBUG
-          'item-start flex flex-col gap-4 lg:flex-row',
-        )}
-      >
-        <div
-          className={cn(
-            isDev && '__ManageTopicQuestionsListCard_TitleWrapper', // DEBUG
-            'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
-          )}
-        >
-          <QuestionsBreadcrumbs
-            className={cn(
-              isDev && '__ManageTopicQuestionsListCard_Breadcrumbs', // DEBUG
-            )}
-            scope={manageScope}
-            isLoading={!topic}
-            topic={topic}
-            inactiveLast
-          />
-        </div>
-        <Toolbar
-          topicId={topicId}
-          handleAddQuestion={handleAddQuestion}
-          // handleDeleteTopic={handleDeleteTopic}
-          goBack={goBack}
-          availableQuestionsQuery={availableQuestionsQuery}
-        />
-      </CardHeader>
-      <CardContent
-        className={cn(
-          isDev && '__ManageTopicQuestionsListCard_Content', // DEBUG
-          'relative flex flex-1 flex-col overflow-hidden px-0',
-        )}
-      >
-        <ManageTopicQuestionsListCardContent
-          {...props}
-          questionsListRoutePath={questionsListRoutePath}
-          availableQuestionsQuery={availableQuestionsQuery}
-        />
-      </CardContent>
-    </Card>
-  );
-  */
 }

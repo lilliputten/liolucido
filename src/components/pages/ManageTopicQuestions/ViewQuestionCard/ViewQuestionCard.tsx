@@ -81,13 +81,13 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
       >
         <div
           className={cn(
-            isDev && '__EditQuestionCard_TitleWrapper', // DEBUG
+            isDev && '__ViewQuestionCard_TitleWrapper', // DEBUG
             'flex flex-1 flex-col justify-center gap-2 overflow-hidden',
           )}
         >
           <QuestionsBreadcrumbs
             className={cn(
-              isDev && '__EditQuestionCard_Breadcrumbs', // DEBUG
+              isDev && '__ViewQuestionCard_Breadcrumbs', // DEBUG
             )}
             scope={manageScope}
             isLoading={!topic}

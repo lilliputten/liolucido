@@ -29,9 +29,6 @@ export default async function ManageTopicQuestionsLayout(props: TManageTopicQues
     // scope,
     topicId,
   } = resolvedParams;
-  // const topicsListRoutePath = topicsRoutes[scope];
-  // const topicRootRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
-  // const routePath = `${topicsListRoutePath}/${topicId}/questions` as TRoutePath;
 
   if (!topicId) {
     return <PageError error={'Topic ID not specified.'} />;

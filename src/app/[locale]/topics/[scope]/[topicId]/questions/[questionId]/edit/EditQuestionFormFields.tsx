@@ -13,15 +13,10 @@ import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { isDev } from '@/constants';
-import { TQuestion } from '@/features/questions/types';
 
 import { TFormData } from './types';
 
 interface TEditQuestionFormFieldsProps {
-  question: TQuestion;
-  isSubmitEnabled?: boolean;
-  isPending?: boolean;
-  onCancel?: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   className?: string;
 }
@@ -84,7 +79,13 @@ export function EditQuestionFormFields(props: TEditQuestionFormFieldsProps) {
                 <Switch
                   id={answersCountRandomKey}
                   checked={!!field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={(value) => {
+                    field.onChange(value);
+                    // Trigger validation for min/max fields when random is toggled
+                    if (value) {
+                      form.trigger(['answersCountMin', 'answersCountMax']);
+                    }
+                  }}
                 />
               </FormControl>
               <FormHint>

@@ -187,7 +187,13 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                 <Switch
                   id={answersCountRandomKey}
                   checked={!!field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={(value) => {
+                    field.onChange(value);
+                    // Trigger validation for min/max fields when random is toggled
+                    if (value) {
+                      form.trigger(['answersCountMin', 'answersCountMax']);
+                    }
+                  }}
                 />
               </FormControl>
               <FormHint>
