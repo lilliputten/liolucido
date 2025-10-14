@@ -1,12 +1,12 @@
 import { constructMetadata } from '@/lib/constructMetadata';
 import { cn } from '@/lib/utils';
-import { ViewAnswerCard } from '@/components/pages/ManageTopicQuestionAnswers/ViewAnswerCard/ViewAnswerCard';
-import { ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';
-import { PageHeader } from '@/components/pages/shared';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { ViewAnswerPageHolder } from './ViewAnswerPageHolder';
 
 type TAwaitedProps = TAwaitedLocaleProps<{
   scope: TTopicsManageScopeId;
@@ -24,25 +24,31 @@ export async function generateMetadata({ params }: TAwaitedProps) {
   });
 }
 
-export default async function ViewAnswerPage({ params }: TAwaitedProps) {
+export default async function ViewAnswerPageWrapper({ params }: TAwaitedProps) {
   const { topicId, questionId, answerId } = await params;
 
+  if (!topicId) {
+    return <PageError error={'No topic ID specified.'} />;
+  }
+  if (!questionId) {
+    return <PageError error={'No question ID specified.'} />;
+  }
   if (!answerId) {
-    return <PageError error={'Not answer specified.'} />;
+    return <PageError error={'Not answer ID specified.'} />;
   }
 
   return (
-    <ManageTopicsPageWrapper>
-      <PageHeader heading={'Manage Answer'} />
-      <ViewAnswerCard
-        className={cn(
-          isDev && '__page_ViewAnswerPage', // DEBUG
-          // 'mx-4',
-        )}
-        topicId={topicId}
-        questionId={questionId}
-        answerId={answerId}
-      />
-    </ManageTopicsPageWrapper>
+    <PageWrapper
+      className={cn(
+        isDev && '__ViewAnswerPageWrapper', // DEBUG
+      )}
+      innerClassName={cn(
+        isDev && '__ViewAnswerPageWrapper_Inner', // DEBUG
+        'w-full rounded-lg gap-4 py-6',
+      )}
+      limitWidth
+    >
+      <ViewAnswerPageHolder topicId={topicId} questionId={questionId} answerId={answerId} />
+    </PageWrapper>
   );
 }

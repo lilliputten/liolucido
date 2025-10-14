@@ -7,75 +7,39 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { truncateMarkdown } from '@/lib/helpers/markdown';
 import { cn } from '@/lib/utils';
-import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/Separator';
-import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { TAnswer } from '@/features/answers/types';
-import { TTopicId } from '@/features/topics/types';
-import { useAvailableTopicById, useSessionUser } from '@/hooks';
+import { TAvailableAnswer } from '@/features/answers/types';
+import { TAvailableQuestion } from '@/features/questions/types';
+import { TAvailableTopic } from '@/features/topics/types';
+import { useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-export function ViewAnswerContentSummary({
-  topicId,
-  answer,
-}: {
-  topicId: TTopicId;
-  answer: TAnswer;
-}) {
+interface TViewAnswerContentSummaryProps {
+  topic: TAvailableTopic;
+  question: TAvailableQuestion;
+  answer: TAvailableAnswer;
+}
+export function ViewAnswerContentSummary(props: TViewAnswerContentSummaryProps) {
+  const { topic, question, answer } = props;
   const { manageScope } = useManageTopicsStore();
   const format = useFormatter();
   const user = useSessionUser();
 
-  const questionId = answer.questionId;
-
   const topicsListPath = `/topics/${manageScope}`;
-  const topicRoutePath = `${topicsListPath}/${topicId}`;
+  const topicRoutePath = `${topicsListPath}/${topic.id}`;
   const questionsListRoutePath = `${topicRoutePath}/questions`;
-  // const questionRoutePath = `${questionsListRoutePath}/${questionId}`;
+  // const questionRoutePath = `${questionsListRoutePath}/${question.id}`;
   // const answersListRoutePath = `${questionRoutePath}/answers`;
-  // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
-
-  const availableTopicQuery = useAvailableTopicById({
-    id: topicId,
-    // availableTopicsQueryKey,
-    // ...availableTopicsQueryProps,
-    // includeWorkout: availableTopicsQueryProps.includeWorkout,
-    // includeUser: availableTopicsQueryProps.includeUser,
-    // includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
-  });
-  const { topic, isFetched: isTopicFetched, isLoading: isTopicLoading } = availableTopicQuery;
-  const isTopicLoadingOverall =
-    !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
-
-  const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
-  const {
-    question,
-    isFetched: isQuestionFetched,
-    isLoading: isQuestionLoading,
-  } = availableQuestionQuery;
-  const isQuestionLoadingOverall = !question && (!isQuestionFetched || isQuestionLoading);
+  // const answerRoutePath = `${answersListRoutePath}/${answer.id}`;
 
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
 
-  const topicInfoContent = isTopicLoadingOverall ? (
-    <div
-      className={cn(
-        isDev && '__Section_Topic_Skeleton', // DEBUG
-        'size-full',
-        'flex flex-1 flex-col gap-4 py-4',
-      )}
-    >
-      <Skeleton className="h-8 w-full rounded-lg" />
-      {[...Array(1)].map((_, i) => (
-        <Skeleton key={i} className="h-20 w-full rounded-lg" />
-      ))}
-    </div>
-  ) : topic ? (
+  const topicInfoContent = (
     <div data-testid="__Section_Topic" className="flex flex-col gap-4">
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold">Topic</h3>
@@ -104,7 +68,7 @@ export function ViewAnswerContentSummary({
         </p>
       </div>
     </div>
-  ) : null;
+  );
 
   const answerTextContent = (
     <div data-testid="__Section_AnswerText" className="flex flex-col gap-4">
@@ -119,12 +83,9 @@ export function ViewAnswerContentSummary({
     <div data-testid="__Section_Properties" className="flex flex-col gap-4">
       <h3 className="text-lg font-semibold">Properties</h3>
       <div className="flex flex-wrap gap-2">
-        <Badge
-          // variant={answer.isCorrect ? 'default' : 'secondary'}
-          className={answer.isCorrect ? 'bg-green-500' : 'bg-red-500'}
-        >
+        <Badge className={answer.isCorrect ? 'bg-green-500' : 'bg-red-500'}>
           <Icons.CircleCheck className="mr-1 h-3 w-3" />
-          {answer.isCorrect ? 'Correct' : 'Incorrect'}
+          {answer.isCorrect ? 'Correct answer' : 'Incorrect answer'}
         </Badge>
         {answer.isGenerated && (
           <Badge variant="outline" className="border-slate-500 text-slate-500">
@@ -137,19 +98,7 @@ export function ViewAnswerContentSummary({
   );
 
   // TODO: Use skeleton if is lolading
-  const questionInfoContent = isQuestionLoadingOverall ? (
-    <div
-      className={cn(
-        isDev && '__ViewAnswerContentSummary_Question_Skeleton', // DEBUG
-        'flex size-full flex-1 flex-col gap-4 py-4',
-      )}
-    >
-      <Skeleton className="h-8 w-full rounded-lg" />
-      {[...Array(1)].map((_, i) => (
-        <Skeleton key={i} className="h-20 w-full rounded-lg" />
-      ))}
-    </div>
-  ) : question ? (
+  const questionInfoContent = (
     <div data-testid="__Section_Question" className="flex flex-col gap-4">
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold">Question</h3>
@@ -178,7 +127,7 @@ export function ViewAnswerContentSummary({
         </p>
       </div>
     </div>
-  ) : null;
+  );
 
   const authorInfoContent = (
     <div data-testid="__Section_Author" className="flex flex-col gap-4">

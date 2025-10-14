@@ -12,8 +12,6 @@ import { useAvailableQuestionById, useAvailableTopicById } from '@/hooks';
 
 import { ViewQuestionCard } from './ViewQuestionCard';
 
-// import { EditTopicPage } from './EditTopicPage';
-
 interface TViewQuestionPageHolderProps {
   topicId: TTopicId;
   questionId: TQuestionId;
