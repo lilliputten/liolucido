@@ -14,7 +14,7 @@ interface TProps {
   answer: TAnswer;
   isSubmitEnabled?: boolean;
   isPending?: boolean;
-  onCancel?: (ev: React.MouseEvent) => void;
+  handleCancel?: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   onSubmit: (data: TFormData) => void;
   handleDeleteAnswer: () => void;
@@ -25,7 +25,7 @@ export function EditAnswerFormActions(props: TProps) {
   const {
     isSubmitEnabled,
     isPending,
-    onCancel,
+    handleCancel,
     handleDeleteAnswer,
     handleAddAnswer,
     form,
@@ -41,9 +41,9 @@ export function EditAnswerFormActions(props: TProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={onCancel}
+          onClick={handleCancel}
           className="gap-2"
-          disabled={isDirty || !onCancel}
+          disabled={isDirty || !handleCancel}
         >
           <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
           <span>Back</span>

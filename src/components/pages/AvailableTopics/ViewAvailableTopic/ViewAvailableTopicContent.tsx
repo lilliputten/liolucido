@@ -14,22 +14,11 @@ import { TAvailableTopic } from '@/features/topics/types';
 interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;
   className?: string;
-  // toolbarPortalRoot: HTMLDivElement | null;
-  // toolbarPortalRef: React.RefObject<HTMLDivElement>;
-  // goBack?: () => void;
-  // handleDeleteTopic: TViewAvailableTopicContentActionsProps['handleDeleteTopic'];
-  // handleAddQuestion?: TViewAvailableTopicContentActionsProps['handleAddQuestion'];
 }
 
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
-  const {
-    topic,
-    className,
-    // goBack,
-    // handleDeleteTopic,
-    // handleAddQuestion,
-  } = props;
+  const { topic, className } = props;
   const {
     // id,
     // userId,

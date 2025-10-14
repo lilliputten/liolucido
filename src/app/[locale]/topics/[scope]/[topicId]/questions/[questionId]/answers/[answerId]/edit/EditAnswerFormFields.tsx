@@ -12,15 +12,10 @@ import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import { isDev } from '@/constants';
-import { TAnswer } from '@/features/answers/types';
 
 import { TFormData } from './types';
 
 interface TEditAnswerFormFieldsProps {
-  answer: TAnswer;
-  isSubmitEnabled?: boolean;
-  isPending?: boolean;
-  onCancel?: (ev: React.MouseEvent) => void;
   form: UseFormReturn<TFormData>;
   className?: string;
 }
