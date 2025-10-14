@@ -14,46 +14,23 @@ import { Separator } from '@/components/ui/Separator';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { TQuestion } from '@/features/questions/types';
-import { useAvailableTopicById, useSessionUser } from '@/hooks';
+import { TAvailableQuestion } from '@/features/questions/types';
+import { TAvailableTopic } from '@/features/topics/types';
+import { useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-export function ViewQuestionContentSummary({ question }: { question: TQuestion }) {
+interface TProps {
+  topic: TAvailableTopic;
+  question: TAvailableQuestion;
+}
+export function ViewQuestionContentSummary(props: TProps) {
+  const { topic, question } = props;
   const { manageScope } = useManageTopicsStore();
   const routePath = `/topics/${manageScope}`;
   const format = useFormatter();
   const user = useSessionUser();
 
-  /* // NOTE: All the topics list here are not necessary here
-   * const availableTopics = useAvailableTopicsByScope({ manageScope });
-   * const {
-   *   // allTopics,
-   *   isFetched: isTopicsFetched,
-   *   // isLoading: isTopicsLoading,
-   *   queryKey: availableTopicsQueryKey,
-   *   queryProps: availableTopicsQueryProps,
-   * } = availableTopics;
-   */
-
-  const topicId = question.topicId;
-
-  const availableTopicQuery = useAvailableTopicById({
-    id: topicId,
-    // availableTopicsQueryKey,
-    // // ...availableTopicsQueryProps,
-    // includeWorkout: availableTopicsQueryProps.includeWorkout,
-    // includeUser: availableTopicsQueryProps.includeUser,
-    // includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
-  });
-  const {
-    topic,
-    isFetched: isTopicFetched,
-    isLoading: isTopicLoading,
-    // isCached: isTopicCached,
-  } = availableTopicQuery;
-
-  const isTopicLoadingOverall =
-    !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
+  const isTopicLoadingOverall = false; // !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
 
   const questionTextContent = (
@@ -76,12 +53,16 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
       <h3 className="text-lg font-semibold">Properties</h3>
       <div className="flex flex-wrap gap-2">
         {!!question._count?.answers && (
-          <Link href={`${routePath}/${question.topicId}/questions/${question.id}/answers`}>
-            <Badge variant="secondary" className="cursor-pointer hover:bg-secondary/80">
-              <Icons.Messages className="opcity-50 mr-1 size-3" />
+          <Button variant="ghost" size="sm">
+            <Link
+              href={`${routePath}/${question.topicId}/questions/${question.id}/answers`}
+              className="flex items-center gap-2"
+              title="Manage answers"
+            >
+              <Icons.Edit className="size-4 opacity-50" />
               Answers: {question._count.answers}
-            </Badge>
-          </Link>
+            </Link>
+          </Button>
         )}
         {question.answersCountRandom && question.answersCountMin && question.answersCountMax && (
           <Badge variant="secondary" className="border-blue-500 text-blue-500">
@@ -113,7 +94,7 @@ export function ViewQuestionContentSummary({ question }: { question: TQuestion }
         {isOwner && (
           <Button variant="ghost" size="sm">
             <Link href={`${routePath}/${topic.id}`} className="flex items-center gap-2">
-              <Icons.Edit className="size-3 opacity-50" />
+              <Icons.Edit className="size-4 opacity-50" />
               <span>Manage Topic</span>
             </Link>
           </Button>

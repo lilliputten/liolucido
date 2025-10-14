@@ -383,7 +383,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
       />
       <Card
         className={cn(
-          isDev && '__EditTopicCard', // DEBUG
+          isDev && '__EditTopicPage_Card', // DEBUG
           'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
         )}
       >

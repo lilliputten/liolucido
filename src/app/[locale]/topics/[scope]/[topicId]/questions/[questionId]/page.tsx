@@ -1,13 +1,12 @@
 import { constructMetadata } from '@/lib/constructMetadata';
 import { cn } from '@/lib/utils';
-// import { ManageQuestionsPageWrapper } from '@/components/pages/ManageTopicQuestions';
-import { ViewQuestionCard } from '@/components/pages/ManageTopicQuestions/ViewQuestionCard/ViewQuestionCard';
-import { ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';
-import { PageHeader } from '@/components/pages/shared';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { ViewQuestionPageHolder } from './ViewQuestionPageHolder';
 
 type TAwaitedProps = TAwaitedLocaleProps<{
   scope: TTopicsManageScopeId;
@@ -24,24 +23,28 @@ export async function generateMetadata({ params }: TAwaitedProps) {
   });
 }
 
-export default async function ViewQuestionPage({ params }: TAwaitedProps) {
+export default async function ViewQuestionPageWrapper({ params }: TAwaitedProps) {
   const { topicId, questionId } = await params;
 
+  if (!topicId) {
+    return <PageError error={'No topic ID specified.'} />;
+  }
   if (!questionId) {
-    return <PageError error={'No question specified.'} />;
+    return <PageError error={'No question ID specified.'} />;
   }
 
   return (
-    <ManageTopicsPageWrapper>
-      <PageHeader heading={'Manage Question'} />
-      <ViewQuestionCard
-        className={cn(
-          isDev && '__page_ViewQuestionPage', // DEBUG
-          'mx-4',
-        )}
-        topicId={topicId}
-        questionId={questionId}
-      />
-    </ManageTopicsPageWrapper>
+    <PageWrapper
+      className={cn(
+        isDev && '__ViewQuestionPageWrapper', // DEBUG
+      )}
+      innerClassName={cn(
+        isDev && '__ViewQuestionPageWrapper_Inner', // DEBUG
+        'w-full rounded-lg gap-4 py-6',
+      )}
+      limitWidth
+    >
+      <ViewQuestionPageHolder topicId={topicId} questionId={questionId} />
+    </PageWrapper>
   );
 }

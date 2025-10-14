@@ -35,7 +35,7 @@ export default async function EditTopicPageWrapper({ params }: TAwaitedProps) {
       )}
       innerClassName={cn(
         isDev && '__EditTopicPageWrapper_Inner', // DEBUG
-        'w-full rounded-lg gap-4',
+        'w-full rounded-lg gap-4 py-6',
       )}
       limitWidth
     >
