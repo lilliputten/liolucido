@@ -37,6 +37,7 @@ export default async function ManageTopicsLayout(props: TManageTopicsLayoutProps
   if (!namespace || !routePath) {
     // eslint-disable-next-line no-console
     console.warn('[ManageTopicsLayout] An invalid scope received:', manageScope);
+    debugger; // eslint-disable-line no-debugger
     notFound();
   }
 
@@ -57,6 +58,7 @@ export default async function ManageTopicsLayout(props: TManageTopicsLayoutProps
       '[ManageTopicsLayout] Admin user role required for managing topics scope',
       manageScope,
     );
+    debugger; // eslint-disable-line no-debugger
     notFound();
   }
 

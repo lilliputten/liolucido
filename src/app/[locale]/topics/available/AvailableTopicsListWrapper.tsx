@@ -8,38 +8,36 @@ import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { PageEmpty } from '@/components/pages/shared';
 import * as Icons from '@/components/shared/Icons';
+import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
+import { TopicsManageScopeIds, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
 
-import { AvailableTopicsList } from './AvailableTopicsList';
-import { AvailableTopicsLoading } from './AvailableTopicsLoading';
+import { AvailableTopicsListPage } from './AvailableTopicsListPage';
+import { ContentSkeleton } from './ContentSkeleton';
 
 export function AvailableTopicsListWrapper() {
+  const manageScope: TTopicsManageScopeId = TopicsManageScopeIds.AVAILABLE_TOPICS;
+
+  const availableTopicsQuery = useAvailableTopicsByScope({ manageScope });
+  const { isFetched, isError, refetch, error, hasTopics } = availableTopicsQuery;
+
   const goBack = useGoBack(rootRoute);
-  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
 
-  const availableTopics = useAvailableTopicsByScope({ manageScope });
-  const { isLoading, isError, hasTopics } = availableTopics;
-
-  if (isLoading) {
-    return <AvailableTopicsLoading />;
+  if (!isFetched) {
+    return <ContentSkeleton className="px-6" />;
   }
 
   if (isError) {
     return (
-      <PageEmpty
-        className="size-full flex-1"
-        title="Something went wrong"
-        description="We couldn't load the topics. Please try again later."
-        buttons={
-          <>
-            <Button variant="ghost" onClick={goBack} className="flex gap-2">
-              <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
-              Go Back
-            </Button>
-          </>
-        }
+      <PageError
+        className={cn(
+          isDev && '__ManageTopicsListWrapper_Error', // DEBUG
+          'my-0',
+        )}
+        error={error || 'Error loading available topics data'}
+        reset={refetch}
+        // extraActions={extraActions}
       />
     );
   }
@@ -47,7 +45,7 @@ export function AvailableTopicsListWrapper() {
   if (!hasTopics) {
     return (
       <PageEmpty
-        className="size-full flex-1"
+        className="mx-6 flex-1"
         title="No topics available"
         description="Change filters to allow displaying public topics (if there are any), or create your own ones."
         buttons={
@@ -69,13 +67,10 @@ export function AvailableTopicsListWrapper() {
     );
   }
 
-  // TODO: Add a toolbar with the "Add topic" toolbar (links to a login page for unauthorized user)
   return (
-    <AvailableTopicsList
-      className={cn(
-        isDev && '__AvailableTopicsList', // DEBUG
-        'relative flex flex-1 flex-col overflow-hidden',
-      )}
+    <AvailableTopicsListPage
+      availableTopicsQuery={availableTopicsQuery}
+      manageScope={manageScope}
     />
   );
 }

@@ -5,26 +5,23 @@ import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { isDev } from '@/constants';
-import { TopicsManageScopeIds } from '@/contexts/TopicsContext/TopicsContextDefinitions';
+import { TTopicsManageScopeId } from '@/contexts/TopicsContext/TopicsContextDefinitions';
 import { useAvailableTopicsByScope } from '@/hooks';
 
 import { AvailableTopicsListItem } from './AvailableTopicsListItem';
 
 const saveScrollHash = getRandomHashString();
 
-export function AvailableTopicsList(props: TPropsWithClassName) {
-  const { className } = props;
+interface TProps extends TPropsWithClassName {
+  availableTopicsQuery: ReturnType<typeof useAvailableTopicsByScope>;
+  manageScope: TTopicsManageScopeId;
+}
 
-  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+export function AvailableTopicsList(props: TProps) {
+  const { className, availableTopicsQuery } = props;
 
-  const {
-    // data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    allTopics,
-  } = useAvailableTopicsByScope({ manageScope });
+  const { fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, allTopics } =
+    availableTopicsQuery;
 
   return (
     <ScrollAreaInfinite

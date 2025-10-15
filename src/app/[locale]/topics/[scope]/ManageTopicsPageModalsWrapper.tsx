@@ -120,6 +120,7 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
     },
     [memo, goToTheRoute],
   );
+
   React.useEffect(() => {
     // Use another id (`editQuestionsTopicId`)?
     if (editQuestionsTopicId) {

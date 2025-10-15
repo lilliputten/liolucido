@@ -13,7 +13,7 @@ export default function NotFound() {
     <PageWrapper
       className={cn(
         isDev && '__NotFoundPage', // DEBUG
-        'w-full p-4',
+        'w-full px-6',
       )}
       innerClassName="gap-6 justify-center items-center"
       scrollable

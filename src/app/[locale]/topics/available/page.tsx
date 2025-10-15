@@ -1,6 +1,10 @@
 import { constructMetadata } from '@/lib/constructMetadata';
-import { AvailableTopicsPageModalsWrapper } from '@/components/pages/AvailableTopics/AvailableTopicsPageModalsWrapper';
+import { cn } from '@/lib/utils';
+import { PageWrapper } from '@/components/layout/PageWrapper';
+import { isDev } from '@/config';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { AvailableTopicsListWrapper } from './AvailableTopicsListWrapper';
 
 type TAwaitedProps = TAwaitedLocaleProps;
 
@@ -13,7 +17,19 @@ export async function generateMetadata({ params }: TAwaitedProps) {
   });
 }
 
-export default async function AvailableTopicsPage(/* props: AvailableTopicsPageProps */) {
-  // TODO: Pass modal props
-  return <AvailableTopicsPageModalsWrapper />;
+export default async function AvailableTopicsPageWrapper() {
+  return (
+    <PageWrapper
+      className={cn(
+        isDev && '__AvailableTopicsPageWrapper', // DEBUG
+      )}
+      innerClassName={cn(
+        isDev && '__AvailableTopicsPageWrapper_Inner', // DEBUG
+        'w-full rounded-lg gap-4 py-6',
+      )}
+      limitWidth
+    >
+      <AvailableTopicsListWrapper />
+    </PageWrapper>
+  );
 }

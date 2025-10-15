@@ -1,3 +1,4 @@
+import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { isDev } from '@/constants';
@@ -16,9 +17,10 @@ export function ContentSkeleton({ className }: TProps) {
         className,
       )}
     >
-      <Skeleton className="h-32 w-full rounded-xl" />
-      <Skeleton className="h-32 w-full rounded-xl" />
-      <Skeleton className="h-32 w-full rounded-xl" />
+      <Skeleton className="h-9 w-full rounded" />
+      {generateArray(3).map((i) => (
+        <Skeleton key={i} className="h-32 w-full rounded-xl" />
+      ))}
     </div>
   );
 }

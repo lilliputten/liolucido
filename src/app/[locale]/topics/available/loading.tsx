@@ -1,5 +1,5 @@
 import { ContentSkeleton } from './ContentSkeleton';
 
-export default function ManageTopicsLoading() {
+export default function AvailableTopicsListLoading() {
   return <ContentSkeleton className="p-6" />;
 }
