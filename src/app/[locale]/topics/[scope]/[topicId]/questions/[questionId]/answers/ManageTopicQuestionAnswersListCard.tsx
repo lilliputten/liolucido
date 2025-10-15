@@ -386,7 +386,6 @@ export function ManageTopicQuestionAnswersListCard(
     isLoading: !topic || !question,
     topic: topic,
     question: question,
-    inactiveLast: true,
   });
 
   return (
@@ -397,8 +396,9 @@ export function ManageTopicQuestionAnswersListCard(
           isDev && '__ManageTopicQuestionAnswersListCard_DashboardHeader', // DEBUG
           'mx-6',
         )}
-        breadcrumbs={breadcrumbs}
         actions={actions}
+        breadcrumbs={breadcrumbs}
+        inactiveLastBreadcrumb
       />
       <Card
         className={cn(

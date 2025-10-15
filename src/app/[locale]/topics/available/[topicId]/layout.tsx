@@ -1,3 +1,28 @@
-import { WorkoutTopicLayout } from '@/components/pages/AvailableTopics/WorkoutTopic/WorkoutTopicLayout';
+import { PageError } from '@/components/shared/PageError';
+import { TAwaitedLocaleProps } from '@/i18n/types';
 
-export default WorkoutTopicLayout;
+type TAwaitedProps = TAwaitedLocaleProps<{
+  //  scope: TTopicsManageScopeId;
+  topicId: string;
+}>;
+
+type TWorkoutTopicLayoutProps = TAwaitedProps & {
+  children: React.ReactNode;
+};
+
+// const scope: TTopicsManageScopeId = TopicsManageScopeIds.AVAILABLE_TOPICS;
+
+export default async function WorkoutTopicLayout(props: TWorkoutTopicLayoutProps) {
+  const { children, params } = props;
+  const resolvedParams = await params;
+  const { topicId } = resolvedParams;
+  // const topicsListRoutePath = topicsRoutes[scope];
+  // const topicRootRoutePath = `${topicsListRoutePath}/${topicId}`;
+  // const routePath = `${topicsListRoutePath}/${topicId}/workout`;
+
+  if (!topicId) {
+    return <PageError error={'Topic ID not specified.'} />;
+  }
+
+  return children;
+}

@@ -54,7 +54,7 @@ export function EditTopicPageHolder(props: TEditTopicPageHolderProps) {
     return (
       <div
         className={cn(
-          isDev && '__EditTopicPage_Skeleton', // DEBUG
+          isDev && '__EditTopicPageHolder_Skeleton', // DEBUG
           'flex size-full flex-1 flex-col gap-4 px-6',
         )}
       >

@@ -53,13 +53,15 @@ function RenderBreadcrumbsItem({
 
 interface TBreadcrumbsProps extends TPropsWithClassName {
   items: (TBreadcrumbsItemProps | undefined)[];
+  inactiveLast?: boolean;
 }
 
 export function Breadcrumbs(props: TBreadcrumbsProps) {
-  const { className, items } = props;
+  const { className, items, inactiveLast } = props;
   const content: React.JSX.Element[] = [];
   const filteredItems = items.filter(Boolean) as TBreadcrumbsItemProps[];
   for (let n = 0; n < filteredItems.length; n++) {
+    const isLast = n === filteredItems.length - 1;
     const props = filteredItems[n];
     content.push(
       <RenderBreadcrumbsItem
@@ -67,6 +69,7 @@ export function Breadcrumbs(props: TBreadcrumbsProps) {
           props.link || (typeof props.content === 'string' ? props.content : `BreadcrumbsItem-${n}`)
         }
         {...props}
+        link={isLast && inactiveLast ? undefined : props.link}
       />,
     );
     if (n < filteredItems.length - 1) {

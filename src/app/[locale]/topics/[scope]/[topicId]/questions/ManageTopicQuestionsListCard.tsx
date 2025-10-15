@@ -348,13 +348,6 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     refetch({ cancelRefetch: true });
   }, [refetch]);
 
-  const breadcrumbs = useQuestionsBreadcrumbsItems({
-    scope: manageScope,
-    isLoading: !topic,
-    topic: topic,
-    inactiveLast: true,
-  });
-
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
       {
@@ -386,6 +379,12 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     [goBack, isRefetching, handleReload, handleAddQuestion],
   );
 
+  const breadcrumbs = useQuestionsBreadcrumbsItems({
+    scope: manageScope,
+    isLoading: !topic,
+    topic: topic,
+  });
+
   return (
     <>
       <DashboardHeader
@@ -394,8 +393,9 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
           isDev && '__ManageTopicQuestionsListCard_DashboardHeader', // DEBUG
           'mx-6',
         )}
-        breadcrumbs={breadcrumbs}
         actions={actions}
+        breadcrumbs={breadcrumbs}
+        inactiveLastBreadcrumb
       />
       <Card
         className={cn(

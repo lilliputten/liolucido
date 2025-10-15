@@ -84,7 +84,6 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
     topic: topic,
     question: question,
     answer: answer,
-    inactiveLast: true,
   });
 
   return (
@@ -95,8 +94,9 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
           isDev && '__ViewQuestionCard_DashboardHeader', // DEBUG
           'mx-6',
         )}
-        breadcrumbs={breadcrumbs}
         actions={actions}
+        breadcrumbs={breadcrumbs}
+        inactiveLastBreadcrumb
       />
       <Card
         className={cn(

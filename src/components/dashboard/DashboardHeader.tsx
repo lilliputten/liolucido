@@ -14,10 +14,11 @@ interface DashboardHeaderProps {
   className?: string;
   actions?: TActionMenuItem[];
   breadcrumbs?: TBreadcrumbsItemProps[];
+  inactiveLastBreadcrumb?: boolean;
 }
 
 export function DashboardHeader(props: DashboardHeaderProps) {
-  const { className, heading, text, actions, breadcrumbs } = props;
+  const { className, heading, text, actions, breadcrumbs, inactiveLastBreadcrumb } = props;
   return (
     <div
       className={cn(
@@ -39,6 +40,7 @@ export function DashboardHeader(props: DashboardHeaderProps) {
               'truncate',
             )}
             items={breadcrumbs}
+            inactiveLast={inactiveLastBreadcrumb}
           />
         )}
         <h1 className="truncate font-heading text-2xl font-semibold text-theme" title={heading}>
