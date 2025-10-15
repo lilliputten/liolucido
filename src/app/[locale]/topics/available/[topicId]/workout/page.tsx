@@ -31,7 +31,7 @@ export default async function WorkoutTopicWrapper({ params }: TAwaitedProps) {
         isDev && '__WorkoutTopicWrapper', // DEBUG
       )}
       innerClassName={cn(
-        isDev && '__WorkoutTopicWrapper', // DEBUG
+        isDev && '__WorkoutTopicWrapper_Inner', // DEBUG
         'w-full rounded-lg gap-4 py-6',
       )}
       limitWidth

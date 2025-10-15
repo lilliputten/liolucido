@@ -4,10 +4,11 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { WorkoutQuestionContainer } from '@/components/pages/AvailableTopics/WorkoutQuestion/WorkoutQuestionContainer';
 import { isDev } from '@/constants';
 import { TAvailableTopic } from '@/features/topics/types';
 
-import { WorkoutQuestionContainer } from '../WorkoutQuestion';
+// import { WorkoutQuestionContainer } from '../WorkoutQuestion';
 
 interface TWorkoutTopicGoContentProps {
   topic: TAvailableTopic;
@@ -29,7 +30,7 @@ export function WorkoutTopicGoContent(props: TWorkoutTopicGoContentProps) {
         <div
           className={cn(
             isDev && '__WorkoutTopicGoContent_Scroll', // DEBUG
-            'mx-6 flex w-full flex-col gap-4',
+            'flex w-full flex-col gap-4 px-6',
             className,
           )}
         >

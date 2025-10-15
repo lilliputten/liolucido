@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { myTopicsRoute } from '@/config/routesConfig';
+import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
@@ -10,20 +10,20 @@ import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 
-import { WorkoutTopicContent } from './WorkoutTopicContent';
+import { WorkoutTopicGoContent } from './WorkoutTopicGoContent';
 
-export function WorkoutTopic(props: TPropsWithClassName) {
+const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+
+export function WorkoutTopicGo(props: TPropsWithClassName) {
   const { className } = props;
-  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
-  const { topic } = useWorkoutContext();
-  const routePath = topicsRoutes[manageScope];
+  const { topic, workout, pending } = useWorkoutContext();
 
   if (!topic) {
     throw new Error('No topic found');
@@ -43,6 +43,13 @@ export function WorkoutTopic(props: TPropsWithClassName) {
     // _count,
   } = topic;
 
+  const isWorkoutInProgress = workout?.started && !workout?.finished;
+
+  const workoutRoutePath = `${availableTopicsRoute}/${id}/workout`;
+
+  const goToTheRoute = useGoToTheRoute();
+  const goBack = useGoBack(workoutRoutePath);
+
   const user = useSessionUser();
   const isOwner = userId && userId === user?.id;
   const isAdminMode = user?.role === 'ADMIN';
@@ -50,8 +57,23 @@ export function WorkoutTopic(props: TPropsWithClassName) {
   // const questionsCount = _count?.questions;
   // const allowedTraining = !!questionsCount;
 
-  const goToTheRoute = useGoToTheRoute();
-  const goBack = useGoBack(`${routePath}/${topic.id}`); // topicsContext.routePath);
+  const currentQuestionId = React.useMemo(() => {
+    if (!workout?.questionsOrder) return null;
+    const questionsOrder = workout.questionsOrder.split(' ');
+    const currentIndex = workout.stepIndex || 0;
+    return questionsOrder[currentIndex] || null;
+  }, [workout?.questionsOrder, workout?.stepIndex]);
+
+  React.useEffect(() => {
+    if ((!workout || !isWorkoutInProgress) && !pending) {
+      // eslint-disable-next-line no-console
+      console.warn('[WorkoutTopicGo] No active workout: go to the workout review page', {
+        workout,
+      });
+      goBack();
+      // goToTheRoute(workoutRoutePath);
+    }
+  }, [goBack, workoutRoutePath, workout, isWorkoutInProgress, pending]);
 
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
@@ -72,15 +94,24 @@ export function WorkoutTopic(props: TPropsWithClassName) {
         hidden: !allowedEdit,
         onClick: () => goToTheRoute(`${myTopicsRoute}/${id}`),
       },
+      {
+        id: 'ManageQuestion',
+        content: 'Manage Question',
+        variant: 'ghost',
+        icon: Icons.Questions,
+        visibleFor: 'xl',
+        hidden: !isWorkoutInProgress || !allowedEdit,
+        onClick: () => goToTheRoute(`${myTopicsRoute}/${id}/questions/${currentQuestionId}`),
+      },
     ],
-    [allowedEdit, goBack, goToTheRoute, id],
+    [allowedEdit, goBack, goToTheRoute, id, isWorkoutInProgress, currentQuestionId],
   );
 
   const breadcrumbs = useTopicsBreadcrumbsItems({
     scope: manageScope,
     topic: topic,
     lastItem: {
-      content: 'Workout Review',
+      content: 'Workout',
       // link: isWorkoutInProgress ? questionsContext.routePath : undefined,
     },
   });
@@ -88,9 +119,9 @@ export function WorkoutTopic(props: TPropsWithClassName) {
   return (
     <>
       <DashboardHeader
-        heading="Workout Review"
+        heading="Workout"
         className={cn(
-          isDev && '__WorkoutTopic_DashboardHeader', // DEBUG
+          isDev && '__WorkoutTopicGo_DashboardHeader', // DEBUG
           'mx-6',
         )}
         breadcrumbs={breadcrumbs}
@@ -98,15 +129,15 @@ export function WorkoutTopic(props: TPropsWithClassName) {
       />
       <Card
         className={cn(
-          isDev && '__WorkoutTopic_Card', // DEBUG
+          isDev && '__WorkoutTopicGo', // DEBUG
           // 'xl:col-span-2', // ???
-          'relative mx-6 flex flex-1 flex-col overflow-hidden',
+          'relative flex flex-1 flex-col overflow-hidden',
           className,
         )}
       >
         <CardHeader
           className={cn(
-            isDev && '__WorkoutTopic_CardHeader', // DEBUG
+            isDev && '__WorkoutTopicGo_Header', // DEBUG
             'item-start flex flex-col gap-4',
           )}
         >
@@ -120,11 +151,11 @@ export function WorkoutTopic(props: TPropsWithClassName) {
         </CardHeader>
         <CardContent
           className={cn(
-            isDev && '__WorkoutTopic_Content', // DEBUG
+            isDev && '__WorkoutTopicGo_Content', // DEBUG
             'relative flex flex-1 flex-col overflow-hidden px-0',
           )}
         >
-          <WorkoutTopicContent topic={topic} />
+          <WorkoutTopicGoContent topic={topic} />
         </CardContent>
       </Card>
     </>
