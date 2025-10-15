@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -28,18 +29,17 @@ export function AvailableTopicsListPage(props: TProps) {
     () => [
       {
         id: 'AddNewTopic',
-        content: 'Manage Topics',
+        content: 'Manage Your Topics',
         variant: 'ghost',
         icon: Icons.Edit,
         visibleFor: 'md',
         hidden: !user?.id,
-        onClick: () => goToTheRoute('/topics/my'),
+        onClick: () => goToTheRoute(myTopicsRoute),
       },
     ],
     [goToTheRoute, user],
   );
 
-  // TODO: Add a toolbar with the "Add topic" toolbar (links to a login page for unauthorized user)
   return (
     <>
       <DashboardHeader

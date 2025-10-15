@@ -7,6 +7,7 @@ import { availableTopicsRoute } from '@/config/routesConfig';
 import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
+import * as Icons from '@/components/shared/Icons';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { useGoToTheRoute } from '@/hooks';
 
@@ -31,8 +32,9 @@ export function WorkoutTopicControl() {
     return (
       <div className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">No active workout found.</p>
-        <Button onClick={createWorkout} className="w-fit" disabled={pending}>
-          Start New Workout
+        <Button onClick={createWorkout} disabled={pending} className="flex w-fit gap-2">
+          <Icons.Activity className="size-4 opacity-50" />
+          <span>Start New Workout</span>
         </Button>
       </div>
     );
@@ -62,12 +64,16 @@ export function WorkoutTopicControl() {
           data-testid="__WorkoutTopicControl_Start_Button"
           onClick={isWorkoutInProgress ? handleResumeWorkout : handleStartWorkout}
           variant="default"
+          className="flex gap-2"
         >
-          {workout.finished
-            ? 'Restart Workout'
-            : workout.started
-              ? 'Resume Workout'
-              : 'Start Workout'}
+          <Icons.Activity className="size-4 opacity-50" />
+          <span>
+            {workout.finished
+              ? 'Restart Workout'
+              : workout.started
+                ? 'Resume Workout'
+                : 'Start Workout'}
+          </span>
         </Button>
         {/*!!workout.stepIndex && (
           <Button onClick={startWorkout} variant="outline">

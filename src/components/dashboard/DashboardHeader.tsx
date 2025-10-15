@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
@@ -9,21 +10,23 @@ import { isDev } from '@/constants';
 import { DashboardActions, TActionMenuItem } from './DashboardActions';
 
 interface DashboardHeaderProps {
-  heading: string;
-  text?: string;
   className?: string;
+  children?: TReactNode;
+  heading?: TReactNode;
+  text?: TReactNode;
   actions?: TActionMenuItem[];
   breadcrumbs?: TBreadcrumbsItemProps[];
   inactiveLastBreadcrumb?: boolean;
 }
 
 export function DashboardHeader(props: DashboardHeaderProps) {
-  const { className, heading, text, actions, breadcrumbs, inactiveLastBreadcrumb } = props;
+  const { className, children, heading, text, actions, breadcrumbs, inactiveLastBreadcrumb } =
+    props;
   return (
     <div
       className={cn(
         isDev && '__DashboardHeader', // DEBUG
-        'flex items-center justify-between gap-2',
+        'flex items-start justify-between gap-2',
         className,
       )}
     >
@@ -43,14 +46,11 @@ export function DashboardHeader(props: DashboardHeaderProps) {
             inactiveLast={inactiveLastBreadcrumb}
           />
         )}
-        <h1 className="truncate font-heading text-2xl font-semibold text-theme" title={heading}>
-          {heading}
-        </h1>
-        {text && (
-          <p className="truncate text-base opacity-50" title={text}>
-            {text}
-          </p>
+        {heading && (
+          <h1 className="truncate font-heading text-2xl font-semibold text-theme">{heading}</h1>
         )}
+        {text && <div className="truncate text-base opacity-50">{text}</div>}
+        {children}
       </div>
       {actions && <DashboardActions actions={actions} />}
     </div>

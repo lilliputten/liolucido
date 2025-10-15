@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { availableTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
@@ -44,7 +45,7 @@ export function AvailableTopicsListItem(props: TAvailableTopicsListItemProps) {
   const router = useRouter();
   const pathname = usePathname();
   const topicsRoutePath = `${routePath}/${id}`;
-  const workoutRoutePath = `/topics/available/${id}/workout`;
+  const workoutRoutePath = `${availableTopicsRoute}/${id}/workout`;
   const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicsRoutePath, pathname);
   const startWorkout = (ev: React.MouseEvent) => {
     ev.stopPropagation();

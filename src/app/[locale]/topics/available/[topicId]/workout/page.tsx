@@ -1,11 +1,11 @@
 import { constructMetadata } from '@/lib/constructMetadata';
 import { cn } from '@/lib/utils';
-import { AvailableTopicsPageWrapper, WorkoutTopic } from '@/components/pages/AvailableTopics';
-import { PageHeader } from '@/components/pages/shared';
-import { PageError } from '@/components/shared/PageError';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { isDev } from '@/constants';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { WorkoutTopic } from './WorkoutTopic';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId: string }>;
 
@@ -18,22 +18,31 @@ export async function generateMetadata({ params }: TAwaitedProps) {
   });
 }
 
-export default async function ViewTopicPage({ params }: TAwaitedProps) {
+export default async function WorkoutTopicWrapper({ params }: TAwaitedProps) {
   const { topicId } = await params;
 
   if (!topicId) {
-    return <PageError error={'Not topic specified.'} />;
+    throw new Error('No topic ID specified');
   }
 
   return (
-    <AvailableTopicsPageWrapper>
-      <PageHeader heading={'Workout Topic Review'} />
+    <PageWrapper
+      className={cn(
+        isDev && '__WorkoutTopicWrapper', // DEBUG
+      )}
+      innerClassName={cn(
+        isDev && '__WorkoutTopicWrapper', // DEBUG
+        'w-full rounded-lg gap-4 py-6',
+      )}
+      limitWidth
+    >
       <WorkoutTopic
         className={cn(
-          isDev && '__page_ViewTopicPage', // DEBUG
+          isDev && '__WorkoutTopicWrapper_Content', // DEBUG
         )}
+        // NOTE: workout is taken from WorkoutContextProvider
         // topicId={topicId}
       />
-    </AvailableTopicsPageWrapper>
+    </PageWrapper>
   );
 }

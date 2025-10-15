@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { myTopicsRoute } from '@/config/routesConfig';
+import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
@@ -49,7 +49,6 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const questionsCount = _count?.questions;
   const allowedTraining = !!questionsCount;
 
-  const availableTopicsPath = '/topics/available';
   const myTopicRoutePath = myTopicsRoute;
 
   const actions: TActionMenuItem[] = React.useMemo(
@@ -60,17 +59,16 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         variant: 'ghost',
         icon: Icons.ArrowLeft,
         visibleFor: 'sm',
-        disabled: !goBack,
         onClick: goBack,
       },
       {
-        id: 'StartTraining',
-        content: 'Start Training',
+        id: 'Workout',
+        content: 'Workout',
         variant: 'theme',
-        icon: Icons.ArrowRight,
+        icon: Icons.Activity,
         visibleFor: 'lg',
         hidden: !allowedTraining,
-        onClick: () => goToTheRoute(`${availableTopicsPath}/${id}/workout`),
+        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
       },
       {
         id: 'ManageTopic',

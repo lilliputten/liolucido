@@ -80,7 +80,7 @@ export function WorkoutTopicGo(props: TPropsWithClassName) {
               scope={manageScope}
               topic={topic}
               lastItem={{
-                content: 'Workout Review',
+                content: 'Workout',
                 link: workoutRoutePath,
               }}
             />

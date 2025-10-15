@@ -3,6 +3,7 @@
 import React from 'react';
 import { toast } from 'sonner';
 
+import { availableTopicsRoute } from '@/config/routesConfig';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
@@ -101,7 +102,7 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         variant: 'theme',
         icon: Icons.ArrowRight,
         visibleFor: 'md',
-        onClick: () => goToTheRoute(`/topics/available/${topicId}/workout`),
+        onClick: () => goToTheRoute(`${availableTopicsRoute}/${topicId}/workout`),
         hidden: !allowedTraining,
       },
       {
