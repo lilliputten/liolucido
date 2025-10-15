@@ -20,7 +20,7 @@ interface TTopicsListProps {
 interface TMemo {
   allTopics?: TAvailableTopic[];
   routePath?: string;
-  isFetched?: boolean;
+  // isFetched?: boolean;
 }
 
 export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
@@ -30,7 +30,7 @@ export function ManageTopicsPageModalsWrapper(props: TTopicsListProps) {
   const routePath = `/topics/${manageScope}`;
   const availableTopics = useAvailableTopicsByScope({ manageScope });
   const { allTopics, isFetched } = availableTopics;
-  memo.isFetched = isFetched;
+  // memo.isFetched = isFetched;
   memo.routePath = routePath;
   memo.allTopics = allTopics;
 

@@ -9,7 +9,6 @@ import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAnswerId } from '@/features/answers/types';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
-// import { ManageTopicsPageWrapper } from '../ManageTopicsPage';
 import { ManageTopicQuestionAnswersPageModalsWrapper } from './ManageTopicQuestionAnswersPageModalsWrapper';
 
 type TAwaitedProps = TAwaitedLocaleProps<{

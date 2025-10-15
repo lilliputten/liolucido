@@ -81,7 +81,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
         content: 'Add New Question',
         variant: 'ghost',
         icon: Icons.Add,
-        visibleFor: 'xl',
+        // visibleFor: 'xl',
         onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),
       },
       {
@@ -89,7 +89,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
         content: 'Delete Question',
         variant: 'destructive',
         icon: Icons.Trash,
-        visibleFor: 'xl',
+        // visibleFor: 'xl',
         onClick: () =>
           goToTheRoute(
             `${questionsListRoutePath}/delete?questionId=${question.id}&from=ViewQuestionCard`,

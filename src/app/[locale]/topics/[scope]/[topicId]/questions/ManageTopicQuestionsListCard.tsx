@@ -250,7 +250,7 @@ export function ManageTopicQuestionsListCardContent(
       <div
         className={cn(
           isDev && '__ManageTopicQuestionsListCard_Skeleton', // DEBUG
-          'flex size-full flex-1 flex-col gap-4 p-6',
+          'flex size-full flex-1 flex-col gap-4 px-6',
         )}
       >
         <Skeleton className="h-8 w-full rounded-lg" />
@@ -370,7 +370,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
         content: 'Reload',
         variant: 'ghost',
         icon: Icons.Refresh,
-        visibleFor: 'md',
+        visibleFor: 'lg',
         pending: isRefetching,
         onClick: handleReload,
       },
@@ -379,7 +379,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
         content: 'Add New Question',
         variant: 'ghost',
         icon: Icons.Add,
-        visibleFor: 'md',
+        // visibleFor: 'md',
         onClick: handleAddQuestion,
       },
     ],

@@ -55,8 +55,7 @@ export function ViewTopicPageHolder(props: TViewTopicPageHolderProps) {
       <div
         className={cn(
           isDev && '__ViewTopicPage_Skeleton', // DEBUG
-          'size-full px-6',
-          'flex flex-1 flex-col gap-4 py-4',
+          'flex size-full flex-1 flex-col gap-4 px-6',
         )}
       >
         <Skeleton className="h-8 w-48 rounded-lg" />

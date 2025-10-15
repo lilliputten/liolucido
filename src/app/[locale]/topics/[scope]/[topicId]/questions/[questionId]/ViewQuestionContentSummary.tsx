@@ -78,8 +78,7 @@ export function ViewQuestionContentSummary(props: TProps) {
     <div
       className={cn(
         isDev && '__Section_Topic_Skeleton', // DEBUG
-        'size-full',
-        'flex flex-1 flex-col gap-4 py-4',
+        'flex size-full flex-1 flex-col gap-4',
       )}
     >
       <Skeleton className="h-8 w-full rounded-lg" />

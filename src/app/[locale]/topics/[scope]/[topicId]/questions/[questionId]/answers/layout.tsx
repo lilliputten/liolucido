@@ -1,13 +1,10 @@
 import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
-import { TRoutePath, welcomeRoute } from '@/config/routesConfig';
+import { welcomeRoute } from '@/config/routesConfig';
 import { getCurrentUser } from '@/lib/session';
 import { PageError } from '@/components/shared/PageError';
-import { AnswersContextProvider } from '@/contexts/AnswersContext';
-import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
-import { getQuestionAnswers } from '@/features/answers/actions/getQuestionAnswers';
-import { TAnswer } from '@/features/answers/types';
+import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
@@ -33,12 +30,7 @@ export default async function ManageTopicQuestionAnswersLayout(
     params,
   } = props;
   const resolvedParams = await params;
-  const { locale, scope, topicId, questionId } = resolvedParams;
-  const topicsListRoutePath = topicsRoutes[scope];
-  const topicRoutePath = `${topicsListRoutePath}/${topicId}` as TRoutePath;
-  const questionsListRoutePath = `${topicRoutePath}/questions` as TRoutePath;
-  const questionRootRoutePath = `${questionsListRoutePath}/${questionId}` as TRoutePath;
-  const routePath = `${questionRootRoutePath}/answers` as TRoutePath;
+  const { locale, topicId, questionId } = resolvedParams;
 
   if (!topicId) {
     return <PageError error={'No topic ID specified.'} />;
@@ -59,31 +51,11 @@ export default async function ManageTopicQuestionAnswersLayout(
   // Enable static rendering
   setRequestLocale(locale);
 
-  let answers: TAnswer[];
-  try {
-    answers = await getQuestionAnswers(questionId);
-  } catch (error) {
-    return (
-      <PageError
-        error={error instanceof Error ? error.message : 'Failed to load answers for this question.'}
-      />
-    );
-  }
-
   return (
-    <AnswersContextProvider
-      answers={answers}
-      routePath={routePath}
-      questionRootRoutePath={questionRootRoutePath}
-      questionsListRoutePath={questionsListRoutePath}
-      questionId={questionId}
-      topicRootRoutePath={topicRoutePath}
-      topicsListRoutePath={topicsListRoutePath}
-      topicId={topicId}
-    >
+    <>
       {children}
       {addAnswerModal}
       {deleteAnswerModal}
-    </AnswersContextProvider>
+    </>
   );
 }

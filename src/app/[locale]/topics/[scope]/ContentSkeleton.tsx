@@ -1,14 +1,11 @@
 import React from 'react';
 
+import { TPropsWithClassName } from '@/lib/types/react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { isDev } from '@/constants';
 
-interface TProps {
-  className?: string;
-}
-
-export function ContentSkeleton({ className }: TProps) {
+export function ContentSkeleton({ className }: TPropsWithClassName) {
   return (
     <div
       className={cn(

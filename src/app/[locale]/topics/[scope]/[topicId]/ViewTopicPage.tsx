@@ -109,7 +109,7 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         content: 'Reload',
         variant: 'ghost',
         icon: Icons.Refresh,
-        visibleFor: 'lg',
+        // visibleFor: 'lg',
         onClick: handleReload,
       },
       {
@@ -133,7 +133,7 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         content: 'Add New Question',
         variant: 'ghost',
         icon: Icons.Add,
-        visibleFor: 'lg',
+        // visibleFor: 'lg',
         onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),
       },
       {
@@ -141,7 +141,7 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         content: 'Delete Topic',
         variant: 'destructive',
         icon: Icons.Trash,
-        visibleFor: 'lg',
+        // visibleFor: 'lg',
         onClick: () => goToTheRoute(`${routePath}/delete?topicId=${topicId}&from=ViewTopicPage`),
       },
     ],
@@ -161,7 +161,6 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
     <>
       <DashboardHeader
         heading="View Topic"
-        // text="Extra long testing text string for text wrap and layout test"
         className={cn(
           isDev && '__ViewTopicPage_DashboardHeader', // DEBUG
           'mx-6',
