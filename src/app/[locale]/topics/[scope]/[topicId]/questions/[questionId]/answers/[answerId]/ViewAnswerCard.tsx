@@ -60,7 +60,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
       {
         id: 'Add New Answer',
         content: 'Add New Answer',
-        variant: 'ghost',
+        variant: 'success',
         icon: Icons.Add,
         visibleFor: 'xl',
         onClick: () => goToTheRoute(`${answersListRoutePath}/add`),

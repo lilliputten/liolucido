@@ -336,7 +336,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
       {
         id: 'Add',
         content: 'Add New Topic',
-        variant: 'ghost',
+        variant: 'success',
         icon: Icons.Add,
         visibleFor: 'md',
         onClick: handleAddTopic,

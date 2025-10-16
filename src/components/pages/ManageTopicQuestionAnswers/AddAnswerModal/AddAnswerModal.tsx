@@ -35,16 +35,10 @@ export function AddAnswerModal() {
 
   const pathname = usePathname();
   const match = pathname.match(urlRegExp);
-  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
   const topicId = match?.[1];
   const questionId = match?.[2];
 
-  if (!topicId) {
-    throw new Error('Not found topic id');
-  }
-  if (!questionId) {
-    throw new Error('Not found question id');
-  }
+  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
 
   // Calculate paths...
   const topicsListRoutePath = `/topics/${manageScope}`;
@@ -111,7 +105,7 @@ export function AddAnswerModal() {
     [answersListRoutePath, availableAnswersQuery, goToTheRoute, questionId],
   );
 
-  if (!shouldBeVisible) {
+  if (!shouldBeVisible || !topicId || !questionId) {
     return null;
     // throw new Error('Cannot parse topic id from the modal url.');
   }

@@ -71,7 +71,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
       {
         id: 'Answers',
         content: 'Answers',
-        variant: 'ghost',
+        variant: 'theme',
         icon: Icons.Answers,
         visibleFor: 'lg',
         onClick: () => goToTheRoute(`${questionsListRoutePath}/${question.id}/answers`),
@@ -79,7 +79,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
       {
         id: 'Add New Question',
         content: 'Add New Question',
-        variant: 'ghost',
+        variant: 'success',
         icon: Icons.Add,
         // visibleFor: 'xl',
         onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),

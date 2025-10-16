@@ -132,7 +132,7 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
       {
         id: 'Add New Question',
         content: 'Add New Question',
-        variant: 'ghost',
+        variant: 'success',
         icon: Icons.Add,
         // visibleFor: 'lg',
         onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),

@@ -88,6 +88,10 @@ export function AddTopicModal() {
     [availableTopicsQuery, routePath, goToTheRoute],
   );
 
+  if (!shouldBeVisible) {
+    return null;
+  }
+
   return (
     <Modal
       isVisible={isVisible}

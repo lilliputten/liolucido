@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
+import { myTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
@@ -20,10 +20,11 @@ interface TViewAvailableTopicProps {
   topic: TTopic;
 }
 
+const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+const routePath = topicsRoutes[manageScope];
+
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const { topic } = props;
-  const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
-  const routePath = topicsRoutes[manageScope];
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(routePath);
@@ -39,17 +40,15 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
     // keywords,
     // createdAt,
     // updatedAt,
-    _count,
+    // _count,
   } = topic;
 
   const user = useSessionUser();
   const isOwner = userId && userId === user?.id;
   const isAdminMode = user?.role === 'ADMIN';
   const allowedEdit = isAdminMode || isOwner;
-  const questionsCount = _count?.questions;
-  const allowedTraining = !!questionsCount;
-
-  const myTopicRoutePath = myTopicsRoute;
+  // const questionsCount = _count?.questions;
+  // const allowedTraining = !!questionsCount;
 
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
@@ -61,15 +60,17 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         visibleFor: 'sm',
         onClick: goBack,
       },
-      {
-        id: 'Workout',
-        content: 'Workout',
-        variant: 'theme',
-        icon: Icons.Activity,
-        visibleFor: 'lg',
-        hidden: !allowedTraining,
-        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
-      },
+      /* // Included in extra actions block in the content
+       * {
+       *   id: 'Workout',
+       *   content: 'Workout',
+       *   variant: 'theme',
+       *   icon: Icons.Activity,
+       *   visibleFor: 'sm',
+       *   hidden: !allowedTraining,
+       *   onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
+       * },
+       */
       {
         id: 'ManageTopic',
         content: 'Manage Topic',
@@ -77,10 +78,10 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         icon: Icons.Edit,
         visibleFor: 'xl',
         hidden: !allowedEdit,
-        onClick: () => goToTheRoute(`${myTopicRoutePath}/${id}`),
+        onClick: () => goToTheRoute(`${myTopicsRoute}/${id}`),
       },
     ],
-    [allowedEdit, allowedTraining, goBack, goToTheRoute, id, myTopicRoutePath],
+    [allowedEdit, goBack, goToTheRoute, id],
   );
 
   const breadcrumbs = useTopicsBreadcrumbsItems({

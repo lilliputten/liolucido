@@ -7,6 +7,7 @@ import { useFormatter } from 'next-intl';
 import { compareDates, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/Separator';
 import * as Icons from '@/components/shared/Icons';
@@ -40,32 +41,44 @@ export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
         </div>
       )}
 
+      {/* Topic Questions */}
+      <div data-testid="__Section_Questions" className="flex flex-col gap-4">
+        <h3 className="text-lg font-semibold">Questions</h3>
+        <div className="flex flex-wrap gap-4">
+          {!!topic._count?.questions && (
+            <span className="flex items-center gap-2">
+              <Icons.Questions className="size-4 opacity-50" />
+              <span>Questions count: {topic._count.questions}</span>
+            </span>
+          )}
+          <Button variant="theme">
+            <Link href={`${routePath}/${topic.id}/questions`} className="flex items-center gap-2">
+              <Icons.Edit className="size-4 opacity-50" />
+              <span>Manage</span>
+            </Link>
+          </Button>
+        </div>
+      </div>
+
       {/* Topic Properties */}
       <div data-testid="__Section_Properties" className="flex flex-col gap-4">
         <h3 className="text-lg font-semibold">Properties</h3>
         <div className="flex flex-wrap gap-2">
-          {!!topic._count?.questions && (
-            <Link href={`${routePath}/${topic.id}/questions`}>
-              <Badge
-                variant="default"
-                className="cursor-pointer bg-theme-500 hover:bg-theme-500/80"
-              >
-                <Icons.Questions className="mr-1 size-3 opacity-50" />
-                Questions: {topic._count.questions}
-              </Badge>
-            </Link>
-          )}
-          <Badge variant={topic.isPublic ? 'success' : 'secondary'}>
+          <Badge
+            variant={topic.isPublic ? 'success' : 'outline'}
+            className="flex gap-2 px-2 py-1"
+            title="Availability"
+          >
             {topic.isPublic ? (
-              <Icons.Eye className="mr-1 size-3 opacity-50" />
+              <Icons.Eye className="size-4 opacity-50" />
             ) : (
-              <Icons.EyeOff className="mr-1 size-3 opacity-50" />
+              <Icons.EyeOff className="size-4 opacity-50" />
             )}
             {topic.isPublic ? 'Public' : 'Private'}
           </Badge>
           {topic.langName && (
-            <Badge variant="outline">
-              <Icons.Languages className="mr-1 size-3 opacity-50" />
+            <Badge variant="outline" className="flex gap-2" title="Language">
+              <Icons.Languages className="size-4 opacity-50" />
               {topic.langName} {topic.langCode && `(${topic.langCode})`}
             </Badge>
           )}

@@ -26,33 +26,40 @@ export function DashboardHeader(props: DashboardHeaderProps) {
     <div
       className={cn(
         isDev && '__DashboardHeader', // DEBUG
-        'flex items-start justify-between gap-2',
+        'flex flex-col gap-2',
         className,
       )}
     >
+      {breadcrumbs && (
+        <Breadcrumbs
+          className={cn(
+            isDev && '__DashboardHeader_Breadcrumbs', // DEBUG
+            // 'truncate',
+          )}
+          items={breadcrumbs}
+          inactiveLast={inactiveLastBreadcrumb}
+        />
+      )}
       <div
         className={cn(
-          isDev && '__DashboardHeader_Content', // DEBUG
-          'flex flex-1 flex-col gap-1 truncate',
+          isDev && '__DashboardHeader_MainWrapper', // DEBUG
+          'flex items-start justify-between gap-2',
         )}
       >
-        {breadcrumbs && (
-          <Breadcrumbs
-            className={cn(
-              isDev && '__DashboardHeader_Breadcrumbs', // DEBUG
-              'truncate',
-            )}
-            items={breadcrumbs}
-            inactiveLast={inactiveLastBreadcrumb}
-          />
-        )}
-        {heading && (
-          <h1 className="truncate font-heading text-2xl font-semibold text-theme">{heading}</h1>
-        )}
-        {text && <div className="truncate text-base opacity-50">{text}</div>}
-        {children}
+        <div
+          className={cn(
+            isDev && '__DashboardHeader_Content', // DEBUG
+            'flex flex-1 flex-col gap-1 truncate',
+          )}
+        >
+          {heading && (
+            <h1 className="truncate font-heading text-2xl font-semibold text-theme">{heading}</h1>
+          )}
+          {text && <div className="truncate text-base opacity-50">{text}</div>}
+          {children}
+        </div>
+        {actions && <DashboardActions actions={actions} />}
       </div>
-      {actions && <DashboardActions actions={actions} />}
     </div>
   );
 }

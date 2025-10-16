@@ -372,7 +372,7 @@ export function ManageTopicQuestionAnswersListCard(
       {
         id: 'Add New Answer',
         content: 'Add New Answer',
-        variant: 'ghost',
+        variant: 'success',
         icon: Icons.Add,
         visibleFor: 'lg',
         onClick: () => goToTheRoute(`${answersListRoutePath}/add`),

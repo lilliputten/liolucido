@@ -248,7 +248,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       {
         id: 'Add New Answer',
         content: 'Add New Answer',
-        variant: 'ghost',
+        variant: 'success',
         icon: Icons.Add,
         visibleFor: 'xl',
         onClick: handleAddAnswer,

@@ -36,7 +36,7 @@ function RenderBreadcrumbsItem({
   loading,
 }: TBreadcrumbsItemProps | BreadcrumbsItem) {
   if (loading) {
-    return <Skeleton className="h-1 w-5 rounded" />;
+    return <Skeleton className="h-1 w-5 truncate rounded" />;
   }
   if (!content) {
     return null;
@@ -80,8 +80,8 @@ export function Breadcrumbs(props: TBreadcrumbsProps) {
     <div
       className={cn(
         isDev && '__Breadcrumbs', // DEBUG
-        'flex gap-1 gap-x-3 overflow-hidden',
-        'text-sm',
+        'flex gap-1 gap-x-2 overflow-hidden text-sm',
+        // 'truncate-start',
         className,
       )}
     >

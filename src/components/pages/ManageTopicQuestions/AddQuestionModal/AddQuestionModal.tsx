@@ -36,10 +36,6 @@ export function AddQuestionModal() {
   const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
   const topicId = match?.[1];
 
-  if (!topicId) {
-    throw new Error('Not found topic id');
-  }
-
   const topicsListRoutePath = `/topics/${manageScope}`;
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
   const questionsListRoutePath = `${topicRoutePath}/questions`;
@@ -111,7 +107,6 @@ export function AddQuestionModal() {
 
   if (!shouldBeVisible || !topicId) {
     return null;
-    // throw new Error('Cannot parse topic id from the modal url.');
   }
 
   return (

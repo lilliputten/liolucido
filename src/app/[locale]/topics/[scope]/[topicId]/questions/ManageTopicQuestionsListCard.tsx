@@ -370,7 +370,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       {
         id: 'Add New Question',
         content: 'Add New Question',
-        variant: 'ghost',
+        variant: 'success',
         icon: Icons.Add,
         // visibleFor: 'md',
         onClick: handleAddQuestion,

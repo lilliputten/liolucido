@@ -2,37 +2,69 @@
 
 import React from 'react';
 
+import { availableTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
-import { MarkdownText } from '@/components/ui/MarkdownText';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { DashboardActions, TActionMenuItem } from '@/components/dashboard/DashboardActions';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
+import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
+import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 
 interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;
   className?: string;
 }
 
+const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+const routePath = topicsRoutes[manageScope];
+
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const { topic, className } = props;
+  // Topic
   const {
-    // id,
+    id,
     // userId,
-    // user,
     // name,
-    description,
+    // description,
     // isPublic,
     // langCode,
     // langName,
     // keywords,
     // createdAt,
     // updatedAt,
-    // _count,
+    _count,
   } = topic;
+
+  // const user = useSessionUser();
+  // const isOwner = userId && userId === user?.id;
+  // const isAdminMode = user?.role === 'ADMIN';
+  // const allowedEdit = isAdminMode || isOwner;
+  const questionsCount = _count?.questions;
+  const allowedTraining = !!questionsCount;
+
+  const goToTheRoute = useGoToTheRoute();
+  // const goBack = useGoBack(routePath);
+
+  const extraActions = React.useMemo<TActionMenuItem[]>(
+    () => [
+      {
+        id: 'Workout',
+        content: 'Workout',
+        variant: 'theme',
+        icon: Icons.Activity,
+        visibleFor: 'sm',
+        hidden: !allowedTraining,
+        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
+      },
+    ],
+    [allowedTraining, goToTheRoute, id],
+  );
+
   return (
     <div
       className={cn(
@@ -53,15 +85,12 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
           <TopicHeader
             scope={manageScope}
             topic={topic}
+            showDescription
             className="flex-1 max-sm:flex-col-reverse"
           />
-          {!!description && (
-            <div id="description" className="truncate">
-              <MarkdownText>{description}</MarkdownText>
-            </div>
-          )}
           <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
           {/* TODO: Show statistics, existed workout etc */}
+          <DashboardActions actions={extraActions} />
         </div>
       </ScrollArea>
     </div>
