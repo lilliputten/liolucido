@@ -2,11 +2,13 @@
 
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { APIError } from '@/lib/types/api';
+import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
@@ -49,6 +51,8 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     availableAnswerQuery,
   } = props;
   const { manageScope } = useManageTopicsStore();
+
+  const queryClient = useQueryClient();
 
   const [hasDeleted, setHasDeleted] = React.useState(false);
 
@@ -162,6 +166,12 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
             error: 'Can not save the answer data.',
           });
           const updatedAnswer = await promise;
+          // Invalidate all possible answer data...
+          const invalidatePrefixes = [
+            ['available-answer', editedAnswer.id],
+            '["available-answers', // All available question queries
+          ].map(makeQueryKeyPrefix);
+          invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
           // Update the item to the cached react-query data
           availableAnswersQuery.updateAnswer(updatedAnswer);
           // Invalidate all other keys...
@@ -181,7 +191,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         }
       });
     },
-    [availableAnswersQuery, answer, form],
+    [answer, queryClient, availableAnswersQuery, form],
   );
 
   const handleReload = React.useCallback(() => {
@@ -190,12 +200,6 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       .then((res) => {
         const answer = res.data;
         if (answer) {
-          // const formData = formSchema.parse({
-          //   text: answer.text || '',
-          //   isCorrect: answer.isCorrect || false,
-          //   isGenerated: answer.isGenerated || false,
-          // });
-          // form.reset(formData);
           form.reset(answer as TFormData);
           // Add the created item to the cached react-query data
           availableAnswersQuery.updateAnswer(answer);

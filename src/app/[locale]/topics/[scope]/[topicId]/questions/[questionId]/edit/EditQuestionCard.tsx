@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
 
+import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { APIError } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
@@ -45,6 +47,8 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
     availableQuestionQuery,
   } = props;
   const { manageScope } = useManageTopicsStore();
+
+  const queryClient = useQueryClient();
 
   const topicsListRoutePath = `/topics/${manageScope}`;
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
@@ -179,6 +183,13 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
             error: 'Can not save the question data.',
           });
           const updatedQuestion = await promise;
+          // Invalidate all possible question data...
+          const invalidatePrefixes = [
+            ['available-question', editedQuestion.id],
+            '["available-questions', // All available question queries
+          ].map(makeQueryKeyPrefix);
+          invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
+
           // Update the item to the cached react-query data
           availableQuestionsQuery.updateQuestion(updatedQuestion);
           // TODO: Update or invalidate all other possible AvailableQuestion and AvailableQuestions cached data
@@ -200,7 +211,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
         }
       });
     },
-    [availableQuestionsQuery, form, question],
+    [availableQuestionsQuery, form, queryClient, question.id, question.topicId],
   );
 
   const handleReload = React.useCallback(() => {
@@ -236,7 +247,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
         content: 'Back',
         variant: 'ghost',
         icon: Icons.ArrowLeft,
-        visibleFor: 'xs',
+        visibleFor: 'sm',
         onClick: goBack,
       },
       {
@@ -279,7 +290,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
         content: 'Save',
         variant: 'success',
         icon: Icons.Check,
-        visibleFor: 'md',
+        visibleFor: 'sm',
         disabled: !isSubmitEnabled,
         pending: isPending,
         onClick: handleSubmit,

@@ -6,15 +6,18 @@ import { TAllUsedKeys, TQueryClient } from '@/lib/types/react-query';
 /** Stringify react-query data key (unknown[] -> string)
  * Should return the same value as provided by `query.queryHash`
  */
-export function stringifyQueryKey(qk: QueryKey) {
-  return JSON.stringify(qk);
-  // return String(qk);
+export function stringifyQueryKey(queryKey: QueryKey) {
+  return JSON.stringify(queryKey);
+  // return String(queryKey);
 }
 
 /** Return query key hash without the final square bracket, to match all similar list hashes */
-export function makeQueryKeyPrefix(qk: QueryKey) {
-  const hash = JSON.stringify(qk);
-  return hash.substring(0, hash.length - 1);
+export function makeQueryKeyPrefix(queryKey: QueryKey | string) {
+  if (typeof queryKey === 'string') {
+    return queryKey;
+  }
+  const hash = JSON.stringify(queryKey);
+  return hash.endsWith(']') ? hash.substring(0, hash.length - 1) : hash;
 }
 
 /** Extract & deduplicate topics by their IDs */

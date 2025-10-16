@@ -381,8 +381,8 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
 
   const breadcrumbs = useQuestionsBreadcrumbsItems({
     scope: manageScope,
-    isLoading: !topic,
-    topic: topic,
+    // isLoading: !topic,
+    topic,
   });
 
   return (

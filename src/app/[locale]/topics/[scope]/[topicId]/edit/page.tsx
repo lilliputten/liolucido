@@ -13,7 +13,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId:
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
   // const t = await getTranslations({ locale, namespace });
-  const title = 'Manage Topic Properties';
+  const title = 'Edit Topic Properties';
   return constructMetadata({
     locale,
     title,

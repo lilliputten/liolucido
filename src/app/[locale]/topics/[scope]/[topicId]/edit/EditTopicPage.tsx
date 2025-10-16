@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
 
+import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { APIError, TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
@@ -53,6 +55,8 @@ export function EditTopicPage(props: TEditTopicPageProps) {
   const goBack = useGoBack(routePath);
   const goToTheRoute = useGoToTheRoute();
   const [isPending, startTransition] = React.useTransition();
+
+  const queryClient = useQueryClient();
 
   const {
     topic,
@@ -217,6 +221,13 @@ export function EditTopicPage(props: TEditTopicPageProps) {
         });
         try {
           const topic = await savePromise;
+          // Invalidate all possible topic data...
+          const invalidatePrefixes = [
+            ['available-topic', editedTopic.id],
+            '["available-topics', // All available question queries
+          ].map(makeQueryKeyPrefix);
+          invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
+          // Update query data
           availableTopicQuery.queryClient.setQueryData(availableTopicQuery.queryKey, topic);
           // Add the created item to the cached react-query data
           availableTopicsQuery.updateTopic(topic);
@@ -253,7 +264,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
         }
       });
     },
-    [availableTopicQuery, availableTopicsQuery, form, topic],
+    [availableTopicQuery, availableTopicsQuery, form, queryClient, topic],
   );
 
   const handleSubmit = form.handleSubmit(handleFormSubmit);
@@ -372,7 +383,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
   return (
     <>
       <DashboardHeader
-        heading="Manage Topic Properties"
+        heading="Edit Topic Properties"
         // text="Extra long testing text string for text wrap and layout test"
         className={cn(
           isDev && '__EditTopicPage_DashboardHeader', // DEBUG

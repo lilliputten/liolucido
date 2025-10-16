@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { stringifyQueryKey } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Card } from '@/components/ui/Card';
@@ -30,14 +29,7 @@ export function ViewQuestionCard(props: TViewQuestionCardProps) {
   const { topicId, questionId, availableTopicQuery, availableQuestionQuery } = props;
   const { manageScope } = useManageTopicsStore();
 
-  const { queryKey: availableTopicQueryKey } = availableQuestionQuery;
-  React.useEffect(() => {
-    console.log('[ViewQuestionCard:DEBUG]', {
-      topicId,
-      questionId,
-      availableTopicQueryHash: stringifyQueryKey(availableTopicQueryKey),
-    });
-  }, [topicId, questionId, availableTopicQueryKey]);
+  // const { queryKey: availableTopicQueryKey } = availableQuestionQuery;
 
   const topicsListRoutePath = `/topics/${manageScope}`;
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
