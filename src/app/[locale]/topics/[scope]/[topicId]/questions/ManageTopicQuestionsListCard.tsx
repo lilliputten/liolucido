@@ -388,7 +388,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
   return (
     <>
       <DashboardHeader
-        heading="View Questions"
+        heading="Manage Questions"
         className={cn(
           isDev && '__ManageTopicQuestionsListCard_DashboardHeader', // DEBUG
           'mx-6',

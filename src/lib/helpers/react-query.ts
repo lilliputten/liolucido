@@ -126,11 +126,25 @@ export function invalidateAllUsedKeysExcept(
 
 /** Invalidate all keys with given prefixes.
  * Use `makeQueryKeyPrefix` to create given query prefixes.
+ * @param {TQueryClient} queryClient: TQueryClient
+ * @param {string[]} queryPrefixes
+ * @param {string[]} [exceptQueries] - Don't invalidate these queries (by query keys or hashes)
  */
-export function invalidateKeysByPrefixes(queryClient: TQueryClient, queryPrefixes: string[]) {
+export function invalidateKeysByPrefixes(
+  queryClient: TQueryClient,
+  queryPrefixes: string[],
+  exceptQueries?: (QueryKey | string)[],
+) {
+  const exceptHashes = exceptQueries?.map((k) =>
+    typeof k === 'string' ? k : stringifyQueryKey(k),
+  );
   queryClient.invalidateQueries({
     predicate: (query) => {
       const { queryHash } = query;
+      if (exceptHashes && exceptHashes.includes(queryHash)) {
+        // This query is protected
+        return false;
+      }
       // const queryHash = stringifyQueryKey(query.queryKey);
       const invalidate = queryPrefixes.find((prefix) => queryHash.startsWith(prefix));
       /* console.log('[react-query:invalidateKeysByPrefixes:invalidateQueries]', {
