@@ -114,12 +114,15 @@ model AllowedUser {
 }
 
 // User settings
+// Ensure sync of `settingsSchema` in the `src/features/settings/types/settings.ts`,
+// compare with `UserSettingsSchema` from `src/generated/prisma/index.ts`.
 
 model UserSettings {
   userId String @id @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  showOnlyMyTopics Boolean? @default(false) @map("show_only_my_topics")
+  showOnlyMyTopics  Boolean? @default(false) @map("show_only_my_topics")
+  jumpToNewEntities Boolean? @default(false) @map("jump_to_new_entities")
 
   // The application language.
   locale String? @map("locale") // Language code ("en", "ru", ee the defintion in `src/i18n/types.ts`

@@ -296,3 +296,8 @@ export function useSettingsContext() {
   }
   return context;
 }
+
+export function useSettings() {
+  const { settings } = useSettingsContext();
+  return settings;
+}

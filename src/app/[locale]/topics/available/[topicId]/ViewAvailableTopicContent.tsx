@@ -8,11 +8,11 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { DashboardActions, TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
+import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
-import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
+import { useGoToTheRoute } from '@/hooks';
 
 interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;

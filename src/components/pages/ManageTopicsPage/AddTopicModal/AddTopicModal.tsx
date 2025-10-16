@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
+import { useSettings } from '@/contexts/SettingsContext';
 import { addNewTopic } from '@/features/topics/actions/addNewTopic';
 import { TAvailableTopic, TNewTopic } from '@/features/topics/types';
 import {
@@ -31,6 +32,8 @@ export function AddTopicModal() {
   const routePath = `/topics/${manageScope}`;
   const [isVisible, setVisible] = React.useState(false);
   const { isMobile } = useMediaQuery();
+
+  const { jumpToNewEntities } = useSettings();
 
   const availableTopicsQuery = useAvailableTopicsByScope({ manageScope });
 
@@ -59,9 +62,11 @@ export function AddTopicModal() {
       availableTopicsQuery.invalidateAllKeysExcept([availableTopicsQuery.queryKey]);
       // Close the modal first
       setVisible(false);
-      // Then navigate to the edit page after a short delay to ensure modal is closed
-      // setTimeout(() => goToTheRoute(`${routePath}/${addedTopic.id}`, true), 100);
-      goToTheRoute(`${routePath}/${addedTopic.id}`, true);
+      if (jumpToNewEntities) {
+        // Then navigate to the edit page after a short delay to ensure modal is closed
+        // setTimeout(() => goToTheRoute(`${routePath}/${addedTopic.id}`, true), 100);
+        goToTheRoute(`${routePath}/${addedTopic.id}`, true);
+      }
     },
     onError: (error, newTopic) => {
       const details = error instanceof APIError ? error.details : null;

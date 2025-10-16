@@ -11,6 +11,9 @@ import * as z from 'zod';
  * const themeUnion = [z.literal('dark'), z.literal('light'), z.literal('system')] as const;
  */
 
+// It can't convert nullable fileds to options via existed helper
+// export const settingsSchema = makeNullableFieldsOptional(UserSettingsSchema);
+
 export const settingsSchema = z.object({
   /* // DEBUG
    * testInput: z.string().optional(),
@@ -24,6 +27,7 @@ export const settingsSchema = z.object({
   theme: z.string().optional(),
   themeColor: z.string().optional(),
   showOnlyMyTopics: z.boolean().optional(),
+  jumpToNewEntities: z.boolean().optional(),
   langCode: z.string().optional(),
   langName: z.string().optional(),
   langCustom: z.boolean().optional(),

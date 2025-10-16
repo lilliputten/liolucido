@@ -164,7 +164,6 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
           const updatedAnswer = await promise;
           // Update the item to the cached react-query data
           availableAnswersQuery.updateAnswer(updatedAnswer);
-          // TODO: Update or invalidate all other possible AvailableAnswer and AvailableAnswers cached data
           // Invalidate all other keys...
           availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
           // Reset form to the current data

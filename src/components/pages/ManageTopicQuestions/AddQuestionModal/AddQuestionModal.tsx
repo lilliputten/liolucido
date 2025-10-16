@@ -12,6 +12,7 @@ import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
+import { useSettings } from '@/contexts/SettingsContext';
 import { addNewQuestion } from '@/features/questions/actions';
 import { TNewQuestion, TQuestion } from '@/features/questions/types';
 import {
@@ -32,6 +33,8 @@ const urlTopicIdRegExp = new RegExp(idToken + urlPostfix + '$');
 export function AddQuestionModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(false);
+
+  const { jumpToNewEntities } = useSettings();
 
   const pathname = usePathname();
   const match = pathname.match(urlTopicIdRegExp);
@@ -73,8 +76,10 @@ export function AddQuestionModal() {
       invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
       // Close modal and navigate
       setVisible(false);
-      const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
-      setTimeout(() => goToTheRoute(returnUrl, true), 100);
+      if (jumpToNewEntities) {
+        const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
+        setTimeout(() => goToTheRoute(returnUrl, true), 100);
+      }
     },
     onError: (error, newQuestion) => {
       const details = error instanceof APIError ? error.details : null;

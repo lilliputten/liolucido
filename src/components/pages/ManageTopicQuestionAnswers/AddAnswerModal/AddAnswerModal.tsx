@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
+import { useSettings } from '@/contexts/SettingsContext';
 import { addNewAnswer } from '@/features/answers/actions';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
 import {
@@ -34,6 +35,8 @@ const urlRegExp = new RegExp(idToken + urlQuestionToken + idToken + urlPostfix +
 export function AddAnswerModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(true);
+
+  const { jumpToNewEntities } = useSettings();
 
   const pathname = usePathname();
   const match = pathname.match(urlRegExp);
@@ -81,8 +84,10 @@ export function AddAnswerModal() {
       invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
       // Close modal and navigate
       setVisible(false);
-      const continueUrl = `${answersListRoutePath}/${addedAnswer.id}`;
-      goToTheRoute(continueUrl, true);
+      if (jumpToNewEntities) {
+        const continueUrl = `${answersListRoutePath}/${addedAnswer.id}`;
+        goToTheRoute(continueUrl, true);
+      }
     },
     onError: (error, newAnswer) => {
       const details = error instanceof APIError ? error.details : null;
