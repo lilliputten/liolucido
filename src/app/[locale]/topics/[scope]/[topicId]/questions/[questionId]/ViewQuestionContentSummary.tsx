@@ -50,24 +50,38 @@ export function ViewQuestionContentSummary(props: TProps) {
       data-testid="__ViewQuestionContentSummary_Section_Properties"
       className="flex flex-col gap-4"
     >
-      <h3 className="text-lg font-semibold">Properties</h3>
+      <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="text-lg font-semibold">Answers</h3>
+        <Button variant="ghost" size="sm">
+          <Link
+            href={`${routePath}/${question.topicId}/questions/${question.id}/answers`}
+            className="flex items-center gap-2"
+            title="Manage answers"
+          >
+            <Icons.Edit className="size-4 opacity-50" />
+            <span>Manage Answers</span>
+          </Link>
+        </Button>
+      </div>
       <div className="flex flex-wrap gap-2">
-        {!!question._count?.answers && (
-          <Button variant="ghost" size="sm">
-            <Link
-              href={`${routePath}/${question.topicId}/questions/${question.id}/answers`}
-              className="flex items-center gap-2"
-              title="Manage answers"
-            >
-              <Icons.Edit className="size-4 opacity-50" />
-              Answers: {question._count.answers}
-            </Link>
-          </Button>
-        )}
+        <Badge variant="outline" className="flex items-center gap-2 px-2 py-1">
+          <Icons.Answers className="size-4 opacity-50" />
+          {question._count?.answers ? (
+            <span>Answers: {question._count.answers}</span>
+          ) : (
+            <span>No answers yet</span>
+          )}
+        </Badge>
+
         {question.answersCountRandom && question.answersCountMin && question.answersCountMax && (
-          <Badge variant="secondary" className="border-blue-500 text-blue-500">
-            <Icons.Hash className="mr-1 size-3 opacity-50" />
-            Random Answers: {question.answersCountMin}-{question.answersCountMax}
+          <Badge
+            variant="outline"
+            className="flex items-center gap-2 border-blue-500 px-2 py-1 text-blue-500"
+          >
+            <Icons.Hash className="size-4 opacity-50" />
+            <span>
+              Random Answers: {question.answersCountMin}-{question.answersCountMax}
+            </span>
           </Badge>
         )}
       </div>

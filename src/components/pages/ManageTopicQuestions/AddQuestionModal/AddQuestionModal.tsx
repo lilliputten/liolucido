@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
+import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
@@ -40,7 +42,6 @@ export function AddQuestionModal() {
   const topicRoutePath = `${topicsListRoutePath}/${topicId}`;
   const questionsListRoutePath = `${topicRoutePath}/questions`;
 
-  const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
   const goToTheRoute = useGoToTheRoute();
@@ -52,57 +53,54 @@ export function AddQuestionModal() {
   }, [goBack]);
 
   const availableQuestionsQuery = useAvailableQuestions({ topicId });
+  const queryClient = useQueryClient();
 
   useModalTitle('Add a Question', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
 
+  const addQuestionMutation = useMutation<TQuestion, Error, TNewQuestion>({
+    mutationFn: addNewQuestion,
+    onSuccess: (addedQuestion) => {
+      // Add the created item to the cached react-query data
+      availableQuestionsQuery.addNewQuestion(addedQuestion, true);
+      // Invalidate all other queries...
+      availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+      const invalidatePrefixes = [
+        // Invalidate parent topic and topics list...
+        ['available-topic', topicId],
+        ['available-topics'],
+      ].map(makeQueryKeyPrefix);
+      invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
+      // Close modal and navigate
+      setVisible(false);
+      const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
+      setTimeout(() => goToTheRoute(returnUrl, true), 100);
+    },
+    onError: (error, newQuestion) => {
+      const details = error instanceof APIError ? error.details : null;
+      const message = 'Cannot create question';
+      // eslint-disable-next-line no-console
+      console.error('[AddQuestionModal:addQuestionMutation]', message, {
+        error,
+        details,
+        newQuestion,
+        topicId,
+      });
+      debugger; // eslint-disable-line no-debugger
+    },
+  });
+
   const handleAddQuestion = React.useCallback(
     (newQuestion: TNewQuestion) => {
-      return new Promise((resolve, reject) => {
-        return startUpdating(async () => {
-          try {
-            const promise = addNewQuestion(newQuestion);
-            toast.promise<TQuestion>(promise, {
-              loading: 'Creating a new question...',
-              success: 'Successfully created a new question.',
-              error: 'Can not create a new question',
-            });
-            const addedQuestion = await promise;
-            // Add the created item to the cached react-query data
-            availableQuestionsQuery.addNewQuestion(addedQuestion, true);
-            // Invalidate all other keys...
-            availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
-            /* // Broadcast an event
-             * const event = new CustomEvent<TAddedQuestionDetail>(addedQuestionEventName, {
-             *   detail: { topicId, addedQuestionId: addedQuestion.id, questionsCount: ...Get from `addNewQuestion` results... },
-             *   bubbles: true,
-             * });
-             * window.dispatchEvent(event);
-             */
-            // Resolve added data
-            resolve(addedQuestion);
-            // NOTE: Close or go to the edit page
-            setVisible(false);
-            const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
-            setTimeout(() => goToTheRoute(returnUrl, true), 100);
-          } catch (error) {
-            const details = error instanceof APIError ? error.details : null;
-            const message = 'Cannot create question';
-            // eslint-disable-next-line no-console
-            console.error('[AddQuestionModal:handleAddQuestion]', message, {
-              error,
-              details,
-              newQuestion,
-              topicId,
-            });
-            debugger; // eslint-disable-line no-debugger
-            reject(error);
-            throw error;
-          }
-        });
+      const promise = addQuestionMutation.mutateAsync(newQuestion);
+      toast.promise(promise, {
+        loading: 'Creating a new question...',
+        success: 'Successfully created a new question.',
+        error: 'Can not create a new question',
       });
+      return promise;
     },
-    [availableQuestionsQuery, goToTheRoute, questionsListRoutePath, topicId],
+    [addQuestionMutation],
   );
 
   if (!shouldBeVisible || !topicId) {
@@ -116,7 +114,7 @@ export function AddQuestionModal() {
       className={cn(
         isDev && '__AddQuestionModal', // DEBUG
         'gap-0',
-        isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
+        addQuestionMutation.isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div
@@ -136,7 +134,7 @@ export function AddQuestionModal() {
           handleAddQuestion={handleAddQuestion}
           className="p-8"
           handleClose={hideModal}
-          isPending={isPending}
+          isPending={addQuestionMutation.isPending}
           topicId={topicId}
         />
       </div>

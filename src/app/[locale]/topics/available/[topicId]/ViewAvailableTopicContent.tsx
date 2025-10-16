@@ -19,8 +19,8 @@ interface TViewAvailableTopicContentProps {
   className?: string;
 }
 
-const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
-const routePath = topicsRoutes[manageScope];
+// const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
+// const routePath = topicsRoutes[manageScope];
 
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;

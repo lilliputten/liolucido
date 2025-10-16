@@ -3,10 +3,18 @@ import { QueryKey } from '@tanstack/react-query';
 import { TGetResults, TGetResultsInfiniteQueryData } from '@/lib/types/api';
 import { TAllUsedKeys, TQueryClient } from '@/lib/types/react-query';
 
-/** Stringify react-query data key (unknown[] -> string) */
+/** Stringify react-query data key (unknown[] -> string)
+ * Should return the same value as provided by `query.queryHash`
+ */
 export function stringifyQueryKey(qk: QueryKey) {
-  // return JSON.stringify(qk);
-  return String(qk);
+  return JSON.stringify(qk);
+  // return String(qk);
+}
+
+/** Return query key hash without the final square bracket, to match all similar list hashes */
+export function makeQueryKeyPrefix(qk: QueryKey) {
+  const hash = JSON.stringify(qk);
+  return hash.substring(0, hash.length - 1);
 }
 
 /** Extract & deduplicate topics by their IDs */
@@ -26,7 +34,7 @@ export function getUnqueItemsList<TItem extends { id: TId }, TId = string>(
     });
 }
 
-/** Add a new item record to cached pages. */
+/** Add a new item record to cached pages */
 export function addNewItemToQueryCache<TItem>(
   queryClient: TQueryClient,
   queryKey: QueryKey,
@@ -51,7 +59,7 @@ export function addNewItemToQueryCache<TItem>(
   });
 }
 
-/** Delete an item from cached pages by id. */
+/** Delete an item from cached pages by id */
 export function deleteItemFromQueryCache<TItem extends { id: TId }, TId = string>(
   queryClient: TQueryClient,
   queryKey: QueryKey,
@@ -70,7 +78,7 @@ export function deleteItemFromQueryCache<TItem extends { id: TId }, TId = string
   });
 }
 
-/** Update an item in cached pages by id. */
+/** Update an item in cached pages by id */
 export function updateItemInQueryCache<TItem extends { id: TId }, TId = string>(
   queryClient: TQueryClient,
   queryKey: QueryKey,
@@ -92,7 +100,7 @@ export function updateItemInQueryCache<TItem extends { id: TId }, TId = string>(
   });
 }
 
-/** Invalidate all used keys except the provided ones. */
+/** Invalidate all used keys except the provided ones */
 export function invalidateAllUsedKeysExcept(
   queryClient: TQueryClient,
   excludeKeys?: QueryKey[],
@@ -102,12 +110,34 @@ export function invalidateAllUsedKeysExcept(
     Array.isArray(excludeKeys) && excludeKeys.length ? excludeKeys.map(stringifyQueryKey) : [];
   queryClient.invalidateQueries({
     predicate: (query) => {
-      const queryKeyStr = JSON.stringify(query.queryKey);
-      return (
-        !excludeKeysStr.includes(queryKeyStr) &&
+      const { queryHash } = query;
+      // const queryHash = stringifyQueryKey(query.queryKey);
+      const invalidate =
+        !excludeKeysStr.includes(queryHash) &&
         (!allUsedKeys ||
-          Object.values(allUsedKeys).some((key) => stringifyQueryKey(key) === queryKeyStr))
-      );
+          Object.values(allUsedKeys).some((key) => stringifyQueryKey(key) === queryHash));
+      return !!invalidate;
+    },
+  });
+}
+
+/** Invalidate all keys with given prefixes.
+ * Use `makeQueryKeyPrefix` to create given query prefixes.
+ */
+export function invalidateKeysByPrefixes(queryClient: TQueryClient, queryPrefixes: string[]) {
+  queryClient.invalidateQueries({
+    predicate: (query) => {
+      const { queryHash } = query;
+      // const queryHash = stringifyQueryKey(query.queryKey);
+      const invalidate = queryPrefixes.find((prefix) => queryHash.startsWith(prefix));
+      /* console.log('[react-query:invalidateKeysByPrefixes:invalidateQueries]', {
+       *   invalidate,
+       *   queryHash,
+       *   query,
+       *   queryPrefixes,
+       * });
+       */
+      return !!invalidate;
     },
   });
 }

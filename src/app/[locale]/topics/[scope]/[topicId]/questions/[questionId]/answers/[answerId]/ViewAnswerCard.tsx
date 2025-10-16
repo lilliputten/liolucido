@@ -91,7 +91,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
       <DashboardHeader
         heading="View Answer"
         className={cn(
-          isDev && '__ViewQuestionCard_DashboardHeader', // DEBUG
+          isDev && '__ViewAnswerCard_DashboardHeader', // DEBUG
           'mx-6',
         )}
         actions={actions}
@@ -100,7 +100,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
       />
       <Card
         className={cn(
-          isDev && '__ViewQuestionCard_Card', // DEBUG
+          isDev && '__ViewAnswerCard_Card', // DEBUG
           'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
         )}
       >

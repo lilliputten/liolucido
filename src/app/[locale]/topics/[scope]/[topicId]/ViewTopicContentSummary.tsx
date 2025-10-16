@@ -12,15 +12,25 @@ import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/Separator';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { TAvailableTopic } from '@/features/topics/types';
-import { useSessionUser } from '@/hooks';
+import { useAvailableTopicById, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
-export function ViewTopicContentSummary({ topic }: { topic: TAvailableTopic }) {
+interface TProps {
+  availableTopicQuery: ReturnType<typeof useAvailableTopicById>;
+}
+
+export function ViewTopicContentSummary({ availableTopicQuery }: TProps) {
   const { manageScope } = useManageTopicsStore();
   const routePath = `/topics/${manageScope}`;
   const format = useFormatter();
   const user = useSessionUser();
+
+  const { topic } = availableTopicQuery;
+
+  // Check if query is actually being invalidated
+  if (!topic) {
+    throw new Error('No topic loaded');
+  }
 
   const isOwner = !!topic.userId && topic.userId === user?.id;
 

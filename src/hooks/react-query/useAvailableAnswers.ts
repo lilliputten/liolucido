@@ -51,10 +51,10 @@ export function useAvailableAnswers(props: TUseAvailableAnswersProps = {}) {
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
+  const queryUrlHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
   const queryKey = React.useMemo<QueryKey>(
-    () => ['available-answers', questionId, queryHash],
-    [questionId, queryHash],
+    () => ['available-answers-for-question', questionId, queryUrlHash],
+    [questionId, queryUrlHash],
   );
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
 

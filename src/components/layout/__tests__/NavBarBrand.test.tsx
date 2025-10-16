@@ -14,7 +14,7 @@ describe('NavBarBrand', () => {
   it('renders a heading', () => {
     try {
       render(<NavBarBrand isUser={false} />);
-      const titleNode = screen.getByTestId('NavBarBrandTitle');
+      const titleNode = screen.getByTestId('NavBarBrandImage');
       expect(titleNode).toBeInTheDocument();
     } catch (error) {
       const nextText = 'Content test error';

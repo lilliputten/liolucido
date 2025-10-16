@@ -2,13 +2,15 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
+import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { useAvailableQuestions } from '@/hooks/react-query/useAvailableQuestions';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deleteQuestion } from '@/features/questions/actions/deleteQuestion';
-import { TQuestionId } from '@/features/questions/types';
+import { TAvailableQuestion, TQuestionId } from '@/features/questions/types';
 import { useGoBack, useModalTitle, useUpdateModalVisibility } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -46,6 +48,8 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
 
   const availableQuestionsQuery = useAvailableQuestions({ topicId });
 
+  const queryClient = useQueryClient();
+
   useModalTitle('Delete a Question', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
 
@@ -56,51 +60,50 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
     throw new Error('No question id passed for deletion');
   }
 
-  const [isPending, startUpdating] = React.useTransition();
+  const deleteQuestionMutation = useMutation<TAvailableQuestion, Error, TQuestionId>({
+    mutationFn: deleteQuestion,
+    onSuccess: () => {
+      // Add the created item to the cached react-query data
+      availableQuestionsQuery.deleteQuestion(questionId);
+      // Invalidate all other keys...
+      availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+      const invalidatePrefixes = [
+        // Invalidate parent topic and topics list...
+        ['available-topic', topicId],
+        ['available-topics'],
+      ].map(makeQueryKeyPrefix);
+      invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
+      // Broadcast an event
+      const event = new CustomEvent<TQuestionId>(topicQuestionDeletedEventId, {
+        detail: questionId,
+        bubbles: true,
+      });
+      window.dispatchEvent(event);
+      // Hide the modal
+      hideModal();
+    },
+    onError: (error) => {
+      const details = error instanceof APIError ? error.details : null;
+      const message = 'Cannot delete question';
+      // eslint-disable-next-line no-console
+      console.error('[DeleteQuestionModal:deleteQuestionMutation]', message, {
+        error,
+        details,
+        questionId,
+      });
+      debugger; // eslint-disable-line no-debugger
+    },
+  });
 
-  const confirmDeleteQuestion = React.useCallback(
-    () =>
-      new Promise<void>((resolve, reject) => {
-        return startUpdating(async () => {
-          try {
-            const promise = deleteQuestion(questionId);
-            toast.promise(promise, {
-              loading: 'Deleting the question...',
-              success: 'Successfully deleted the question.',
-              error: `Can not delete the question."`,
-            });
-            await promise;
-            // Add the created item to the cached react-query data
-            availableQuestionsQuery.deleteQuestion(questionId);
-            // Invalidate all other keys...
-            availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
-            // Resolve added data
-            resolve();
-            // Broadcast an event
-            const event = new CustomEvent<TQuestionId>(topicQuestionDeletedEventId, {
-              detail: questionId,
-              bubbles: true,
-            });
-            window.dispatchEvent(event);
-            // Hide the modal
-            hideModal();
-          } catch (error) {
-            const details = error instanceof APIError ? error.details : null;
-            const message = 'Cannot create question';
-            // eslint-disable-next-line no-console
-            console.error('[DeleteQuestionModal:confirmDeleteQuestion]', message, {
-              error,
-              details,
-              questionId,
-            });
-            debugger; // eslint-disable-line no-debugger
-            reject(error);
-            throw error;
-          }
-        });
-      }),
-    [questionId, availableQuestionsQuery, hideModal],
-  );
+  const confirmDeleteQuestion = React.useCallback(() => {
+    const promise = deleteQuestionMutation.mutateAsync(questionId);
+    toast.promise(promise, {
+      loading: 'Deleting the question...',
+      success: 'Successfully deleted the question.',
+      error: `Can not delete the question.`,
+    });
+    return promise;
+  }, [deleteQuestionMutation, questionId]);
 
   if (!shouldBeVisible || !topicId || !questionId) {
     return null;
@@ -116,7 +119,7 @@ export function DeleteQuestionModal(props: TDeleteQuestionModalProps) {
       cancelButtonText="Cancel"
       handleClose={hideModal}
       handleConfirm={confirmDeleteQuestion}
-      isPending={isPending}
+      isPending={deleteQuestionMutation.isPending}
       isVisible={isVisible}
     >
       Do you confirm the deletion of the question?

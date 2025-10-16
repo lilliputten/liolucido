@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
+import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deleteAnswer } from '@/features/answers/actions';
-import { TAnswerId } from '@/features/answers/types';
+import { TAnswerId, TAvailableAnswer } from '@/features/answers/types';
 import { useAvailableAnswers, useGoBack, useModalTitle, useUpdateModalVisibility } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -63,10 +65,10 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
 
   const availableAnswersQuery = useAvailableAnswers({ questionId });
 
+  const queryClient = useQueryClient();
+
   useModalTitle('Delete a Question', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
-
-  const [isPending, startUpdating] = React.useTransition();
 
   // Change a browser title
   React.useEffect(() => {
@@ -77,50 +79,50 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
     };
   }, []);
 
-  const confirmDeleteAnswer = React.useCallback(
-    () =>
-      new Promise<void>((resolve, reject) => {
-        return startUpdating(async () => {
-          try {
-            const promise = deleteAnswer(answerId);
-            toast.promise(promise, {
-              loading: 'Deleting the answer...',
-              success: 'Successfully deleted the answer.',
-              error: `Can not delete the answer."`,
-            });
-            await promise;
-            // Hide the modal
-            hideModal();
-            // Add the created item to the cached react-query data
-            availableAnswersQuery.deleteAnswer(answerId);
-            // Invalidate all other keys...
-            availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
-            // Resolve added data
-            resolve();
-            // Dispatch a broadcast event
-            const event = new CustomEvent<TAnswerId>(topicAnswerDeletedEventId, {
-              detail: answerId,
-              bubbles: true,
-            });
-            window.dispatchEvent(event);
-          } catch (error) {
-            const details = error instanceof APIError ? error.details : null;
-            const message = 'Cannot delete answer';
-            // eslint-disable-next-line no-console
-            console.error('[DeleteAnswerModal:confirmDeleteAnswer]', message, {
-              details,
-              error,
-              answerId: answerId,
-            });
-            debugger; // eslint-disable-line no-debugger
-            reject(error);
-          }
-        });
-      }),
-    [answerId, availableAnswersQuery, hideModal],
-  );
+  const deleteAnswerMutation = useMutation<TAvailableAnswer, Error, TAnswerId>({
+    mutationFn: deleteAnswer,
+    onSuccess: () => {
+      // Hide the modal
+      hideModal();
+      // Add the created item to the cached react-query data
+      availableAnswersQuery.deleteAnswer(answerId);
+      // Invalidate all other queries...
+      availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+      // Invalidate parent question...
+      const invalidatePrefixes = [
+        ['available-question', questionId],
+        ['available-questions-for-topic', topicId],
+      ].map(makeQueryKeyPrefix);
+      invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
+      // Dispatch a broadcast event
+      const event = new CustomEvent<TAnswerId>(topicAnswerDeletedEventId, {
+        detail: answerId,
+        bubbles: true,
+      });
+      window.dispatchEvent(event);
+    },
+    onError: (error) => {
+      const details = error instanceof APIError ? error.details : null;
+      const message = 'Cannot delete answer';
+      // eslint-disable-next-line no-console
+      console.error('[DeleteAnswerModal:deleteAnswerMutation]', message, {
+        details,
+        error,
+        answerId: answerId,
+      });
+      debugger; // eslint-disable-line no-debugger
+    },
+  });
 
-  // const answerName = deletingAnswer && truncateMarkdown(deletingAnswer.text, 30);
+  const confirmDeleteAnswer = React.useCallback(() => {
+    const promise = deleteAnswerMutation.mutateAsync(answerId);
+    toast.promise(promise, {
+      loading: 'Deleting the answer...',
+      success: 'Successfully deleted the answer.',
+      error: `Can not delete the answer.`,
+    });
+    return promise;
+  }, [deleteAnswerMutation, answerId]);
 
   if (!shouldBeVisible) {
     return null;
@@ -135,7 +137,7 @@ export function DeleteAnswerModal(props: TDeleteAnswerModalProps) {
       cancelButtonText="Cancel"
       handleClose={hideModal}
       handleConfirm={confirmDeleteAnswer}
-      isPending={isPending}
+      isPending={deleteAnswerMutation.isPending}
       isVisible={isVisible}
     >
       Do you confirm deleting the answer?

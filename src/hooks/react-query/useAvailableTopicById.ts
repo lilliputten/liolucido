@@ -24,11 +24,11 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
   const { availableTopicsQueryKey, id: topicId, ...queryProps } = props;
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
+  const queryUrlHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
 
   const queryKey = React.useMemo<QueryKey>(
-    () => ['available-topic', topicId, queryHash],
-    [queryHash, topicId],
+    () => ['available-topic', topicId, queryUrlHash],
+    [queryUrlHash, topicId],
   );
 
   // Check cached infinite query data first
@@ -50,7 +50,7 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
     queryFn: async (_params) => {
       try {
         /* // OPTION 1: Using route api fetch
-         * const url = appendUrlQueries(`/api/topics/${topicId}`, queryHash);
+         * const url = appendUrlQueries(`/api/topics/${topicId}`, queryUrlHash);
          * const result = await handleApiResponse<TAvailableTopic>(fetch(url), {
          *   onInvalidateKeys: invalidateKeys,
          *   debugDetails: {

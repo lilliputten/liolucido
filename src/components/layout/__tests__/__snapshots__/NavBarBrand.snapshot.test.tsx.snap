@@ -6,23 +6,18 @@ exports[`NavBarBrand snapshot 1`] = `
     class="h-12 flex items-center space-x-1.5 gap-2 transition-all mr-10 select-none"
   >
     <img
-      alt="Logo"
-      class="size-16"
+      alt="líolúcido"
+      class="h-14 w-auto"
       data-nimg="1"
+      data-testid="NavBarBrandImage"
       decoding="async"
-      height="36"
+      height="40"
       loading="lazy"
-      src="/static/logo/Logo.svg"
+      src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+      srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
       style="color: transparent;"
-      width="36"
+      width="40"
     />
-    <h1
-      class="font-urban text-xl text-theme-foreground font-bold whitespace-nowrap overflow-hidden text-ellipsis"
-      data-testid="NavBarBrandTitle"
-      role="heading"
-    >
-      líolúcido!
-    </h1>
   </div>
 </div>
 `;

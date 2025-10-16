@@ -176,7 +176,7 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         )}
       >
         <ScrollArea>
-          <ViewTopicContentSummary topic={topic} />
+          <ViewTopicContentSummary availableTopicQuery={availableTopicQuery} />
         </ScrollArea>
       </Card>
     </>

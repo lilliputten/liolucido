@@ -55,6 +55,7 @@ export function NavBarBrand(props: NavBarBrandProps) {
   return (
     <BrandWrapper {...props} className="h-12">
       <Image
+        data-testid="NavBarBrandImage"
         src={isDark ? logoWhiteSvg : logoSvg}
         className="h-14 w-auto"
         priority={false}

@@ -187,7 +187,7 @@
     "prisma-switch-UNUSED": "echo --Switch to proper prisma provider-- && tsx prisma-switch.ts",
     "prisma-migrate": "echo --Migrate database-- && prisma migrate deploy",
     "prisma-db-push": "echo --Create database-- && prisma db push --accept-data-loss",
-    "prisma-db-push-test": "echo --Create test database-- && cross-env DATABASE_URL='file:.data/test.db' prisma db push --accept-data-loss",
+    "prisma-db-push-test-test-db": "echo --Create test database-- && cross-env DATABASE_URL='file:.data/test.db' prisma db push --accept-data-loss",
     "prisma-db-push-all": "echo --Create all databases-- && npm-run-all prisma-db-push prisma-db-push-test",
     "prisma-studio": "echo --Run database explorer-- && prisma studio",
     "husky-init": "husky init",
