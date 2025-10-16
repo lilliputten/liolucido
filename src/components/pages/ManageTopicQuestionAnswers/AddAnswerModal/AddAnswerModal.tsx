@@ -87,6 +87,8 @@ export function AddAnswerModal() {
       if (jumpToNewEntities) {
         const continueUrl = `${answersListRoutePath}/${addedAnswer.id}`;
         goToTheRoute(continueUrl, true);
+      } else {
+        goBack();
       }
     },
     onError: (error, newAnswer) => {

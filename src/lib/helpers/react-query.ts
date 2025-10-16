@@ -147,13 +147,12 @@ export function invalidateKeysByPrefixes(
       }
       // const queryHash = stringifyQueryKey(query.queryKey);
       const invalidate = queryPrefixes.find((prefix) => queryHash.startsWith(prefix));
-      /* console.log('[react-query:invalidateKeysByPrefixes:invalidateQueries]', {
-       *   invalidate,
-       *   queryHash,
-       *   query,
-       *   queryPrefixes,
-       * });
-       */
+      console.log('[react-query:invalidateKeysByPrefixes:invalidateQueries]', !!invalidate, {
+        // invalidate,
+        queryHash,
+        query,
+        queryPrefixes,
+      });
       return !!invalidate;
     },
   });

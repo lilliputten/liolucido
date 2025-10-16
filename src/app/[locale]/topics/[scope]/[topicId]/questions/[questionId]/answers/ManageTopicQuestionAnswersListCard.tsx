@@ -80,10 +80,11 @@ function AnswerTableHeader({
             'hover:[&>button]:ring-2 hover:[&>button]:ring-theme-500/50',
           )}
           onClick={toggleAll}
+          title="Select/deselect all"
         >
           <Checkbox
             checked={hasSelected}
-            aria-label="Select/unselect all"
+            aria-label="Select/deselect all"
             className={cn('block', isIndeterminate && 'opacity-50')}
             icon={isIndeterminate ? Icons.Dot : Icons.Check}
           />
@@ -176,6 +177,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           'hover:[&>button]:ring-2 hover:[&>button]:ring-theme-500/50',
         )}
         onClick={() => toggleSelected(id)}
+        title="Select answer"
       >
         <Checkbox checked={isSelected} className="block" aria-label="Select answer" />
       </TableCell>
@@ -524,7 +526,7 @@ export function ManageTopicQuestionAnswersListCard(
         variant: 'destructive',
         icon: Icons.Trash,
         visibleFor: 'lg',
-        disabled: selectedAnswers.size === 0,
+        hidden: !selectedAnswers.size,
         pending: deleteSelectedMutation.isPending,
         onClick: handleShowDeleteSelectedConfirm,
       },
@@ -551,7 +553,7 @@ export function ManageTopicQuestionAnswersListCard(
 
   const breadcrumbs = useAnswersBreadcrumbsItems({
     scope: manageScope,
-    isLoading: !topic || !question,
+    // isLoading: !topic || !question,
     topic: topic,
     question: question,
   });

@@ -78,7 +78,10 @@ export function AddQuestionModal() {
       setVisible(false);
       if (jumpToNewEntities) {
         const returnUrl = `${questionsListRoutePath}/${addedQuestion.id}`;
-        setTimeout(() => goToTheRoute(returnUrl, true), 100);
+        // setTimeout(() => goToTheRoute(returnUrl, true), 100);
+        goToTheRoute(returnUrl, true);
+      } else {
+        goBack();
       }
     },
     onError: (error, newQuestion) => {

@@ -66,6 +66,8 @@ export function AddTopicModal() {
         // Then navigate to the edit page after a short delay to ensure modal is closed
         // setTimeout(() => goToTheRoute(`${routePath}/${addedTopic.id}`, true), 100);
         goToTheRoute(`${routePath}/${addedTopic.id}`, true);
+      } else {
+        goBack();
       }
     },
     onError: (error, newTopic) => {

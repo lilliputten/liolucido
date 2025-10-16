@@ -359,7 +359,7 @@ export function EditTopicPage(props: TEditTopicPageProps) {
       {
         id: 'Save',
         content: 'Save',
-        variant: 'theme',
+        variant: 'success',
         icon: Icons.Save,
         visibleFor: 'sm',
         pending: isPending,
