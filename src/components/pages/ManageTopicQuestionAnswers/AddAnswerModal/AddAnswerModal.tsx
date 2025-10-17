@@ -2,15 +2,18 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
+import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
+import { useSettings } from '@/contexts/SettingsContext';
 import { addNewAnswer } from '@/features/answers/actions';
-import { TNewAnswer } from '@/features/answers/types';
+import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
 import {
   useAvailableAnswers,
   useGoBack,
@@ -33,18 +36,14 @@ export function AddAnswerModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(true);
 
+  const { jumpToNewEntities } = useSettings();
+
   const pathname = usePathname();
   const match = pathname.match(urlRegExp);
-  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
   const topicId = match?.[1];
   const questionId = match?.[2];
 
-  if (!topicId) {
-    throw new Error('Not found topic id');
-  }
-  if (!questionId) {
-    throw new Error('Not found question id');
-  }
+  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
 
   // Calculate paths...
   const topicsListRoutePath = `/topics/${manageScope}`;
@@ -54,7 +53,6 @@ export function AddAnswerModal() {
   const answersListRoutePath = `${questionRoutePath}/answers`;
   // const answerRoutePath = `${answersListRoutePath}/${answerId}`;
 
-  const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
 
   const goToTheRoute = useGoToTheRoute();
@@ -66,52 +64,61 @@ export function AddAnswerModal() {
   }, [goBack]);
 
   const availableAnswersQuery = useAvailableAnswers({ questionId });
+  const queryClient = useQueryClient();
 
   useModalTitle('Add an Answer', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
 
+  const addAnswerMutation = useMutation<TAvailableAnswer, Error, TNewAnswer>({
+    mutationFn: addNewAnswer,
+    onSuccess: (addedAnswer) => {
+      // Add the created item to the cached react-query data
+      availableAnswersQuery.addNewAnswer(addedAnswer, true);
+      // Invalidate all other queries...
+      availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+      // Invalidate parent question...
+      const invalidatePrefixes = [
+        ['available-question', questionId],
+        ['available-questions-for-topic', topicId],
+      ].map(makeQueryKeyPrefix);
+      invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
+      // Close modal and navigate
+      setVisible(false);
+      if (jumpToNewEntities) {
+        const continueUrl = `${answersListRoutePath}/${addedAnswer.id}`;
+        goToTheRoute(continueUrl, true);
+      } else {
+        goBack();
+      }
+    },
+    onError: (error, newAnswer) => {
+      const details = error instanceof APIError ? error.details : null;
+      const message = 'Cannot create answer';
+      // eslint-disable-next-line no-console
+      console.error('[AddAnswerModal:addAnswerMutation]', message, {
+        error,
+        details,
+        newAnswer,
+        questionId,
+      });
+      debugger; // eslint-disable-line no-debugger
+    },
+  });
+
   const handleAddAnswer = React.useCallback(
     (newAnswer: TNewAnswer) => {
-      return new Promise((resolve, reject) => {
-        return startUpdating(async () => {
-          try {
-            const promise = addNewAnswer(newAnswer);
-            toast.promise(promise, {
-              loading: 'Creating a new answer...',
-              success: 'Successfully created a new answer.',
-              error: 'Cannot create answer',
-            });
-            const addedAnswer = await promise;
-            // Add the created item to the cached react-query data
-            availableAnswersQuery.addNewAnswer(addedAnswer, true);
-            // Invalidate all other keys...
-            availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
-            // Resolve data
-            resolve(addedAnswer);
-            // NOTE: Close or go to the edit page
-            setVisible(false);
-            const continueUrl = `${answersListRoutePath}/${addedAnswer.id}`;
-            goToTheRoute(continueUrl, true);
-          } catch (error) {
-            const details = error instanceof APIError ? error.details : null;
-            const message = 'Cannot create answer';
-            // eslint-disable-next-line no-console
-            console.error('[AddAnswerModal:handleAddAnswer]', message, {
-              error,
-              details,
-              newAnswer,
-              questionId,
-            });
-            debugger; // eslint-disable-line no-debugger
-            reject(error);
-          }
-        });
+      const promise = addAnswerMutation.mutateAsync(newAnswer);
+      toast.promise(promise, {
+        loading: 'Creating a new answer...',
+        success: 'Successfully created a new answer.',
+        error: 'Cannot create answer',
       });
+      return promise;
     },
-    [answersListRoutePath, availableAnswersQuery, goToTheRoute, questionId],
+    [addAnswerMutation],
   );
 
-  if (!shouldBeVisible) {
+  if (!shouldBeVisible || !topicId || !questionId) {
     return null;
     // throw new Error('Cannot parse topic id from the modal url.');
   }
@@ -123,7 +130,7 @@ export function AddAnswerModal() {
       className={cn(
         isDev && '__AddAnswerModal', // DEBUG
         'gap-0',
-        isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
+        addAnswerMutation.isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div
@@ -143,7 +150,7 @@ export function AddAnswerModal() {
           handleAddAnswer={handleAddAnswer}
           className="p-8"
           handleClose={hideModal}
-          isPending={isPending}
+          isPending={addAnswerMutation.isPending}
           questionId={questionId}
         />
       </div>

@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { getErrorText } from '@/lib/helpers/strings';
+import { APIError } from '@/lib/types/api';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { deleteTopic } from '@/features/topics/actions/deleteTopic';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TAvailableTopic, TTopic, TTopicId } from '@/features/topics/types';
 import { useAvailableTopicsByScope, useGoBack, useModalTitle } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -36,65 +37,45 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
     () => availableTopics.allTopics.find(({ id }) => id === topicId),
     [topicId, availableTopics.allTopics],
   );
-  const [isPending, startUpdating] = React.useTransition();
 
   useModalTitle('Delete a Topic?');
 
-  const confirmDeleteTopic = React.useCallback(
-    () =>
-      new Promise((resolve, reject) => {
-        const name = deletingTopic?.name;
-        return startUpdating(() => {
-          if (!deletingTopic) {
-            reject(new Error('No topic to delete provided'));
-            return;
-          }
-          const promise = deleteTopic(deletingTopic)
-            .then(() => {
-              // Delete the topic from the cached react-query data
-              availableTopics.deleteTopic(deletingTopic.id);
-              // Invalidate all other keys...
-              availableTopics.invalidateAllKeysExcept([availableTopics.queryKey]);
-              /* // UNUSED: Delete the topic from the topics context and roadcast the event (?)
-               * topicsContext.setTopics((topics) => {
-               *   const updatedTopics = topics.filter(({ id }) => id != deletingTopic.id);
-               *   // Dispatch a custom event with the deleted topic info
-               *   const detail: TDeletedTopicDetail = {
-               *     deletedTopicId: deletingTopic.id,
-               *     topicsCount: updatedTopics.length,
-               *   };
-               *   const event = new CustomEvent<TDeletedTopicDetail>(deletedTopicEventName, {
-               *     detail,
-               *     bubbles: true,
-               *   });
-               *   setTimeout(() => window.dispatchEvent(event), 100);
-               *   // Return updated data
-               *   return updatedTopics;
-               * });
-               */
-              // Resolve added data
-              resolve(deletingTopic);
-              // Hide modal (go back)
-              hideModal();
-            })
-            .catch((error) => {
-              // eslint-disable-next-line no-console
-              console.error('[DeleteTopicModal:confirmDeleteTopic:catch]', getErrorText(error), {
-                error,
-              });
-              debugger; // eslint-disable-line no-debugger
-              reject(error);
-              throw error;
-            });
-          toast.promise(promise, {
-            loading: `Deleting topic "${name}"`,
-            success: `Successfully deleted topic "${name}"`,
-            error: `Can not delete topic "${name}"`,
-          });
-        });
-      }),
-    [availableTopics, deletingTopic, hideModal],
-  );
+  const deleteTopicMutation = useMutation<TAvailableTopic, Error, TTopic>({
+    mutationFn: deleteTopic,
+    onSuccess: () => {
+      // Delete the topic from the cached react-query data
+      availableTopics.deleteTopic(topicId);
+      // Invalidate all other keys...
+      availableTopics.invalidateAllKeysExcept([availableTopics.queryKey]);
+      // Hide modal (go back)
+      hideModal();
+    },
+    onError: (error, deletingTopic) => {
+      const details = error instanceof APIError ? error.details : null;
+      const message = 'Cannot delete topic';
+      // eslint-disable-next-line no-console
+      console.error('[DeleteTopicModal:deleteTopicMutation]', message, {
+        error,
+        details,
+        deletingTopic,
+      });
+      debugger; // eslint-disable-line no-debugger
+    },
+  });
+
+  const confirmDeleteTopic = React.useCallback(() => {
+    if (!deletingTopic) {
+      return Promise.reject(new Error('No topic to delete provided'));
+    }
+    const promise = deleteTopicMutation.mutateAsync(deletingTopic);
+    const name = deletingTopic.name;
+    toast.promise(promise, {
+      loading: `Deleting topic "${name}"`,
+      success: `Successfully deleted topic "${name}"`,
+      error: `Can not delete topic "${name}"`,
+    });
+    return promise;
+  }, [deleteTopicMutation, deletingTopic]);
 
   const topicName = deletingTopic?.name;
 
@@ -111,7 +92,7 @@ export function DeleteTopicModal(props: TDeleteTopicModalProps) {
       cancelButtonText="Cancel"
       handleConfirm={confirmDeleteTopic}
       handleClose={hideModal}
-      isPending={isPending}
+      isPending={deleteTopicMutation.isPending}
       isVisible
     >
       Do you confirm deleting the topic "{topicName}"?

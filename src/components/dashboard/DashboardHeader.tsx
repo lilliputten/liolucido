@@ -2,38 +2,64 @@
 
 import React from 'react';
 
+import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { Breadcrumbs, TBreadcrumbsItemProps } from '@/components/layout/Breadcrumbs';
 import { isDev } from '@/constants';
 
 import { DashboardActions, TActionMenuItem } from './DashboardActions';
 
 interface DashboardHeaderProps {
-  heading: string;
-  text?: string;
   className?: string;
+  children?: TReactNode;
+  heading?: TReactNode;
+  text?: TReactNode;
   actions?: TActionMenuItem[];
+  breadcrumbs?: TBreadcrumbsItemProps[];
+  inactiveLastBreadcrumb?: boolean;
 }
 
 export function DashboardHeader(props: DashboardHeaderProps) {
-  const { className, heading, text, actions } = props;
+  const { className, children, heading, text, actions, breadcrumbs, inactiveLastBreadcrumb } =
+    props;
   return (
     <div
       className={cn(
         isDev && '__DashboardHeader', // DEBUG
-        'flex items-center justify-between',
+        'flex flex-col gap-2',
         className,
       )}
     >
+      {breadcrumbs && (
+        <Breadcrumbs
+          className={cn(
+            isDev && '__DashboardHeader_Breadcrumbs', // DEBUG
+            // 'truncate',
+          )}
+          items={breadcrumbs}
+          inactiveLast={inactiveLastBreadcrumb}
+        />
+      )}
       <div
         className={cn(
-          isDev && '__DashboardHeader_Header', // DEBUG
-          'flex flex-col gap-1',
+          isDev && '__DashboardHeader_MainWrapper', // DEBUG
+          'flex items-start justify-between gap-2',
         )}
       >
-        <h1 className="font-heading text-2xl font-semibold text-theme">{heading}</h1>
-        {text && <p className="text-base opacity-50">{text}</p>}
+        <div
+          className={cn(
+            isDev && '__DashboardHeader_Content', // DEBUG
+            'flex flex-1 flex-col gap-1 truncate',
+          )}
+        >
+          {heading && (
+            <h1 className="truncate font-heading text-2xl font-semibold text-theme">{heading}</h1>
+          )}
+          {text && <div className="truncate text-base opacity-50">{text}</div>}
+          {children}
+        </div>
+        {actions && <DashboardActions actions={actions} />}
       </div>
-      <DashboardActions actions={actions} />
     </div>
   );
 }

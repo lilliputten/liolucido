@@ -58,8 +58,8 @@ async function main() {
     });
     const res = await transporter.sendMail({
       from: `"${EMAIL_FROM_NAME}" <${EMAIL_FROM || EMAIL_HOST_USER}>`,
-      to: 'lilliputten@gmail.com',
-      // to: 'dmia@yandex.ru',
+      // to: 'lilliputten@gmail.com',
+      to: 'dmia@yandex.ru',
       subject: 'Email test',
       text: 'The test email message.',
     });

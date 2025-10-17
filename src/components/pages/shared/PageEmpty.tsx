@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { EmptyPlaceholder } from '@/components/shared/EmptyPlaceholder';
 import * as Icons from '@/components/shared/Icons';
 import { TGenericIcon } from '@/components/shared/IconTypes';
+import { isDev } from '@/config';
 
 interface TPageEmptyProps extends TPropsWithClassName {
   title: string;
@@ -29,7 +30,13 @@ export function PageEmpty(props: TPageEmptyProps) {
   const hasCustomButton = !!(onButtonClick && buttonTitle);
   const hasAnyButtons = !!(buttons || hasCustomButton);
   return (
-    <EmptyPlaceholder className={cn(className, '__PageEmpty')} framed={framed}>
+    <EmptyPlaceholder
+      className={cn(
+        isDev && '__PageEmpty', // DEBUG
+        className,
+      )}
+      framed={framed}
+    >
       <EmptyPlaceholder.Icon icon={icon} />
       <EmptyPlaceholder.Title>{title}</EmptyPlaceholder.Title>
       <EmptyPlaceholder.Description>{description}</EmptyPlaceholder.Description>

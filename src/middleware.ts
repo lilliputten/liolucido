@@ -6,8 +6,6 @@ export default createMiddleware(routing);
 
 export const config = {
   matcher: [
-    // NOTE: It seems that these values should be hard-coded string literals, so it's impossible to compose it dynamically, from `localesList`
-
     // Enable a redirect to a matching locale at the root
     '/',
 
@@ -15,8 +13,7 @@ export const config = {
     // all requests that have a locale prefix
     '/(en|ru)/:path*',
 
-    // Enable redirects that add missing locales
-    // (e.g. `/pathnames` -> `/en/pathnames`)
-    '/((?!api|_next|_vercel|favicons|.well-known|.*\\..*).*)',
+    // Enable redirects that add missing locales but exclude system paths
+    '/((?!api|_next|_vercel|favicon|.well-known|static|.*\\..*).*)',
   ],
 };

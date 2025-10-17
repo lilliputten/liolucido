@@ -49,10 +49,10 @@ export function useAvailableQuestions(props: TUseAvailableQuestionsProps = {}) {
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
+  const queryUrlHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
   const queryKey = React.useMemo<QueryKey>(
-    () => ['available-questions', topicId, queryHash],
-    [topicId, queryHash],
+    () => ['available-questions-for-topic', topicId, queryUrlHash],
+    [topicId, queryUrlHash],
   );
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
 
@@ -85,7 +85,7 @@ export function useAvailableQuestions(props: TUseAvailableQuestionsProps = {}) {
           /* // OPTION 2: Using route api fetch
            * const paginationHash = composeUrlQuery({ skip: pageParam, take: itemsLimit });
            * const baseUrl = `/api/questions`;
-           * const url = appendUrlQueries(baseUrl, queryHash, paginationHash);
+           * const url = appendUrlQueries(baseUrl, queryUrlHash, paginationHash);
            * const results = await handleApiResponse<TGetAvailableQuestionsResults>(fetch(url), {
            *   onInvalidateKeys: invalidateKeys,
            *   debugDetails: {

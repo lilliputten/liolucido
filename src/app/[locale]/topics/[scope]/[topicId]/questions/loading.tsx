@@ -1,3 +1,3 @@
-import { ManageTopicQuestionsLoading } from '@/components/pages/ManageTopicQuestions';
+import { ManageTopicQuestionsLoading } from './ManageTopicQuestionsLoading';
 
 export default ManageTopicQuestionsLoading;

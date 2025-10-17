@@ -1,10 +1,12 @@
 import { constructMetadata } from '@/lib/constructMetadata';
-import { EditAnswerCard } from '@/components/pages/ManageTopicQuestionAnswers';
-import { ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';
-import { PageHeader } from '@/components/pages/shared';
+import { cn } from '@/lib/utils';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageError } from '@/components/shared/PageError';
+import { isDev } from '@/config';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { EditAnswerPageHolder } from './EditAnswerPageHolder';
 
 type TAwaitedProps = TAwaitedLocaleProps<{
   scope: TTopicsManageScopeId;
@@ -22,17 +24,31 @@ export async function generateMetadata({ params }: TAwaitedProps) {
   });
 }
 
-export default async function EditManageAnswerPage({ params }: TAwaitedProps) {
+export default async function EditManageAnswerPageWrapper({ params }: TAwaitedProps) {
   const { topicId, questionId, answerId } = await params;
 
+  if (!topicId) {
+    return <PageError error={'No topic ID specified.'} />;
+  }
+  if (!questionId) {
+    return <PageError error={'No question ID specified.'} />;
+  }
   if (!answerId) {
-    return <PageError error={'Undefined answer ID.'} />;
+    return <PageError error={'No answer ID specified.'} />;
   }
 
   return (
-    <ManageTopicsPageWrapper>
-      <PageHeader heading={'Edit Answer Properties'} />
-      <EditAnswerCard topicId={topicId} questionId={questionId} answerId={answerId} />
-    </ManageTopicsPageWrapper>
+    <PageWrapper
+      className={cn(
+        isDev && '__EditManageAnswerPageWrapper', // DEBUG
+      )}
+      innerClassName={cn(
+        isDev && '__EditManageAnswerPageWrapper_Inner', // DEBUG
+        'w-full rounded-lg gap-4 py-6',
+      )}
+      limitWidth
+    >
+      <EditAnswerPageHolder topicId={topicId} questionId={questionId} answerId={answerId} />
+    </PageWrapper>
   );
 }

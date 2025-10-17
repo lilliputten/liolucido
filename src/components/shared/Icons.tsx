@@ -9,6 +9,7 @@ import { IconProps, IconType } from './IconTypes';
 
 // Stock lucide icons...
 export const {
+  Activity,
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,

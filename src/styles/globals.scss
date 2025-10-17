@@ -303,20 +303,14 @@
     }
   }
 
-  // See animation examples in the `tailwind.config.ts`
-  // Animate sonner toast spinner
-  .sonner-loading-wrapper {
-    animation: rotating-spin 4s linear infinite;
+  .truncate-start {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: bidi-override;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
-  @keyframes rotating-spin {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  // .bg-background-50 {
-  //   background-color: rgba(var(--backgroundColorRGB) / 0.5);
-  // }
 
   // Define themes (from global variables `$themes` and `$defaultTheme`, see definitions in the `src/config/themeColors.ts`)
   @include defineAllThemes($themes, $defaultTheme);

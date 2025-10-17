@@ -1,3 +1,3 @@
-import { ManageTopicQuestionAnswersLoading } from '@/components/pages/ManageTopicQuestionAnswers';
+import { ManageTopicQuestionAnswersLoading } from './ManageTopicQuestionAnswersLoading';
 
 export default ManageTopicQuestionAnswersLoading;

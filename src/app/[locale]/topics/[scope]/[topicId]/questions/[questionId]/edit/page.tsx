@@ -1,10 +1,12 @@
 import { constructMetadata } from '@/lib/constructMetadata';
-import { EditQuestionCard } from '@/components/pages/ManageTopicQuestions';
-import { ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';
-import { PageHeader } from '@/components/pages/shared';
+import { cn } from '@/lib/utils';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageError } from '@/components/shared/PageError';
+import { isDev } from '@/config';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { EditQuestionCardHolder } from './EditQuestionCardHolder';
 
 type TAwaitedProps = TAwaitedLocaleProps<{
   scope: TTopicsManageScopeId;
@@ -25,13 +27,22 @@ export default async function EditManageQuestionPage({ params }: TAwaitedProps) 
   const { topicId, questionId } = await params;
 
   if (!questionId) {
-    return <PageError error={'Undefined question ID.'} />;
+    return <PageError error={'Not specified question'} />;
   }
 
   return (
-    <ManageTopicsPageWrapper>
-      <PageHeader heading={'Edit Question Properties'} />
-      <EditQuestionCard topicId={topicId} questionId={questionId} />
-    </ManageTopicsPageWrapper>
+    <PageWrapper
+      className={cn(
+        isDev && '__EditManageQuestionPageWrapper', // DEBUG
+      )}
+      innerClassName={cn(
+        isDev && '__EditManageQuestionPageWrapper_Inner', // DEBUG
+        'w-full rounded-lg gap-6 py-6',
+      )}
+      limitWidth
+      // vPadded
+    >
+      <EditQuestionCardHolder topicId={topicId} questionId={questionId} />
+    </PageWrapper>
   );
 }

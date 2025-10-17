@@ -2,11 +2,12 @@
 
 import { ExtendedUser } from '@/@types/next-auth';
 
-/** Test db. Ensure if it has been created */
-const DATABASE_URL = 'file:.data/test.db';
-
-// Set it for prisma also
-process.env.DATABASE_URL = DATABASE_URL;
+/* // NOTE: Using the local db for tests. Make sure all the data is cleaning.
+ * // Test db. Ensure if it has been created
+ * const DATABASE_URL = 'file:.data/test.db';
+ * // Set it for prisma also
+ * process.env.DATABASE_URL = DATABASE_URL;
+ */
 
 // Mocks...
 

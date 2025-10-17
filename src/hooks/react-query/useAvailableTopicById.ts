@@ -4,11 +4,10 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
 import { TAvailableTopicsResultsQueryData } from '@/lib/types/react-query';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data';
-import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
+import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
+import { getAvailableTopicById } from '@/features/topics/actions';
 import { TAvailableTopic } from '@/features/topics/types';
 
 interface TUseAvailableTopicByIdProps extends TGetAvailableTopicByIdParams {
@@ -21,15 +20,15 @@ const staleTime = minuteMs * 10;
 /** Get topic data from cached `useAvailableTopics` query data or fetch it now */
 export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
   const queryClient = useQueryClient();
-  const invalidateKeys = useInvalidateReactQueryKeys();
+  // const invalidateKeys = useInvalidateReactQueryKeys();
   const { availableTopicsQueryKey, id: topicId, ...queryProps } = props;
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
+  const queryUrlHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
 
   const queryKey = React.useMemo<QueryKey>(
-    () => ['available-topic', topicId, queryHash],
-    [queryHash, topicId],
+    () => ['available-topic', topicId, queryUrlHash],
+    [queryUrlHash, topicId],
   );
 
   // Check cached infinite query data first
@@ -46,27 +45,26 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
 
   // Only fetch if the topic is not cached
   const query = useQuery<TAvailableTopic>({
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey,
     staleTime, // Data validity period
     queryFn: async (_params) => {
-      const url = appendUrlQueries(`/api/topics/${topicId}`, queryHash);
       try {
-        // OPTION 1: Using route api fetch
-        const result = await handleApiResponse<TAvailableTopic>(fetch(url), {
-          onInvalidateKeys: invalidateKeys,
-          debugDetails: {
-            initiator: 'useAvailableTopicById',
-            action: 'getAvailableTopicById',
-            url,
-            queryProps,
-            topicId,
-          },
-        });
-        return result.data as TAvailableTopic;
-        /* // OPTION 2: Using server function
-         * return await getAvailableTopicById({ id: topicId, ...queryProps });
+        /* // OPTION 1: Using route api fetch
+         * const url = appendUrlQueries(`/api/topics/${topicId}`, queryUrlHash);
+         * const result = await handleApiResponse<TAvailableTopic>(fetch(url), {
+         *   onInvalidateKeys: invalidateKeys,
+         *   debugDetails: {
+         *     initiator: 'useAvailableTopicById',
+         *     action: 'getAvailableTopicById',
+         *     url,
+         *     queryProps,
+         *     topicId,
+         *   },
+         * });
+         * return result.data as TAvailableTopic;
          */
+        // OPTION 2: Using server function
+        return await getAvailableTopicById({ id: topicId, ...queryProps });
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
         const message = 'Cannot load topic data';
@@ -74,7 +72,7 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
         console.error('[useAvailableTopicById:queryFn]', message, {
           details,
           error,
-          url,
+          queryProps,
         });
         // eslint-disable-next-line no-debugger
         debugger;
@@ -89,6 +87,7 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
     topic: cachedTopic ?? query.data,
     isCached,
     queryKey,
+    queryClient,
     ...query,
   };
 }

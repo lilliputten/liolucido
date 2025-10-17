@@ -2,15 +2,17 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { getErrorText } from '@/lib/helpers/strings';
+import { APIError } from '@/lib/types/api';
 import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { Modal } from '@/components/ui/Modal';
 import { isDev } from '@/constants';
+import { useSettings } from '@/contexts/SettingsContext';
 import { addNewTopic } from '@/features/topics/actions/addNewTopic';
-import { TNewTopic, TTopic } from '@/features/topics/types';
+import { TAvailableTopic, TNewTopic } from '@/features/topics/types';
 import {
   useAvailableTopicsByScope,
   useGoBack,
@@ -29,8 +31,9 @@ export function AddTopicModal() {
   const { manageScope } = useManageTopicsStore();
   const routePath = `/topics/${manageScope}`;
   const [isVisible, setVisible] = React.useState(false);
-  const [isPending, startUpdating] = React.useTransition();
   const { isMobile } = useMediaQuery();
+
+  const { jumpToNewEntities } = useSettings();
 
   const availableTopicsQuery = useAvailableTopicsByScope({ manageScope });
 
@@ -50,43 +53,52 @@ export function AddTopicModal() {
   useModalTitle('Add a Topic', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
 
+  const addTopicMutation = useMutation<TAvailableTopic, Error, TNewTopic>({
+    mutationFn: addNewTopic,
+    onSuccess: (addedTopic) => {
+      // Add the created item to the cached react-query data
+      availableTopicsQuery.addNewTopic(addedTopic, true);
+      // Invalidate all other keys...
+      availableTopicsQuery.invalidateAllKeysExcept([availableTopicsQuery.queryKey]);
+      // Close the modal first
+      setVisible(false);
+      if (jumpToNewEntities) {
+        // Then navigate to the edit page after a short delay to ensure modal is closed
+        // setTimeout(() => goToTheRoute(`${routePath}/${addedTopic.id}`, true), 100);
+        goToTheRoute(`${routePath}/${addedTopic.id}`, true);
+      } else {
+        goBack();
+      }
+    },
+    onError: (error, newTopic) => {
+      const details = error instanceof APIError ? error.details : null;
+      const message = 'Cannot create topic';
+      // eslint-disable-next-line no-console
+      console.error('[AddTopicModal:addTopicMutation]', message, {
+        error,
+        details,
+        newTopic,
+      });
+      debugger; // eslint-disable-line no-debugger
+    },
+  });
+
   const handleAddTopic = React.useCallback(
     (newTopic: TNewTopic) => {
-      return new Promise((resolve, reject) => {
-        return startUpdating(() => {
-          const promise = addNewTopic(newTopic)
-            .then((addedTopic) => {
-              // Add the created item to the cached react-query data
-              availableTopicsQuery.addNewTopic(addedTopic, true);
-              // Invalidate all other keys...
-              availableTopicsQuery.invalidateAllKeysExcept([availableTopicsQuery.queryKey]);
-              // Resolve added data
-              resolve(addedTopic);
-              // Close the modal first
-              setVisible(false);
-              // Then navigate to the edit page after a short delay to ensure modal is closed
-              setTimeout(() => goToTheRoute(`${routePath}/${addedTopic.id}`, true), 100);
-              return addedTopic;
-            })
-            .catch((error) => {
-              // eslint-disable-next-line no-console
-              console.error('[AddTopicModal:handleAddTopic:catch]', getErrorText(error), {
-                error,
-                newTopic,
-              });
-              reject(error);
-              throw error;
-            });
-          toast.promise<TTopic>(promise, {
-            loading: 'Creating new topic...',
-            success: (topic) => `Successfully created new topic "${topic.name}"`,
-            error: 'Can not create new topic',
-          });
-        });
+      const promise = addTopicMutation.mutateAsync(newTopic);
+      toast.promise(promise, {
+        loading: 'Creating new topic...',
+        success: (topic) => `Successfully created new topic "${topic.name}"`,
+        error: 'Can not create new topic',
       });
+      return promise;
     },
-    [availableTopicsQuery, routePath, goToTheRoute],
+    [addTopicMutation],
   );
+
+  if (!shouldBeVisible) {
+    return null;
+  }
 
   return (
     <Modal
@@ -95,7 +107,7 @@ export function AddTopicModal() {
       className={cn(
         isDev && '__AddTopicModal', // DEBUG
         'gap-0',
-        isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
+        addTopicMutation.isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
       <div
@@ -115,7 +127,7 @@ export function AddTopicModal() {
           handleAddTopic={handleAddTopic}
           className="p-8"
           handleClose={hideModal}
-          isPending={isPending}
+          isPending={addTopicMutation.isPending}
         />
       </div>
     </Modal>

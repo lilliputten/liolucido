@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
+import { TopicsManageScopeIds, topicsRoutes, TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAvailableTopic } from '@/features/topics/types';
 import { useSessionUser } from '@/hooks';
 import { comparePathsWithoutLocalePrefix } from '@/i18n/helpers';
@@ -20,14 +20,14 @@ interface TTopicHeaderOptions {
 }
 interface TTopicHeaderProps {
   topic: TAvailableTopic;
-  scope: TTopicsManageScopeId;
+  scope?: TTopicsManageScopeId;
   className?: string;
 }
 
 export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   const {
     topic,
-    scope,
+    scope = TopicsManageScopeIds.AVAILABLE_TOPICS,
     className,
     // Options...
     showDates,
@@ -49,8 +49,8 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
     updatedAt,
     // _count,
   } = topic;
-  const sessionUser = useSessionUser();
-  const isOwner = userId && userId === sessionUser?.id;
+  const user = useSessionUser();
+  const isOwner = userId && userId === user?.id;
   const topicsListRoutePath = topicsRoutes[scope];
   const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
   const topicRoutePath = `${topicsListRoutePath}/${id}`;
@@ -71,22 +71,22 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
     <div
       className={cn(
         isDev && '__TopicHeader', // DEBUG
-        'flex flex-row gap-4',
+        'flex flex-row items-start gap-4',
         className,
       )}
     >
-      <div id="left-name" className="flex flex-1 flex-col gap-4">
-        <div id="name" className="text-2xl">
+      <div id="left-name" className="flex flex-1 flex-col gap-2">
+        <h2 id="name" className="truncate text-2xl">
           {nameContent}
-        </div>
+        </h2>
         {/* TODO: Format descrption text */}
         {showDescription && !!description && (
-          <div id="description">
+          <div id="description" className="truncate text-base">
             <MarkdownText>{description}</MarkdownText>
           </div>
         )}
       </div>
-      <div id="right-tools" className="!mt-0 flex items-center gap-4 text-xs opacity-50">
+      <div id="right-tools" className="!mt-0 flex min-h-10 items-center gap-4 text-xs opacity-50">
         {isOwner && (
           <span id="isOwner" title="Your Topic">
             <Icons.ShieldCheck className="size-4 text-green-500" />

@@ -6,10 +6,17 @@ import { Check } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+import { TGenericIcon } from '../shared/IconTypes';
+
+type TRoot = typeof CheckboxPrimitive.Root;
+
 const Checkbox = React.forwardRef<
-  React.ElementRef<typeof CheckboxPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
->(({ className, ...props }, ref) => {
+  React.ElementRef<TRoot>,
+  React.ComponentPropsWithoutRef<TRoot> & {
+    icon?: TGenericIcon;
+  }
+>((allProps, ref) => {
+  const { className, icon: Icon = Check, ...props } = allProps;
   /* XXX: Attempt to re-throw change event...
    * // Save the input node ref in the memo...
    * const memo = React.useMemo<{
@@ -38,14 +45,15 @@ const Checkbox = React.forwardRef<
         'border',
         'border-input',
         'ring-offset-background',
+        'hover:ring-2 hover:ring-theme-500/50',
         'focus-visible:outline-none',
         'focus-visible:ring-2',
         'focus-visible:ring-ring',
         'focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed',
         'disabled:opacity-50',
-        // 'data-[state=checked]:border-theme', // Original checkbox styling
-        'data-[state=checked]:border-muted-foreground',
+        'data-[state=checked]:border-theme', // Original checkbox styling
+        // 'data-[state=checked]:border-muted-foreground',
         className,
       )}
       /* XXX: Attempt to re-throw change event...
@@ -66,11 +74,11 @@ const Checkbox = React.forwardRef<
           'flex',
           'items-center',
           'justify-center',
-          // 'text-theme', // Original checkbox styling
-          'text-muted-foreground',
+          'text-theme', // Original checkbox styling
+          // 'text-muted-foreground',
         )}
       >
-        <Check className="size-4" />
+        <Icon className="size-4" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

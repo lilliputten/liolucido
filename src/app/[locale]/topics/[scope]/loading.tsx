@@ -1,3 +1,5 @@
-import { ManageTopicsLoading } from '@/components/pages/ManageTopicsPage';
+import { ContentSkeleton } from './ContentSkeleton';
 
-export default ManageTopicsLoading;
+export default function ManageTopicsLoading() {
+  return <ContentSkeleton className="p-6" />;
+}

@@ -25,11 +25,11 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
   const { availableQuestionsQueryKey, id: questionId, ...queryProps } = props;
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
+  const queryUrlHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
 
   const queryKey = React.useMemo<QueryKey>(
-    () => ['available-question', questionId, queryHash],
-    [queryHash, questionId],
+    () => ['available-question', questionId, queryUrlHash],
+    [queryUrlHash, questionId],
   );
 
   // Check cached infinite query data first
@@ -44,25 +44,13 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
 
   const isCached = !!cachedQuestion;
 
-  /* console.log('[useAvailableQuestionById:DEBUG]', {
-   *   availableQuestionsQueryKey,
-   *   questionId,
-   *   queryProps,
-   *   queryHash,
-   *   queryKey,
-   *   availableQuestionsData,
-   *   cachedQuestion,
-   *   isCached,
-   * });
-   */
-
   // Only fetch if the question is not cached
   const query = useQuery<TAvailableQuestion>({
     // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey,
     staleTime, // Data validity period
     queryFn: async (_params) => {
-      const url = appendUrlQueries(`/api/questions/${questionId}`, queryHash);
+      const url = appendUrlQueries(`/api/questions/${questionId}`, queryUrlHash);
       try {
         // OPTION 1: Using route api fetch
         const result = await handleApiResponse<TAvailableQuestion>(fetch(url), {

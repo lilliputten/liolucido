@@ -72,6 +72,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
    * const testTextareaKey = React.useId();
    */
   const showOnlyMyTopicsKey = React.useId();
+  const jumpToNewEntitiesKey = React.useId();
   const localeKey = React.useId();
   const themeColorKey = React.useId();
   const themeKey = React.useId();
@@ -113,6 +114,28 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                 />
               </FormControl>
               <FormHint>Disable showing all public topics, show only my personal ones.</FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* jumpToNewEntities */}
+        <FormField
+          name="jumpToNewEntities"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={jumpToNewEntitiesKey}>Jump to newly created entities?</Label>
+              <FormControl>
+                <Switch
+                  id={jumpToNewEntitiesKey}
+                  checked={!!field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormHint>
+                Switch to editing forms for newly created objects (like topics, questions, answers)
+                after creation.
+              </FormHint>
               <FormMessage />
             </FormItem>
           )}

@@ -77,9 +77,7 @@ export function PageWrapper(props: TPageWrapperProps) {
       <MaxWidthWrapper
         className={cn(
           isDev && '__PageWrapper_Wrapper', // DEBUG
-          'flex flex-1 flex-col',
-          'layout-follow',
-          'm-auto',
+          'layout-follow m-auto flex flex-1 flex-col',
         )}
       >
         {content}
@@ -89,12 +87,12 @@ export function PageWrapper(props: TPageWrapperProps) {
 
   return (
     <div
+      data-page-id={id}
       className={cn(
         isDev && '__PageWrapper', // DEBUG
-        'flex flex-1 flex-col items-center',
-        'overflow-hidden',
-        (padded || xPadded) && 'mx-4',
-        (padded || vPadded) && 'my-4',
+        'flex flex-1 flex-col items-center overflow-hidden',
+        (padded || xPadded) && 'mx-6',
+        (padded || vPadded) && 'my-6',
         className,
       )}
     >

@@ -57,8 +57,11 @@ function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
   const routePath = usePathname();
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
-  const queryKey = React.useMemo<QueryKey>(() => ['available-topics', queryHash], [queryHash]);
+  const queryUrlHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
+  const queryKey = React.useMemo<QueryKey>(
+    () => ['available-topics', queryUrlHash],
+    [queryUrlHash],
+  );
   allUsedKeys[stringifyQueryKey(queryKey)] = queryKey;
 
   const query: UseInfiniteQueryResult<TAvailableTopicsResultsQueryData, Error> = useInfiniteQuery<
@@ -97,7 +100,7 @@ function useAvailableTopics(queryProps: TUseAvailableTopicsProps = {}) {
          * const paginationHash = composeUrlQuery(
          *   { skip: pageParam, take: itemsLimit },
          * );
-         * const url = appendUrlQueries('/api/topics', queryHash, paginationHash);
+         * const url = appendUrlQueries('/api/topics', queryUrlHash, paginationHash);
          * const result = await handleApiResponse<TGetAvailableTopicsResults>(fetch(url), {
          *   onInvalidateKeys: invalidateKeys,
          *   debugDetails: {

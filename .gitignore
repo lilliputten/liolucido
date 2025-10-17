@@ -44,7 +44,6 @@ next-env.d.ts
 # Misc
 /.contentlayer
 /certificates
-/prisma/.data
 /src/generated/prisma
 
 # Temporariy, swap & ignored files

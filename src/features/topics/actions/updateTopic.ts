@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { isDev } from '@/constants';
-import { TOptionalTopic, TTopic } from '@/features/topics/types';
+import { TAvailableTopic, TTopic } from '@/features/topics/types';
 
 export async function updateTopic(topic: TTopic) {
   const user = await getCurrentUser();
@@ -11,7 +11,7 @@ export async function updateTopic(topic: TTopic) {
   try {
     if (isDev) {
       // DEBUG: Emulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     if (!userId) {
       throw new Error('Got undefined user');
@@ -25,14 +25,17 @@ export async function updateTopic(topic: TTopic) {
      *   throw new Error('The specified user does not exist.');
      * }
      */
-    const data = { ...topic } as TOptionalTopic;
+    const data = { ...topic } as Partial<TAvailableTopic>;
     delete data.userId;
+    delete data.user;
+    delete data.userTopicWorkout;
+    delete data.questions;
     delete data._count;
     delete data.createdAt;
     delete data.updatedAt;
     const updatedTopic = await prisma.topic.update({
       where: { id: topic.id, userId },
-      data,
+      data: data as TTopic,
     });
 
     return updatedTopic as TTopic;

@@ -1,16 +1,19 @@
 import { constructMetadata } from '@/lib/constructMetadata';
-import { EditTopicCard, ManageTopicsPageWrapper } from '@/components/pages/ManageTopicsPage';
-import { PageHeader } from '@/components/pages/shared';
+import { cn } from '@/lib/utils';
+import { PageWrapper } from '@/components/layout/PageWrapper';
 import { PageError } from '@/components/shared/PageError';
+import { isDev } from '@/config';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
+
+import { EditTopicPageHolder } from './EditTopicPageHolder';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId: string }>;
 
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
   // const t = await getTranslations({ locale, namespace });
-  const title = 'Manage Topic Properties';
+  const title = 'Edit Topic Properties';
   return constructMetadata({
     locale,
     title,
@@ -18,17 +21,25 @@ export async function generateMetadata({ params }: TAwaitedProps) {
   });
 }
 
-export default async function EditManageTopicPage({ params }: TAwaitedProps) {
+export default async function EditTopicPageWrapper({ params }: TAwaitedProps) {
   const { topicId } = await params;
 
   if (!topicId) {
-    return <PageError error={'Topic ID not specified.'} />;
+    return <PageError error={'No topic specified'} />;
   }
 
   return (
-    <ManageTopicsPageWrapper>
-      <PageHeader heading={'Manage Topic Properties'} />
-      <EditTopicCard topicId={topicId} />
-    </ManageTopicsPageWrapper>
+    <PageWrapper
+      className={cn(
+        isDev && '__EditTopicPageWrapper', // DEBUG
+      )}
+      innerClassName={cn(
+        isDev && '__EditTopicPageWrapper_Inner', // DEBUG
+        'w-full rounded-lg gap-4 py-6',
+      )}
+      limitWidth
+    >
+      <EditTopicPageHolder topicId={topicId} />
+    </PageWrapper>
   );
 }

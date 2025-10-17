@@ -25,11 +25,11 @@ export function useAvailableAnswerById(props: TUseAvailableAnswerByIdProps) {
   const { availableAnswersQueryKey, id: answerId, enabled, ...queryProps } = props;
 
   /* Use partrial query url as a part of the query key */
-  const queryHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
+  const queryUrlHash = React.useMemo(() => composeUrlQuery(queryProps), [queryProps]);
 
   const queryKey = React.useMemo<QueryKey>(
-    () => ['available-answer', answerId, queryHash],
-    [queryHash, answerId],
+    () => ['available-answer', answerId, queryUrlHash],
+    [queryUrlHash, answerId],
   );
 
   // Check cached infinite query data first
@@ -51,7 +51,7 @@ export function useAvailableAnswerById(props: TUseAvailableAnswerByIdProps) {
     staleTime, // Data validity period
     enabled: enabled && !isCached, // Disable query if already cached
     queryFn: async (_params) => {
-      const url = appendUrlQueries(`/api/answers/${answerId}`, queryHash);
+      const url = appendUrlQueries(`/api/answers/${answerId}`, queryUrlHash);
       try {
         /* // OPTION 1: Using route api fetch
          * const result = await handleApiResponse<TAvailableAnswer>(fetch(url), {
