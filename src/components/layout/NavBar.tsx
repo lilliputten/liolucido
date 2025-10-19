@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 
 import { siteMenu } from '@/config/siteMenu';
-import { commonXMarginTwStyle, commonXPaddingTwStyle } from '@/config/ui';
+import { commonXPaddingTwStyle } from '@/config/ui';
 import { getAllRouteSynonyms } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { NavUserAuthButton } from '@/components/layout/NavAuthButton';
@@ -115,7 +115,7 @@ export function NavBar(props: NavBarProps) {
             isDev && '__NavBar_MobilePanelToggler', // DEBUG
             'rounded-full',
             'p-2',
-            commonXMarginTwStyle,
+            // commonXMarginTwStyle,
             'transition-all',
             'duration-200',
             'text-theme-foreground hover:bg-theme-400/50',

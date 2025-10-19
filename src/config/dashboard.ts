@@ -17,7 +17,7 @@ import {
 // TODO: Allow to show generative data (like a topics count) in the sideboard titles (as badges?)
 
 // prettier-ignore
-export const sidebarLinks: SidebarNavItem[] = [
+export const dashboardLinks: SidebarNavItem[] = [
   {
     titleId: 'My Data',
     authorizedOnly: true,
