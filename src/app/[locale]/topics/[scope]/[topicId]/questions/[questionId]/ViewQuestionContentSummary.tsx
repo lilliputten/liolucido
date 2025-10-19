@@ -29,6 +29,7 @@ export function ViewQuestionContentSummary(props: TProps) {
   const routePath = `/topics/${manageScope}`;
   const format = useFormatter();
   const user = useSessionUser();
+  const isLogged = !!user;
 
   const isTopicLoadingOverall = false; // !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
@@ -52,16 +53,28 @@ export function ViewQuestionContentSummary(props: TProps) {
     >
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold">Answers</h3>
-        <Button variant="ghost" size="sm">
-          <Link
-            href={`${routePath}/${question.topicId}/questions/${question.id}/answers`}
-            className="flex items-center gap-2"
-            title="Manage answers"
-          >
-            <Icons.Edit className="size-4 opacity-50" />
-            <span>Manage Answers</span>
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" disabled={!isLogged}>
+            <Link
+              href={`${routePath}/${question.topicId}/questions/${question.id}/answers`}
+              className="flex items-center gap-2"
+              title="Manage answers"
+            >
+              <Icons.Edit className="size-4 opacity-50" />
+              <span>Manage Answers</span>
+            </Link>
+          </Button>
+          <Button variant="ghost" size="sm" disabled={!isLogged}>
+            <Link
+              href={`${routePath}/${question.topicId}/questions/${question.id}/answers/generate`}
+              className="flex items-center gap-2"
+              title="Generate Answers"
+            >
+              <Icons.WandSparkles className="size-4 opacity-50" />
+              <span>Generate Answers</span>
+            </Link>
+          </Button>
+        </div>
       </div>
       <div className="flex flex-wrap gap-2">
         <Badge variant="outline" className="flex items-center gap-2 px-2 py-1">

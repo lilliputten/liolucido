@@ -68,6 +68,7 @@ export const {
   Tags,
   Trash,
   User,
+  WandSparkles,
   XIcon,
 } = icons;
 

@@ -29,7 +29,7 @@ interface TTextQueryFormFieldsProps {
 export function TextQueryFormFields(props: TTextQueryFormFieldsProps) {
   const { form, className } = props;
 
-  const modelKey = React.useId();
+  const clientTypeKey = React.useId();
   const systemQueryTextKey = React.useId();
   const userQueryTextKey = React.useId();
   const showDebugDataKey = React.useId();
@@ -71,15 +71,15 @@ export function TextQueryFormFields(props: TTextQueryFormFieldsProps) {
 
       {/* AI Model */}
       <FormField
-        name="model"
+        name="clientType"
         control={form.control}
         render={({ field }) => (
           <FormItem className="flex w-full flex-col gap-4">
-            <Label htmlFor={modelKey}>AI Model</Label>
+            <Label htmlFor={clientTypeKey}>AI Client Type</Label>
             <FormControl>
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id={modelKey} className="flex flex-1">
-                  <SelectValue placeholder="Select AI model…" />
+                <SelectTrigger id={clientTypeKey} className="flex flex-1">
+                  <SelectValue placeholder="Select AI client type…" />
                 </SelectTrigger>
                 <SelectContent>
                   {aiClientTypes.map((id) => (
@@ -90,7 +90,7 @@ export function TextQueryFormFields(props: TTextQueryFormFieldsProps) {
                 </SelectContent>
               </Select>
             </FormControl>
-            <FormHint>Select the AI model to use for the query.</FormHint>
+            <FormHint>Select the AI Client Type to use for the query.</FormHint>
             <FormMessage />
           </FormItem>
         )}

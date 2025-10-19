@@ -41,7 +41,7 @@ export function PageEmpty(props: TPageEmptyProps) {
       <EmptyPlaceholder.Title>{title}</EmptyPlaceholder.Title>
       <EmptyPlaceholder.Description>{description}</EmptyPlaceholder.Description>
       {hasAnyButtons && (
-        <div className="flex w-full justify-center gap-4">
+        <div className="flex w-full justify-center gap-2">
           {hasCustomButton && (
             <Button onClick={onButtonClick} className="flex gap-2">
               <Icons.Add className="hidden size-4 opacity-50 sm:flex" />

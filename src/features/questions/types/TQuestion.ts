@@ -1,6 +1,7 @@
 import z from 'zod';
 
 import { ExtendNullWithUndefined, ReplaceNullWithUndefined } from '@/lib/ts';
+import { TAvailableAnswer } from '@/features/answers/types';
 import { Question, TopicSchema } from '@/generated/prisma';
 
 export type TQuestion = ExtendNullWithUndefined<Question> & { _count?: { answers: number } };
@@ -34,4 +35,5 @@ export type TNewQuestion = Partial<Question> & Pick<Question, 'text' | 'topicId'
 /** NOTE: It's possible to extend the type in the future */
 export interface TAvailableQuestion extends TQuestion {
   topic?: TIncludedTopic;
+  answers?: TAvailableAnswer[];
 }

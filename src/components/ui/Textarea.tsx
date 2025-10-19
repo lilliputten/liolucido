@@ -18,6 +18,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps & { classNa
           'border',
           'border-input',
           'bg-background/50',
+          'text-sm',
           'px-3',
           'py-2',
           'ring-offset-background',

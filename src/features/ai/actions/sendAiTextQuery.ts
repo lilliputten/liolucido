@@ -4,7 +4,7 @@ import { AIMessageChunk, HumanMessage, SystemMessage } from '@langchain/core/mes
 import { GigaChatCallOptions } from 'langchain-gigachat';
 
 import { getAiClient } from '@/lib/ai/getAiClient';
-import { TAiClientType } from '@/lib/ai/types/TAiClientType';
+import { defaultAiClientType, TAiClientType } from '@/lib/ai/types/TAiClientType';
 
 import { TPlainMessage } from '../types/messages';
 
@@ -22,11 +22,13 @@ type TDataType = Pick<
 
 type TGenericMessage = HumanMessage | SystemMessage;
 
-export async function sendAiTextQuery(
-  clientType: TAiClientType,
-  messages: TPlainMessage[],
-  __returnDebugData: boolean = false,
-) {
+interface TOptions {
+  clientType?: TAiClientType;
+  debugData?: boolean;
+}
+
+export async function sendAiTextQuery(messages: TPlainMessage[], opts: TOptions = {}) {
+  const { clientType = defaultAiClientType, debugData: __returnDebugData } = opts;
   try {
     if (__returnDebugData) {
       await new Promise((r) => setTimeout(r, 1000));

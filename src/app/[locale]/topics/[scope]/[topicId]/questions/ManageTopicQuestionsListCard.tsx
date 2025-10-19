@@ -48,69 +48,8 @@ export interface TManageTopicQuestionsListCardProps {
   availableTopicQuery: ReturnType<typeof useAvailableTopicById>;
 }
 
-/*
- * interface TToolbarActionsProps {
- *   topicId: TTopicId;
- *   handleAddQuestion: () => void;
- *   // handleDeleteTopic?: () => void;
- *   goBack: () => void;
- * }
- * function Toolbar(
- *   props: TToolbarActionsProps & {
- *     availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
- *   },
- * ) {
- *   const {
- *     availableQuestionsQuery,
- *     // topicId,
- *     handleAddQuestion,
- *     goBack,
- *   } = props;
- *
- *   const { refetch, isRefetching } = availableQuestionsQuery;
- *
- *   const handleReload = React.useCallback(() => {
- *     refetch({ cancelRefetch: true });
- *   }, [refetch]);
- *
- *   return (
- *     <div
- *       className={cn(
- *         isDev && '__ManageTopicQuestionsListCard_Toolbar', // DEBUG
- *         'flex flex-wrap gap-2',
- *       )}
- *     >
- *       <Button variant="ghost" size="sm" className="flex gap-2" onClick={goBack}>
- *         <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
- *         <span>Back</span>
- *       </Button>
- *       <Button
- *         variant="ghost"
- *         size="sm"
- *         className={cn(
- *           'flex items-center gap-2 px-4',
- *           isRefetching && 'pointer-events-none opacity-50',
- *         )}
- *         onClick={handleReload}
- *       >
- *         <Icons.Refresh
- *           className={cn('hidden size-4 opacity-50 sm:flex', isRefetching && 'animate-spin')}
- *         />
- *         <span>Reload</span>
- *       </Button>
- *       <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
- *         <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
- *         <span>
- *           Add <span className="hidden sm:inline-flex">New Question</span>
- *         </span>
- *       </Button>
- *     </div>
- *   );
- * }
- */
-
 function QuestionTableHeader({
-  isAdminMode,
+  // isAdminMode,
   selectedQuestions,
   allQuestions,
   toggleAll,
@@ -146,8 +85,8 @@ function QuestionTableHeader({
         <TableHead id="no" className="truncate text-right max-sm:hidden">
           No
         </TableHead>
-        {isAdminMode && isDev && (
-          <TableHead id="topicId" className="truncate max-sm:hidden">
+        {isDev && (
+          <TableHead id="questionId" className="truncate max-sm:hidden">
             ID
           </TableHead>
         )}
@@ -181,7 +120,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
     handleDeleteQuestion,
     handleEditQuestion,
     handleEditAnswers,
-    isAdminMode,
+    // isAdminMode,
     idx,
     isSelected,
     toggleSelected,
@@ -202,18 +141,18 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
       >
         <Checkbox checked={isSelected} className="block" aria-label="Select question" />
       </TableCell>
-      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
+      <TableCell id="no" className="max-w-4 truncate text-right opacity-50 max-sm:hidden">
         <div className="truncate">{idx + 1}</div>
       </TableCell>
-      {isAdminMode && isDev && (
-        <TableCell id="questionId" className="max-w-[8em] truncate max-sm:hidden">
-          <div className="truncate">
-            <span className="mr-[2px] opacity-30">#</span>
+      {isDev && (
+        <TableCell id="questionId" className="max-w-8 truncate max-sm:hidden">
+          <div className="truncate opacity-50">
+            <span className="mr-1 opacity-30">#</span>
             {id}
           </div>
         </TableCell>
       )}
-      <TableCell id="text" className="max-w-[12em] truncate">
+      <TableCell id="text" className="max-w-24 truncate" title={truncateMarkdown(text, 100)}>
         <Link className="truncate text-lg font-medium hover:underline" href={questionRoutePath}>
           {truncateMarkdown(text, 40)}
         </Link>

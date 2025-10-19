@@ -5,7 +5,7 @@ import { AiClientTypeEnum, defaultAiClientType } from '@/lib/ai/types/TAiClientT
 
 export const formSchema = z.object({
   showDebugData: z.boolean().optional(),
-  model: z.nativeEnum(AiClientTypeEnum),
+  clientType: z.nativeEnum(AiClientTypeEnum),
   systemQueryText: z.string(),
   userQueryText: z.string(),
 });
@@ -58,7 +58,7 @@ What types of data exist in JavaScript?
 
 export const defaultValues: TFormData = {
   showDebugData: true,
-  model: defaultAiClientType,
+  clientType: defaultAiClientType,
   systemQueryText,
   userQueryText,
 };

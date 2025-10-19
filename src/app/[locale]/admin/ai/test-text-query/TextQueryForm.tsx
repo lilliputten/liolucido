@@ -52,7 +52,7 @@ export function TextQueryForm() {
 
   const sendQuery = React.useCallback(
     async (formData: TFormData) => {
-      const { model, systemQueryText, userQueryText } = formData;
+      const { clientType, systemQueryText, userQueryText } = formData;
       setError(null);
       const queryInfo = [systemQueryText, userQueryText]
         .map((s) => s.trim())
@@ -61,7 +61,7 @@ export function TextQueryForm() {
         .join(' / ');
       addLog({
         type: 'info',
-        content: `Submitting query ${truncateString(queryInfo, 50)} to model ${model}...`,
+        content: `Submitting query ${truncateString(queryInfo, 50)} to client type ${clientType}...`,
       });
       try {
         const messages: TPlainMessage[] = [
@@ -75,10 +75,12 @@ export function TextQueryForm() {
          *   messagesJson: JSON.stringify(messages, null, 2),
          * });
          */
-        const queryResult = await sendAiTextQuery(model, messages, formData.showDebugData);
+        const queryResult = await sendAiTextQuery(messages, {
+          clientType,
+          debugData: formData.showDebugData,
+        });
         const { content } = queryResult;
-        const resultText: MessageContent = content; // `Request ${queryInfo} for model ${model} processed successfully -> ${content}`;
-        const resultData = queryResult; // { sample: 'ok' };
+        const resultText: MessageContent = content; // `Request ${queryInfo} for clientType ${model} processed successfully -> ${content}`;
         /* console.log('[TextQueryForm:sendQuery] done', {
          *   usage: queryResult.usage_metadata,
          *   resultText,
@@ -87,7 +89,7 @@ export function TextQueryForm() {
          *   queryResultJson: JSON.stringify(queryResult, null, 2),
          * });
          */
-        addLog({ type: 'data', title: 'Data received:', content: resultData });
+        addLog({ type: 'data', title: 'Data received:', content: queryResult });
         addLog({ type: 'success', title: 'Received response:', content: `${resultText}` });
         toggleForm(false);
       } catch (error) {
@@ -114,7 +116,7 @@ export function TextQueryForm() {
 
   const isEmpty = React.useMemo(() => {
     return Object.entries(values)
-      .filter(([id]) => id !== 'model')
+      .filter(([id]) => id !== 'clientType')
       .every(
         ([_id, value]) =>
           value === '' ||

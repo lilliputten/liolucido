@@ -81,18 +81,6 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(answersListRoutePath);
 
-  // Add Answer Modal
-  const handleAddAnswer = React.useCallback(() => {
-    const url = `${answersListRoutePath}/add`;
-    goToTheRoute(url);
-  }, [answersListRoutePath, goToTheRoute]);
-
-  // Delete Answer Modal
-  const handleDeleteAnswer = React.useCallback(() => {
-    const url = `${answersListRoutePath}/delete?answerId=${answer.id}`;
-    goToTheRoute(url);
-  }, [answer.id, answersListRoutePath, goToTheRoute]);
-
   // Watch if the answer has been deleted
   React.useEffect(() => {
     const handleAnswerDeleted = (event: CustomEvent<TAnswer>) => {
@@ -254,7 +242,15 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         variant: 'success',
         icon: Icons.Add,
         visibleFor: 'xl',
-        onClick: handleAddAnswer,
+        onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
+      },
+      {
+        id: 'Generate Answers',
+        content: 'Generate Answers',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'xl',
+        onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
       {
         id: 'Reset',
@@ -271,19 +267,20 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         variant: 'destructive',
         icon: Icons.Trash,
         // visibleFor: 'xl',
-        onClick: handleDeleteAnswer,
+        onClick: () => goToTheRoute(`${answersListRoutePath}/delete?answerId=${answer.id}`),
       },
     ],
     [
       goBack,
-      form,
-      availableAnswerQuery,
-      handleReload,
-      handleAddAnswer,
-      handleDeleteAnswer,
-      isPending,
       isSubmitEnabled,
+      isPending,
+      form,
       handleFormSubmit,
+      availableAnswerQuery.isRefetching,
+      handleReload,
+      goToTheRoute,
+      answersListRoutePath,
+      answer.id,
     ],
   );
 

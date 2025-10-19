@@ -15,6 +15,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{
 
 type TManageTopicQuestionAnswersLayoutProps = TAwaitedProps & {
   children: React.ReactNode;
+  generateAnswersModal: React.ReactNode; // slot from @generateAnswersModal
   addAnswerModal: React.ReactNode; // slot from @addAnswerModal
   deleteAnswerModal: React.ReactNode; // slot from @deleteAnswerModal
 };
@@ -24,6 +25,7 @@ export default async function ManageTopicQuestionAnswersLayout(
 ) {
   const {
     children,
+    generateAnswersModal, // slot from @generateAnswersModal
     addAnswerModal, // slot from @addAnswerModal
     deleteAnswerModal, // slot from @deleteAnswerModal
     params,
@@ -50,6 +52,7 @@ export default async function ManageTopicQuestionAnswersLayout(
   return (
     <>
       {children}
+      {generateAnswersModal}
       {addAnswerModal}
       {deleteAnswerModal}
     </>

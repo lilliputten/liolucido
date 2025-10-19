@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { ShowLogRecords, TLogRecord } from '@/components/debug/ShowLogRecords';
-import { Check, Close, FlaskConical, Spinner } from '@/components/shared/Icons';
+import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/config';
 
 const __useDebugData = isDev && true;
@@ -109,7 +109,7 @@ export function BotControlPage() {
         id: 'Show server info',
         content: 'Show server info',
         variant: 'theme',
-        icon: Check,
+        icon: Icons.Check,
         pending: isShowServerInfoRunning,
         onClick: showServerInfo,
         visibleFor: 'lg',
@@ -118,7 +118,7 @@ export function BotControlPage() {
         id: 'Initialize webhook',
         content: 'Initialize webhook',
         variant: 'theme',
-        icon: Check,
+        icon: Icons.Check,
         pending: isInitWebhookRunning,
         onClick: initWebhook,
         visibleFor: 'lg',
@@ -127,7 +127,7 @@ export function BotControlPage() {
         id: 'Set commands',
         content: 'Set commands',
         variant: 'theme',
-        icon: Check,
+        icon: Icons.Check,
         pending: isSetCommandsRunning,
         onClick: setCommands,
         visibleFor: 'lg',
@@ -136,7 +136,7 @@ export function BotControlPage() {
         id: 'Clear log',
         content: 'Clear log',
         variant: 'ghost',
-        icon: Close,
+        icon: Icons.Close,
         disabled: !hasLogs || isPending,
         onClick: clearLogs,
         visibleFor: 'lg',
@@ -169,7 +169,7 @@ export function BotControlPage() {
           <h1 className="truncate text-2xl">Control Telegram Bot</h1>
           {__useDebugData && (
             <Badge variant="destructive" className="flex gap-2 truncate">
-              <FlaskConical className="size-4 opacity-50" />
+              <Icons.FlaskConical className="size-4 opacity-50" />
               <span className="truncate font-bold">DEBUG MODE</span>{' '}
               <span className="truncate opacity-70">The fake local data will be returned</span>
             </Badge>

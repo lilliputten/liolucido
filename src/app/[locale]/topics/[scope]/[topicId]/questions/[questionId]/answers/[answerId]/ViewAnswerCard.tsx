@@ -66,6 +66,14 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
         onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
       },
       {
+        id: 'Generate Answers',
+        content: 'Generate Answers',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'xl',
+        onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
+      },
+      {
         id: 'Delete Answer',
         content: 'Delete Answer',
         variant: 'destructive',

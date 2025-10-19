@@ -22,13 +22,6 @@ function checkIfLinkIsAllowedForUser(user: ExtendedUser | undefined, navItem: Na
   if (!authorizedOnly) {
     return true;
   }
-  console.log('[GenericLayoutContent:checkIfLinkIsAllowedForUser]', {
-    titleId: navItem.titleId,
-    authorizedOnly,
-    // role: user?.role,
-    navItem,
-    user,
-  });
   if (authorizedOnly === true && !!user?.id) {
     return true;
   }

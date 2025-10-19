@@ -2,7 +2,6 @@ import { useTheme } from 'next-themes';
 
 import { cn } from '@/lib/utils';
 import * as Icons from '@/components/shared/Icons';
-import { secondaryColor } from '@/styles/cssVariables';
 import { isDev } from '@/constants';
 
 interface TWaitingSplashProps {
@@ -35,8 +34,7 @@ export function WaitingSplash(props: TWaitingSplashProps) {
         'justify-center',
         'transition',
         'duration-1000',
-        hidden && 'opacity-0',
-        hidden && 'pointer-events-none',
+        hidden && 'pointer-events-none opacity-0',
       )}
     >
       <div
@@ -55,7 +53,6 @@ export function WaitingSplash(props: TWaitingSplashProps) {
           'animate-spin',
         )}
         // color={isLight ? foreground-lightColor : foreground-darkColor} // XXX: Use theme color?
-        color={secondaryColor}
       />
     </div>
   );

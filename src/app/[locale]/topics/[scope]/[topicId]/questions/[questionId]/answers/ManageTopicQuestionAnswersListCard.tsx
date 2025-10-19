@@ -265,6 +265,7 @@ export function ManageTopicQuestionAnswersListCardContent(
   } = props;
 
   const user = useSessionUser();
+  const isLogged = !!user;
   const isAdmin = user?.role === 'ADMIN';
 
   const {
@@ -339,6 +340,12 @@ export function ManageTopicQuestionAnswersListCardContent(
               <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
                 <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
                 Add New Answer
+              </Link>
+            </Button>
+            <Button disabled={!isLogged} variant="secondary">
+              <Link href={`${answersListRoutePath}/generate`} className="flex gap-2">
+                <Icons.WandSparkles className="hidden size-4 opacity-50 sm:flex" />
+                Generate Answers
               </Link>
             </Button>
           </>
@@ -537,6 +544,14 @@ export function ManageTopicQuestionAnswersListCard(
         icon: Icons.Add,
         visibleFor: 'lg',
         onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
+      },
+      {
+        id: 'Generate Answers',
+        content: 'Generate Answers',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'lg',
+        onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
     ],
     [

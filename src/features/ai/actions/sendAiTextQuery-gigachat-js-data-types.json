@@ -1,5 +1,5 @@
 {
-  "content": "{\n  \"answers\": [\n    {\n      \"text\": \"В JavaScript существуют только числовые и строковые типы данных.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript есть такие типы данных как булевый, массивы и функции, но нет примитивных типов.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript существует всего два типа данных: объект и функция.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript есть тип данных дата, который используется исключительно для хранения времени.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript отсутствуют встроенные типы данных для работы с датой и временем.\",\n      \"isCorrect\": false\n    }\n  ]\n}",
+  "content": "{\n  \"answers\": [\n    {\n      \"text\": \"Incorrect answer.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"The correct answer.\",\n      \"isCorrect\": true\n    }  ]\n}",
   "additional_kwargs": {},
   "response_metadata": {
     "tokenUsage": {
