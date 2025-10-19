@@ -40,6 +40,18 @@ export const nextAuthApp = NextAuth({
     maxAge: sessionMaxAge,
     updateAge: sessionUpdateAge,
   },
+  useSecureCookies: !isDev,
+  cookies: {
+    pkceCodeVerifier: {
+      name: 'next-auth.pkce.code_verifier',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: !isDev,
+      },
+    },
+  },
   pages: {
     // @see https://next-auth.js.org/configuration/pages
     signIn: welcomeRoute, // <-- /api/auth/signin
