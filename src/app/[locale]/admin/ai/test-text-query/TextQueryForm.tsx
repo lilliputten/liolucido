@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { MessageContent } from '@langchain/core/messages';
 import { useForm } from 'react-hook-form';
 
+import { truncateString } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { Form } from '@/components/ui/Form';
@@ -58,16 +59,34 @@ export function TextQueryForm() {
         .filter(Boolean)
         .map((s) => `"${s}"`)
         .join(' / ');
-      addLog({ type: 'info', content: `Submitting query ${queryInfo} to model ${model}...` });
+      addLog({
+        type: 'info',
+        content: `Submitting query ${truncateString(queryInfo, 50)} to model ${model}...`,
+      });
       try {
         const messages: TPlainMessage[] = [
           { role: 'system', content: systemQueryText },
           { role: 'user', content: userQueryText },
         ];
+        addLog({ type: 'data', title: 'Retrieving data with messages:', content: messages });
+        /* // DEBUG
+         * console.log('[TextQueryForm:sendQuery] start', {
+         *   messages,
+         *   messagesJson: JSON.stringify(messages, null, 2),
+         * });
+         */
         const queryResult = await sendAiTextQuery(model, messages, formData.showDebugData);
         const { content } = queryResult;
         const resultText: MessageContent = content; // `Request ${queryInfo} for model ${model} processed successfully -> ${content}`;
         const resultData = queryResult; // { sample: 'ok' };
+        /* console.log('[TextQueryForm:sendQuery] done', {
+         *   usage: queryResult.usage_metadata,
+         *   resultText,
+         *   resultData,
+         *   queryResult,
+         *   queryResultJson: JSON.stringify(queryResult, null, 2),
+         * });
+         */
         addLog({ type: 'data', title: 'Data received:', content: resultData });
         addLog({ type: 'success', title: 'Received response:', content: `${resultText}` });
         toggleForm(false);
@@ -114,10 +133,11 @@ export function TextQueryForm() {
     () => [
       {
         id: 'Submit',
-        content: isPending ? 'Processing...' : 'Submit',
+        content: 'Submit',
         variant: 'theme',
         icon: Check,
         disabled: !isSubmitEnabled,
+        pending: isPending,
         onClick: () =>
           form.handleSubmit((formData) => {
             startTransition(async () => {
@@ -189,7 +209,7 @@ export function TextQueryForm() {
             <TextQueryFormFields form={form} className="flex-1 shrink-0 overflow-hidden" />
           )}
           {(!showForm || !isMobile) && (
-            <ShowLogRecords logs={logs} className={cn('mx-4 mt-4', showForm && 'max-h-[300px]')} />
+            <ShowLogRecords logs={logs} className={cn('mx-6', showForm && 'max-h-[300px]')} />
           )}
         </div>
       </Form>

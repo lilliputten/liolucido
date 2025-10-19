@@ -1,9 +1,10 @@
 'use server';
 
 import { AIMessageChunk, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { GigaChatCallOptions } from 'langchain-gigachat';
 
-import { TAiClientType } from '@/lib/types/TAiClientType';
 import { getAiClient } from '@/lib/ai/getAiClient';
+import { TAiClientType } from '@/lib/ai/types/TAiClientType';
 
 import { TPlainMessage } from '../types/messages';
 
@@ -29,7 +30,7 @@ export async function sendAiTextQuery(
   try {
     if (__returnDebugData) {
       await new Promise((r) => setTimeout(r, 1000));
-      const rawData = await import('./sendAiTextQuery-sample-data.json');
+      const rawData = await import('./sendAiTextQuery-gigachat-js-data-types.json');
       const data = { ...rawData.default } as TDataType;
       return data;
     }
@@ -40,7 +41,10 @@ export async function sendAiTextQuery(
       return new HumanMessage(text);
     });
     const client = await getAiClient(clientType);
-    const res = await client.invoke(prepartedMessages);
+    const options = {
+      model: client.model,
+    } satisfies GigaChatCallOptions;
+    const res = await client.invoke(prepartedMessages, options);
     const {
       content,
       name,

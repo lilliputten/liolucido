@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { aiClientTypes } from '@/lib/types/TAiClientType';
+import { aiClientTypes } from '@/lib/ai/types/TAiClientType';
 import { cn } from '@/lib/utils';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
 import { Label } from '@/components/ui/Label';
@@ -43,7 +43,7 @@ export function TextQueryFormFields(props: TTextQueryFormFieldsProps) {
       )}
       viewportClassName={cn(
         isDev && '__TextQueryFormFields_ScrollViewport', // DEBUG
-        'px-4 py-2 [&>div]:!flex [&>div]:flex-col [&>div]:gap-4 [&>div]:flex-1',
+        'px-6 [&>div]:!flex [&>div]:flex-col [&>div]:gap-4 [&>div]:flex-1',
       )}
     >
       {/* Show Debug Data */}
@@ -58,6 +58,7 @@ export function TextQueryFormFields(props: TTextQueryFormFieldsProps) {
                 id={showDebugDataKey}
                 checked={!!field.value}
                 onCheckedChange={field.onChange}
+                className="data-[state=checked]:bg-red-500 data-[state=checked]:hover:bg-red-600"
               />
             </FormControl>
             <FormHint>

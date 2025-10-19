@@ -1,0 +1,8 @@
+{
+  "content": "```json\n{\n  \"answers\": [\n    {\n      \"text\": \"### Primitive Data Types\\n- Number\\n- String\\n- Boolean\\n- Null\\n- Undefined\",\n      \"isCorrect\": true\n    },\n    {\n      \"text\": \"### Complex Data Types\\n- Only Number\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"### JavaScript Data Types\\n- Only String\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"### Data Types in JavaScript\\n- Number, String, Boolean, Null, Undefined, Array, Object\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"### Data Types\\n- Only Boolean\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"### JavaScript Data Types\\n- Number, String, Boolean, Null, Undefined, Object\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"### Primitive Data Types\\n- Number, String, Boolean, Null, Undefined, Object\",\n      \"isCorrect\": false\n    }\n  ]\n}\n```",
+  "additional_kwargs": {},
+  "response_metadata": {},
+  "id": "run-df19235a-70d6-4a91-9d5a-4c9d709dd6fa",
+  "tool_calls": [],
+  "invalid_tool_calls": []
+}

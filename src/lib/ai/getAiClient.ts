@@ -1,7 +1,9 @@
-import { ChatCloudflareWorkersAI } from '@langchain/cloudflare';
-import { GigaChat, GigaChatCallOptions } from 'langchain-gigachat';
+import { ChatCloudflareWorkersAI, CloudflareWorkersAIInput } from '@langchain/cloudflare';
+import { BaseLanguageModelParams } from '@langchain/core/language_models/base';
+import { BaseChatModelParams } from '@langchain/core/language_models/chat_models';
+import { GigaChatClientConfig } from 'gigachat';
+import { GigaChat, GigaChatCallOptions, GigaChatInput } from 'langchain-gigachat';
 
-import { defaultAiClientType, TAiClientType } from '@/lib/types/TAiClientType';
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CLOUDFLARE_API_TOKEN,
@@ -10,9 +12,14 @@ import {
 } from '@/config/envServer';
 import { getHttpsAgent } from '@/lib/ai/getHttpsAgent';
 
+import { defaultAiClientType, TAiClientType } from './types/TAiClientType';
+
 export type TAiClient = GigaChat<GigaChatCallOptions> | ChatCloudflareWorkersAI;
 
 const cachedClients: Partial<Record<TAiClientType, TAiClient>> = {};
+
+const temperature = 0.7;
+const maxTokens = 50;
 
 // Create client instance
 export async function getAiClient(clientType: TAiClientType = defaultAiClientType) {
@@ -29,7 +36,7 @@ export async function getAiClient(clientType: TAiClientType = defaultAiClientTyp
         cloudflareApiToken: CLOUDFLARE_API_TOKEN,
         // Pass a custom base URL to use Cloudflare AI Gateway
         // baseUrl: `https://gateway.ai.cloudflare.com/v1/{YOUR_ACCOUNT_ID}/{GATEWAY_NAME}/workers-ai/`,
-      });
+      } satisfies CloudflareWorkersAIInput & BaseLanguageModelParams);
     } else if (clientType === 'GigaChat') {
       // GigaChat
       client = new GigaChat({
@@ -37,7 +44,10 @@ export async function getAiClient(clientType: TAiClientType = defaultAiClientTyp
         model: GIGACHAT_MODEL,
         useApiForTokens: true, // enable token counting via API
         httpsAgent: getHttpsAgent(),
-      });
+        temperature,
+        maxTokens,
+        verbose: true,
+      } satisfies GigaChatClientConfig & GigaChatInput & BaseChatModelParams);
     }
     if (!client) {
       throw new Error(`Cannot create an ai client for "{clientType}".`);

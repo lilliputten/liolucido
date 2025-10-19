@@ -1,0 +1,24 @@
+{
+  "content": "{\n  \"answers\": [\n    {\n      \"text\": \"В JavaScript существуют только числовые и строковые типы данных.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript есть такие типы данных как булевый, массивы и функции, но нет примитивных типов.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript существует всего два типа данных: объект и функция.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript есть тип данных дата, который используется исключительно для хранения времени.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"В JavaScript отсутствуют встроенные типы данных для работы с датой и временем.\",\n      \"isCorrect\": false\n    }\n  ]\n}",
+  "additional_kwargs": {},
+  "response_metadata": {
+    "tokenUsage": {
+      "input_tokens": 174,
+      "output_tokens": 170,
+      "total_tokens": 344
+    },
+    "finish_reason": "stop",
+    "xHeaders": {
+      "xRequestID": "00eff734-284e-4502-8eb8-abaa153e9bd7",
+      "xSessionID": "67e24141-9871-4133-81fb-b63122e11f68"
+    }
+  },
+  "id": "00eff734-284e-4502-8eb8-abaa153e9bd7",
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "input_tokens": 174,
+    "output_tokens": 170,
+    "total_tokens": 344
+  }
+}

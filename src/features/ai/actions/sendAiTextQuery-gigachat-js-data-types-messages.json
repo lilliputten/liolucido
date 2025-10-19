@@ -1,0 +1,10 @@
+[
+  {
+    "role": "system",
+    "content": "You are an assistant that generates correct or wrong question answers for a given topic in JSON format.\n\nEach answer object should have 'text' with answer text (in markdown format) and 'isCorrect' boolean properties indicating whether it is a correct answer or not.\n\nThe response should be well-formed JSON, and answer texts must use the language of the input question."
+  },
+  {
+    "role": "user",
+    "content": "Please provide a JSON response with an 'answers' key containing an array of answer objects.\n\nEach answer object should have 'text' with answer text (in markdown format) and 'isCorrect' boolean properties indicating whether it is a correct answer or not.\n\nGenerate a list of 3 to 8 responses.\n\nProvide multiple incorrect answers and at least one correct answer.\n\nThe topic:\n\nJavascript for Developers\n\nThe question:\n\nWhat types of data exist in JavaScript?\n"
+  }
+]

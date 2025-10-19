@@ -30,14 +30,10 @@ import { PageEmpty } from '@/components/pages/shared';
 import * as Icons from '@/components/shared/Icons';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
-import {
-  TopicsManageScopeIds,
-  topicsNamespaces,
-  TTopicsManageScopeId,
-} from '@/contexts/TopicsContext';
+import { TopicsManageScopeIds, topicsNamespaces } from '@/contexts/TopicsContext';
 import { deleteTopics } from '@/features/topics/actions';
 import { TTopic, TTopicId } from '@/features/topics/types';
-import { useAvailableTopicsByScope, useGoBack, useSessionUser } from '@/hooks';
+import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 const saveScrollHash = getRandomHashString();
@@ -95,7 +91,7 @@ function TopicTableHeader({
         <TableHead id="no" className="truncate text-right max-lg:hidden">
           No
         </TableHead>
-        {isAdminMode && isDev && (
+        {isDev && (
           <TableHead id="topicId" className="truncate max-xl:hidden">
             ID
           </TableHead>
@@ -164,18 +160,18 @@ function TopicTableRow(props: TTopicTableRowProps) {
       >
         <Checkbox checked={isSelected} className="block" aria-label="Select topic" />
       </TableCell>
-      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-lg:hidden">
+      <TableCell id="no" className="truncate text-right opacity-50 max-lg:hidden">
         <div className="truncate">{idx + 1}</div>
       </TableCell>
-      {isAdminMode && isDev && (
-        <TableCell id="topicId" className="max-w-[8em] truncate max-xl:hidden" title={id}>
-          <div className="truncate">
+      {isDev && (
+        <TableCell id="topicId" className="max-w-6 truncate max-xl:hidden" title={id}>
+          <div className="truncate opacity-50">
             <span className="mr-[2px] opacity-30">#</span>
             {id}
           </div>
         </TableCell>
       )}
-      <TableCell id="name" className="max-w-[8em] truncate">
+      <TableCell id="name" className="max-w-12 truncate">
         <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
           {truncateString(name, 40)}
         </Link>
@@ -259,7 +255,6 @@ export function ManageTopicsListCardContent(props: TManageTopicsListCardContentP
     setSelectedTopics,
   } = props;
   const { manageScope } = useManageTopicsStore();
-  // const user = useSessionUser();
   const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS; // || user?.role === 'ADMIN';
   const {
     isLoading,

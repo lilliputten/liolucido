@@ -103,18 +103,14 @@ export function BotControlPage() {
 
   const hasLogs = !!logs.length;
 
-  const ShowServerInfoIcon = isShowServerInfoRunning ? Spinner : Check;
-  const InitWebhookIcon = isInitWebhookRunning ? Spinner : Check;
-  const SetCommandsIcon = isSetCommandsRunning ? Spinner : Check;
-
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
       {
         id: 'Show server info',
         content: 'Show server info',
         variant: 'theme',
-        icon: ShowServerInfoIcon,
-        disabled: isShowServerInfoRunning,
+        icon: Check,
+        pending: isShowServerInfoRunning,
         onClick: showServerInfo,
         visibleFor: 'lg',
       },
@@ -122,8 +118,8 @@ export function BotControlPage() {
         id: 'Initialize webhook',
         content: 'Initialize webhook',
         variant: 'theme',
-        icon: InitWebhookIcon,
-        disabled: isInitWebhookRunning,
+        icon: Check,
+        pending: isInitWebhookRunning,
         onClick: initWebhook,
         visibleFor: 'lg',
       },
@@ -131,8 +127,8 @@ export function BotControlPage() {
         id: 'Set commands',
         content: 'Set commands',
         variant: 'theme',
-        icon: SetCommandsIcon,
-        disabled: isSetCommandsRunning,
+        icon: Check,
+        pending: isSetCommandsRunning,
         onClick: setCommands,
         visibleFor: 'lg',
       },
@@ -156,9 +152,6 @@ export function BotControlPage() {
       isSetCommandsRunning,
       hasLogs,
       isPending,
-      ShowServerInfoIcon,
-      InitWebhookIcon,
-      SetCommandsIcon,
     ],
   );
 
@@ -173,8 +166,6 @@ export function BotControlPage() {
         actions={actions}
       >
         <div className="flex flex-wrap gap-4">
-          {/*
-           */}
           <h1 className="truncate text-2xl">Control Telegram Bot</h1>
           {__useDebugData && (
             <Badge variant="destructive" className="flex gap-2 truncate">
@@ -189,10 +180,10 @@ export function BotControlPage() {
         // onSubmit={onSubmit}
         className={cn(
           isDev && '__BotControlPage', // DEBUG
-          'mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-hidden',
+          'flex flex-1 flex-col overflow-hidden',
         )}
       >
-        <ShowLogRecords logs={logs} className="mx-4 my-6" />
+        <ShowLogRecords logs={logs} className="mx-6" />
       </div>
     </>
   );
