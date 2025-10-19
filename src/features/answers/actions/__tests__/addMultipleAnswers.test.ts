@@ -1,13 +1,11 @@
-import { ExtendedUser } from '@/@types/next-auth';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';
 import { getCurrentUser } from '@/lib/session';
+import { TExtendedUser } from '@/features/users/types/TUser';
 
 import { addMultipleAnswers } from '../addMultipleAnswers';
-
-type TExtendedUser = ExtendedUser;
 
 const mockedGetCurrentUser = getCurrentUser as jest.MockedFunction<typeof getCurrentUser>;
 

@@ -8,11 +8,8 @@ import { InfoVisualBlock } from '@/components/blocks/InfoVisualBlock';
 import { UseScrollableLayout } from '@/components/shared/ScrollableLayout';
 import { isDev } from '@/constants';
 
-export function InfoScreen(props: TPropsWithClassName & { isLoggedUser: boolean }) {
-  const {
-    className,
-    // isLoggedUser,
-  } = props;
+export function InfoScreen(props: TPropsWithClassName & { isLogged: boolean }) {
+  const { className } = props;
   return (
     <div
       className={cn(
@@ -36,7 +33,6 @@ export function InfoScreen(props: TPropsWithClassName & { isLoggedUser: boolean 
             // 'pointer-events-none',
           )}
         />
-        {/* TODO: Show a bigger page with more content if user is logged (isLoggedUser)? */}
         <InfoVisualBlock className="z-10" />
         <div
           className={cn(
@@ -54,16 +50,6 @@ export function InfoScreen(props: TPropsWithClassName & { isLoggedUser: boolean 
           ))*/}
         </div>
       </div>
-      {/*!isLoggedUser && (
-        <div
-          className={cn(
-            isDev && '__InfoScreen_SignIn', // DEBUG
-            'flex flex-1 flex-col lg:overflow-auto',
-          )}
-        >
-          <SignInBlock />
-        </div>
-      )*/}
     </div>
   );
 }

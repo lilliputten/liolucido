@@ -3,6 +3,7 @@ import { UserRoles } from '@/lib/db/TUserRole';
 import * as Icons from '@/components/shared/Icons';
 
 import {
+  adminAiTestTextQueryRoute,
   adminBotControlRoute,
   allTopicsRoute,
   availableTopicsRoute,
@@ -29,7 +30,10 @@ export const sidebarLinks: SidebarNavItem[] = [
   {
     titleId: 'Administration',
     authorizedOnly: UserRoles.ADMIN,
-    items: [{ href: adminBotControlRoute, icon: Icons.FlaskConical, titleId: 'Bot Control' }],
+    items: [
+      { href: adminBotControlRoute, icon: Icons.FlaskConical, titleId: 'Bot Control' },
+      { href: adminAiTestTextQueryRoute, icon: Icons.FlaskConical, titleId: 'Test AI Text Query' },
+    ],
   },
   {
     titleId: 'Application',

@@ -9,8 +9,8 @@ import { WelcomeVisualBlock } from '@/components/blocks/WelcomeVisualBlock';
 import { UseScrollableLayout } from '@/components/shared/ScrollableLayout';
 import { isDev } from '@/constants';
 
-export function WelcomeScreen(props: TPropsWithClassName & { isLoggedUser: boolean }) {
-  const { className, isLoggedUser } = props;
+export function WelcomeScreen(props: TPropsWithClassName & { isLogged: boolean }) {
+  const { className, isLogged } = props;
   return (
     <div
       className={cn(
@@ -35,7 +35,7 @@ export function WelcomeScreen(props: TPropsWithClassName & { isLoggedUser: boole
         />
         <WelcomeVisualBlock className="z-10" />
       </div>
-      {!isLoggedUser && (
+      {!isLogged && (
         <div
           className={cn(
             isDev && '__WelcomeScreen_SignIn', // DEBUG

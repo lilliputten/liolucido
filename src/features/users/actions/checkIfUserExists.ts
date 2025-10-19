@@ -1,17 +1,24 @@
 'use server';
 
-import { prisma } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
-export async function checkIfUserExists(userId: string, doThrow?: boolean) {
+import { getUser } from './getUser';
+
+export interface TCheckIfUserExistsParams {
+  id: string;
+  doThrow?: boolean;
+  include?: Prisma.UserInclude;
+}
+
+export async function checkIfUserExists(params: TCheckIfUserExistsParams) {
+  const { id, doThrow, include } = params;
   // Verify user exists
-  const userExists = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-  if (userExists) {
-    return true;
+  const user = await getUser({ where: { id }, include });
+  if (user) {
+    return user;
   }
   if (doThrow) {
-    throw new Error(`User with ID ${userId} does not exist.`);
+    throw new Error(`User with ID ${id} does not exist.`);
   }
-  return false;
+  return undefined;
 }

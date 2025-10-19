@@ -2,23 +2,21 @@ import { redirect } from 'next/navigation';
 
 import { welcomeRoute } from '@/config/routesConfig';
 import { constructMetadata } from '@/lib/constructMetadata';
-import { UserRoles } from '@/lib/db/TUserRole';
-import { getCurrentUser } from '@/lib/session';
+import { isAdminUser } from '@/lib/session';
 import { cn } from '@/lib/utils';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 import { isDev } from '@/config';
 
-import { BotControlPage } from './BotControlPage';
+import { TextQueryForm } from './TextQueryForm';
 
 export async function generateMetadata(/* { params }: TAwaitedLocaleProps */) {
   return constructMetadata({
-    title: 'Start Bot',
+    title: 'Test AI Text Query',
   });
 }
 
-export default async function BotControlPageWrapper() {
-  const user = await getCurrentUser();
-  const isAdmin = user?.role === UserRoles.ADMIN;
+export default async function TestQueryPage() {
+  const isAdmin = await isAdminUser();
 
   if (!isAdmin) {
     return redirect(welcomeRoute);
@@ -26,18 +24,18 @@ export default async function BotControlPageWrapper() {
 
   return (
     <PageWrapper
-      id="BotControlPageWrapper"
+      id="TextQueryPage"
       className={cn(
-        isDev && '__BotControlPageWrapper', // DEBUG
+        isDev && '__TextQueryPage', // DEBUG
       )}
       innerClassName={cn(
-        isDev && '__BotControlPageWrapper_Inner', // DEBUG
+        isDev && '__TextQueryPage_Inner', // DEBUG
         'w-full rounded-lg gap-6 py-6',
       )}
-      // scrollable
       limitWidth
+      // scrollable
     >
-      <BotControlPage />
+      <TextQueryForm />
     </PageWrapper>
   );
 }
