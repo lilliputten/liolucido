@@ -1,5 +1,5 @@
-import { TUserRole } from '@/lib/types/db/TUserRole';
 import { TRoutePath } from '@/config/routesConfig';
+import { TUserRole } from '@/lib/db/TUserRole';
 import { TGenericIcon } from '@/components/shared/IconTypes';
 
 export interface NavItemBase {

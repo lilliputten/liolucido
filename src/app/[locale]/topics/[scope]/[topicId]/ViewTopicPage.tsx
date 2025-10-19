@@ -39,12 +39,11 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
 
   const {
     topic,
-    queryKey: availableTopicQueryKey,
+    // queryKey: availableTopicQueryKey,
     // isFetched: isTopicFetched,
     // isLoading: isTopicLoading,
     // isCached: isTopicCached,
   } = availableTopicQuery;
-  console.log('[ViewTopicPage:availableTopicQuery]', { availableTopicQueryKey });
 
   // Error: topic hasn't been found
   if (!topic) {

@@ -34,6 +34,7 @@ export const {
   EyeOff,
   FileQuestion,
   Flag,
+  FlaskConical,
   FolderKanban,
   Hand,
   Hash,
