@@ -249,6 +249,8 @@ model UserTopicWorkout {
 
   // favorite Boolean? // TODO: Allow adding dd to the favorites list
 
+  // TODO: Use other topic specific options
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 

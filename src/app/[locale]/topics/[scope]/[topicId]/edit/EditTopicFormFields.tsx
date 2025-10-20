@@ -96,8 +96,8 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                 />
               </FormControl>
               <FormHint>
-                A topic description. Could be used in questions and answers generation.{' '}
-                <MarkdownHint />
+                A topic description. This text can be used both to generate questions and answers by
+                the system itself, and by users for navigation and search. <MarkdownHint />
               </FormHint>
               <FormMessage />
             </FormItem>
@@ -129,8 +129,8 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
                 <Input id={keywordsKey} type="text" placeholder="Keywords" {...field} />
               </FormControl>
               <FormHint>
-                An optional list of keywords separated by commas. Could be used in questions and
-                answers generation.
+                Optional list of keywords separated by commas. It can be used to generate questions
+                and answers, as well as to navigate and search for users.
               </FormHint>
               <FormMessage />
             </FormItem>

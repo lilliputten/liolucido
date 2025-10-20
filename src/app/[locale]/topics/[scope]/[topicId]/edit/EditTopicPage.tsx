@@ -90,7 +90,19 @@ export function EditTopicPage(props: TEditTopicPageProps) {
           answersCountMax: z.union([z.string().optional(), z.number()]),
         })
         .superRefine((data, ctx) => {
-          const { answersCountRandom } = data;
+          const { answersCountRandom, keywords } = data;
+          // Validate keywords format
+          if (keywords && keywords.trim() !== '') {
+            const keywordList = keywords.split(',').map((k) => k.trim());
+            const validKeywords = keywordList.filter(Boolean);
+            if (validKeywords.length === 0 || keywordList.length !== validKeywords.length) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Keywords must be comma-separated words without empty values',
+                path: ['keywords'],
+              });
+            }
+          }
           if (answersCountRandom) {
             const answersCountMin = Number(data.answersCountMin);
             const answersCountMax = Number(data.answersCountMax);
