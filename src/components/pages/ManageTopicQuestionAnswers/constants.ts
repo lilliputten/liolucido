@@ -3,4 +3,4 @@
 // export const minNameLength = 1;
 // export const maxNameLength = 100;
 export const minTextLength = 1;
-export const maxTextLength = 1000;
+export const maxTextLength = 500;

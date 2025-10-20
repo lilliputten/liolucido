@@ -1,24 +1,13 @@
 'use server';
 
-import { AIMessageChunk, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { GigaChatCallOptions } from 'langchain-gigachat';
 
 import { getAiClient } from '@/lib/ai/getAiClient';
 import { defaultAiClientType, TAiClientType } from '@/lib/ai/types/TAiClientType';
 
+import { TAITextQueryData } from '../types/GenerateAnswersTypes';
 import { TPlainMessage } from '../types/messages';
-
-type TDataType = Pick<
-  AIMessageChunk,
-  | 'content'
-  | 'name'
-  | 'additional_kwargs'
-  | 'response_metadata'
-  | 'id'
-  | 'tool_calls'
-  | 'invalid_tool_calls'
-  | 'usage_metadata'
->;
 
 type TGenericMessage = HumanMessage | SystemMessage;
 
@@ -32,8 +21,8 @@ export async function sendAiTextQuery(messages: TPlainMessage[], opts: TOptions 
   try {
     if (__returnDebugData) {
       await new Promise((r) => setTimeout(r, 1000));
-      const rawData = await import('./sendAiTextQuery-gigachat-js-data-types.json');
-      const data = { ...rawData.default } as TDataType;
+      const rawData = await import('./sendAiTextQuery-gigachat-broken-02.json');
+      const data = { ...rawData.default } as TAITextQueryData;
       return data;
     }
     const prepartedMessages: TGenericMessage[] = messages.map(({ role: type, content: text }) => {
@@ -57,7 +46,7 @@ export async function sendAiTextQuery(messages: TPlainMessage[], opts: TOptions 
       invalid_tool_calls,
       usage_metadata,
     } = res;
-    const data: TDataType = {
+    const data: TAITextQueryData = {
       content,
       name,
       additional_kwargs,

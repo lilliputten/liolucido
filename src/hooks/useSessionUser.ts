@@ -6,5 +6,5 @@ import { useSession } from 'next-auth/react';
  */
 export function useSessionUser(): ExtendedUser | undefined {
   const session = useSession();
-  return session?.data?.user;
+  return session.data?.user;
 }

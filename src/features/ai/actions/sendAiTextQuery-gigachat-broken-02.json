@@ -1,0 +1,24 @@
+{
+  "content": "```json\n{\n  \"answers\": [\n    {\n      \"text\": \"> **`int`, `float`, `string`, `boolean`, `array`, `object`, `null`, `undefined`, `symbol`, `date`**\\n",
+  "additional_kwargs": {},
+  "response_metadata": {
+    "tokenUsage": {
+      "input_tokens": 178,
+      "output_tokens": 50,
+      "total_tokens": 228
+    },
+    "finish_reason": "length",
+    "xHeaders": {
+      "xRequestID": "188f2d39-d547-41a6-85f5-d4fd3c930243",
+      "xSessionID": "86dbc0fa-158d-4026-876f-7caee2e4cc5f"
+    }
+  },
+  "id": "188f2d39-d547-41a6-85f5-d4fd3c930243",
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "input_tokens": 178,
+    "output_tokens": 50,
+    "total_tokens": 228
+  }
+}

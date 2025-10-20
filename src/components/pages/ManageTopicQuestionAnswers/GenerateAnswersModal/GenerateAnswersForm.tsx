@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ExtendedUser } from '@/@types/next-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -20,14 +21,13 @@ import { Slider } from '@/components/ui/Slider';
 import { Switch } from '@/components/ui/Switch';
 import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
-import { MarkdownHint } from '@/components/blocks/MarkdownHint';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import {
   generateQuestionAnswersParamsSchema,
   generationTypes,
   generationTypeTexts,
-} from '@/features/ai/actions/generateQuestionAnswers';
+} from '@/features/ai/types/GenerateAnswersTypes';
 import { TQuestionId } from '@/features/questions/types';
 
 const formSchema = generateQuestionAnswersParamsSchema.pick({
@@ -46,9 +46,8 @@ export interface TGenerateAnswersFormProps {
   className?: string;
   isPending?: boolean;
   questionId: TQuestionId; // Is it required here?
+  user?: ExtendedUser;
 }
-
-const __useDebugData = true;
 
 const maxAnswersToGeneration = 20;
 
@@ -59,17 +58,21 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
     handleClose,
     isPending,
     // questionId,
+    user,
   } = props;
+  const isAdmin = user?.role === 'ADMIN';
+
+  const __useDebugData = isDev || isAdmin;
 
   const defaultValues: TFormData = React.useMemo(
     () => ({
-      debugData: isDev,
+      debugData: __useDebugData,
       generationType: generationTypes[0],
       answersCountMin: 1,
       answersCountMax: 5,
       extraText: '',
     }),
-    [],
+    [__useDebugData],
   );
 
   // @see https://react-hook-form.com/docs/useform
@@ -206,9 +209,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
                   {...field}
                 />
               </FormControl>
-              <FormHint>
-                Optional additional context or instructions for the AI. <MarkdownHint />
-              </FormHint>
+              <FormHint>Optional additional context or instructions for the AI.</FormHint>
               <FormMessage />
             </FormItem>
           )}

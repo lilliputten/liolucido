@@ -89,21 +89,21 @@ function AnswerTableHeader({
             icon={isIndeterminate ? Icons.Dot : Icons.Check}
           />
         </TableHead>
-        <TableHead id="no" className="truncate text-right max-sm:hidden">
+        <TableHead id="no" className="truncate text-right max-lg:hidden">
           No
         </TableHead>
         {isAdminMode && isDev && (
-          <TableHead id="topicId" className="truncate max-sm:hidden">
+          <TableHead id="topicId" className="truncate max-lg:hidden">
             ID
           </TableHead>
         )}
         <TableHead id="text" className="truncate">
           Answer Text
         </TableHead>
-        <TableHead id="isCorrect" className="truncate max-sm:hidden">
+        <TableHead id="isCorrect" className="truncate max-lg:hidden">
           Correct
         </TableHead>
-        <TableHead id="isGenerated" className="truncate max-sm:hidden">
+        <TableHead id="isGenerated" className="truncate max-lg:hidden">
           Generated
         </TableHead>
       </TableRow>
@@ -181,11 +181,11 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
       >
         <Checkbox checked={isSelected} className="block" aria-label="Select answer" />
       </TableCell>
-      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
+      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-lg:hidden">
         <div className="truncate">{idx + 1}</div>
       </TableCell>
       {isAdminMode && isDev && (
-        <TableCell id="answerId" className="max-w-[8em] truncate max-sm:hidden">
+        <TableCell id="answerId" className="max-w-[8em] truncate max-lg:hidden">
           <div className="truncate">
             <span className="mr-[2px] opacity-30">#</span>
             {id}
@@ -197,7 +197,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           {truncateMarkdown(text, 40)}
         </Link>
       </TableCell>
-      <TableCell id="isCorrect" className="w-[8em] max-sm:hidden">
+      <TableCell id="isCorrect" className="w-[8em] max-lg:hidden">
         <Switch
           checked={isCorrect}
           onCheckedChange={handleToggleCorrect}
@@ -205,7 +205,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           className="data-[state=checked]:bg-green-500"
         />
       </TableCell>
-      <TableCell id="isGenerated" className="w-[8em] max-sm:hidden">
+      <TableCell id="isGenerated" className="w-[8em] max-lg:hidden">
         {isGenerated && <Icons.CircleCheck className="stroke-blue-500" />}
       </TableCell>
       <TableCell id="actions" className="w-[2em] text-right">
@@ -532,7 +532,7 @@ export function ManageTopicQuestionAnswersListCard(
         content: 'Delete Selected',
         variant: 'destructive',
         icon: Icons.Trash,
-        visibleFor: 'lg',
+        visibleFor: 'xl',
         hidden: !selectedAnswers.size,
         pending: deleteSelectedMutation.isPending,
         onClick: handleShowDeleteSelectedConfirm,
@@ -542,7 +542,7 @@ export function ManageTopicQuestionAnswersListCard(
         content: 'Add New Answer',
         variant: 'success',
         icon: Icons.Add,
-        visibleFor: 'lg',
+        visibleFor: 'xl',
         onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
       },
       {

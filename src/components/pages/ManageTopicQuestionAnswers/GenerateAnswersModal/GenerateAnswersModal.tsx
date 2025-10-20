@@ -3,9 +3,11 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
+import { getErrorText } from '@/lib/helpers';
 import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
@@ -13,15 +15,13 @@ import { Modal } from '@/components/ui/Modal';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import {
-  generateQuestionAnswers,
-  TGeneratedAnswers,
-  TGenerateQuestionAnswersParams,
-} from '@/features/ai/actions/generateQuestionAnswers';
+import { sendAiTextQuery } from '@/features/ai/actions/sendAiTextQuery';
+import { createGenerateQuestionAnswersMessages } from '@/features/ai/helpers/createGenerateQuestionAnswersMessages';
+import { parseGeneratedQuestionAnswers } from '@/features/ai/helpers/parseGeneratedQuestionAnswers';
+import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnswersTypes';
 import { addMultipleAnswers } from '@/features/answers/actions/addMultipleAnswers';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
 import {
-  useAvailableAnswers,
   useAvailableQuestionById,
   useGoBack,
   useGoToTheRoute,
@@ -32,6 +32,8 @@ import {
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { GenerateAnswersForm, TFormData } from './GenerateAnswersForm';
+
+// import { generateQuestionAnswers } from '@/features/answers/actions/generateQuestionAnswers';
 
 // Url example: /en/topics/my/[topicId]/questions/[questionId]/answers/generate
 const urlPostfix = '/answers/generate';
@@ -51,6 +53,9 @@ export function GenerateAnswersModal() {
   const questionId = match?.[2];
 
   const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
+
+  const session = useSession();
+  const isSessionLoading = session.status === 'loading';
 
   // Calculate paths...
   const topicsListRoutePath = `/topics/${manageScope}`;
@@ -72,7 +77,7 @@ export function GenerateAnswersModal() {
     goBack();
   }, [goBack]);
 
-  const availableAnswersQuery = useAvailableAnswers({ questionId });
+  // const availableAnswersQuery = useAvailableAnswers({ questionId });
 
   const availableQuestionQuery = useAvailableQuestionById({
     id: questionId || '',
@@ -87,28 +92,68 @@ export function GenerateAnswersModal() {
   // const availableAnswersQuery = useAvailableAnswers({ questionId });
   // const queryClient = useQueryClient();
 
-  console.log('[GenerateAnswersModal:DEBUG]', questionId, {
-    shouldBeVisible,
-    isQuestionPending,
-    question,
-    answers,
-    questionId,
-  });
+  // console.log('[GenerateAnswersModal:DEBUG]', questionId, {
+  //   shouldBeVisible,
+  //   isQuestionPending,
+  //   question,
+  //   answers,
+  //   questionId,
+  // });
 
   useModalTitle('Generate Answers', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
 
-  const generateAnswersMutation = useMutation<TGeneratedAnswers, Error, TFormData>({
+  // const generateAnswersMutation = useMutation<TGeneratedAnswers, Error, TFormData>({
+  const generateAnswersMutation = useMutation({
     mutationFn: async (formData: TFormData) => {
       const questionText = question?.text || '';
       const topicText = question?.topic?.name || '';
+      const topicDescription = question?.topic?.description || '';
+      const topicKeywords = question?.topic?.keywords || '';
       const params: TGenerateQuestionAnswersParams = {
         ...formData,
         topicText,
+        topicDescription,
+        topicKeywords,
         questionText,
+        existedAnswers: answers?.map(({ isCorrect, explanation, text }) => ({
+          isCorrect,
+          explanation: explanation || null,
+          text,
+        })),
       };
-      const result = await generateQuestionAnswers(params);
-      return result;
+      const { debugData } = formData;
+      const topic = question?.topic;
+      console.log('[GenerateAnswersModal:generateAnswersMutation] Start', {
+        debugData,
+        formData,
+        params,
+        topic,
+        question,
+        answers,
+      });
+      debugger;
+      const messages = createGenerateQuestionAnswersMessages(params);
+      const __debugMessagesStr = messages.map(({ content }) => content).join('\n\n');
+      console.log('[GenerateAnswersModal:generateAnswersMutation] Created messages', {
+        __debugMessagesStr,
+        messages,
+        params,
+      });
+      debugger;
+      // const queryData = await generateQuestionAnswers(messages, formData.debugData);
+      // const client = await getAiClient('GigaChat');
+      // const client = (await getAiClient('GigaChat')) as TGigaChatClient;
+      const queryData = await sendAiTextQuery(messages, { debugData });
+      // const generatedAnswers = await generateQuestionAnswers(messages, debugData);
+      console.log('[GenerateAnswersModal:generateAnswersMutation] Generated query data', {
+        // content: queryData?.content,
+        queryData,
+        messages,
+        params,
+      });
+      debugger;
+      return queryData;
     },
     onError: (error, formData) => {
       const details = error instanceof APIError ? error.details : null;
@@ -142,74 +187,92 @@ export function GenerateAnswersModal() {
 
   const handleGenerateAnswers = React.useCallback(
     async (formData: TFormData) => {
-      if (!questionId) {
-        toast.error('No question ID defined');
-        return;
+      try {
+        if (!questionId) {
+          toast.error('No question ID defined');
+          return;
+        }
+        console.log('[GenerateAnswersModal:handleGenerateAnswers] start', {
+          formData,
+          questionId,
+        });
+        const queryPromise = generateAnswersMutation.mutateAsync(formData);
+        toast.promise(queryPromise, {
+          loading: 'Retrieving AI generated data...',
+          success: 'Successfully retrieved AI generated data',
+          error: 'Can not retrieve AI generated data',
+        });
+        const queryData = await queryPromise;
+        console.log('[GenerateAnswersModal:handleGenerateAnswers] Got queryData', {
+          queryData,
+        });
+        debugger;
+        // Parsing answers...
+        const answers = parseGeneratedQuestionAnswers(queryData);
+        // const { answers } = generatedAnswers;
+        console.log('[GenerateAnswersModal:handleGenerateAnswers] Parsed answers', {
+          answers,
+        });
+        debugger;
+        const newAnswers: TNewAnswer[] = answers.map((answer) => ({
+          ...answer,
+          questionId,
+          isGenerated: true,
+        }));
+        const addAnswersPromise = addAnswersMutation.mutateAsync(newAnswers);
+        toast.promise(addAnswersPromise, {
+          loading: 'Adding new answers...',
+          success: 'Successfully added new answers',
+          error: 'Cannot added answers',
+        });
+        const addedAnswers = await addAnswersPromise;
+        console.log('[GenerateAnswersModal:handleGenerateAnswers] Answers added', {
+          addedAnswers,
+        });
+        debugger;
+        /*
+         * // Add the created item to the cached react-query data
+         * addedAnswers.map((addedAnswer) => {
+         *   availableAnswersQuery.addNewAnswer(addedAnswer, true);
+         * });
+         * // Invalidate all other queries...
+         * availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+         */
+        // Invalidate parent question...
+        const invalidatePrefixes = [
+          ['available-question', questionId],
+          ['available-answers-for-question', questionId],
+        ].map(makeQueryKeyPrefix);
+        invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
+        // Close modal and navigate
+        setVisible(false);
+        if (jumpToNewEntities) {
+          const continueUrl = `${answersListRoutePath}`;
+          goToTheRoute(continueUrl, true);
+        } else {
+          goBack();
+        }
+        return addAnswersPromise;
+      } catch (error) {
+        const humanMsg = 'An error occurred while generating and adding question answers';
+        const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
+        // eslint-disable-next-line no-console
+        console.error('[GenerateAnswersModal] ❌', errMsg, {
+          error,
+        });
+        debugger; // eslint-disable-line no-debugger
+        toast.error(humanMsg);
       }
-      console.log('[GenerateAnswersModal:handleGenerateAnswers] start', {
-        formData,
-        questionId,
-      });
-      const promise1 = generateAnswersMutation.mutateAsync(formData);
-      toast.promise(promise1, {
-        loading: 'Generating new answers...',
-        success: 'Successfully generated new answers',
-        error: 'Cannot generate answers',
-      });
-      const result1 = await promise1;
-      const { answers } = result1;
-      console.log('[GenerateAnswersModal:handleGenerateAnswers] result1', {
-        answers,
-        result1,
-      });
-      const newAnswers: TNewAnswer[] = answers.map((a) => ({
-        ...a,
-        questionId,
-        isGenerated: true,
-      }));
-      const promise2 = addAnswersMutation.mutateAsync(newAnswers);
-      toast.promise(promise2, {
-        loading: 'Adding new answers...',
-        success: 'Successfully added new answers',
-        error: 'Cannot added answers',
-      });
-      const addedAnswers = await promise2;
-      console.log('[GenerateAnswersModal:handleGenerateAnswers] addedAnswers', {
-        addedAnswers,
-      });
-      // Add the created item to the cached react-query data
-      addedAnswers.map((addedAnswer) => {
-        availableAnswersQuery.addNewAnswer(addedAnswer, true);
-      });
-      // Invalidate all other queries...
-      availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
-      // Invalidate parent question...
-      const invalidatePrefixes = [
-        ['available-question', questionId],
-        ['available-questions-for-topic', topicId],
-      ].map(makeQueryKeyPrefix);
-      invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
-      // Close modal and navigate
-      setVisible(false);
-      if (jumpToNewEntities) {
-        const continueUrl = `${answersListRoutePath}`;
-        goToTheRoute(continueUrl, true);
-      } else {
-        goBack();
-      }
-      return promise2;
     },
     [
       addAnswersMutation,
       answersListRoutePath,
-      availableAnswersQuery,
       generateAnswersMutation,
       goBack,
       goToTheRoute,
       jumpToNewEntities,
       queryClient,
       questionId,
-      topicId,
     ],
   );
 
@@ -227,7 +290,7 @@ export function GenerateAnswersModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__GenerateAnswersModal', // DEBUG
-        'gap-0 pb-4 text-theme-foreground',
+        'gap-0 text-theme-foreground',
         isOverallPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -243,14 +306,17 @@ export function GenerateAnswersModal() {
           Generate Answers Dialog
         </DialogDescription>
       </div>
-      <div className="relative flex flex-col px-8 py-4">
-        <GenerateAnswersForm
-          handleGenerateAnswers={handleGenerateAnswers}
-          className="p-8"
-          handleClose={hideModal}
-          isPending={areMutationsPending}
-          questionId={questionId}
-        />
+      <div className="relative flex min-h-24 flex-col px-8 py-4">
+        {!isSessionLoading && (
+          <GenerateAnswersForm
+            handleGenerateAnswers={handleGenerateAnswers}
+            className="p-8"
+            handleClose={hideModal}
+            isPending={areMutationsPending}
+            questionId={questionId}
+            user={session.data?.user}
+          />
+        )}
         <WaitingSplash show={isOverallPending} />
       </div>
     </Modal>

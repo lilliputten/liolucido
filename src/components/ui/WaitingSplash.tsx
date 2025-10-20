@@ -7,6 +7,7 @@ import { isDev } from '@/constants';
 interface TWaitingSplashProps {
   show?: boolean;
   theme?: string;
+  className?: string;
 }
 
 export function WaitingSplash(props: TWaitingSplashProps) {
@@ -14,6 +15,7 @@ export function WaitingSplash(props: TWaitingSplashProps) {
     // prettier-ignore
     show,
     theme: userTheme,
+    className,
   } = props;
   const hidden = !show;
   // NOTE: Theme
@@ -34,7 +36,9 @@ export function WaitingSplash(props: TWaitingSplashProps) {
         'justify-center',
         'transition',
         'duration-1000',
+        // 'min-size-12',
         hidden && 'pointer-events-none opacity-0',
+        className,
       )}
     >
       <div

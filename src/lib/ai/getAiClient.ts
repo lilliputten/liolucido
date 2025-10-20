@@ -14,14 +14,21 @@ import { getHttpsAgent } from '@/lib/ai/getHttpsAgent';
 
 import { defaultAiClientType, TAiClientType } from './types/TAiClientType';
 
-export type TAiClient = GigaChat<GigaChatCallOptions> | ChatCloudflareWorkersAI;
+export type TGigaChatClient = GigaChat<GigaChatCallOptions>;
+export type TCloudflareClient = ChatCloudflareWorkersAI;
+export type TAiClient = GigaChat<GigaChatCallOptions> | TCloudflareClient;
 
 const cachedClients: Partial<Record<TAiClientType, TAiClient>> = {};
 
 const temperature = 0.7;
-const maxTokens = 50;
+// const maxTokens = 50; // Don't use low values: it'j just cutting the answer in the middle
 
-// Create client instance
+export async function getAiClient(clientType: 'GigaChat'): Promise<TGigaChatClient>;
+// eslint-disable-next-line no-redeclare
+export async function getAiClient(clientType: 'Cloudflare'): Promise<TCloudflareClient>;
+// eslint-disable-next-line no-redeclare
+export async function getAiClient(clientType?: TAiClientType): Promise<TAiClient>;
+// eslint-disable-next-line no-redeclare
 export async function getAiClient(clientType: TAiClientType = defaultAiClientType) {
   if (cachedClients[clientType]) {
     return cachedClients[clientType];
@@ -45,7 +52,7 @@ export async function getAiClient(clientType: TAiClientType = defaultAiClientTyp
         useApiForTokens: true, // enable token counting via API
         httpsAgent: getHttpsAgent(),
         temperature,
-        maxTokens,
+        // maxTokens,
         verbose: true,
       } satisfies GigaChatClientConfig & GigaChatInput & BaseChatModelParams);
     }

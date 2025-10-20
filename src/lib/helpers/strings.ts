@@ -89,8 +89,9 @@ const defaultEllipsis = '…';
 
 export function truncateString(str?: string, len?: number, ellipsis: string = defaultEllipsis) {
   if (!str || !len) {
-    return str || '';
+    return '';
   }
+  str = str.trim();
   if (str.length > len) {
     return str.substring(0, len - ellipsis.length) + ellipsis;
   }

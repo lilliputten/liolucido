@@ -64,7 +64,7 @@ export function ViewQuestionContentSummary(props: TProps) {
               <span>Manage Answers</span>
             </Link>
           </Button>
-          <Button variant="ghost" size="sm" disabled={!isLogged}>
+          <Button variant="secondary" size="sm" disabled={!isLogged}>
             <Link
               href={`${routePath}/${question.topicId}/questions/${question.id}/answers/generate`}
               className="flex items-center gap-2"
