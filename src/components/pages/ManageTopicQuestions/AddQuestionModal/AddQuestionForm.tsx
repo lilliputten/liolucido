@@ -69,7 +69,7 @@ export function AddQuestionForm(props: TAddQuestionFormProps) {
 
   const onSubmit = handleSubmit((formData) => {
     const { text } = formData;
-    const newQuestion: TNewQuestion = { text, topicId };
+    const newQuestion: TNewQuestion = { text, topicId, isGenerated: false };
     handleAddQuestion(newQuestion);
   });
 

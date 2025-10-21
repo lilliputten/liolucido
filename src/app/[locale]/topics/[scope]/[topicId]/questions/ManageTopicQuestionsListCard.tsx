@@ -32,7 +32,7 @@ import { deleteQuestions } from '@/features/questions/actions';
 import { useQuestionsBreadcrumbsItems } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useAvailableTopicById, useGoBack, useSessionUser } from '@/hooks';
+import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 const saveScrollHash = getRandomHashString();
@@ -153,9 +153,19 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
         </TableCell>
       )}
       <TableCell id="text" className="max-w-24 truncate" title={truncateMarkdown(text, 120)}>
-        <Link className="text-ellipsis whitespace-normal hover:underline" href={questionRoutePath}>
-          {truncateMarkdown(text, 80)}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            className="text-ellipsis whitespace-normal hover:underline"
+            href={questionRoutePath}
+          >
+            {truncateMarkdown(text, 80)}
+          </Link>
+          {question.isGenerated && (
+            <div title="AI Generated">
+              <Icons.WandSparkles className="size-4 opacity-50" />
+            </div>
+          )}
+        </div>
       </TableCell>
       <TableCell id="answers" className="max-w-[8em] truncate">
         <div className="truncate">
@@ -212,6 +222,7 @@ export function ManageTopicQuestionsListCardContent(
     availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
     selectedQuestions: Set<TQuestionId>;
     setSelectedQuestions: React.Dispatch<React.SetStateAction<Set<TQuestionId>>>;
+    goToTheRoute: ReturnType<typeof useGoToTheRoute>;
   },
 ) {
   const {
@@ -223,6 +234,7 @@ export function ManageTopicQuestionsListCardContent(
     handleEditAnswers,
     selectedQuestions,
     setSelectedQuestions,
+    goToTheRoute,
   } = props;
 
   const user = useSessionUser();
@@ -293,6 +305,14 @@ export function ManageTopicQuestionsListCardContent(
             <Button onClick={handleAddQuestion} className="flex gap-2">
               <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
               Add New Question
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => goToTheRoute(`${questionsListRoutePath}/generate`)}
+              className="flex gap-2"
+            >
+              <Icons.WandSparkles className="hidden size-4 opacity-50 sm:flex" />
+              Generate Questions
             </Button>
           </>
         }
@@ -365,6 +385,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
   const { refetch, isRefetching } = availableQuestionsQuery;
 
   const goBack = useGoBack(topicsListRoutePath);
+  const goToTheRoute = useGoToTheRoute();
 
   const handleReload = React.useCallback(() => {
     refetch({ cancelRefetch: true });
@@ -456,6 +477,14 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
         visibleFor: 'lg',
         onClick: handleAddQuestion,
       },
+      {
+        id: 'Generate Questions',
+        content: 'Generate Questions',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'lg',
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
+      },
     ],
     [
       goBack,
@@ -465,6 +494,8 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       deleteSelectedMutation.isPending,
       handleShowDeleteSelectedConfirm,
       handleAddQuestion,
+      goToTheRoute,
+      questionsListRoutePath,
     ],
   );
 
@@ -497,6 +528,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
           availableQuestionsQuery={availableQuestionsQuery}
           selectedQuestions={selectedQuestions}
           setSelectedQuestions={setSelectedQuestions}
+          goToTheRoute={goToTheRoute}
         />
       </Card>
       <ConfirmModal

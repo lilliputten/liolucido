@@ -6,8 +6,8 @@ import { GigaChatCallOptions } from 'langchain-gigachat';
 import { getAiClient } from '@/lib/ai/getAiClient';
 import { defaultAiClientType, TAiClientType } from '@/lib/ai/types/TAiClientType';
 
-import { TAITextQueryData } from '../types/GenerateAnswersTypes';
 import { TPlainMessage } from '../types/messages';
+import { TAITextQueryData } from '../types/TAITextQueryData';
 
 type TGenericMessage = HumanMessage | SystemMessage;
 
@@ -21,7 +21,8 @@ export async function sendAiTextQuery(messages: TPlainMessage[], opts: TOptions 
   try {
     if (__returnDebugData) {
       await new Promise((r) => setTimeout(r, 1000));
-      const rawData = await import('./sendAiTextQuery-gigachat-broken-02.json');
+      const sampleJsonFile = './sample-data/GenerateQuestions/query-data-01.json';
+      const rawData = await import(sampleJsonFile);
       const data = { ...rawData.default } as TAITextQueryData;
       return data;
     }

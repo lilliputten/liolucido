@@ -1,8 +1,9 @@
 import { truncateString } from '@/lib/helpers';
 
 import {
-  generationTypeQueries,
+  answersGenerationTypeQueries,
   maxExtraTextLength,
+  TAnswerGenerationType,
   TGenerateQuestionAnswersParams,
 } from '../types/GenerateAnswersTypes';
 import { TPlainMessage } from '../types/messages';
@@ -17,9 +18,8 @@ import { TPlainMessage } from '../types/messages';
  * }
  */
 
-function getGenerationQuery(params: TGenerateQuestionAnswersParams) {
-  const { generationType } = params;
-  return generationTypeQueries[generationType];
+export function getAnswersGenerationQuery(answersGenerationType: TAnswerGenerationType) {
+  return answersGenerationTypeQueries[answersGenerationType];
 }
 
 function getUserQueryText(params: TGenerateQuestionAnswersParams) {
@@ -33,14 +33,14 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
     answersCountMin,
     answersCountMax,
     // createdAt,
-    // generationType,
+    answersGenerationType,
   } = params;
   // const topicDescriptionStr = topicDescription?.trim();
   // const topicKeywordsStr = topicKeywords?.trim();
   const extraTextStr = truncateString(extraText, maxExtraTextLength);
   // const existedAnswersJson = existedAnswers?.length ? JSON.stringify(existedAnswers) : undefined;
   const existedAnswersText = existedAnswers?.map(({ text }) => '- ' + text).join('\n');
-  const fieldsText = [
+  const answerFieldsText = [
     `- "text" with the answer text in markdown format (in the same language as the question),`,
     `- "explanation" the reason why this answer is correct or incorrect,`,
     `- "isCorrect" as a boolean indicating if it is the correct answer.`,
@@ -50,12 +50,12 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
     existedAnswersText &&
       `These answers should exclude previously generated responses (listed below).`,
 
-    getGenerationQuery(params),
+    getAnswersGenerationQuery(answersGenerationType),
 
     `Provide the result as a well-formed JSON object with an "answers" field containing a list of answer objects and "answersCount" with a number of totally generated answers.`,
 
     `Each answer object must have:`,
-    fieldsText,
+    answerFieldsText,
 
     `Question: ${questionText}`,
 

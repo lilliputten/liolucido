@@ -2,55 +2,57 @@ import { MessageContent } from '@langchain/core/messages';
 
 import { getErrorText } from '@/lib/helpers';
 
-import { generatedAnswersSchema, TGeneratedAnswers } from '../types/GenerateAnswersTypes';
+import {
+  generatedQuestionsSchema,
+  TGeneratedQuestion,
+  TGeneratedQuestions,
+} from '../types/GenerateQuestionsTypes';
 import { TAITextQueryData } from '../types/TAITextQueryData';
 
-export function parseGeneratedQuestionAnswers(queryData: TAITextQueryData) {
+export function parseGeneratedTopicQuestions(queryData: TAITextQueryData): TGeneratedQuestion[] {
   let rawJson: MessageContent | undefined;
   let rawData: unknown;
+
   try {
     const { content } = queryData;
     rawJson = content;
-    /* console.log('[parseGeneratedQuestionAnswers] Got raw text', {
-     *   rawJson,
-     *   queryData,
-     * });
-     */
+    console.log('[parseGeneratedTopicQuestions] Got raw text', {
+      rawJson,
+      queryData,
+    });
     if (typeof rawJson !== 'string') {
       throw new Error(`Received unexpected result type instead of json string: ${typeof rawJson}`);
     }
     rawJson = rawJson.trim();
     // NOTE: Cloudflare might return this: ```json\n{...}\n```
-    // rawJson = '```json\n' + rawJson + '\n```';
     const mdStart = '```json';
     const mdEnd = '```';
     if (rawJson.startsWith(mdStart) && rawJson.endsWith(mdEnd)) {
       rawJson = rawJson.substring(mdStart.length, rawJson.length - mdEnd.length).trim();
     }
     rawData = JSON.parse(rawJson);
-    /* console.log('[parseGeneratedQuestionAnswers] Parsed raw data', {
-     *   rawData,
-     *   rawJson,
-     *   queryData,
-     * });
-     */
+    console.log('[parseGeneratedTopicQuestions] Parsed raw data', {
+      rawData,
+      rawJson,
+      queryData,
+    });
     if (!rawData) {
       throw new Error('Got an invalid (empty) json object');
     }
-    const validatedData: TGeneratedAnswers = generatedAnswersSchema.parse(rawData);
+    const validatedData: TGeneratedQuestions = generatedQuestionsSchema.parse(rawData);
     // DEBUG
-    console.log('[parseGeneratedQuestionAnswers] Parsed validated data', {
+    console.log('[parseGeneratedTopicQuestions] Parsed validated data', {
       validatedData,
       rawData,
       rawJson,
       queryData,
     });
-    return validatedData.answers;
+    return validatedData.questions;
   } catch (error) {
-    const humanMsg = 'Can not parse generated question answers';
+    const humanMsg = 'Can not parse generated topic questions';
     const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
     // eslint-disable-next-line no-console
-    console.error('[parseGeneratedQuestionAnswers] ❌', errMsg, {
+    console.error('[parseGeneratedTopicQuestions] ❌', errMsg, {
       error,
       rawJson,
       rawData,

@@ -1,19 +1,6 @@
-import { AIMessageChunk } from '@langchain/core/messages';
 import z from 'zod';
 
 import { AnswerSchema } from '@/generated/prisma';
-
-export type TAITextQueryData = Pick<
-  AIMessageChunk,
-  | 'content'
-  | 'name'
-  | 'additional_kwargs'
-  | 'response_metadata'
-  | 'id'
-  | 'tool_calls'
-  | 'invalid_tool_calls'
-  | 'usage_metadata'
->;
 
 const generatedAnswerSchema = AnswerSchema.pick({ text: true, explanation: true, isCorrect: true });
 // const generatedAnswerSchema = z.object({
@@ -30,29 +17,29 @@ export type TGeneratedAnswers = z.infer<typeof generatedAnswersSchema>;
 
 // export type TExistedAnswer = TGeneratedAnswer;
 
-export const generationTypes = [
+export const answersGenerationTypes = [
   // All possible answer types to generation
   'RANDOM',
   'CORRECT',
   'WRONG',
 ] as const;
-export const generationTypeQueries = {
+export const answersGenerationTypeQueries = {
   CORRECT: 'Provide only correct answers.',
   WRONG: 'Provide only wrong answers.',
   RANDOM: 'Provide multiple incorrect answers and at least one correct answer.',
 };
-export const generationTypeTexts = {
+export const answersGenerationTypeTexts = {
   CORRECT: 'Only correct answers',
   WRONG: 'Only wrong answers',
   RANDOM: 'Multiple answers with at least one correct',
 };
-const generationTypesSchema = z.enum(generationTypes);
-// type TGenerationType = z.infer<typeof generationTypesSchema>;
+const answersGenerationTypesSchema = z.enum(answersGenerationTypes);
+export type TAnswerGenerationType = z.infer<typeof answersGenerationTypesSchema>;
 
 export const maxExtraTextLength = 30;
 
 export const generateQuestionAnswersParamsSchema = z.object({
-  generationType: generationTypesSchema,
+  answersGenerationType: answersGenerationTypesSchema,
   topicText: z.string(),
   topicDescription: z.string().optional(),
   topicKeywords: z.string().optional(),

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
 import { TAvailableQuestionsResultsQueryData } from '@/lib/types/react-query';
-import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
+import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
 import { getAvailableQuestionById } from '@/features/questions/actions';
@@ -44,11 +44,10 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
 
   // Only fetch if the question is not cached
   const query = useQuery<TAvailableQuestion>({
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey,
     staleTime, // Data validity period
     queryFn: async (_params) => {
-      const url = appendUrlQueries(`/api/questions/${questionId}`, queryUrlHash);
+      // const url = appendUrlQueries(`/api/questions/${questionId}`, queryUrlHash);
       try {
         /* // OPTION 1: Using route api fetch
          * const result = await handleApiResponse<TAvailableQuestion>(fetch(url), {
@@ -72,7 +71,9 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
         console.error('[useAvailableQuestionById:queryFn]', message, {
           details,
           error,
-          url,
+          questionId,
+          queryProps,
+          // url,
         });
         // eslint-disable-next-line no-debugger
         debugger;

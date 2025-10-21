@@ -240,6 +240,22 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         onClick: handleReload,
       },
       {
+        id: 'Add New Question',
+        content: 'Add New Question',
+        variant: 'success',
+        icon: Icons.Add,
+        visibleFor: 'xl',
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),
+      },
+      {
+        id: 'Generate Questions',
+        content: 'Generate Questions',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'xl',
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
+      },
+      {
         id: 'Add New Answer',
         content: 'Add New Answer',
         variant: 'success',
@@ -283,6 +299,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       handleReload,
       goToTheRoute,
       answersListRoutePath,
+      questionsListRoutePath,
       answer.id,
     ],
   );

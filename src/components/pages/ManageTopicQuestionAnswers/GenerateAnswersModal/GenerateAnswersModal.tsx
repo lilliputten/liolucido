@@ -12,6 +12,7 @@ import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/reac
 import { cn } from '@/lib/utils';
 import { DialogDescription, DialogTitle } from '@/components/ui/Dialog';
 import { Modal } from '@/components/ui/Modal';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
@@ -228,7 +229,7 @@ export function GenerateAnswersModal() {
           ['available-answers-for-question', questionId],
         ].map(makeQueryKeyPrefix);
         invalidateKeysByPrefixes(queryClient, invalidatePrefixes);
-        // Close modal and navigate
+        // Close modal and navigate out
         setVisible(false);
         if (jumpToNewEntities) {
           const continueUrl = `${answersListRoutePath}`;
@@ -274,7 +275,8 @@ export function GenerateAnswersModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__GenerateAnswersModal', // DEBUG
-        'gap-0 text-theme-foreground',
+        'flex flex-col gap-0 text-theme-foreground',
+        !isMobile && 'max-h-[90%]',
         isOverallPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -290,16 +292,28 @@ export function GenerateAnswersModal() {
           Generate Answers Dialog
         </DialogDescription>
       </div>
-      <div className="relative flex min-h-24 flex-col px-8 py-4">
+      <div
+        className={cn(
+          isDev && '__GenerateAnswersModal_Wrapper', // DEBUG
+          'relative flex min-h-24 flex-col overflow-hidden',
+        )}
+      >
         {!isSessionLoading && (
-          <GenerateAnswersForm
-            handleGenerateAnswers={handleGenerateAnswers}
-            className="p-8"
-            handleClose={hideModal}
-            isPending={areMutationsPending}
-            questionId={questionId}
-            user={session.data?.user}
-          />
+          <ScrollArea
+            className={cn(
+              isDev && '__GenerateAnswersModal_Scroll', // DEBUG
+              'flex flex-1 flex-col',
+            )}
+          >
+            <GenerateAnswersForm
+              handleGenerateAnswers={handleGenerateAnswers}
+              className="p-8"
+              handleClose={hideModal}
+              isPending={areMutationsPending}
+              questionId={questionId}
+              user={session.data?.user}
+            />
+          </ScrollArea>
         )}
         <WaitingSplash show={isOverallPending} />
       </div>

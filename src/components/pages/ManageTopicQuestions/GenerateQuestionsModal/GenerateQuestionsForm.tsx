@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/Form';
 import { Label } from '@/components/ui/Label';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import {
   Select,
   SelectContent,
@@ -26,12 +27,19 @@ import { isDev } from '@/constants';
 import {
   answersGenerationTypes,
   answersGenerationTypeTexts,
-  generateQuestionAnswersParamsSchema,
 } from '@/features/ai/types/GenerateAnswersTypes';
-import { TQuestionId } from '@/features/questions/types';
+import {
+  generateTopicQuestionsParamsSchema,
+  questionsGenerationTypes,
+  questionsGenerationTypeTexts,
+} from '@/features/ai/types/GenerateQuestionsTypes';
+import { TTopicId } from '@/features/topics/types';
 
-const formSchema = generateQuestionAnswersParamsSchema.pick({
+const formSchema = generateTopicQuestionsParamsSchema.pick({
   debugData: true,
+  questionsGenerationType: true,
+  questionsCountMin: true,
+  questionsCountMax: true,
   answersGenerationType: true,
   answersCountMin: true,
   answersCountMax: true,
@@ -40,26 +48,20 @@ const formSchema = generateQuestionAnswersParamsSchema.pick({
 
 export type TFormData = z.infer<typeof formSchema>;
 
-export interface TGenerateAnswersFormProps {
-  handleGenerateAnswers: (p: TFormData) => Promise<unknown>;
+export interface TGenerateQuestionsFormProps {
+  handleGenerateQuestions: (p: TFormData) => Promise<unknown>;
   handleClose?: () => void;
   className?: string;
   isPending?: boolean;
-  questionId: TQuestionId; // Is it required here?
+  topicId: TTopicId;
   user?: ExtendedUser;
 }
 
+const maxQuestionsToGeneration = 10;
 const maxAnswersToGeneration = 10;
 
-export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
-  const {
-    className,
-    handleGenerateAnswers,
-    handleClose,
-    isPending,
-    // questionId,
-    user,
-  } = props;
+export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
+  const { className, handleGenerateQuestions, handleClose, isPending, user } = props;
   const isAdmin = user?.role === 'ADMIN';
 
   const __useDebugData = isDev || isAdmin;
@@ -67,15 +69,17 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
   const defaultValues: TFormData = React.useMemo(
     () => ({
       debugData: __useDebugData,
+      questionsGenerationType: questionsGenerationTypes[0],
+      questionsCountMin: 1,
+      questionsCountMax: 2,
       answersGenerationType: answersGenerationTypes[0],
       answersCountMin: 1,
-      answersCountMax: 5,
+      answersCountMax: 2,
       extraText: '',
     }),
     [__useDebugData],
   );
 
-  // @see https://react-hook-form.com/docs/useform
   const form = useForm<TFormData>({
     mode: 'onChange',
     criteriaMode: 'all',
@@ -84,14 +88,11 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
   });
 
   const { formState, handleSubmit } = form;
-
   const { isValid } = formState;
-
   const isSubmitEnabled = !isPending && isValid;
 
   const onSubmit = handleSubmit((formData) => {
-    // const { generationType, answersCountMin, answersCountMax, extraText } = formData;
-    handleGenerateAnswers(formData);
+    handleGenerateQuestions(formData);
   });
 
   const onClose = (ev: React.MouseEvent) => {
@@ -102,6 +103,8 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
   };
 
   const generationTypeKey = React.useId();
+  const questionsCountKey = React.useId();
+  const answersGenerationTypeKey = React.useId();
   const answersCountKey = React.useId();
   const extraTextKey = React.useId();
   const debugDataKey = React.useId();
@@ -113,11 +116,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
     <Form {...form}>
       <form
         onSubmit={onSubmit}
-        className={cn(
-          isDev && '__GenerateAnswersForm', // DEBUG
-          'flex w-full flex-col gap-4',
-          className,
-        )}
+        className={cn(isDev && '__GenerateQuestionsForm', 'flex w-full flex-col gap-4', className)}
       >
         {__useDebugData && (
           <FormField
@@ -145,7 +144,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
           />
         )}
         <FormField
-          name="answersGenerationType"
+          name="questionsGenerationType"
           control={form.control}
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-4">
@@ -158,6 +157,53 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
                     <SelectValue placeholder="Select generation type" />
                   </SelectTrigger>
                   <SelectContent>
+                    {questionsGenerationTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {questionsGenerationTypeTexts[type]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormHint>Choose the type of questions to generate.</FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormItem className="flex w-full flex-col gap-4">
+          <Label className="m-0" htmlFor={questionsCountKey}>
+            Questions Count: {form.watch('questionsCountMin')} - {form.watch('questionsCountMax')}
+          </Label>
+          <FormControl>
+            <Slider
+              id={questionsCountKey}
+              min={1}
+              max={maxQuestionsToGeneration}
+              step={1}
+              value={[form.watch('questionsCountMin'), form.watch('questionsCountMax')]}
+              onValueChange={(value) => {
+                form.setValue('questionsCountMin', value[0]);
+                form.setValue('questionsCountMax', value[1]);
+              }}
+            />
+          </FormControl>
+          <FormHint>Range of questions to generate (minimum - maximum).</FormHint>
+          <FormMessage />
+        </FormItem>
+        <FormField
+          name="answersGenerationType"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label className="m-0" htmlFor={answersGenerationTypeKey}>
+                Answers Generation Type
+              </Label>
+              <FormControl>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id={answersGenerationTypeKey}>
+                    <SelectValue placeholder="Select answers generation type" />
+                  </SelectTrigger>
+                  <SelectContent>
                     {answersGenerationTypes.map((type) => (
                       <SelectItem key={type} value={type}>
                         {answersGenerationTypeTexts[type]}
@@ -166,7 +212,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormHint>Choose the type of answers to generate.</FormHint>
+              <FormHint>Choose the type of answers to generate for each question.</FormHint>
               <FormMessage />
             </FormItem>
           )}
@@ -181,7 +227,6 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
               min={1}
               max={maxAnswersToGeneration}
               step={1}
-              // minStepsBetweenThumbs={0}
               value={[form.watch('answersCountMin'), form.watch('answersCountMax')]}
               onValueChange={(value) => {
                 form.setValue('answersCountMin', value[0]);
@@ -189,7 +234,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
               }}
             />
           </FormControl>
-          <FormHint>Range of answers to generate (minimum - maximum).</FormHint>
+          <FormHint>Range of answers to generate for each question (minimum - maximum).</FormHint>
           <FormMessage />
         </FormItem>
         <FormField
@@ -204,7 +249,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
                 <Textarea
                   id={extraTextKey}
                   className="flex-1"
-                  placeholder="Additional instructions for answers generation..."
+                  placeholder="Additional instructions for questions generation..."
                   rows={3}
                   {...field}
                 />
@@ -214,8 +259,6 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
             </FormItem>
           )}
         />
-        <div className="flex flex-col justify-between"></div>
-        {/* Actions */}
         <div className="flex w-full gap-4">
           <Button
             type="submit"

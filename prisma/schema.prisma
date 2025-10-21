@@ -134,6 +134,7 @@ model Topic {
 
 model Question {
   id                 String   @id @default(cuid())
+  isGenerated        Boolean  @default(false) @map("is_generated")
   text               String
   answersCountRandom Boolean? @map("answers_count_random")
   answersCountMin    Int?     @map("answers_count_min")

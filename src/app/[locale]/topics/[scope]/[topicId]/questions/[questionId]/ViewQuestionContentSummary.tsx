@@ -117,14 +117,26 @@ export function ViewQuestionContentSummary(props: TProps) {
     <div data-testid="__ViewQuestionContentSummary_Section_Topic" className="flex flex-col gap-4">
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold">Topic</h3>
-        {isOwner && (
-          <Button variant="ghost" size="sm">
-            <Link href={`${routePath}/${topic.id}`} className="flex items-center gap-2">
-              <Icons.Edit className="size-4 opacity-50" />
-              <span>Manage Topic</span>
+        <div className="flex gap-2">
+          {isOwner && (
+            <Button variant="ghost" size="sm">
+              <Link href={`${routePath}/${topic.id}`} className="flex items-center gap-2">
+                <Icons.Edit className="size-4 opacity-50" />
+                <span>Manage Topic</span>
+              </Link>
+            </Button>
+          )}
+          <Button variant="secondary" size="sm" disabled={!isLogged}>
+            <Link
+              href={`${routePath}/${topic.id}/questions/generate`}
+              className="flex items-center gap-2"
+              title="Generate Questions"
+            >
+              <Icons.WandSparkles className="size-4 opacity-50" />
+              <span>Generate Questions</span>
             </Link>
           </Button>
-        )}
+        </div>
       </div>
       <div className="flex flex-col gap-2 rounded-lg bg-slate-500/10 p-3">
         <p className="font-medium">{topic.name}</p>

@@ -103,6 +103,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
           answersCountRandom: z.boolean().optional(),
           answersCountMin: z.union([z.string().optional(), z.number()]),
           answersCountMax: z.union([z.string().optional(), z.number()]),
+          isGenerated: z.boolean().optional(),
         })
         .superRefine((data, ctx) => {
           const { answersCountRandom } = data;
@@ -146,6 +147,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
       answersCountRandom: question.answersCountRandom || false,
       answersCountMin: question.answersCountMin || undefined,
       answersCountMax: question.answersCountMax || undefined,
+      isGenerated: question.isGenerated || false,
     }),
     [question],
   );
@@ -173,6 +175,7 @@ export function EditQuestionCard(props: TEditQuestionCardProps) {
         answersCountRandom: formData.answersCountRandom,
         answersCountMin: formData.answersCountMin,
         answersCountMax: formData.answersCountMax,
+        isGenerated: formData.isGenerated,
       };
       startTransition(async () => {
         try {
