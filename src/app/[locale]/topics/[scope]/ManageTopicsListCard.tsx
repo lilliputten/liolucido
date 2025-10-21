@@ -171,8 +171,11 @@ function TopicTableRow(props: TTopicTableRowProps) {
           </div>
         </TableCell>
       )}
-      <TableCell id="name" className="max-w-12 truncate">
-        <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
+      <TableCell id="name" className="max-w-24 truncate">
+        <Link
+          className="text-ellipsis whitespace-normal hover:underline"
+          href={`${routePath}/${id}`}
+        >
           {truncateString(name, 40)}
         </Link>
       </TableCell>

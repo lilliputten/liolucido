@@ -152,9 +152,9 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
           </div>
         </TableCell>
       )}
-      <TableCell id="text" className="max-w-24 truncate" title={truncateMarkdown(text, 100)}>
-        <Link className="truncate text-lg font-medium hover:underline" href={questionRoutePath}>
-          {truncateMarkdown(text, 40)}
+      <TableCell id="text" className="max-w-24 truncate" title={truncateMarkdown(text, 120)}>
+        <Link className="text-ellipsis whitespace-normal hover:underline" href={questionRoutePath}>
+          {truncateMarkdown(text, 80)}
         </Link>
       </TableCell>
       <TableCell id="answers" className="max-w-[8em] truncate">

@@ -109,6 +109,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     () =>
       z.object({
         text: z.string().min(minTextLength).max(maxTextLength),
+        explanation: z.string().optional(),
         isCorrect: z.boolean().optional(),
         isGenerated: z.boolean().optional(),
       }),
@@ -118,6 +119,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
   const defaultValues: TFormData = React.useMemo(
     () => ({
       text: answer.text || '',
+      explanation: answer.explanation || '',
       isCorrect: answer.isCorrect || false,
       isGenerated: answer.isGenerated || false,
     }),
@@ -142,6 +144,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       const editedAnswer: TAnswer = {
         ...answer,
         text: formData.text,
+        explanation: formData.explanation,
         isCorrect: formData.isCorrect,
         isGenerated: formData.isGenerated,
       };

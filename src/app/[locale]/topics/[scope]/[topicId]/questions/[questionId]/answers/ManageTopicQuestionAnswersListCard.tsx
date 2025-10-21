@@ -192,9 +192,9 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           </div>
         </TableCell>
       )}
-      <TableCell id="text" className="max-w-[20em] truncate">
-        <Link className="truncate text-lg font-medium hover:underline" href={answerRoutePath}>
-          {truncateMarkdown(text, 40)}
+      <TableCell id="text" className="max-w-[20em] truncate" title={truncateMarkdown(text, 120)}>
+        <Link className="text-ellipsis whitespace-normal hover:underline" href={answerRoutePath}>
+          {truncateMarkdown(text, 80)}
         </Link>
       </TableCell>
       <TableCell id="isCorrect" className="w-[8em] max-lg:hidden">

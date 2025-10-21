@@ -33,8 +33,6 @@ import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 import { GenerateAnswersForm, TFormData } from './GenerateAnswersForm';
 
-// import { generateQuestionAnswers } from '@/features/answers/actions/generateQuestionAnswers';
-
 // Url example: /en/topics/my/[topicId]/questions/[questionId]/answers/generate
 const urlPostfix = '/answers/generate';
 const urlQuestionToken = '/questions/';
@@ -77,8 +75,6 @@ export function GenerateAnswersModal() {
     goBack();
   }, [goBack]);
 
-  // const availableAnswersQuery = useAvailableAnswers({ questionId });
-
   const availableQuestionQuery = useAvailableQuestionById({
     id: questionId || '',
     includeTopic: true,
@@ -89,16 +85,6 @@ export function GenerateAnswersModal() {
   const isQuestionPending = !isFetched || isLoading;
 
   const answers = question?.answers;
-  // const availableAnswersQuery = useAvailableAnswers({ questionId });
-  // const queryClient = useQueryClient();
-
-  // console.log('[GenerateAnswersModal:DEBUG]', questionId, {
-  //   shouldBeVisible,
-  //   isQuestionPending,
-  //   question,
-  //   answers,
-  //   questionId,
-  // });
 
   useModalTitle('Generate Answers', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
@@ -123,36 +109,35 @@ export function GenerateAnswersModal() {
         })),
       };
       const { debugData } = formData;
-      const topic = question?.topic;
-      console.log('[GenerateAnswersModal:generateAnswersMutation] Start', {
-        debugData,
-        formData,
-        params,
-        topic,
-        question,
-        answers,
-      });
-      debugger;
+      /* // DEBUG
+       * const topic = question?.topic;
+       * console.log('[GenerateAnswersModal:generateAnswersMutation] Start', {
+       *   debugData,
+       *   formData,
+       *   params,
+       *   topic,
+       *   question,
+       *   answers,
+       * });
+       */
       const messages = createGenerateQuestionAnswersMessages(params);
-      const __debugMessagesStr = messages.map(({ content }) => content).join('\n\n');
-      console.log('[GenerateAnswersModal:generateAnswersMutation] Created messages', {
-        __debugMessagesStr,
-        messages,
-        params,
-      });
-      debugger;
-      // const queryData = await generateQuestionAnswers(messages, formData.debugData);
-      // const client = await getAiClient('GigaChat');
-      // const client = (await getAiClient('GigaChat')) as TGigaChatClient;
+      /* // DEBUG
+       * const __debugMessagesStr = messages.map(({ content }) => content).join('\n\n');
+       * console.log('[GenerateAnswersModal:generateAnswersMutation] Created messages', {
+       *   __debugMessagesStr,
+       *   messages,
+       *   params,
+       * });
+       */
       const queryData = await sendAiTextQuery(messages, { debugData });
       // const generatedAnswers = await generateQuestionAnswers(messages, debugData);
-      console.log('[GenerateAnswersModal:generateAnswersMutation] Generated query data', {
-        // content: queryData?.content,
-        queryData,
-        messages,
-        params,
-      });
-      debugger;
+      /* console.log('[GenerateAnswersModal:generateAnswersMutation] Generated query data', {
+       *   // content: queryData?.content,
+       *   queryData,
+       *   messages,
+       *   params,
+       * });
+       */
       return queryData;
     },
     onError: (error, formData) => {
@@ -192,10 +177,11 @@ export function GenerateAnswersModal() {
           toast.error('No question ID defined');
           return;
         }
-        console.log('[GenerateAnswersModal:handleGenerateAnswers] start', {
-          formData,
-          questionId,
-        });
+        /* console.log('[GenerateAnswersModal:handleGenerateAnswers] Start', {
+         *   formData,
+         *   questionId,
+         * });
+         */
         const queryPromise = generateAnswersMutation.mutateAsync(formData);
         toast.promise(queryPromise, {
           loading: 'Retrieving AI generated data...',
@@ -203,17 +189,16 @@ export function GenerateAnswersModal() {
           error: 'Can not retrieve AI generated data',
         });
         const queryData = await queryPromise;
-        console.log('[GenerateAnswersModal:handleGenerateAnswers] Got queryData', {
-          queryData,
-        });
-        debugger;
+        /* console.log('[GenerateAnswersModal:handleGenerateAnswers] Got query data', {
+         *   queryData,
+         * });
+         */
         // Parsing answers...
         const answers = parseGeneratedQuestionAnswers(queryData);
-        // const { answers } = generatedAnswers;
-        console.log('[GenerateAnswersModal:handleGenerateAnswers] Parsed answers', {
-          answers,
-        });
-        debugger;
+        /* console.log('[GenerateAnswersModal:handleGenerateAnswers] Parsed answers', {
+         *   answers,
+         * });
+         */
         const newAnswers: TNewAnswer[] = answers.map((answer) => ({
           ...answer,
           questionId,
@@ -225,20 +210,19 @@ export function GenerateAnswersModal() {
           success: 'Successfully added new answers',
           error: 'Cannot added answers',
         });
-        const addedAnswers = await addAnswersPromise;
-        console.log('[GenerateAnswersModal:handleGenerateAnswers] Answers added', {
-          addedAnswers,
-        });
-        debugger;
-        /*
-         * // Add the created item to the cached react-query data
+        await addAnswersPromise;
+        /* console.log('[GenerateAnswersModal:handleGenerateAnswers] Answers added', {
+         *   addedAnswers,
+         * });
+         */
+        /* // UNUSED: Add the created items to the cached react-query data
          * addedAnswers.map((addedAnswer) => {
          *   availableAnswersQuery.addNewAnswer(addedAnswer, true);
          * });
          * // Invalidate all other queries...
          * availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
          */
-        // Invalidate parent question...
+        // Invalidate parent question and its answers...
         const invalidatePrefixes = [
           ['available-question', questionId],
           ['available-answers-for-question', questionId],

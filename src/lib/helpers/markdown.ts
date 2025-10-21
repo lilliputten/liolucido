@@ -45,7 +45,7 @@ export function truncateMarkdown(
   ellipsis: string = defaultEllipsis,
 ): string {
   if (!markdown || !markdown.trim().length) {
-    return markdown || '';
+    return '';
   }
 
   // Convert to plain text first to check if we need complex processing
@@ -61,31 +61,26 @@ export function truncateMarkdown(
     return plainText;
   }
 
-  // For simple cases, try to preserve formatting
-  const hasComplexMarkdown = /^#{1,6}\s|```|^>\s|^[-*+]\s|^\d+\.\s|\[.*\]\(.*\)/m.test(markdown);
-
-  if (!hasComplexMarkdown) {
-    // Try to truncate while preserving simple formatting
-    let truncated = markdown.substring(0, len - ellipsis.length);
-
-    // Find the last complete word to avoid breaking in the middle
-    const lastSpace = truncated.lastIndexOf(' ');
-    if (lastSpace > len * 0.8) {
-      truncated = truncated.substring(0, lastSpace);
-    }
-
-    // Check if we're inside markdown formatting and try to close it
-    const openBold = (truncated.match(/\*\*/g) || []).length % 2;
-    const openItalic = (truncated.match(/(?<!\*)\*(?!\*)/g) || []).length % 2;
-    const openCode = (truncated.match(/`/g) || []).length % 2;
-
-    // Close open formatting
-    if (openCode) truncated += '`';
-    if (openItalic) truncated += '*';
-    if (openBold) truncated += '**';
-
-    return truncated + ellipsis;
-  }
+  // // UNUSED: For simple cases, try to preserve formatting
+  // const hasComplexMarkdown = /^#{1,6}\s|```|^>\s|^[-*+]\s|^\d+\.\s|\[.*\]\(.*\)/m.test(markdown);
+  // if (!hasComplexMarkdown) {
+  //   // Try to truncate while preserving simple formatting
+  //   let truncated = markdown.substring(0, len - ellipsis.length);
+  //   // Find the last complete word to avoid breaking in the middle
+  //   const lastSpace = truncated.lastIndexOf(' ');
+  //   if (lastSpace > len * 0.8) {
+  //     truncated = truncated.substring(0, lastSpace);
+  //   }
+  //   // Check if we're inside markdown formatting and try to close it
+  //   const openBold = (truncated.match(/\*\*/g) || []).length % 2;
+  //   const openItalic = (truncated.match(/(?<!\*)\*(?!\*)/g) || []).length % 2;
+  //   const openCode = (truncated.match(/`/g) || []).length % 2;
+  //   // Close open formatting
+  //   if (openCode) truncated += '`';
+  //   if (openItalic) truncated += '*';
+  //   if (openBold) truncated += '**';
+  //   return truncated + ellipsis;
+  // }
 
   // Fall back to plain text truncation for complex markdown
   const lastSpace = plainText.lastIndexOf(' ', len - ellipsis.length);

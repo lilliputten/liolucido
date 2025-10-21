@@ -14,10 +14,11 @@ export function parseGeneratedQuestionAnswers(queryData: TAITextQueryData) {
   try {
     const { content } = queryData;
     rawJson = content;
-    console.log('[parseGeneratedQuestionAnswers] Got raw text', {
-      rawJson,
-      queryData,
-    });
+    /* console.log('[parseGeneratedQuestionAnswers] Got raw text', {
+     *   rawJson,
+     *   queryData,
+     * });
+     */
     if (typeof rawJson !== 'string') {
       throw new Error(`Received unexpected result type instead of json string: ${typeof rawJson}`);
     }
@@ -30,23 +31,23 @@ export function parseGeneratedQuestionAnswers(queryData: TAITextQueryData) {
       rawJson = rawJson.substring(mdStart.length, rawJson.length - mdEnd.length).trim();
     }
     rawData = JSON.parse(rawJson);
-    console.log('[parseGeneratedQuestionAnswers] Parsed raw data', {
-      rawData,
-      rawJson,
-      queryData,
-    });
-    debugger;
+    /* console.log('[parseGeneratedQuestionAnswers] Parsed raw data', {
+     *   rawData,
+     *   rawJson,
+     *   queryData,
+     * });
+     */
     if (!rawData) {
       throw new Error('Got an invalid (empty) json object');
     }
     const validatedData: TGeneratedAnswers = generatedAnswersSchema.parse(rawData);
+    // DEBUG
     console.log('[parseGeneratedQuestionAnswers] Parsed validated data', {
       validatedData,
       rawData,
       rawJson,
       queryData,
     });
-    debugger;
     return validatedData.answers;
   } catch (error) {
     const humanMsg = 'Can not parse generated question answers';
