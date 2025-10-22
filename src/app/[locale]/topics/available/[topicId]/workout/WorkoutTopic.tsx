@@ -96,7 +96,7 @@ export function WorkoutTopic(props: TPropsWithClassName) {
       <div
         className={cn(
           isDev && '__WorkoutTopic_Card_Skeleton', // DEBUG
-          'grid w-full gap-4 p-4 md:grid-cols-2',
+          'grid w-full gap-4 p-6 md:grid-cols-2',
         )}
       >
         {generateArray(5).map((i) => (

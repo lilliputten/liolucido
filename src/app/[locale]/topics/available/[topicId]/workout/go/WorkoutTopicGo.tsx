@@ -132,7 +132,7 @@ export function WorkoutTopicGo(props: TPropsWithClassName) {
       <div
         className={cn(
           isDev && '__WorkoutTopicGo_Card_Skeleton', // DEBUG
-          'grid w-full gap-4 p-4 md:grid-cols-2',
+          'grid w-full gap-4 p-6 md:grid-cols-2',
         )}
       >
         {generateArray(5).map((i) => (
@@ -144,7 +144,7 @@ export function WorkoutTopicGo(props: TPropsWithClassName) {
         className={cn(
           isDev && '__WorkoutTopicGo', // DEBUG
           // 'xl:col-span-2', // ???
-          'relative flex flex-1 flex-col overflow-hidden',
+          'relative mx-6 flex flex-1 flex-col overflow-hidden',
           className,
         )}
       >

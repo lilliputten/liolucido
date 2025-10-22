@@ -60,7 +60,7 @@ export function WorkoutQuestion({
       const isSelected = selectedAnswerId === answer.id;
       const isCorrect = answer.isCorrect;
       let borderColor = 'border-border';
-      let bgColor = 'bg-card';
+      let bgColor = 'bg-background/50';
       if (selectedAnswerId) {
         if (isCorrect) {
           borderColor = isSelected ? 'border-green-500' : 'border-green-500 border-dashed';
@@ -77,8 +77,8 @@ export function WorkoutQuestion({
           disabled={!!selectedAnswerId}
           className={cn(
             isDev && '__WorkoutQuestion_Answer',
-            'w-full rounded-lg border-2 p-4 text-left transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
+            'w-full rounded-lg border p-4 text-left transition',
+            'hover:bg-theme-500/15 hover:text-accent-foreground',
             'disabled:cursor-not-allowed',
             selectedAnswerId && 'disabled',
             borderColor,
@@ -117,7 +117,7 @@ export function WorkoutQuestion({
   );
 
   const questionContent = (
-    <div data-testid="__WorkoutQuestion_Question" className="space-y-4">
+    <div data-testid="__WorkoutQuestion_Question" className="flex flex-col gap-4">
       <div className="text-xl font-semibold">
         <MarkdownText>{questionText}</MarkdownText>
       </div>
@@ -127,7 +127,7 @@ export function WorkoutQuestion({
         className={cn(
           isDev && '__WorkoutQuestion_Answers', // DEBUG
           'grid md:grid-cols-2',
-          'gap-4 py-4',
+          'gap-4 py-2',
         )}
       >
         {answersContent}
@@ -136,7 +136,7 @@ export function WorkoutQuestion({
   );
 
   const buttonsContent = (
-    <div className="mt-6 flex justify-center gap-2">
+    <div className="flex justify-center gap-2">
       {/* Back Button */}
       {currentStep > 1 && (
         <Button
@@ -145,7 +145,7 @@ export function WorkoutQuestion({
             'gap-2',
             // selectedAnswerId && 'disabled',
           )}
-          variant="outline"
+          variant="ghost"
           onClick={goPrevQuestion}
         >
           <Icons.ArrowLeft className="size-5 opacity-50" />
@@ -170,7 +170,7 @@ export function WorkoutQuestion({
               <Button
                 data-testid="__WorkoutQuestion_Skip_Button"
                 className="gap-2"
-                variant="outline"
+                variant="ghost"
                 onClick={onSkip}
               >
                 <Icons.ArrowRight className="size-5 opacity-50" />
@@ -187,7 +187,7 @@ export function WorkoutQuestion({
           isFinished && selectedAnswerId && isSelectedCorrect && 'animate-pulse',
           // selectedAnswerId && 'disabled',
         )}
-        variant={isFinished && selectedAnswerId ? 'theme' : 'outline'}
+        variant={isFinished && selectedAnswerId ? 'theme' : 'ghost'}
         onClick={onFinish}
       >
         <Icons.Flag className="size-5 opacity-50" />
@@ -197,7 +197,7 @@ export function WorkoutQuestion({
   );
 
   return (
-    <div data-testid="__WorkoutQuestion" className="flex flex-col gap-6">
+    <div data-testid="__WorkoutQuestion" className="flex flex-col gap-4">
       {progressBar}
       {questionContent}
       {buttonsContent}

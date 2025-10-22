@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
 import { safeJsonParse } from '@/lib/helpers/json';
-import { getCurrentUser } from '@/lib/session';
 import { minuteMs } from '@/constants';
 import { TTopicId } from '@/features/topics/types';
 import { TUserId } from '@/features/users/types';
@@ -141,20 +140,17 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
         setLocalWorkout(null);
         return;
       }
-
       const updatedWorkout = memo.workout
         ? ({ ...memo.workout, ...data } as TWorkoutData)
         : (data as TWorkoutData);
-      debugger;
-
       // Always save to localStorage
       saveToLocalStorage(updatedWorkout);
       setLocalWorkout(updatedWorkout);
-
       // Save to server if online
       if (!isOffline && userId) {
         try {
           if (data && topicId) {
+            debugger;
             await updateWorkout(topicId, data);
           }
           queryClient.invalidateQueries({ queryKey });
@@ -213,7 +209,6 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
 
   const finishWorkout = React.useCallback(() => {
     if (!memo.workout) return;
-
     const { questionResults, startedAt, totalRounds, allRatios, allTimes } = memo.workout;
     const totalSteps = questionIds?.length || 0;
     const allRatiosList = safeJsonParse<number[]>(allRatios, []);
@@ -226,17 +221,14 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       ? Math.round((finishedAt.getTime() - startedAt.getTime()) / 1000)
       : 0;
     const currentRatio = totalSteps ? Math.round((100 * correctAnswers) / totalSteps) : 0;
-
     allTimesList.push(currentTime);
     allRatiosList.push(currentRatio);
-
     const averageRatio = Math.round(
       allRatiosList.reduce((sum, val) => sum + val, 0) / newTotalRounds,
     );
     const averageTime = Math.round(
       allTimesList.reduce((sum, val) => sum + val, 0) / newTotalRounds,
     );
-
     updateWorkoutData({
       started: false,
       finished: true,
@@ -254,16 +246,23 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     });
   }, [memo, questionIds, updateWorkoutData]);
 
+  const goPrevQuestion = React.useCallback(() => {
+    if (!memo.workout) return;
+    const newStepIndex = memo.workout.stepIndex ? memo.workout.stepIndex - 1 : 0;
+    updateWorkoutData({
+      stepIndex: newStepIndex,
+      selectedAnswerId: '',
+      finishedAt: new Date(),
+    });
+  }, [memo, updateWorkoutData]);
+
   const goNextQuestion = React.useCallback(() => {
     if (!memo.workout) return;
-
     const totalSteps = questionIds?.length || 0;
     const stepIndex = memo.workout.stepIndex || 0;
-
     if (stepIndex >= totalSteps - 1) {
       return finishWorkout();
     }
-
     updateWorkoutData({
       stepIndex: stepIndex + 1,
       selectedAnswerId: '',
@@ -271,22 +270,59 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     });
   }, [memo, questionIds, finishWorkout, updateWorkoutData]);
 
+  const saveResult = React.useCallback(
+    (result: boolean | undefined) => {
+      if (!memo.workout) return;
+      const currentResults = memo.workout.questionResults || '[]';
+      const resultsList = safeJsonParse<(number | null)[]>(currentResults, []);
+      const idx = memo.workout.stepIndex || 0;
+      const resultVal = result == undefined ? null : Number(result);
+      resultsList[idx] = resultVal;
+      const correctAnswers = resultsList.filter(Boolean).length;
+      const questionResults = JSON.stringify(resultsList);
+      updateWorkoutData({
+        questionResults,
+        correctAnswers,
+        finishedAt: new Date(),
+      });
+    },
+    [memo, updateWorkoutData],
+  );
+
+  const saveAnswer = React.useCallback(
+    (selectedAnswerId?: string) => {
+      updateWorkoutData({
+        selectedAnswerId: selectedAnswerId || '',
+        finishedAt: new Date(),
+      });
+    },
+    [updateWorkoutData],
+  );
+
+  const saveResultAndGoNext = React.useCallback(
+    (result: boolean | undefined) => {
+      saveResult(result);
+      goNextQuestion();
+    },
+    [saveResult, goNextQuestion],
+  );
+
   return {
     workout,
     questionIds,
-    // isOffline,
-    // localInitialized,
-    // enabled,
-    // preparing,
-    // isQuestionIdsPending,
+    topicId,
+    userId,
     pending: !query.isFetched || query.isLoading || !localInitialized,
     queryKey,
     createWorkout,
     startWorkout,
     finishWorkout,
+    goPrevQuestion,
     goNextQuestion,
+    saveResult,
+    saveAnswer,
+    saveResultAndGoNext,
     updateWorkoutData,
-    // isQueryEnabled,
     ...query,
   };
 }

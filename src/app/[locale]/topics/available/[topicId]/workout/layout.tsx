@@ -1,8 +1,8 @@
-import { notFound } from 'next/navigation';
+// import { notFound } from 'next/navigation';
 
-import { getCurrentUser } from '@/lib/session';
-import { WorkoutContextProvider } from '@/contexts/WorkoutContext';
-import { getAvailableTopicById } from '@/features/topics/actions';
+// import { getCurrentUser } from '@/lib/session';
+// import { WorkoutContextProvider } from '@/contexts/WorkoutContext';
+// import { getAvailableTopicById } from '@/features/topics/actions';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ topicId: string }>;

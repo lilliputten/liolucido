@@ -12,5 +12,5 @@ export * from './useScroll';
 export * from './useSessionUser';
 export * from './useSwitchRouterLocale';
 export * from './useUpdateModalVisibility';
-export * from './useWorkout';
+// export * from './useWorkout';
 export * from './useMediaMinDevices';

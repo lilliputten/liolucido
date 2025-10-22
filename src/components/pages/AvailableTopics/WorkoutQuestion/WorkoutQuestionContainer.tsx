@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { generateArray } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { PageError } from '@/components/shared/PageError';
@@ -48,6 +49,18 @@ export function WorkoutQuestionContainer() {
   const currentStep = stepIndex + 1;
   const questionId = questionsOrder[stepIndex];
   const isExceed = currentStep > totalSteps;
+
+  console.log('[WorkoutQuestionContainer:DEBUG]', {
+    totalSteps,
+    questionsOrder,
+    questionId,
+    workout,
+    // question,
+    // answers,
+    // isAnswersLoading,
+    // isQuestionFetched,
+    // isQuestionLoading,
+  });
 
   const handleFinish = React.useCallback(() => {
     finishWorkout();
@@ -136,11 +149,16 @@ export function WorkoutQuestionContainer() {
 
   if (isLoadingOverall) {
     return (
-      <div className="flex flex-col gap-6 py-4">
+      <div
+        className={cn(
+          isDev && '__WorkoutQuestionContainer_Skeleton', // DEBUG
+          'flex flex-col gap-4 py-2',
+        )}
+      >
         <Skeleton className="h-6 w-1/4" />
         <Skeleton className="h-8 w-full" />
         {/* Emulate answers */}
-        <div className="grid gap-4 py-4 md:grid-cols-2">
+        <div className="grid gap-4 py-2 md:grid-cols-2">
           {generateArray(2).map((i) => (
             <Skeleton key={i} className="h-14 w-full" />
           ))}
@@ -148,7 +166,7 @@ export function WorkoutQuestionContainer() {
         {/* Emulate buttons */}
         <div className="flex justify-center gap-4">
           {generateArray(2).map((i) => (
-            <Skeleton key={i} className="h-10 w-20" />
+            <Skeleton key={i} className="h-10 w-28" />
           ))}
         </div>
       </div>
@@ -209,7 +227,7 @@ export function WorkoutQuestionContainer() {
       onFinish={handleFinish}
       onContinue={goToTheNextQuestion}
       goPrevQuestion={goToThePrevQuestion}
-      selectedAnswerId={selectedAnswerId}
+      selectedAnswerId={selectedAnswerId || undefined}
     />
   );
 }

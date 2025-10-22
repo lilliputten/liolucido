@@ -100,30 +100,33 @@ export function GenerateQuestionsModal() {
         existedQuestions: questions?.map(({ text }) => ({ text })),
       };
       const { debugData } = formData;
-      // const topic = availableTopicQuery.topic;
-      console.log('[GenerateQuestionsModal:generateQuestionsMutation] Start', {
-        debugData,
-        formData,
-        params,
-        topic,
-        questions,
-      });
+      /* console.log('[GenerateQuestionsModal:generateQuestionsMutation] Start', {
+       *   debugData,
+       *   formData,
+       *   params,
+       *   topic,
+       *   questions,
+       * });
+       */
       const messages = createGenerateTopicQuestionsMessages(params);
-      // DEBUG
-      const __debugMessagesStr = messages.map(({ content }) => content).join('\n\n');
-      console.log('[GenerateQuestionsModal:generateQuestionsMutation] Created messages', {
-        __debugMessagesStr,
-        messages,
-        params,
-      });
+      /* // DEBUG
+       * const __debugMessagesStr = messages.map(({ content }) => content).join('\n\n');
+       * console.log('[GenerateQuestionsModal:generateQuestionsMutation] Created messages', {
+       *   __debugMessagesStr,
+       *   messages,
+       *   params,
+       * });
+       */
       const queryData = await sendAiTextQuery(messages, { debugData });
-      const content = queryData?.content;
-      console.log('[GenerateQuestionsModal:generateQuestionsMutation] Generated query data', {
-        content,
-        queryData,
-        messages,
-        params,
-      });
+      /* // DEBUG
+       * const content = __queryData?.content;
+       * console.log('[GenerateQuestionsModal:generateQuestionsMutation] Generated query data', {
+       *   __content,
+       *   queryData,
+       *   messages,
+       *   params,
+       * });
+       */
       return queryData;
     },
     onError: (error, formData) => {
@@ -163,10 +166,11 @@ export function GenerateQuestionsModal() {
           toast.error('No topic ID defined');
           return;
         }
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Start', {
-          formData,
-          topicId,
-        });
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Start', {
+         *   formData,
+         *   topicId,
+         * });
+         */
         const queryPromise = generateQuestionsMutation.mutateAsync(formData);
         toast.promise(queryPromise, {
           loading: 'Retrieving AI generated data...',
@@ -174,9 +178,10 @@ export function GenerateQuestionsModal() {
           error: 'Can not retrieve AI generated data',
         });
         const queryData = await queryPromise;
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Got query data', {
-          queryData,
-        });
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Got query data', {
+         *   queryData,
+         * });
+         */
         // Parsing questions...
         const questions = parseGeneratedTopicQuestions(queryData);
         const newQuestions: TNewQuestion[] = questions.map(
@@ -191,22 +196,22 @@ export function GenerateQuestionsModal() {
             isGenerated: true,
           }),
         );
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Parsed questions', {
-          newQuestions,
-          questions,
-        });
-        debugger;
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Parsed questions', {
+         *   newQuestions,
+         *   questions,
+         * });
+         */
         const addQuestionsPromise = addQuestionsMutation.mutateAsync(newQuestions);
         toast.promise(addQuestionsPromise, {
           loading: 'Adding new questions...',
           success: 'Successfully added new questions',
           error: 'Cannot add questions',
         });
-        const addedQuestions = await addQuestionsPromise;
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Questions added', {
-          addedQuestions,
-        });
-        debugger;
+        await addQuestionsPromise;
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Questions added', {
+         *   addedQuestions,
+         * });
+         */
         // Invalidate parent topic and its questions...
         const invalidatePrefixes = [
           ['available-topic', topicId],

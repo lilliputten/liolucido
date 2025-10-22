@@ -6,16 +6,12 @@ import { useFormatter } from 'next-intl';
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
-import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
-import { TAvailableTopic } from '@/features/topics/types';
-import { updateWorkout } from '@/features/workouts/actions/updateWorkout';
-import { TWorkout } from '@/features/workouts/types';
-import { useGoToTheRoute, useSessionUser } from '@/hooks';
+import { useGoToTheRoute } from '@/hooks';
 
 interface TWorkoutControlProps {
   // topic: TAvailableTopic;
@@ -32,39 +28,25 @@ export function WorkoutControl(props: TWorkoutControlProps) {
   const format = useFormatter();
   const workoutContext = useWorkoutContext();
   const {
+    userId,
     topicId,
-    // workout,
-    // pending,
+    workout,
+    pending,
     // createWorkout,
-    // startWorkout,
-    // data...
-    // questionIds,
+    startWorkout,
+    questionIds,
   } = workoutContext;
 
-  const user = useSessionUser();
-  const userId = user?.id;
-  const workoutQuery = useWorkoutQuery({ topicId, userId });
-  const {
-    workout,
-    questionIds,
-    // isOffline,
-    pending,
-    queryKey,
-    startWorkout,
-    // createWorkout,
-    // finishWorkout,
-    // goNextQuestion,
-    // updateWorkoutData,
-  } = workoutQuery;
+  // const user = useSessionUser();
+  // const userId = user?.id;
 
   console.log('[WorkoutControl:DEBUG]', {
-    user,
     userId,
     questionIds,
     workout,
     // isOffline,
     pending,
-    queryKey,
+    // queryKey,
   });
 
   // const [pending, setPending] = React.useState(false);

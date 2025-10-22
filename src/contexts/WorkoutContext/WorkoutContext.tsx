@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import { TAvailableTopic, TTopicId } from '@/features/topics/types';
+import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
+import { TTopicId } from '@/features/topics/types';
 import { TUserId } from '@/features/users/types/TUser';
-import { useAvailableQuestions, useAvailableTopicById, useWorkout } from '@/hooks';
 
-type TUseWorkout = ReturnType<typeof useWorkout>;
+type TUseWorkout = ReturnType<typeof useWorkoutQuery>;
 
 const WorkoutContext = React.createContext<TUseWorkout | undefined>(undefined);
 
@@ -14,16 +14,9 @@ interface WorkoutContextProviderProps {
   userId?: TUserId;
   topicId: TTopicId;
   children: React.ReactNode;
-  // topic: TAvailableTopic;
-  // questionIds: string[];
 }
 
-export function WorkoutContextProvider({
-  userId,
-  topicId,
-  children,
-  // questionIds,
-}: WorkoutContextProviderProps) {
+export function WorkoutContextProvider({ userId, topicId, children }: WorkoutContextProviderProps) {
   // const availableTopicQuery = useAvailableTopicById({
   //   id: topicId,
   //   // availableTopicsQueryKey,
@@ -34,23 +27,19 @@ export function WorkoutContextProvider({
   // });
   // const { topic, isFetched: isTopicFetched, isCached: isTopicCached } = availableTopicQuery;
 
-  const availableQuestionsQuery = useAvailableQuestions({ topicId, itemsLimit: null });
-  const {
-    allQuestions,
-    isFetched: isQuestionsFetched,
-    isLoading: isQuestionsLoading,
-    // queryKey: availableQuestionsQueryKey,
-    // queryProps: availableQuestionsQueryProps,
-  } = availableQuestionsQuery;
-  const isPreparing = !!isQuestionsFetched && !isQuestionsLoading;
+  // const availableQuestionsQuery = useAvailableQuestions({ topicId, itemsLimit: null });
+  // const {
+  //   allQuestions,
+  //   isFetched: isQuestionsFetched,
+  //   isLoading: isQuestionsLoading,
+  //   // queryKey: availableQuestionsQueryKey,
+  //   // queryProps: availableQuestionsQueryProps,
+  // } = availableQuestionsQuery;
+  // const isPreparing = !!isQuestionsFetched && !isQuestionsLoading;
+  //
+  // const questionIds = allQuestions.map((q) => q.id);
 
-  const questionIds = allQuestions.map((q) => q.id);
-
-  console.log('[WorkoutContext:WorkoutContextProvider]', {
-    questionIds,
-  });
-
-  const workoutData = useWorkout({ topicId, questionIds, userId, isPreparing });
+  const workoutData = useWorkoutQuery({ topicId, userId });
 
   return <WorkoutContext.Provider value={workoutData}>{children}</WorkoutContext.Provider>;
 }
