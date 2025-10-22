@@ -23,6 +23,7 @@ import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';
 import { useAnswersBreadcrumbsItems } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer } from '@/features/answers/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
   useAvailableAnswerById,
   useAvailableAnswers,
@@ -185,6 +186,8 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     [answer, queryClient, availableAnswersQuery, form],
   );
 
+  const ifGenerationAllowed = useIfGenerationAllowed();
+
   const handleReload = React.useCallback(() => {
     availableAnswerQuery
       .refetch()
@@ -253,6 +256,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'xl',
+        disabled: !ifGenerationAllowed,
         onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
       },
       {
@@ -269,6 +273,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'xl',
+        disabled: !ifGenerationAllowed,
         onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
       {
@@ -297,6 +302,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       handleFormSubmit,
       availableAnswerQuery.isRefetching,
       handleReload,
+      ifGenerationAllowed,
       goToTheRoute,
       answersListRoutePath,
       questionsListRoutePath,

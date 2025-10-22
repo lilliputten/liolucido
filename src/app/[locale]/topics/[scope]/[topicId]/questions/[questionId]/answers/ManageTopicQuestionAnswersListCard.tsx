@@ -34,6 +34,7 @@ import { useAnswersBreadcrumbsItems } from '@/features/answers/components/Answer
 import { TAnswer, TAnswerId, TAvailableAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
   useAvailableAnswers,
   useAvailableQuestionById,
@@ -267,6 +268,7 @@ export function ManageTopicQuestionAnswersListCardContent(
   const user = useSessionUser();
   const isLogged = !!user;
   const isAdmin = user?.role === 'ADMIN';
+  const ifGenerationAllowed = useIfGenerationAllowed();
 
   const {
     allAnswers,
@@ -342,7 +344,7 @@ export function ManageTopicQuestionAnswersListCardContent(
                 Add New Answer
               </Link>
             </Button>
-            <Button disabled={!isLogged} variant="secondary">
+            <Button disabled={!ifGenerationAllowed} variant="secondary">
               <Link href={`${answersListRoutePath}/generate`} className="flex gap-2">
                 <Icons.WandSparkles className="hidden size-4 opacity-50 sm:flex" />
                 Generate Answers
@@ -508,6 +510,8 @@ export function ManageTopicQuestionAnswersListCard(
     setShowDeleteSelectedConfirm(false);
   }, []);
 
+  const ifGenerationAllowed = useIfGenerationAllowed();
+
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
       {
@@ -551,6 +555,7 @@ export function ManageTopicQuestionAnswersListCard(
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'lg',
+        disabled: !ifGenerationAllowed,
         onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
     ],
@@ -560,6 +565,7 @@ export function ManageTopicQuestionAnswersListCard(
       selectedAnswers.size,
       deleteSelectedMutation.isPending,
       handleShowDeleteSelectedConfirm,
+      ifGenerationAllowed,
       refetchAnswers,
       goToTheRoute,
       answersListRoutePath,

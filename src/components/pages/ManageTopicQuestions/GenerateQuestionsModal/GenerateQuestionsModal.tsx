@@ -22,6 +22,7 @@ import { parseGeneratedTopicQuestions } from '@/features/ai/helpers/parseGenerat
 import { TGenerateTopicQuestionsParams } from '@/features/ai/types/GenerateQuestionsTypes';
 import { addMultipleQuestions } from '@/features/questions/actions/addMultipleQuestions';
 import { TAvailableQuestion, TNewQuestion } from '@/features/questions/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
   useAvailableTopicById,
   useGoBack,
@@ -50,7 +51,8 @@ export function GenerateQuestionsModal() {
   const match = pathname.match(urlRegExp);
   const topicId = match?.[2];
 
-  const shouldBeVisible = !!match;
+  const ifGenerationAllowed = useIfGenerationAllowed();
+  const shouldBeVisible = ifGenerationAllowed && !!match;
 
   const session = useSession();
   const isSessionLoading = session.status === 'loading';

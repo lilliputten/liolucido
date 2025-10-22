@@ -22,6 +22,7 @@ import { parseGeneratedQuestionAnswers } from '@/features/ai/helpers/parseGenera
 import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnswersTypes';
 import { addMultipleAnswers } from '@/features/answers/actions/addMultipleAnswers';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
   useAvailableQuestionById,
   useGoBack,
@@ -51,7 +52,8 @@ export function GenerateAnswersModal() {
   const topicId = match?.[1];
   const questionId = match?.[2];
 
-  const shouldBeVisible = !!match; // pathname.endsWith(urlPostfix);
+  const ifGenerationAllowed = useIfGenerationAllowed();
+  const shouldBeVisible = ifGenerationAllowed && !!match;
 
   const session = useSession();
   const isSessionLoading = session.status === 'loading';

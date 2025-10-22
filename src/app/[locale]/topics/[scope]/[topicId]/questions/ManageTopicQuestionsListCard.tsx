@@ -32,6 +32,7 @@ import { deleteQuestions } from '@/features/questions/actions';
 import { useQuestionsBreadcrumbsItems } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -278,6 +279,8 @@ export function ManageTopicQuestionsListCardContent(
     });
   }, [memo, setSelectedQuestions]);
 
+  const ifGenerationAllowed = useIfGenerationAllowed();
+
   if (!isQuestionsFetched) {
     return (
       <div
@@ -310,6 +313,7 @@ export function ManageTopicQuestionsListCardContent(
               variant="secondary"
               onClick={() => goToTheRoute(`${questionsListRoutePath}/generate`)}
               className="flex gap-2"
+              disabled={!ifGenerationAllowed}
             >
               <Icons.WandSparkles className="hidden size-4 opacity-50 sm:flex" />
               Generate Questions
@@ -440,6 +444,8 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     setShowDeleteSelectedConfirm(false);
   }, []);
 
+  const ifGenerationAllowed = useIfGenerationAllowed();
+
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
       {
@@ -483,6 +489,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'lg',
+        disabled: !ifGenerationAllowed,
         onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
       },
     ],
@@ -493,6 +500,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       selectedQuestions.size,
       deleteSelectedMutation.isPending,
       handleShowDeleteSelectedConfirm,
+      ifGenerationAllowed,
       handleAddQuestion,
       goToTheRoute,
       questionsListRoutePath,

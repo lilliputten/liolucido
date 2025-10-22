@@ -16,6 +16,7 @@ import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { TAvailableTopic } from '@/features/topics/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import { useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -30,6 +31,7 @@ export function ViewQuestionContentSummary(props: TProps) {
   const format = useFormatter();
   const user = useSessionUser();
   const isLogged = !!user;
+  const ifGenerationAllowed = useIfGenerationAllowed();
 
   const isTopicLoadingOverall = false; // !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
@@ -64,7 +66,7 @@ export function ViewQuestionContentSummary(props: TProps) {
               <span>Manage Answers</span>
             </Link>
           </Button>
-          <Button variant="secondary" size="sm" disabled={!isLogged}>
+          <Button variant="secondary" size="sm" disabled={!ifGenerationAllowed}>
             <Link
               href={`${routePath}/${question.topicId}/questions/${question.id}/answers/generate`}
               className="flex items-center gap-2"
@@ -126,7 +128,7 @@ export function ViewQuestionContentSummary(props: TProps) {
               </Link>
             </Button>
           )}
-          <Button variant="secondary" size="sm" disabled={!isLogged}>
+          <Button variant="secondary" size="sm" disabled={!ifGenerationAllowed}>
             <Link
               href={`${routePath}/${topic.id}/questions/generate`}
               className="flex items-center gap-2"
