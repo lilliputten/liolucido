@@ -37,12 +37,22 @@ export function NavBar(props: NavBarProps) {
         'z-40',
         'flex',
         'w-full',
-        'bg-theme-400/70 backdrop-blur',
+        'bg-theme-400/70',
+        'backdrop-blur',
         commonXPaddingTwStyle,
         'justify-stretch',
         'transition-all',
       )}
     >
+      <div // Ex: MaxWidthWrapper
+        className={cn(
+          // prettier-ignore
+          isDev && '__NavBar_Decor', // DEBUG
+          'absolute inset-0',
+          'bg-header-gradient',
+          'z-0',
+        )}
+      />
       <div // Ex: MaxWidthWrapper
         className={cn(
           // prettier-ignore
