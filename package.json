@@ -144,7 +144,7 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.13",
     "pretty-quick": "^4.0.0",
-    "prisma": "^6.16.2",
+    "prisma": "^6.18.0",
     "rimraf": "^6.0.1",
     "sass": "^1.81.0",
     "stylelint": "^16.21.1",

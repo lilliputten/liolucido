@@ -45,15 +45,30 @@ model Session {
   @@map("sessions")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserGrade {
+  GUEST
+  MEMBER
+  PREMIUM
+}
+
 model User {
-  id               String             @id @default(cuid())
-  name             String?
-  email            String?            @unique
-  emailVerified    DateTime?          @map("email_verified")
-  image            String?
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @updatedAt @map("updated_at")
-  role             String             @default("USER")
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+
+  role  UserRole  @default(USER)
+  grade UserGrade @default(GUEST)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   accounts         Account[]
   sessions         Session[]
   topics           Topic[]
@@ -67,9 +82,11 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  name       String?
-  locale     String?
-  image      String?
+
+  // Temp parameters passing to user creation
+  name   String?
+  locale String?
+  image  String?
 
   @@unique([identifier, token])
   @@map("verification_tokens")
