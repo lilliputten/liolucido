@@ -164,8 +164,8 @@ export function useWorkout(topic: TTopic, questionIds: string[] = [], userId: TU
           }
           if (userId) {
             try {
-              const url = isNew ? '/api/workouts' : `/api/workouts/${topicId}`;
               const requestData = isDelete ? undefined : isNew ? { topicId, ...data } : data;
+              const url = isNew ? '/api/workouts' : `/api/workouts/${topicId}`;
               const requestInit: RequestInit = {
                 method,
                 headers: !isDelete ? { 'Content-Type': 'application/json' } : {},

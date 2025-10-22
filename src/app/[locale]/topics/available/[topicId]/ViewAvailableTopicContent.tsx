@@ -5,17 +5,17 @@ import React from 'react';
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { DashboardActions, TActionMenuItem } from '@/components/dashboard/DashboardActions';
-import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
-import { useGoToTheRoute } from '@/hooks';
+import { WorkoutControl, WorkoutInfo } from '@/features/workout/components';
+import { TWorkout } from '@/features/workouts/types';
 
 interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;
+  workout?: TWorkout;
   className?: string;
 }
 
@@ -24,7 +24,7 @@ interface TViewAvailableTopicContentProps {
 
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
-  const { topic, className } = props;
+  const { topic, workout, className } = props;
   // Topic
   const {
     id,
@@ -46,24 +46,6 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
   // const allowedEdit = isAdminMode || isOwner;
   const questionsCount = _count?.questions;
   const allowedTraining = !!questionsCount;
-
-  const goToTheRoute = useGoToTheRoute();
-  // const goBack = useGoBack(routePath);
-
-  const extraActions = React.useMemo<TActionMenuItem[]>(
-    () => [
-      {
-        id: 'Workout',
-        content: 'Workout',
-        variant: 'theme',
-        icon: Icons.Activity,
-        visibleFor: 'sm',
-        hidden: !allowedTraining,
-        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
-      },
-    ],
-    [allowedTraining, goToTheRoute, id],
-  );
 
   return (
     <div
@@ -89,8 +71,8 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
             className="flex-1 max-sm:flex-col-reverse"
           />
           <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
-          {/* TODO: Show statistics, existed workout etc */}
-          <DashboardActions actions={extraActions} />
+          <WorkoutInfo workout={workout} className="flex-1 text-sm" />
+          {allowedTraining && <WorkoutControl />}
         </div>
       </ScrollArea>
     </div>

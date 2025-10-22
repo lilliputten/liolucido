@@ -12,6 +12,8 @@ import { isDev } from '@/constants';
 import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
 import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic } from '@/features/topics/types';
+import { getWorkout } from '@/features/workouts/actions/getWorkout';
+import { TWorkout } from '@/features/workouts/types';
 import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 
 import { ViewAvailableTopicContent } from './ViewAvailableTopicContent';
@@ -25,6 +27,8 @@ const routePath = topicsRoutes[manageScope];
 
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const { topic } = props;
+  const [workout, setWorkout] = React.useState<TWorkout | null>(null);
+  const [workoutLoading, setWorkoutLoading] = React.useState(false);
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(routePath);
@@ -49,6 +53,17 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const allowedEdit = isAdminMode || isOwner;
   // const questionsCount = _count?.questions;
   // const allowedTraining = !!questionsCount;
+
+  // Fetch workout data
+  React.useEffect(() => {
+    if (user?.id && topic.id) {
+      setWorkoutLoading(true);
+      getWorkout(topic.id)
+        .then(setWorkout)
+        .catch(() => setWorkout(null))
+        .finally(() => setWorkoutLoading(false));
+    }
+  }, [user?.id, topic.id]);
 
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
@@ -107,7 +122,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
           'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
         )}
       >
-        <ViewAvailableTopicContent topic={topic} />
+        <ViewAvailableTopicContent topic={topic} workout={workout || undefined} />
       </Card>
     </>
   );
