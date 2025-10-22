@@ -1,0 +1,29 @@
+{
+  "lc": 1,
+  "type": "constructor",
+  "id": ["langchain_core", "messages", "AIMessage"],
+  "kwargs": {
+    "content": "Ты написал всего лишь две буквы «а». Если есть необходимость, могу помочь с чем-то более содержательным. Что именно тебя интересует?",
+    "tool_calls": [],
+    "additional_kwargs": {},
+    "response_metadata": {
+      "tokenUsage": {
+        "input_tokens": 16,
+        "output_tokens": 28,
+        "total_tokens": 44
+      },
+      "finish_reason": "stop",
+      "xHeaders": {
+        "xRequestID": "86255e06-c084-4a12-9f44-98a4c9decd7b",
+        "xSessionID": "ef4e00e0-4cd5-4019-9b26-48f797367b24"
+      }
+    },
+    "usage_metadata": {
+      "input_tokens": 16,
+      "output_tokens": 28,
+      "total_tokens": 44
+    },
+    "id": "86255e06-c084-4a12-9f44-98a4c9decd7b",
+    "invalid_tool_calls": []
+  }
+}

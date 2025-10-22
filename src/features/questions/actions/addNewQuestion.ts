@@ -27,9 +27,19 @@ export async function addNewQuestion(newQuestion: TNewQuestion) {
       throw new Error('Not specified question name');
     }
     const result = await prisma.$transaction(async (tx) => {
-      const data = { ...newQuestion };
+      const { answers, ...questionFields } = newQuestion;
       const addedQuestion = await tx.question.create({
-        data,
+        data: {
+          ...questionFields,
+          ...(answers?.length && {
+            answers: {
+              create: answers.map((answer) => ({
+                ...answer,
+                isGenerated: questionFields.isGenerated || false,
+              })),
+            },
+          }),
+        },
       });
 
       // Update UserTopicWorkout questionsOrder for all users with this topic

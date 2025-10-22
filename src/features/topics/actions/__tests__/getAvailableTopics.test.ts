@@ -1,14 +1,12 @@
-import { ExtendedUser } from '@/@types/next-auth';
+// import { ExtendedUser } from '@/@types/next-auth';
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { User } from '@prisma/client';
 
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';
 import { getCurrentUser } from '@/lib/session';
+import { TUser } from '@/features/users/types/TUser';
 
 import { getAvailableTopics } from '../getAvailableTopics';
-
-type TExtendedUser = ExtendedUser;
 
 const mockedGetCurrentUser = getCurrentUser as jest.MockedFunction<typeof getCurrentUser>;
 
@@ -83,7 +81,7 @@ describe('getAvailableTopics', () => {
       });
       const topicIds = [topic0, topic1, topic2].map(({ id }) => id);
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
-      mockedGetCurrentUser.mockResolvedValue(user1 as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user1 as TUser);
       const { items, totalCount } = await getAvailableTopics({ topicIds, noDebug: true });
       expect(totalCount).toBe(2);
       expect(items.map((t) => t.id).sort()).toEqual([topic0.id, topic1.id].sort());
@@ -111,7 +109,7 @@ describe('getAvailableTopics', () => {
       });
       const topicIds = [topic1, topic2].map(({ id }) => id);
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
-      mockedGetCurrentUser.mockResolvedValue(user1 as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user1 as TUser);
       const { items, totalCount } = await getAvailableTopics({
         topicIds,
         showOnlyMyTopics: true,
@@ -147,7 +145,7 @@ describe('getAvailableTopics', () => {
       });
       const topicIds = [t1.id, t2.id, t3.id];
       topicIds.forEach((id) => createdIds.push({ type: 'topic', id }));
-      mockedGetCurrentUser.mockResolvedValue(admin as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(admin as TUser);
       const { items, totalCount } = await getAvailableTopics({
         topicIds,
         adminMode: true,
@@ -168,7 +166,7 @@ describe('getAvailableTopics', () => {
         data: { email: `user1-${dateTag}@test.com`, role: 'USER' },
       });
       createdIds.push({ type: 'user', id: user1.id });
-      mockedGetCurrentUser.mockResolvedValue(user1 as User & { role: UserRole });
+      mockedGetCurrentUser.mockResolvedValue(user1);
       await expect(getAvailableTopics({ adminMode: true, noDebug: true })).rejects.toThrow(
         'Admin mode is allowed only for administrators',
       );

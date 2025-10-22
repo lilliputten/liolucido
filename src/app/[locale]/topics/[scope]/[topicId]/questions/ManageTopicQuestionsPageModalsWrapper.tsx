@@ -12,13 +12,21 @@ import { ManageTopicQuestionsPageHolder } from './ManageTopicQuestionsPageHolder
 interface TTopicsListProps {
   topicId: TTopicId;
   showAddModal?: boolean;
+  showGenerateModal?: boolean;
   deleteQuestionId?: TQuestionId;
   editQuestionId?: TQuestionId;
   editAnswersQuestionId?: TQuestionId;
 }
 
 export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
-  const { topicId, showAddModal, deleteQuestionId, editQuestionId, editAnswersQuestionId } = props;
+  const {
+    topicId,
+    showAddModal,
+    showGenerateModal,
+    deleteQuestionId,
+    editQuestionId,
+    editAnswersQuestionId,
+  } = props;
 
   const { manageScope } = useManageTopicsStore();
   const topicsListRoutePath = `/topics/${manageScope}`;
@@ -37,6 +45,17 @@ export function ManageTopicQuestionsPageModalsWrapper(props: TTopicsListProps) {
       openAddQuestionModal();
     }
   }, [showAddModal, openAddQuestionModal]);
+
+  // Generate Questions Modal
+  const openGenerateQuestionsModal = React.useCallback(() => {
+    const url = `${questionsListRoutePath}/generate`;
+    goToTheRoute(url, true);
+  }, [goToTheRoute, questionsListRoutePath]);
+  React.useEffect(() => {
+    if (showGenerateModal) {
+      openGenerateQuestionsModal();
+    }
+  }, [showGenerateModal, openGenerateQuestionsModal]);
 
   // Delete Question Modal
   const openDeleteQuestionModal = React.useCallback(

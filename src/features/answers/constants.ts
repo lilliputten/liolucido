@@ -1,4 +1,4 @@
 import { isDev } from '@/constants';
 
 /** Pagination limit */
-export const itemsLimit = isDev ? 2 : 20;
+export const itemsLimit = isDev ? 10 : 50;

@@ -1,16 +1,15 @@
-// import { UserRole } from '@/generated/prisma';
-import { User } from 'next-auth';
+import { User as AuthUser } from 'next-auth';
 // NOTE: False-positive eslint error for extending existed type (see below)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JWT } from 'next-auth/jwt';
 
-export type ExtendedUser = User & {
-  role: UserRole;
-};
+import { User as PrismaUser, UserRoleType } from '@/generated/prisma';
+
+export type ExtendedUser = AuthUser & PrismaUser;
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    role: UserRole;
+    role: UserRoleType;
   }
 }
 

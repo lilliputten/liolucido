@@ -18,6 +18,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{
 }>;
 
 interface ManageTopicQuestionAnswersPageProps extends TAwaitedProps {
+  showGenerateModal?: boolean;
   showAddModal?: boolean;
   deleteAnswerId?: TAnswerId;
   editAnswerId?: TAnswerId;
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 export default async function ManageTopicQuestionAnswersPageWrapper(
   props: ManageTopicQuestionAnswersPageProps,
 ) {
-  const { showAddModal, deleteAnswerId, editAnswerId, params } = props;
+  const { showGenerateModal, showAddModal, deleteAnswerId, editAnswerId, params } = props;
 
   const { topicId, questionId } = await params;
 
@@ -66,6 +67,7 @@ export default async function ManageTopicQuestionAnswersPageWrapper(
       <ManageTopicQuestionAnswersPageModalsWrapper
         topicId={topicId}
         questionId={questionId}
+        showGenerateModal={showGenerateModal}
         showAddModal={showAddModal}
         deleteAnswerId={deleteAnswerId}
         editAnswerId={editAnswerId}

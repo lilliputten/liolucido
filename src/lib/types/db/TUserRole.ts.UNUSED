@@ -1,3 +1,4 @@
+// NOTE: Use the module from `lib/db`
 // NOTE: We don't use prisma enum `UserRole` as it's not supported for sqlite
 // import { UserRole } from '@/generated/prisma';
 

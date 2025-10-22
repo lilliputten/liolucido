@@ -1,0 +1,24 @@
+{
+  "content": "{\n  \"answers\": [\n    {\n      \"text\": \"In JavaScript, there are five primitive data types: number, string, boolean, null, undefined, and symbol.\",\n      \"isCorrect\": true\n    },\n    {\n      \"",
+  "additional_kwargs": {},
+  "response_metadata": {
+    "tokenUsage": {
+      "input_tokens": 259,
+      "output_tokens": 50,
+      "total_tokens": 309
+    },
+    "finish_reason": "length",
+    "xHeaders": {
+      "xRequestID": "fc79071a-d79d-49b3-9655-17a31883fe33",
+      "xSessionID": "ecc04127-991c-4054-bb65-cc89a48d82aa"
+    }
+  },
+  "id": "fc79071a-d79d-49b3-9655-17a31883fe33",
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "input_tokens": 259,
+    "output_tokens": 50,
+    "total_tokens": 309
+  }
+}

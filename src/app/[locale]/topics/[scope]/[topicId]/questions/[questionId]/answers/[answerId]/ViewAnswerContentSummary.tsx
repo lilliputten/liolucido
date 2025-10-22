@@ -79,17 +79,37 @@ export function ViewAnswerContentSummary(props: TViewAnswerContentSummaryProps) 
     </div>
   );
 
+  const answerExplanationContent = answer.explanation ? (
+    <div data-testid="__Section_AnswerExplanation" className="flex flex-col gap-4">
+      <h3 className="text-lg font-semibold">Explanation</h3>
+      <div className="rounded-lg bg-slate-500/10 p-4">
+        <MarkdownText>{answer.explanation || ''}</MarkdownText>
+      </div>
+    </div>
+  ) : undefined;
+
   const answerPropertiesContent = (
     <div data-testid="__Section_Properties" className="flex flex-col gap-4">
       <h3 className="text-lg font-semibold">Properties</h3>
       <div className="flex flex-wrap gap-2">
-        <Badge className={answer.isCorrect ? 'bg-green-500' : 'bg-red-500'}>
-          <Icons.CircleCheck className="mr-1 h-3 w-3" />
+        <Badge
+          className={cn(
+            answer.isCorrect ? 'bg-green-500' : 'bg-red-500',
+            'flex items-center gap-1 px-2 py-1',
+          )}
+        >
+          <Icons.Check className="size-4 opacity-50" />
           {answer.isCorrect ? 'Correct answer' : 'Incorrect answer'}
         </Badge>
         {answer.isGenerated && (
-          <Badge variant="outline" className="border-slate-500 text-slate-500">
-            <Icons.Bot className="mr-1 h-3 w-3" />
+          <Badge
+            variant="outline"
+            className={cn(
+              'flex items-center gap-1 px-2 py-1',
+              'border-slate-500/50 text-slate-500',
+            )}
+          >
+            <Icons.Bot className="size-4 opacity-50" />
             AI Generated
           </Badge>
         )}
@@ -179,6 +199,7 @@ export function ViewAnswerContentSummary(props: TViewAnswerContentSummaryProps) 
       )}
     >
       {answerTextContent}
+      {answerExplanationContent}
       {answerPropertiesContent}
       <Separator />
       {questionInfoContent}

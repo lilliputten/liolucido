@@ -4,13 +4,13 @@ import { toast } from 'sonner';
 import { getErrorText } from '@/lib/helpers/strings';
 import { TTopic } from '@/features/topics/types';
 import { getUsersByIdsList } from '@/features/users/actions';
-import { TDefinedUserId, TUser } from '@/features/users/types/TUser';
+import { TUser, TUserId } from '@/features/users/types/TUser';
 
-export type TCachedUsers = Record<TDefinedUserId, TUser>;
+export type TCachedUsers = Record<TUserId, TUser>;
 
 interface TMemo {
   cachedUsers: TCachedUsers;
-  loadingIds: TDefinedUserId[];
+  loadingIds: TUserId[];
 }
 
 interface TUseCachedUsersProps {

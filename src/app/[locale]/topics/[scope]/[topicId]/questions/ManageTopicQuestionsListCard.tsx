@@ -32,7 +32,8 @@ import { deleteQuestions } from '@/features/questions/actions';
 import { useQuestionsBreadcrumbsItems } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useAvailableTopicById, useGoBack, useSessionUser } from '@/hooks';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
+import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 const saveScrollHash = getRandomHashString();
@@ -48,69 +49,8 @@ export interface TManageTopicQuestionsListCardProps {
   availableTopicQuery: ReturnType<typeof useAvailableTopicById>;
 }
 
-/*
- * interface TToolbarActionsProps {
- *   topicId: TTopicId;
- *   handleAddQuestion: () => void;
- *   // handleDeleteTopic?: () => void;
- *   goBack: () => void;
- * }
- * function Toolbar(
- *   props: TToolbarActionsProps & {
- *     availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
- *   },
- * ) {
- *   const {
- *     availableQuestionsQuery,
- *     // topicId,
- *     handleAddQuestion,
- *     goBack,
- *   } = props;
- *
- *   const { refetch, isRefetching } = availableQuestionsQuery;
- *
- *   const handleReload = React.useCallback(() => {
- *     refetch({ cancelRefetch: true });
- *   }, [refetch]);
- *
- *   return (
- *     <div
- *       className={cn(
- *         isDev && '__ManageTopicQuestionsListCard_Toolbar', // DEBUG
- *         'flex flex-wrap gap-2',
- *       )}
- *     >
- *       <Button variant="ghost" size="sm" className="flex gap-2" onClick={goBack}>
- *         <Icons.ArrowLeft className="hidden size-4 opacity-50 sm:flex" />
- *         <span>Back</span>
- *       </Button>
- *       <Button
- *         variant="ghost"
- *         size="sm"
- *         className={cn(
- *           'flex items-center gap-2 px-4',
- *           isRefetching && 'pointer-events-none opacity-50',
- *         )}
- *         onClick={handleReload}
- *       >
- *         <Icons.Refresh
- *           className={cn('hidden size-4 opacity-50 sm:flex', isRefetching && 'animate-spin')}
- *         />
- *         <span>Reload</span>
- *       </Button>
- *       <Button variant="ghost" size="sm" onClick={handleAddQuestion} className="flex gap-2">
- *         <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
- *         <span>
- *           Add <span className="hidden sm:inline-flex">New Question</span>
- *         </span>
- *       </Button>
- *     </div>
- *   );
- * }
- */
-
 function QuestionTableHeader({
-  isAdminMode,
+  // isAdminMode,
   selectedQuestions,
   allQuestions,
   toggleAll,
@@ -146,8 +86,8 @@ function QuestionTableHeader({
         <TableHead id="no" className="truncate text-right max-sm:hidden">
           No
         </TableHead>
-        {isAdminMode && isDev && (
-          <TableHead id="topicId" className="truncate max-sm:hidden">
+        {isDev && (
+          <TableHead id="questionId" className="truncate max-sm:hidden">
             ID
           </TableHead>
         )}
@@ -181,7 +121,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
     handleDeleteQuestion,
     handleEditQuestion,
     handleEditAnswers,
-    isAdminMode,
+    // isAdminMode,
     idx,
     isSelected,
     toggleSelected,
@@ -202,21 +142,31 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
       >
         <Checkbox checked={isSelected} className="block" aria-label="Select question" />
       </TableCell>
-      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
+      <TableCell id="no" className="max-w-4 truncate text-right opacity-50 max-sm:hidden">
         <div className="truncate">{idx + 1}</div>
       </TableCell>
-      {isAdminMode && isDev && (
-        <TableCell id="questionId" className="max-w-[8em] truncate max-sm:hidden">
-          <div className="truncate">
-            <span className="mr-[2px] opacity-30">#</span>
+      {isDev && (
+        <TableCell id="questionId" className="max-w-8 truncate max-sm:hidden">
+          <div className="truncate opacity-50">
+            <span className="mr-1 opacity-30">#</span>
             {id}
           </div>
         </TableCell>
       )}
-      <TableCell id="text" className="max-w-[12em] truncate">
-        <Link className="truncate text-lg font-medium hover:underline" href={questionRoutePath}>
-          {truncateMarkdown(text, 40)}
-        </Link>
+      <TableCell id="text" className="max-w-24 truncate" title={truncateMarkdown(text, 120)}>
+        <div className="flex items-center gap-2">
+          <Link
+            className="text-ellipsis whitespace-normal hover:underline"
+            href={questionRoutePath}
+          >
+            {truncateMarkdown(text, 80)}
+          </Link>
+          {question.isGenerated && (
+            <div title="AI Generated">
+              <Icons.WandSparkles className="size-4 opacity-50" />
+            </div>
+          )}
+        </div>
       </TableCell>
       <TableCell id="answers" className="max-w-[8em] truncate">
         <div className="truncate">
@@ -273,6 +223,7 @@ export function ManageTopicQuestionsListCardContent(
     availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
     selectedQuestions: Set<TQuestionId>;
     setSelectedQuestions: React.Dispatch<React.SetStateAction<Set<TQuestionId>>>;
+    goToTheRoute: ReturnType<typeof useGoToTheRoute>;
   },
 ) {
   const {
@@ -284,6 +235,7 @@ export function ManageTopicQuestionsListCardContent(
     handleEditAnswers,
     selectedQuestions,
     setSelectedQuestions,
+    goToTheRoute,
   } = props;
 
   const user = useSessionUser();
@@ -327,6 +279,8 @@ export function ManageTopicQuestionsListCardContent(
     });
   }, [memo, setSelectedQuestions]);
 
+  const ifGenerationAllowed = useIfGenerationAllowed();
+
   if (!isQuestionsFetched) {
     return (
       <div
@@ -354,6 +308,15 @@ export function ManageTopicQuestionsListCardContent(
             <Button onClick={handleAddQuestion} className="flex gap-2">
               <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
               Add New Question
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => goToTheRoute(`${questionsListRoutePath}/generate`)}
+              className="flex gap-2"
+              disabled={!ifGenerationAllowed}
+            >
+              <Icons.WandSparkles className="hidden size-4 opacity-50 sm:flex" />
+              Generate Questions
             </Button>
           </>
         }
@@ -426,6 +389,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
   const { refetch, isRefetching } = availableQuestionsQuery;
 
   const goBack = useGoBack(topicsListRoutePath);
+  const goToTheRoute = useGoToTheRoute();
 
   const handleReload = React.useCallback(() => {
     refetch({ cancelRefetch: true });
@@ -480,6 +444,8 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
     setShowDeleteSelectedConfirm(false);
   }, []);
 
+  const ifGenerationAllowed = useIfGenerationAllowed();
+
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
       {
@@ -517,6 +483,15 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
         visibleFor: 'lg',
         onClick: handleAddQuestion,
       },
+      {
+        id: 'Generate Questions',
+        content: 'Generate Questions',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'lg',
+        disabled: !ifGenerationAllowed,
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
+      },
     ],
     [
       goBack,
@@ -525,7 +500,10 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
       selectedQuestions.size,
       deleteSelectedMutation.isPending,
       handleShowDeleteSelectedConfirm,
+      ifGenerationAllowed,
       handleAddQuestion,
+      goToTheRoute,
+      questionsListRoutePath,
     ],
   );
 
@@ -558,6 +536,7 @@ export function ManageTopicQuestionsListCard(props: TManageTopicQuestionsListCar
           availableQuestionsQuery={availableQuestionsQuery}
           selectedQuestions={selectedQuestions}
           setSelectedQuestions={setSelectedQuestions}
+          goToTheRoute={goToTheRoute}
         />
       </Card>
       <ConfirmModal

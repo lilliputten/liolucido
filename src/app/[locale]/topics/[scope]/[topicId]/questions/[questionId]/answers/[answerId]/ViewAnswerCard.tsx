@@ -12,6 +12,7 @@ import { useAnswersBreadcrumbsItems } from '@/features/answers/components/Answer
 import { TAvailableAnswer } from '@/features/answers/types';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { TAvailableTopic } from '@/features/topics/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import { useGoBack, useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -37,6 +38,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(answersListRoutePath);
+  const ifGenerationAllowed = useIfGenerationAllowed();
 
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
@@ -66,6 +68,15 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
         onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
       },
       {
+        id: 'Generate Answers',
+        content: 'Generate Answers',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'xl',
+        disabled: !ifGenerationAllowed,
+        onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
+      },
+      {
         id: 'Delete Answer',
         content: 'Delete Answer',
         variant: 'destructive',
@@ -75,7 +86,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
           goToTheRoute(`${answersListRoutePath}/delete?answerId=${answer.id}&from=ViewAnswerCard`),
       },
     ],
-    [goBack, goToTheRoute, answersListRoutePath, answer.id],
+    [goBack, goToTheRoute, answersListRoutePath, answer.id, ifGenerationAllowed],
   );
 
   const breadcrumbs = useAnswersBreadcrumbsItems({

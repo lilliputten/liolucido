@@ -2,12 +2,12 @@ import { User } from '@prisma/client';
 
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { TTopicId } from '@/features/topics/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
+import { TUserId } from '@/features/users/types/TUser';
 
 import { deleteUser } from '../deleteUser';
 
 test('should delete the user and all the related topics (as cascaded)', async () => {
-  const userIds: TDefinedUserId[] = [];
+  const userIds: TUserId[] = [];
   const topicIds: TTopicId[] = [];
   try {
     // Create users...

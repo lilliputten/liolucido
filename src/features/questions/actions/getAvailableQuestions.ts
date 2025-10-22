@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/lib/session';
 import { TGetAvailableQuestionsParams, TGetAvailableQuestionsResults } from '@/lib/zod-schemas';
 import { isDev } from '@/constants';
 
-import { IncludedTopicSelect } from '../types';
+// import { IncludedTopicSelect } from '../types';
 
 interface TOptions {
   noDebug?: boolean;
@@ -57,7 +57,7 @@ export async function getAvailableQuestions(
       _count: { select: { answers: includeAnswersCount } },
     };
     if (includeTopic) {
-      include.topic = { select: IncludedTopicSelect };
+      include.topic = true; // { select: IncludedTopicSelect };
     }
     if (includeAnswers) {
       include.answers = true;

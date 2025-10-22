@@ -1,13 +1,11 @@
-import { ExtendedUser } from '@/@types/next-auth';
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';
 import { getCurrentUser } from '@/lib/session';
+import { TUser } from '@/features/users/types/TUser';
 
 import { deleteTopics } from '../deleteTopics';
-
-type TExtendedUser = ExtendedUser;
 
 const mockedGetCurrentUser = getCurrentUser as jest.MockedFunction<typeof getCurrentUser>;
 
@@ -46,7 +44,7 @@ describe('deleteTopics', () => {
       createdIds.push({ type: 'topic', id: topic1.id });
       createdIds.push({ type: 'topic', id: topic2.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       const result = await deleteTopics([topic1.id, topic2.id]);
       expect(result.count).toBe(2);
@@ -83,7 +81,7 @@ describe('deleteTopics', () => {
       createdIds.push({ type: 'topic', id: topic1.id });
       createdIds.push({ type: 'topic', id: topic2.id });
 
-      mockedGetCurrentUser.mockResolvedValue(admin as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(admin as TUser);
 
       const result = await deleteTopics([topic1.id, topic2.id]);
       expect(result.count).toBe(2);
@@ -106,7 +104,7 @@ describe('deleteTopics', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       await expect(deleteTopics(['nonexistent1', 'nonexistent2'])).rejects.toThrow(
         'Some topics not found',
@@ -134,7 +132,7 @@ describe('deleteTopics', () => {
       });
       createdIds.push({ type: 'topic', id: topic.id });
 
-      mockedGetCurrentUser.mockResolvedValue(otherUser as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(otherUser as TUser);
 
       await expect(deleteTopics([topic.id])).rejects.toThrow(
         'Current user is not allowed to delete the topic',
@@ -153,7 +151,7 @@ describe('deleteTopics', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       const result = await deleteTopics([]);
       expect(result.count).toBe(0);

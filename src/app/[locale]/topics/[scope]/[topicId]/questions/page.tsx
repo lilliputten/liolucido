@@ -15,6 +15,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId:
 
 interface ManageTopicQuestionsPageProps extends TAwaitedProps {
   showAddModal?: boolean;
+  showGenerateModal?: boolean;
   deleteQuestionId?: TQuestionId;
   editQuestionId?: TQuestionId;
   editAnswersQuestionId?: TQuestionId;
@@ -33,7 +34,14 @@ export async function generateMetadata({ params }: TAwaitedProps) {
 }
 
 export default async function ManageTopicQuestionsPage(props: ManageTopicQuestionsPageProps) {
-  const { showAddModal, deleteQuestionId, editQuestionId, editAnswersQuestionId, params } = props;
+  const {
+    showAddModal,
+    showGenerateModal,
+    deleteQuestionId,
+    editQuestionId,
+    editAnswersQuestionId,
+    params,
+  } = props;
 
   const resolvedParams = await params;
   const { topicId } = resolvedParams;
@@ -59,6 +67,7 @@ export default async function ManageTopicQuestionsPage(props: ManageTopicQuestio
       <ManageTopicQuestionsPageModalsWrapper
         topicId={topicId}
         showAddModal={showAddModal}
+        showGenerateModal={showGenerateModal}
         deleteQuestionId={deleteQuestionId}
         editQuestionId={editQuestionId}
         editAnswersQuestionId={editAnswersQuestionId}

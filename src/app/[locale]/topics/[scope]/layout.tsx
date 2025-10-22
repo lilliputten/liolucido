@@ -2,14 +2,13 @@ import { notFound, redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
 import { welcomeRoute } from '@/config/routesConfig';
-import { getCurrentUser } from '@/lib/session';
+import { isAdminUser, isLoggedUser } from '@/lib/session';
 import {
   TopicsManageScopeIds,
   topicsNamespaces,
   topicsRoutes,
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
-import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 import { ManageTopicsStoreProvider } from '@/stores/ManageTopicsStoreProvider';
 
@@ -41,18 +40,17 @@ export default async function ManageTopicsLayout(props: TManageTopicsLayoutProps
     notFound();
   }
 
-  const user = await getCurrentUser();
-  const userId = user?.id;
-  // TODO: Check also if the user really exists in the database>
-  const isValidUser = !!userId && (await checkIfUserExists(userId));
-  if (!isValidUser) {
+  const isLogged = await isLoggedUser();
+  if (!isLogged) {
     redirect(welcomeRoute);
   }
+
+  const isAdmin = await isAdminUser();
 
   const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS;
 
   // Check if it's admin user for 'all' scope
-  if (isAdminMode && user.role !== 'ADMIN') {
+  if (isAdminMode && !isAdmin) {
     // eslint-disable-next-line no-console
     console.warn(
       '[ManageTopicsLayout] Admin user role required for managing topics scope',

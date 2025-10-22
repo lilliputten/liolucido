@@ -1,0 +1,24 @@
+{
+  "content": "Oh, what fascinating creatures! Octopuses have this amazing ability due to a combination of specialized cells called chromatophores, iridophores, and leucophores. \n\nChromatophores contain pigments that can change colors depending on the light conditions or their mood. They expand or contract rapidly, allowing the octopus to blend into its surroundings almost instantly!\n\nIridophores reflect light, creating shiny surfaces like those seen when an octopus flashes bright colors during communication or display. Leucophores help to neutralize these reflections by scattering light, making the skin appear white.\n1. Chromatophores: These cells contain pigment granules that can be expanded or contracted to show different colors.  \n2. Iridophores: Reflective cells that create shimmering effects.\n3. Leucophores: Cells that scatter light to produce white hues.\n\nIn addition to these, octopuses also use muscles under their skin to change the texture of their bodies, giving them a rough or smooth appearance.\n\nThis incredible adaptability helps octopuses camouflage themselves from predators and hunt prey more effectively. It's truly nature's masterpiece! -Coral",
+  "additional_kwargs": {},
+  "response_metadata": {
+    "tokenUsage": {
+      "input_tokens": 92,
+      "output_tokens": 248,
+      "total_tokens": 340
+    },
+    "finish_reason": "stop",
+    "xHeaders": {
+      "xRequestID": "89c0184e-24aa-483f-9318-6c7ef21c746f",
+      "xSessionID": "dd3ca843-0d25-439a-b2e2-c9481f3bca79"
+    }
+  },
+  "id": "89c0184e-24aa-483f-9318-6c7ef21c746f",
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "input_tokens": 92,
+    "output_tokens": 248,
+    "total_tokens": 340
+  }
+}

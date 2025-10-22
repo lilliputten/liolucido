@@ -20,14 +20,14 @@ import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { settingsSchema, TSettings } from '@/features/settings/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
+import { TUserId } from '@/features/users/types/TUser';
 
 import { CardContentSkeleton } from './skeletons';
 
 const saveScrollHash = getRandomHashString();
 
 type TSettingsPageProps = TPropsWithClassName & {
-  userId?: TDefinedUserId;
+  userId?: TUserId;
 };
 
 export function SettingsPage(props: TSettingsPageProps) {

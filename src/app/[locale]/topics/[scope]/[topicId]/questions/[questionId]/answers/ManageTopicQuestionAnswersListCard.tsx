@@ -34,6 +34,7 @@ import { useAnswersBreadcrumbsItems } from '@/features/answers/components/Answer
 import { TAnswer, TAnswerId, TAvailableAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
   useAvailableAnswers,
   useAvailableQuestionById,
@@ -89,21 +90,21 @@ function AnswerTableHeader({
             icon={isIndeterminate ? Icons.Dot : Icons.Check}
           />
         </TableHead>
-        <TableHead id="no" className="truncate text-right max-sm:hidden">
+        <TableHead id="no" className="truncate text-right max-lg:hidden">
           No
         </TableHead>
         {isAdminMode && isDev && (
-          <TableHead id="topicId" className="truncate max-sm:hidden">
+          <TableHead id="topicId" className="truncate max-lg:hidden">
             ID
           </TableHead>
         )}
         <TableHead id="text" className="truncate">
           Answer Text
         </TableHead>
-        <TableHead id="isCorrect" className="truncate max-sm:hidden">
+        <TableHead id="isCorrect" className="truncate max-lg:hidden">
           Correct
         </TableHead>
-        <TableHead id="isGenerated" className="truncate max-sm:hidden">
+        <TableHead id="isGenerated" className="truncate max-lg:hidden">
           Generated
         </TableHead>
       </TableRow>
@@ -181,23 +182,23 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
       >
         <Checkbox checked={isSelected} className="block" aria-label="Select answer" />
       </TableCell>
-      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-sm:hidden">
+      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-lg:hidden">
         <div className="truncate">{idx + 1}</div>
       </TableCell>
       {isAdminMode && isDev && (
-        <TableCell id="answerId" className="max-w-[8em] truncate max-sm:hidden">
+        <TableCell id="answerId" className="max-w-[8em] truncate max-lg:hidden">
           <div className="truncate">
             <span className="mr-[2px] opacity-30">#</span>
             {id}
           </div>
         </TableCell>
       )}
-      <TableCell id="text" className="max-w-[20em] truncate">
-        <Link className="truncate text-lg font-medium hover:underline" href={answerRoutePath}>
-          {truncateMarkdown(text, 40)}
+      <TableCell id="text" className="max-w-[20em] truncate" title={truncateMarkdown(text, 120)}>
+        <Link className="text-ellipsis whitespace-normal hover:underline" href={answerRoutePath}>
+          {truncateMarkdown(text, 80)}
         </Link>
       </TableCell>
-      <TableCell id="isCorrect" className="w-[8em] max-sm:hidden">
+      <TableCell id="isCorrect" className="w-[8em] max-lg:hidden">
         <Switch
           checked={isCorrect}
           onCheckedChange={handleToggleCorrect}
@@ -205,7 +206,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
           className="data-[state=checked]:bg-green-500"
         />
       </TableCell>
-      <TableCell id="isGenerated" className="w-[8em] max-sm:hidden">
+      <TableCell id="isGenerated" className="w-[8em] max-lg:hidden">
         {isGenerated && <Icons.CircleCheck className="stroke-blue-500" />}
       </TableCell>
       <TableCell id="actions" className="w-[2em] text-right">
@@ -265,7 +266,9 @@ export function ManageTopicQuestionAnswersListCardContent(
   } = props;
 
   const user = useSessionUser();
+  const isLogged = !!user;
   const isAdmin = user?.role === 'ADMIN';
+  const ifGenerationAllowed = useIfGenerationAllowed();
 
   const {
     allAnswers,
@@ -339,6 +342,12 @@ export function ManageTopicQuestionAnswersListCardContent(
               <Link href={`${answersListRoutePath}/add`} className="flex gap-2">
                 <Icons.Add className="hidden size-4 opacity-50 sm:flex" />
                 Add New Answer
+              </Link>
+            </Button>
+            <Button disabled={!ifGenerationAllowed} variant="secondary">
+              <Link href={`${answersListRoutePath}/generate`} className="flex gap-2">
+                <Icons.WandSparkles className="hidden size-4 opacity-50 sm:flex" />
+                Generate Answers
               </Link>
             </Button>
           </>
@@ -501,6 +510,8 @@ export function ManageTopicQuestionAnswersListCard(
     setShowDeleteSelectedConfirm(false);
   }, []);
 
+  const ifGenerationAllowed = useIfGenerationAllowed();
+
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
       {
@@ -525,7 +536,7 @@ export function ManageTopicQuestionAnswersListCard(
         content: 'Delete Selected',
         variant: 'destructive',
         icon: Icons.Trash,
-        visibleFor: 'lg',
+        visibleFor: 'xl',
         hidden: !selectedAnswers.size,
         pending: deleteSelectedMutation.isPending,
         onClick: handleShowDeleteSelectedConfirm,
@@ -535,8 +546,17 @@ export function ManageTopicQuestionAnswersListCard(
         content: 'Add New Answer',
         variant: 'success',
         icon: Icons.Add,
-        visibleFor: 'lg',
+        visibleFor: 'xl',
         onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
+      },
+      {
+        id: 'Generate Answers',
+        content: 'Generate Answers',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'lg',
+        disabled: !ifGenerationAllowed,
+        onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
     ],
     [
@@ -545,6 +565,7 @@ export function ManageTopicQuestionAnswersListCard(
       selectedAnswers.size,
       deleteSelectedMutation.isPending,
       handleShowDeleteSelectedConfirm,
+      ifGenerationAllowed,
       refetchAnswers,
       goToTheRoute,
       answersListRoutePath,

@@ -1,5 +1,7 @@
 export const authErrorRoute = '/auth/error';
 export const adminRoute = '/admin';
+export const adminBotControlRoute = '/admin/bot/control';
+export const adminAiTestTextQueryRoute = '/admin/ai/test-text-query';
 export const chartsRoute = '/charts';
 export const dashboardRoute = '/dashboard';
 export const infoRoute = '/info';
@@ -14,6 +16,8 @@ export const welcomeRoute = '/welcome';
 /** NOTE: That's used only to mock real intl context */
 export const pathnames = {
   [adminRoute]: adminRoute,
+  [adminBotControlRoute]: adminBotControlRoute,
+  [adminAiTestTextQueryRoute]: adminAiTestTextQueryRoute,
   [chartsRoute]: chartsRoute,
   [dashboardRoute]: dashboardRoute,
   [availableTopicsRoute]: availableTopicsRoute,

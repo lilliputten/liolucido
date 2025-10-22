@@ -11,7 +11,7 @@ import { checkIsAllowedUser } from '@/features/allowed-users/helpers/checkIsAllo
 import { TUserRejectReason } from '@/features/allowed-users/types/TUserRejectReason';
 import { getUserById } from '@/features/users/actions/';
 import { setFirstUserAsAdmin } from '@/features/users/helpers/setFirstUserAsAdmin';
-import { TExtendedUser } from '@/features/users/types/TUser';
+import { UserRoleType } from '@/generated/prisma';
 
 import authConfig from './auth.config.server';
 import { sessionMaxAge, sessionUpdateAge } from './constants';
@@ -39,6 +39,18 @@ export const nextAuthApp = NextAuth({
     strategy: 'jwt',
     maxAge: sessionMaxAge,
     updateAge: sessionUpdateAge,
+  },
+  useSecureCookies: !isDev,
+  cookies: {
+    pkceCodeVerifier: {
+      name: 'next-auth.pkce.code_verifier',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: !isDev,
+      },
+    },
   },
   pages: {
     // @see https://next-auth.js.org/configuration/pages
@@ -90,7 +102,7 @@ export const nextAuthApp = NextAuth({
 
     async session(params) {
       const { token, session } = params;
-      const user = session.user as unknown as TExtendedUser;
+      const user = session.user;
       if (user) {
         if (token.sub) {
           user.id = token.sub;
@@ -101,7 +113,7 @@ export const nextAuthApp = NextAuth({
         }
         if (token.role) {
           // @see JWT type extension in `@types/next-auth.d.ts`
-          user.role = token.role as UserRole;
+          user.role = token.role as UserRoleType;
         }
         user.name = token.name || null;
         user.image = token.picture || null;
@@ -130,7 +142,7 @@ export const nextAuthApp = NextAuth({
       token.name = dbUser.name;
       token.email = dbUser.email;
       token.picture = dbUser.image;
-      token.role = dbUser.role as UserRole;
+      token.role = dbUser.role as UserRoleType;
       return token;
     },
   } satisfies AuthConfig['callbacks'],

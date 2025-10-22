@@ -37,6 +37,7 @@ export function EditAnswerFormFields(props: TEditAnswerFormFieldsProps) {
   const { className, form } = props;
   // Create unique keys for labels
   const textKey = React.useId();
+  const explanationKey = React.useId();
   const isCorrectKey = React.useId();
   const isGeneratedKey = React.useId();
   return (
@@ -59,6 +60,28 @@ export function EditAnswerFormFields(props: TEditAnswerFormFieldsProps) {
               </FormControl>
               <FormHint>
                 An answer text. <MarkdownHint />
+              </FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="explanation"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={explanationKey}>Explanation</Label>
+              <FormControl>
+                <Textarea
+                  id={explanationKey}
+                  className="flex-1"
+                  placeholder="Optional explanation for the answer"
+                  rows={5}
+                  {...field}
+                />
+              </FormControl>
+              <FormHint>
+                Optional explanation for why this answer is correct or incorrect. <MarkdownHint />
               </FormHint>
               <FormMessage />
             </FormItem>

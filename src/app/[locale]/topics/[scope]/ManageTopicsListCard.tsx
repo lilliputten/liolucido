@@ -33,7 +33,7 @@ import { isDev } from '@/constants';
 import { TopicsManageScopeIds, topicsNamespaces } from '@/contexts/TopicsContext';
 import { deleteTopics } from '@/features/topics/actions';
 import { TTopic, TTopicId } from '@/features/topics/types';
-import { useAvailableTopicsByScope, useGoBack, useSessionUser } from '@/hooks';
+import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 const saveScrollHash = getRandomHashString();
@@ -91,8 +91,8 @@ function TopicTableHeader({
         <TableHead id="no" className="truncate text-right max-lg:hidden">
           No
         </TableHead>
-        {isAdminMode && isDev && (
-          <TableHead id="topicId" className="truncate max-lg:hidden">
+        {isDev && (
+          <TableHead id="topicId" className="truncate max-xl:hidden">
             ID
           </TableHead>
         )}
@@ -104,13 +104,13 @@ function TopicTableHeader({
         </TableHead>
         {isAdminMode && (
           <TableHead id="topicUser" className="truncate max-lg:hidden">
-            User
+            Author
           </TableHead>
         )}
-        <TableHead id="language" className="truncate max-lg:hidden">
+        <TableHead id="language" className="truncate max-xl:hidden">
           Language
         </TableHead>
-        <TableHead id="keywords" className="truncate max-lg:hidden">
+        <TableHead id="keywords" className="truncate max-xl:hidden">
           Keywords
         </TableHead>
       </TableRow>
@@ -160,19 +160,22 @@ function TopicTableRow(props: TTopicTableRowProps) {
       >
         <Checkbox checked={isSelected} className="block" aria-label="Select topic" />
       </TableCell>
-      <TableCell id="no" className="max-w-[1em] truncate text-right opacity-50 max-lg:hidden">
+      <TableCell id="no" className="truncate text-right opacity-50 max-lg:hidden">
         <div className="truncate">{idx + 1}</div>
       </TableCell>
-      {isAdminMode && isDev && (
-        <TableCell id="topicId" className="max-w-[8em] truncate max-lg:hidden">
-          <div className="truncate">
+      {isDev && (
+        <TableCell id="topicId" className="max-w-6 truncate max-xl:hidden" title={id}>
+          <div className="truncate opacity-50">
             <span className="mr-[2px] opacity-30">#</span>
             {id}
           </div>
         </TableCell>
       )}
-      <TableCell id="name" className="max-w-[8em] truncate">
-        <Link className="truncate text-lg font-medium hover:underline" href={`${routePath}/${id}`}>
+      <TableCell id="name" className="max-w-24 truncate">
+        <Link
+          className="text-ellipsis whitespace-normal hover:underline"
+          href={`${routePath}/${id}`}
+        >
           {truncateString(name, 40)}
         </Link>
       </TableCell>
@@ -187,17 +190,21 @@ function TopicTableRow(props: TTopicTableRowProps) {
       </TableCell>
       {isAdminMode && (
         <TableCell id="topicUser" className="max-w-[8em] truncate max-lg:hidden">
-          <div className="truncate" title={topicUser?.name || undefined}>
-            {topicUser?.name || <Skeleton className="h-[2em] w-[8em] rounded-sm" />}
-          </div>
+          {topicUser ? (
+            <div className="truncate" title={topicUser?.name || undefined}>
+              {topicUser?.name}
+            </div>
+          ) : (
+            <Skeleton className="h-[2em] w-full rounded-sm" />
+          )}
         </TableCell>
       )}
-      <TableCell id="language" className="max-w-[8em] truncate max-lg:hidden">
+      <TableCell id="language" className="max-w-[8em] truncate max-xl:hidden">
         <div className="truncate">
           {[langName, langCode && `(${langCode})`].filter(Boolean).join(' ')}
         </div>
       </TableCell>
-      <TableCell id="keywords" className="max-w-[8em] truncate max-lg:hidden">
+      <TableCell id="keywords" className="max-w-[8em] truncate max-xl:hidden">
         <div className="truncate">{keywords}</div>
       </TableCell>
       <TableCell className="text-right">
@@ -251,8 +258,7 @@ export function ManageTopicsListCardContent(props: TManageTopicsListCardContentP
     setSelectedTopics,
   } = props;
   const { manageScope } = useManageTopicsStore();
-  const user = useSessionUser();
-  const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS || user?.role === 'ADMIN';
+  const isAdminMode = manageScope === TopicsManageScopeIds.ALL_TOPICS; // || user?.role === 'ADMIN';
   const {
     isLoading,
     hasTopics,
@@ -302,7 +308,7 @@ export function ManageTopicsListCardContent(props: TManageTopicsListCardContentP
     return (
       <PageError
         className={cn(
-          isDev && '__ManageTopicsListWrapper_Error', // DEBUG
+          isDev && '__ManageTopicsListCard_Error', // DEBUG
         )}
         error={error || 'Error loading available topics data'}
         reset={refetch}
@@ -314,7 +320,10 @@ export function ManageTopicsListCardContent(props: TManageTopicsListCardContentP
   if (!hasTopics) {
     return (
       <PageEmpty
-        className="size-full flex-1"
+        className={cn(
+          isDev && '__ManageTopicsListCard_PageEmpty', // DEBUG
+          'mx-6 flex-1',
+        )}
         // onButtonClick={handleAddTopic}
         // buttonTitle="Add Topic"
         icon={Icons.Topics}
@@ -337,53 +346,60 @@ export function ManageTopicsListCardContent(props: TManageTopicsListCardContentP
   }
 
   return (
-    <ScrollAreaInfinite
-      effectorData={allTopics}
-      fetchNextPage={fetchNextPage}
-      isLoading={isLoading}
-      isFetchingNextPage={isFetchingNextPage}
-      hasNextPage={hasNextPage}
-      saveScrollKey="ManageTopicsListCard"
-      saveScrollHash={saveScrollHash}
+    <Card
       className={cn(
-        isDev && '__ManageTopicsListCard_Scroll', // DEBUG
-        'relative flex flex-1 flex-col overflow-hidden',
-        className,
-      )}
-      viewportClassName={cn(
-        isDev && '__ManageTopicsListCard_Scroll_Viewport', // DEBUG
-        'px-6',
-      )}
-      containerClassName={cn(
-        isDev && '__ManageTopicsListCard_Scroll_Container', // DEBUG
-        'relative w-full flex flex-col gap-4',
+        isDev && '__ManageTopicsListCard_CardContent', // DEBUG
+        'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
       )}
     >
-      <Table>
-        <TopicTableHeader
-          isAdminMode={isAdminMode}
-          selectedTopics={selectedTopics}
-          allTopics={allTopics}
-          toggleAll={toggleAll}
-        />
-        <TableBody>
-          {allTopics.map((topic, idx) => (
-            <TopicTableRow
-              key={topic.id}
-              idx={idx}
-              topic={topic}
-              handleDeleteTopic={handleDeleteTopic}
-              handleEditTopic={handleEditTopic}
-              handleEditQuestions={handleEditQuestions}
-              isAdminMode={isAdminMode}
-              cachedUsers={cachedUsers}
-              isSelected={selectedTopics.has(topic.id)}
-              toggleSelected={toggleSelected}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </ScrollAreaInfinite>
+      <ScrollAreaInfinite
+        effectorData={allTopics}
+        fetchNextPage={fetchNextPage}
+        isLoading={isLoading}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        saveScrollKey="ManageTopicsListCard"
+        saveScrollHash={saveScrollHash}
+        className={cn(
+          isDev && '__ManageTopicsListCard_Scroll', // DEBUG
+          'relative flex flex-1 flex-col overflow-hidden',
+          className,
+        )}
+        viewportClassName={cn(
+          isDev && '__ManageTopicsListCard_Scroll_Viewport', // DEBUG
+          'px-6',
+        )}
+        containerClassName={cn(
+          isDev && '__ManageTopicsListCard_Scroll_Container', // DEBUG
+          'relative w-full flex flex-col gap-4',
+        )}
+      >
+        <Table>
+          <TopicTableHeader
+            isAdminMode={isAdminMode}
+            selectedTopics={selectedTopics}
+            allTopics={allTopics}
+            toggleAll={toggleAll}
+          />
+          <TableBody>
+            {allTopics.map((topic, idx) => (
+              <TopicTableRow
+                key={topic.id}
+                idx={idx}
+                topic={topic}
+                handleDeleteTopic={handleDeleteTopic}
+                handleEditTopic={handleEditTopic}
+                handleEditQuestions={handleEditQuestions}
+                isAdminMode={isAdminMode}
+                cachedUsers={cachedUsers}
+                isSelected={selectedTopics.has(topic.id)}
+                toggleSelected={toggleSelected}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </ScrollAreaInfinite>
+    </Card>
   );
 }
 
@@ -512,23 +528,16 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
         // breadcrumbs={breadcrumbs}
         actions={actions}
       />
-      <Card
+      <ManageTopicsListCardContent
+        {...props}
         className={cn(
-          isDev && '__ManageTopicsListCard_Card', // DEBUG
-          'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
+          isDev && '__ManageTopicsListCard_CardContent', // DEBUG
+          'flex flex-row flex-wrap items-start',
         )}
-      >
-        <ManageTopicsListCardContent
-          {...props}
-          className={cn(
-            isDev && '__ManageTopicsListCard_CardContent', // DEBUG
-            'flex flex-row flex-wrap items-start',
-          )}
-          goBack={goBack}
-          selectedTopics={selectedTopics}
-          setSelectedTopics={setSelectedTopics}
-        />
-      </Card>
+        goBack={goBack}
+        selectedTopics={selectedTopics}
+        setSelectedTopics={setSelectedTopics}
+      />
       <ConfirmModal
         dialogTitle="Confirm delete topics"
         confirmButtonVariant="destructive"

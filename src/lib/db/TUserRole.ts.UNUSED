@@ -1,0 +1,3 @@
+import { UserRoleSchema, UserRoleType } from '@/generated/prisma';
+
+export const userRolesList = UserRoleSchema.options;

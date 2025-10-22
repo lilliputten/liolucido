@@ -73,6 +73,7 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
           details,
           error,
           queryProps,
+          topicId,
         });
         // eslint-disable-next-line no-debugger
         debugger;

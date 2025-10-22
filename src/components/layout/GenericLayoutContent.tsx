@@ -4,7 +4,7 @@ import React from 'react';
 import { ExtendedUser } from '@/@types/next-auth';
 
 import { NavItemBase } from '@/lib/types/site/NavItem';
-import { sidebarLinks } from '@/config/dashboard';
+import { dashboardLinks } from '@/config/dashboard';
 import { TPropsWithChildren } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { NavBar } from '@/components/layout/NavBar';
@@ -36,7 +36,7 @@ export function GenericLayoutContent(props: TGenericLayoutContentProps) {
 
   const checkNavItem = checkIfLinkIsAllowedForUser.bind(undefined, user);
 
-  const filteredLinks = sidebarLinks.filter(checkNavItem).map((section) => ({
+  const filteredLinks = dashboardLinks.filter(checkNavItem).map((section) => ({
     ...section,
     items: section.items.filter(checkNavItem),
   }));

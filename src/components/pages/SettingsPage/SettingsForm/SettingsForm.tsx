@@ -13,7 +13,7 @@ import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { settingsSchema, TSettings } from '@/features/settings/types';
 import { selectTopicEventName, TSelectTopicLanguageData } from '@/features/topics/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
+import { TUserId } from '@/features/users/types/TUser';
 
 import { SettingsFormFields } from './SettingsFormFields';
 import { TSettingsFormData } from './types';
@@ -22,7 +22,7 @@ interface TSettingsFormProps {
   settings: TSettings;
   form: UseFormReturn<TSettingsFormData>;
   className?: string;
-  userId?: TDefinedUserId;
+  userId?: TUserId;
 }
 
 export function SettingsForm(props: TSettingsFormProps) {

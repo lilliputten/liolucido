@@ -2,10 +2,9 @@ import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
 import { welcomeRoute } from '@/config/routesConfig';
-import { getCurrentUser } from '@/lib/session';
+import { isLoggedUser } from '@/lib/session';
 import { PageError } from '@/components/shared/PageError';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
-import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 type TAwaitedProps = TAwaitedLocaleProps<{
@@ -16,6 +15,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{
 
 type TManageTopicQuestionAnswersLayoutProps = TAwaitedProps & {
   children: React.ReactNode;
+  generateAnswersModal: React.ReactNode; // slot from @generateAnswersModal
   addAnswerModal: React.ReactNode; // slot from @addAnswerModal
   deleteAnswerModal: React.ReactNode; // slot from @deleteAnswerModal
 };
@@ -25,6 +25,7 @@ export default async function ManageTopicQuestionAnswersLayout(
 ) {
   const {
     children,
+    generateAnswersModal, // slot from @generateAnswersModal
     addAnswerModal, // slot from @addAnswerModal
     deleteAnswerModal, // slot from @deleteAnswerModal
     params,
@@ -40,11 +41,8 @@ export default async function ManageTopicQuestionAnswersLayout(
     return <PageError error={'No question ID specified.'} />;
   }
 
-  const user = await getCurrentUser();
-  const userId = user?.id;
-  // TODO: Check also if the user really exists in the database>
-  const isValidUser = !!userId && (await checkIfUserExists(userId));
-  if (!isValidUser) {
+  const isLogged = await isLoggedUser();
+  if (!isLogged) {
     redirect(welcomeRoute);
   }
 
@@ -54,6 +52,7 @@ export default async function ManageTopicQuestionAnswersLayout(
   return (
     <>
       {children}
+      {generateAnswersModal}
       {addAnswerModal}
       {deleteAnswerModal}
     </>

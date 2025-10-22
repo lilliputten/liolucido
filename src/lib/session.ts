@@ -2,27 +2,36 @@
 'use server';
 
 import { cache } from 'react';
-import { ExtendedUser } from '@/@types/next-auth';
 
 import { auth } from '@/auth';
-import { checkIfUserExists } from '@/features/users/actions/checkIfUserExists';
+import {
+  checkIfUserExists,
+  TCheckIfUserExistsParams,
+} from '@/features/users/helpers/checkIfUserExists';
+import { TUser } from '@/features/users/types/TUser';
 
-// import { TExtendedUser } from '@/features/users/types/TUser';
+type TParams = Omit<TCheckIfUserExistsParams, 'id'>;
 
-/** Server: Get user data from auth data.
- * Use `useSessionUser` fro client components.
- */
-export const getCurrentUser = cache<() => Promise<ExtendedUser | undefined>>(async () => {
-  const session = await auth();
-  const user = session?.user;
-  if (!user) {
-    return undefined;
-  }
-  const userId = user.id;
-  // TODO: Check also if the user really exists in the database>
-  const isValidUser = !!userId && (await checkIfUserExists(userId));
-  if (!isValidUser) {
-    return undefined;
-  }
-  return user;
-});
+export const getCurrentUser = cache<(params?: TParams) => Promise<TUser | undefined>>(
+  async (params: TParams = {}) => {
+    const session = await auth();
+    const user = session?.user;
+    const id = user?.id;
+    if (!id) {
+      return undefined;
+    }
+    // TODO: Check also if the user really exists in the database>
+    return await checkIfUserExists({ ...params, id });
+  },
+);
+
+export async function isLoggedUser() {
+  const user = await getCurrentUser();
+  return !!user;
+}
+
+export async function isAdminUser() {
+  const user = await getCurrentUser();
+  const isAdmin = user?.role === 'ADMIN';
+  return isAdmin;
+}

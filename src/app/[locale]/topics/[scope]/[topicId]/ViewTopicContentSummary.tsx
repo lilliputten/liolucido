@@ -87,14 +87,14 @@ export function ViewTopicContentSummary({ availableTopicQuery }: TProps) {
             {topic.isPublic ? 'Public' : 'Private'}
           </Badge>
           {topic.langName && (
-            <Badge variant="outline" className="flex gap-2" title="Language">
+            <Badge variant="outline" className="flex items-center gap-1 px-2 py-1" title="Language">
               <Icons.Languages className="size-4 opacity-50" />
               {topic.langName} {topic.langCode && `(${topic.langCode})`}
             </Badge>
           )}
           {topic.answersCountRandom && topic.answersCountMin && topic.answersCountMax && (
-            <Badge variant="secondary">
-              <Icons.Hash className="mr-1 size-3 opacity-50" />
+            <Badge variant="secondary" className="flex items-center gap-1 px-2 py-1">
+              <Icons.Hash className="size-4 opacity-50" />
               Random Answers: {topic.answersCountMin}-{topic.answersCountMax}
             </Badge>
           )}

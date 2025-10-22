@@ -140,19 +140,13 @@ export function invalidateKeysByPrefixes(
   );
   queryClient.invalidateQueries({
     predicate: (query) => {
+      // const queryHash = stringifyQueryKey(query.queryKey); // NOTE: An alternate way to get a hash
       const { queryHash } = query;
       if (exceptHashes && exceptHashes.includes(queryHash)) {
         // This query is protected
         return false;
       }
-      // const queryHash = stringifyQueryKey(query.queryKey);
       const invalidate = queryPrefixes.find((prefix) => queryHash.startsWith(prefix));
-      console.log('[react-query:invalidateKeysByPrefixes:invalidateQueries]', !!invalidate, {
-        // invalidate,
-        queryHash,
-        query,
-        queryPrefixes,
-      });
       return !!invalidate;
     },
   });

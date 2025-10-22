@@ -1,0 +1,14 @@
+import { TAITextQueryData } from '../types/GenerateAnswersTypes';
+import { TPlainMessage } from '../types/messages';
+import { sendAiTextQuery } from './sendAiTextQuery';
+
+export async function generateQuestionAnswers(
+  messages: TPlainMessage[],
+  debugData?: boolean,
+): Promise<TAITextQueryData> {
+  const queryData = await sendAiTextQuery(messages, {
+    // clientType,
+    debugData,
+  });
+  return queryData;
+}

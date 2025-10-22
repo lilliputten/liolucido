@@ -52,9 +52,7 @@ export function DashboardHeader(props: DashboardHeaderProps) {
             'flex flex-1 flex-col gap-1 truncate',
           )}
         >
-          {heading && (
-            <h1 className="truncate font-heading text-2xl font-semibold text-theme">{heading}</h1>
-          )}
+          {heading && <h1 className="truncate font-heading text-2xl text-theme">{heading}</h1>}
           {text && <div className="truncate text-base opacity-50">{text}</div>}
           {children}
         </div>

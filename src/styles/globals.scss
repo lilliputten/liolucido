@@ -191,6 +191,15 @@
   pre {
     font-size: 0.75rem;
   }
+
+  .MarkdownText {
+    code {
+      &:before,
+      &:after {
+        display: none;
+      }
+    }
+  }
 }
 
 @layer utilities {

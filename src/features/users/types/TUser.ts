@@ -1,21 +1,7 @@
-// import { User as SessionUser } from 'next-auth';
+import { ExtendedUser } from '@/@types/next-auth';
 
-import { User } from '@/generated/prisma';
+// import { User as PrismaUser } from '@/generated/prisma';
 
-export type TUser = User;
-export type TSessionUser = TUser; // SessionUser;
+export type TUser = ExtendedUser;
 
-// export type TOptionalUserId = User['id'];
-// export type TOptionalUserId = NonNullable<TOptionalUserId>;
-export type TDefinedUserId = TUser['id'];
-export type TOptionalUserId = TDefinedUserId | null;
-
-// export interface TExtendedUser extends TSessionUser {
-export type TExtendedUser = {
-  // @see src/@types/next-auth.d.ts
-  role: UserRole;
-  // provider?: string; // XXX: In addition to Account?
-  // providerAccountId?: string; // XXX: In addition to Account?
-} & TSessionUser;
-
-export type TOptionalExtendedUser = TExtendedUser | undefined;
+export type TUserId = TUser['id'];

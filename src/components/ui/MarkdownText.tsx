@@ -14,9 +14,11 @@ interface MarkdownProps {
 }
 
 export function MarkdownText({ children, className, omitLinks }: MarkdownProps) {
+  // @see https://github.com/remarkjs/react-markdown
   return (
     <div
       className={cn(
+        'MarkdownText',
         'prose prose-sm max-w-none',
         'prose-headings:font-semibold prose-headings:text-foreground',
         'prose-p:leading-relaxed prose-p:text-foreground',
@@ -52,6 +54,17 @@ export function MarkdownText({ children, className, omitLinks }: MarkdownProps) 
               </a>
             );
           },
+          /* // UNUSED: code
+           * code: (props) => {
+           *   const { children, ...rest } = props;
+           *   console.log('[MarkdownText:DEBUG] props', { props });
+           *   return (
+           *     <code className="rounded bg-muted px-1 py-0.5 text-sm" {...rest}>
+           *       {children}
+           *     </code>
+           *   );
+           * },
+           */
         }}
       >
         {children}

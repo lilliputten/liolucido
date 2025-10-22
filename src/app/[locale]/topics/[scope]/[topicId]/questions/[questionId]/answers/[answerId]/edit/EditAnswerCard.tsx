@@ -23,6 +23,7 @@ import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';
 import { useAnswersBreadcrumbsItems } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer } from '@/features/answers/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
   useAvailableAnswerById,
   useAvailableAnswers,
@@ -81,18 +82,6 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(answersListRoutePath);
 
-  // Add Answer Modal
-  const handleAddAnswer = React.useCallback(() => {
-    const url = `${answersListRoutePath}/add`;
-    goToTheRoute(url);
-  }, [answersListRoutePath, goToTheRoute]);
-
-  // Delete Answer Modal
-  const handleDeleteAnswer = React.useCallback(() => {
-    const url = `${answersListRoutePath}/delete?answerId=${answer.id}`;
-    goToTheRoute(url);
-  }, [answer.id, answersListRoutePath, goToTheRoute]);
-
   // Watch if the answer has been deleted
   React.useEffect(() => {
     const handleAnswerDeleted = (event: CustomEvent<TAnswer>) => {
@@ -121,6 +110,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     () =>
       z.object({
         text: z.string().min(minTextLength).max(maxTextLength),
+        explanation: z.string().optional(),
         isCorrect: z.boolean().optional(),
         isGenerated: z.boolean().optional(),
       }),
@@ -130,6 +120,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
   const defaultValues: TFormData = React.useMemo(
     () => ({
       text: answer.text || '',
+      explanation: answer.explanation || '',
       isCorrect: answer.isCorrect || false,
       isGenerated: answer.isGenerated || false,
     }),
@@ -154,6 +145,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       const editedAnswer: TAnswer = {
         ...answer,
         text: formData.text,
+        explanation: formData.explanation,
         isCorrect: formData.isCorrect,
         isGenerated: formData.isGenerated,
       };
@@ -193,6 +185,8 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     },
     [answer, queryClient, availableAnswersQuery, form],
   );
+
+  const ifGenerationAllowed = useIfGenerationAllowed();
 
   const handleReload = React.useCallback(() => {
     availableAnswerQuery
@@ -249,12 +243,38 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         onClick: handleReload,
       },
       {
+        id: 'Add New Question',
+        content: 'Add New Question',
+        variant: 'success',
+        icon: Icons.Add,
+        visibleFor: 'xl',
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),
+      },
+      {
+        id: 'Generate Questions',
+        content: 'Generate Questions',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'xl',
+        disabled: !ifGenerationAllowed,
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
+      },
+      {
         id: 'Add New Answer',
         content: 'Add New Answer',
         variant: 'success',
         icon: Icons.Add,
         visibleFor: 'xl',
-        onClick: handleAddAnswer,
+        onClick: () => goToTheRoute(`${answersListRoutePath}/add`),
+      },
+      {
+        id: 'Generate Answers',
+        content: 'Generate Answers',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'xl',
+        disabled: !ifGenerationAllowed,
+        onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
       {
         id: 'Reset',
@@ -271,19 +291,22 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         variant: 'destructive',
         icon: Icons.Trash,
         // visibleFor: 'xl',
-        onClick: handleDeleteAnswer,
+        onClick: () => goToTheRoute(`${answersListRoutePath}/delete?answerId=${answer.id}`),
       },
     ],
     [
       goBack,
-      form,
-      availableAnswerQuery,
-      handleReload,
-      handleAddAnswer,
-      handleDeleteAnswer,
-      isPending,
       isSubmitEnabled,
+      isPending,
+      form,
       handleFormSubmit,
+      availableAnswerQuery.isRefetching,
+      handleReload,
+      ifGenerationAllowed,
+      goToTheRoute,
+      answersListRoutePath,
+      questionsListRoutePath,
+      answer.id,
     ],
   );
 

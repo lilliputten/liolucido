@@ -4,11 +4,10 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
 import { TAvailableQuestionsResultsQueryData } from '@/lib/types/react-query';
-import { handleApiResponse } from '@/lib/api';
-import { useInvalidateReactQueryKeys } from '@/lib/data';
-import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
+import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
+import { getAvailableQuestionById } from '@/features/questions/actions';
 import { TAvailableQuestion } from '@/features/questions/types';
 
 interface TUseAvailableQuestionByIdProps extends TGetAvailableQuestionByIdParams {
@@ -21,7 +20,6 @@ const staleTime = minuteMs * 10;
 /** Get question data from cached `useAvailableQuestions` query data or fetch it now */
 export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) {
   const queryClient = useQueryClient();
-  const invalidateKeys = useInvalidateReactQueryKeys();
   const { availableQuestionsQueryKey, id: questionId, ...queryProps } = props;
 
   /* Use partrial query url as a part of the query key */
@@ -46,27 +44,26 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
 
   // Only fetch if the question is not cached
   const query = useQuery<TAvailableQuestion>({
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey,
     staleTime, // Data validity period
     queryFn: async (_params) => {
-      const url = appendUrlQueries(`/api/questions/${questionId}`, queryUrlHash);
+      // const url = appendUrlQueries(`/api/questions/${questionId}`, queryUrlHash);
       try {
-        // OPTION 1: Using route api fetch
-        const result = await handleApiResponse<TAvailableQuestion>(fetch(url), {
-          onInvalidateKeys: invalidateKeys,
-          debugDetails: {
-            initiator: 'useAvailableQuestionById',
-            action: 'getAvailableQuestionById',
-            url,
-            queryProps,
-            questionId,
-          },
-        });
-        return result.data as TAvailableQuestion;
-        /* // OPTION 2: Using server function
-         * return await getAvailableQuestionById({ id: questionId, ...queryProps });
+        /* // OPTION 1: Using route api fetch
+         * const result = await handleApiResponse<TAvailableQuestion>(fetch(url), {
+         *   onInvalidateKeys: invalidateKeys,
+         *   debugDetails: {
+         *     initiator: 'useAvailableQuestionById',
+         *     action: 'getAvailableQuestionById',
+         *     url,
+         *     queryProps,
+         *     questionId,
+         *   },
+         * });
+         * return result.data as TAvailableQuestion;
          */
+        // OPTION 2: Using server function
+        return await getAvailableQuestionById({ id: questionId, ...queryProps });
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
         const message = 'Cannot load question data';
@@ -74,7 +71,9 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
         console.error('[useAvailableQuestionById:queryFn]', message, {
           details,
           error,
-          url,
+          questionId,
+          queryProps,
+          // url,
         });
         // eslint-disable-next-line no-debugger
         debugger;
@@ -82,7 +81,7 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
         throw error;
       }
     },
-    enabled: !isCached, // Disable query if already cached
+    enabled: !!questionId && !isCached, // Disable query if no ID or already cached
   });
 
   return {

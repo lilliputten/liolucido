@@ -34,6 +34,7 @@ export const {
   EyeOff,
   FileQuestion,
   Flag,
+  FlaskConical,
   FolderKanban,
   Hand,
   Hash,
@@ -67,6 +68,7 @@ export const {
   Tags,
   Trash,
   User,
+  WandSparkles,
   XIcon,
 } = icons;
 

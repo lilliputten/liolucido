@@ -14,13 +14,15 @@ interface TTopicsListProps {
   topicId: TTopicId;
   questionId: TQuestionId;
   showAddModal?: boolean;
+  showGenerateModal?: boolean;
   deleteAnswerId?: TAnswerId;
   editAnswerId?: TAnswerId;
 }
 
 export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListProps) {
   const { manageScope } = useManageTopicsStore();
-  const { topicId, questionId, showAddModal, deleteAnswerId, editAnswerId } = props;
+  const { topicId, questionId, showGenerateModal, showAddModal, deleteAnswerId, editAnswerId } =
+    props;
 
   // Calculate paths...
   const topicsListRoutePath = `/topics/${manageScope}`;
@@ -32,10 +34,19 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
 
   const goToTheRoute = useGoToTheRoute();
 
+  // GenerateAnswers Modal
+  const openGenerateAnswersModal = React.useCallback(() => {
+    goToTheRoute(`${answersListRoutePath}/generate`);
+  }, [answersListRoutePath, goToTheRoute]);
+  React.useEffect(() => {
+    if (showGenerateModal) {
+      openGenerateAnswersModal();
+    }
+  }, [showGenerateModal, openGenerateAnswersModal]);
+
   // Add Answer Modal
   const openAddAnswerModal = React.useCallback(() => {
-    const url = `${answersListRoutePath}/add`;
-    goToTheRoute(url);
+    goToTheRoute(`${answersListRoutePath}/add`);
   }, [answersListRoutePath, goToTheRoute]);
   React.useEffect(() => {
     if (showAddModal) {
@@ -46,8 +57,7 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
   // Delete Answer Modal
   const openDeleteAnswerModal = React.useCallback(
     (answerId: TAnswerId) => {
-      const url = `${answersListRoutePath}/delete?answerId=${answerId}`;
-      goToTheRoute(url);
+      goToTheRoute(`${answersListRoutePath}/delete?answerId=${answerId}`);
     },
     [answersListRoutePath, goToTheRoute],
   );
@@ -60,8 +70,7 @@ export function ManageTopicQuestionAnswersPageModalsWrapper(props: TTopicsListPr
   // Edit Answer Card
   const openEditAnswerCard = React.useCallback(
     (answerId: TAnswerId) => {
-      const url = `${answersListRoutePath}/${answerId}/edit`;
-      goToTheRoute(url);
+      goToTheRoute(`${answersListRoutePath}/${answerId}/edit`);
     },
     [answersListRoutePath, goToTheRoute],
   );

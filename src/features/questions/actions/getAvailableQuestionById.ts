@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db';
 import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
 import { isDev } from '@/constants';
 
-import { IncludedTopicSelect, TAvailableQuestion } from '../types';
+import { TAvailableQuestion } from '../types';
 
 interface TOptions {
   noDebug?: boolean;
@@ -38,7 +38,7 @@ export async function getAvailableQuestionById(params: TGetAvailableQuestionById
       _count: { select: { answers: includeAnswersCount } },
     };
     if (includeTopic) {
-      include.topic = { select: IncludedTopicSelect };
+      include.topic = true; // { select: IncludedTopicSelect };
     }
     if (includeAnswers) {
       include.answers = true;
