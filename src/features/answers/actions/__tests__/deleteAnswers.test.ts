@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';
 import { getCurrentUser } from '@/lib/session';
-import { TExtendedUser } from '@/features/users/types/TUser';
+import { TUser } from '@/features/users/types/TUser';
 
 import { deleteAnswers } from '../deleteAnswers';
 
@@ -62,7 +62,7 @@ describe('deleteAnswers', () => {
       createdIds.push({ type: 'answer', id: answer1.id });
       createdIds.push({ type: 'answer', id: answer2.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       const result = await deleteAnswers([answer1.id, answer2.id]);
       expect(result.count).toBe(2);
@@ -109,7 +109,7 @@ describe('deleteAnswers', () => {
       createdIds.push({ type: 'answer', id: answer1.id });
       createdIds.push({ type: 'answer', id: answer2.id });
 
-      mockedGetCurrentUser.mockResolvedValue(admin as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(admin as TUser);
 
       const result = await deleteAnswers([answer1.id, answer2.id]);
       expect(result.count).toBe(2);
@@ -132,7 +132,7 @@ describe('deleteAnswers', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       await expect(deleteAnswers(['nonexistent1', 'nonexistent2'])).rejects.toThrow(
         'Some answers not found',
@@ -170,7 +170,7 @@ describe('deleteAnswers', () => {
       });
       createdIds.push({ type: 'answer', id: answer.id });
 
-      mockedGetCurrentUser.mockResolvedValue(otherUser as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(otherUser as TUser);
 
       await expect(deleteAnswers([answer.id])).rejects.toThrow(
         'Current user is not allowed to delete the answer',
@@ -189,7 +189,7 @@ describe('deleteAnswers', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       const result = await deleteAnswers([]);
       expect(result.count).toBe(0);

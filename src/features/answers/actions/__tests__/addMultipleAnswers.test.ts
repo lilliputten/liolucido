@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';
 import { getCurrentUser } from '@/lib/session';
-import { TExtendedUser } from '@/features/users/types/TUser';
+import { TUser } from '@/features/users/types/TUser';
 
 import { addMultipleAnswers } from '../addMultipleAnswers';
 
@@ -60,7 +60,7 @@ describe('addMultipleAnswers', () => {
       });
       createdIds.push({ type: 'question', id: question.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user);
 
       const newAnswers = [
         { text: `Answer1-${dateTag}`, questionId: question.id },
@@ -104,7 +104,7 @@ describe('addMultipleAnswers', () => {
       });
       createdIds.push({ type: 'question', id: question.id });
 
-      mockedGetCurrentUser.mockResolvedValue(admin as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(admin as TUser);
 
       const newAnswers = [
         { text: `Answer1-${dateTag}`, questionId: question.id },
@@ -139,7 +139,7 @@ describe('addMultipleAnswers', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       await expect(addMultipleAnswers([])).rejects.toThrow('No answers provided');
     } finally {
@@ -156,7 +156,7 @@ describe('addMultipleAnswers', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       await expect(addMultipleAnswers([{ text: '', questionId: 'question1' }])).rejects.toThrow(
         'Not specified answer text',
@@ -175,7 +175,7 @@ describe('addMultipleAnswers', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       await expect(addMultipleAnswers([{ text: 'Answer', questionId: '' }])).rejects.toThrow(
         'Not specified answers owner question',
@@ -194,7 +194,7 @@ describe('addMultipleAnswers', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       await expect(
         addMultipleAnswers([{ text: 'Answer', questionId: 'nonexistent' }]),
@@ -227,7 +227,7 @@ describe('addMultipleAnswers', () => {
       });
       createdIds.push({ type: 'question', id: question.id });
 
-      mockedGetCurrentUser.mockResolvedValue(otherUser as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(otherUser as TUser);
 
       await expect(
         addMultipleAnswers([{ text: 'Answer', questionId: question.id }]),

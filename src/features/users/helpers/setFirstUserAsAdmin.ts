@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/db';
-import { UserRoles } from '@/lib/db/TUserRole';
 import { DatabaseError } from '@/lib/errors';
 import { getErrorText } from '@/lib/helpers';
 
@@ -14,7 +13,7 @@ export async function setFirstUserAsAdmin(userId: string): Promise<boolean> {
     if (otherUserCount === 0) {
       await prisma.user.update({
         where: { id: userId },
-        data: { role: UserRoles.ADMIN },
+        data: { role: 'ADMIN' },
       });
       return true;
     }

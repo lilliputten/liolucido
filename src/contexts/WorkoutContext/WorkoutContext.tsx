@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { TAvailableTopic } from '@/features/topics/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
+import { TUserId } from '@/features/users/types/TUser';
 import { useWorkout } from '@/hooks';
 
 type TUseWorkout = ReturnType<typeof useWorkout>;
@@ -11,7 +11,7 @@ type TUseWorkout = ReturnType<typeof useWorkout>;
 const WorkoutContext = React.createContext<TUseWorkout | undefined>(undefined);
 
 interface WorkoutContextProviderProps {
-  userId?: TDefinedUserId;
+  userId?: TUserId;
   children: React.ReactNode;
   topic: TAvailableTopic;
   questionIds: string[];

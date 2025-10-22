@@ -2,9 +2,9 @@
 
 import { prisma } from '@/lib/db';
 
-import { TDefinedUserId } from '../types/TUser';
+import { TUserId } from '../types/TUser';
 
-export async function getUsersByIdsList(idsList: TDefinedUserId[]) {
+export async function getUsersByIdsList(idsList: TUserId[]) {
   try {
     const users = await prisma.user.findMany({ where: { id: { in: idsList } } });
     return users;

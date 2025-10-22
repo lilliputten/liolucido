@@ -4,11 +4,11 @@ import { prisma } from '@/lib/db';
 import { DatabaseError } from '@/lib/errors';
 import { getErrorText } from '@/lib/helpers/strings';
 
-import { TDefinedUserId } from '../types/TUser';
+import { TUserId } from '../types/TUser';
 
 export type TDeleteUserAction = typeof deleteUser;
 
-export async function deleteUser(userId: TDefinedUserId) {
+export async function deleteUser(userId: TUserId) {
   try {
     // NOTE: Related records will be deleted as they're cascaded
     const removedUser = await prisma.user.delete({

@@ -9,6 +9,7 @@ import { getErrorText } from '@/lib/helpers';
 import { cookieName, sessionMaxAge } from '@/auth/constants';
 import { verifyTelegramToken } from '@/auth/telegram/telegram-provider';
 import { isProd } from '@/config';
+import { TUser } from '@/features/users/types/TUser';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
       where: { id: { not: id } },
     });
 
-    const userData = {
+    const userData: Pick<TUser, 'name' | 'image' | 'role'> = {
       name,
       image,
       role: usersCount ? 'USER' : 'ADMIN',

@@ -1,10 +1,10 @@
 import { TRoutePath } from '@/config/routesConfig';
-import { TUserRole } from '@/lib/db/TUserRole';
 import { TGenericIcon } from '@/components/shared/IconTypes';
+import { UserRoleType } from '@/generated/prisma';
 
 export interface NavItemBase {
   titleId: string; // Id for i18n
-  authorizedOnly?: TUserRole | boolean;
+  authorizedOnly?: UserRoleType | boolean;
   icon?: TGenericIcon;
 }
 export interface NavItem extends NavItemBase {

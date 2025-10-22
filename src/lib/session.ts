@@ -7,14 +7,12 @@ import { auth } from '@/auth';
 import {
   checkIfUserExists,
   TCheckIfUserExistsParams,
-} from '@/features/users/actions/checkIfUserExists';
-import { TExtendedUser } from '@/features/users/types/TUser';
-
-import { UserRoles } from './db/TUserRole';
+} from '@/features/users/helpers/checkIfUserExists';
+import { TUser } from '@/features/users/types/TUser';
 
 type TParams = Omit<TCheckIfUserExistsParams, 'id'>;
 
-export const getCurrentUser = cache<(params?: TParams) => Promise<TExtendedUser | undefined>>(
+export const getCurrentUser = cache<(params?: TParams) => Promise<TUser | undefined>>(
   async (params: TParams = {}) => {
     const session = await auth();
     const user = session?.user;
@@ -34,6 +32,6 @@ export async function isLoggedUser() {
 
 export async function isAdminUser() {
   const user = await getCurrentUser();
-  const isAdmin = user?.role === UserRoles.ADMIN;
+  const isAdmin = user?.role === 'ADMIN';
   return isAdmin;
 }

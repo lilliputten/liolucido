@@ -7,7 +7,7 @@ import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys
 import { safeJsonParse } from '@/lib/helpers/json';
 import { isDev } from '@/constants';
 import { TTopic, TTopicId } from '@/features/topics/types';
-import { TDefinedUserId } from '@/features/users/types/TUser';
+import { TUserId } from '@/features/users/types/TUser';
 import { TWorkoutData } from '@/features/workouts/types';
 
 /** PUT=Update, POST=Create, DELETE=Delete */
@@ -24,7 +24,7 @@ const _shuffleQuestionsStr = (ids?: string[]) => {
 
 interface TMemo {
   topicId?: TTopicId;
-  userId?: TDefinedUserId;
+  userId?: TUserId;
   /** Previous workout */
   workout?: TWorkoutData | null;
   questionIds?: string[];
@@ -32,11 +32,7 @@ interface TMemo {
   // invalidateKeys?: ReturnType<typeof useInvalidateReactQueryKeys>;
 }
 
-export function useWorkout(
-  topic: TTopic,
-  questionIds: string[] = [],
-  userId: TDefinedUserId | undefined,
-) {
+export function useWorkout(topic: TTopic, questionIds: string[] = [], userId: TUserId | undefined) {
   const memo = React.useMemo<TMemo>(() => ({}), []);
   const topicId = (memo.topicId = topic.id);
   const [workout, setWorkout] = React.useState<TWorkoutData | null>(null);
@@ -49,7 +45,7 @@ export function useWorkout(
 
   /** Low-level load data function */
   const retrieveData = React.useCallback(
-    (topicId?: TTopicId, userId?: TDefinedUserId) => {
+    (topicId?: TTopicId, userId?: TUserId) => {
       return new Promise<TWorkoutData | null>((resolve, reject) => {
         if (!topicId) {
           return resolve(null);

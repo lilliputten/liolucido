@@ -1,5 +1,4 @@
 import { SidebarNavItem } from '@/lib/types/site/NavItem';
-import { UserRoles } from '@/lib/db/TUserRole';
 import * as Icons from '@/components/shared/Icons';
 
 import {
@@ -23,13 +22,13 @@ export const dashboardLinks: SidebarNavItem[] = [
     authorizedOnly: true,
     items: [
       { href: myTopicsRoute, icon: Icons.Topics, titleId: 'My Topics' },
-      { href: allTopicsRoute, icon: Icons.AllTopics, titleId: 'All Topics', authorizedOnly: UserRoles.ADMIN },
+      { href: allTopicsRoute, icon: Icons.AllTopics, titleId: 'All Topics', authorizedOnly: 'ADMIN' },
       // Add other data links?
     ],
   },
   {
     titleId: 'Administration',
-    authorizedOnly: UserRoles.ADMIN,
+    authorizedOnly: 'ADMIN',
     items: [
       { href: adminBotControlRoute, icon: Icons.FlaskConical, titleId: 'Bot Control' },
       { href: adminAiTestTextQueryRoute, icon: Icons.FlaskConical, titleId: 'Test AI Text Query' },
@@ -41,7 +40,7 @@ export const dashboardLinks: SidebarNavItem[] = [
       { href: availableTopicsRoute, icon: Icons.Library, titleId: 'Available Topics' },
       // { href: availableTopicsRoute, icon: Icons.Braces, titleId: 'Data' },
       { href: welcomeRoute, icon: Icons.Hand, titleId: 'Welcome' },
-      // { href: adminRoute, icon: Icons.Laptop, titleId: 'Admin Panel', authorizedOnly: UserRoles.ADMIN, disabled: true },
+      // { href: adminRoute, icon: Icons.Laptop, titleId: 'Admin Panel', authorizedOnly: 'ADMIN', disabled: true },
       // { href: dashboardRoute, icon: Icons.Dashboard, titleId: 'Dashboard', disabled: true },
       { href: chartsRoute, icon: Icons.LineChart, titleId: 'Charts', disabled: true, authorizedOnly: true },
     ],

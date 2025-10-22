@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { jestPrisma } from '@/lib/db/jestPrisma';
 import { formatDateTag } from '@/lib/helpers/dates';
 import { getCurrentUser } from '@/lib/session';
-import { TExtendedUser } from '@/features/users/types/TUser';
+import { TUser } from '@/features/users/types/TUser';
 
 import { deleteQuestions } from '../deleteQuestions';
 
@@ -54,7 +54,7 @@ describe('deleteQuestions', () => {
       createdIds.push({ type: 'question', id: question1.id });
       createdIds.push({ type: 'question', id: question2.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       const result = await deleteQuestions([question1.id, question2.id]);
       expect(result.count).toBe(2);
@@ -96,7 +96,7 @@ describe('deleteQuestions', () => {
       createdIds.push({ type: 'question', id: question1.id });
       createdIds.push({ type: 'question', id: question2.id });
 
-      mockedGetCurrentUser.mockResolvedValue(admin as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(admin as TUser);
 
       const result = await deleteQuestions([question1.id, question2.id]);
       expect(result.count).toBe(2);
@@ -119,7 +119,7 @@ describe('deleteQuestions', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       await expect(deleteQuestions(['nonexistent1', 'nonexistent2'])).rejects.toThrow(
         'Some questions not found',
@@ -152,7 +152,7 @@ describe('deleteQuestions', () => {
       });
       createdIds.push({ type: 'question', id: question.id });
 
-      mockedGetCurrentUser.mockResolvedValue(otherUser as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(otherUser as TUser);
 
       await expect(deleteQuestions([question.id])).rejects.toThrow(
         'Current user is not allowed to delete the question',
@@ -171,7 +171,7 @@ describe('deleteQuestions', () => {
       });
       createdIds.push({ type: 'user', id: user.id });
 
-      mockedGetCurrentUser.mockResolvedValue(user as TExtendedUser);
+      mockedGetCurrentUser.mockResolvedValue(user as TUser);
 
       const result = await deleteQuestions([]);
       expect(result.count).toBe(0);

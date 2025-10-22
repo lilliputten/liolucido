@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db';
 import { DatabaseError } from '@/lib/errors';
 import { getErrorText } from '@/lib/helpers';
 
-import { TExtendedUser } from '../types/TUser';
+import { TUser } from '../types/TUser';
 
 interface TParams {
   where: Prisma.UserWhereUniqueInput;
@@ -17,7 +17,7 @@ export async function getUser(params: TParams) {
     if (!user) {
       return undefined;
     }
-    return user as TExtendedUser;
+    return user as TUser;
   } catch (error) {
     const errorMessage = getErrorText(error);
     const nextMessage = [

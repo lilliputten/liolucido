@@ -1,0 +1,3 @@
+import { UserRoleType } from '@/generated/prisma';
+
+// type UserRole = UserRoleType; // 'USER' | 'ADMIN';

@@ -2,7 +2,7 @@
 
 import { Prisma } from '@prisma/client';
 
-import { getUser } from './getUser';
+import { getUser } from '../actions/getUser';
 
 export interface TCheckIfUserExistsParams {
   id: string;
