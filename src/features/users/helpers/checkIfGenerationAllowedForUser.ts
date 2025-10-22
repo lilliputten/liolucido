@@ -2,7 +2,7 @@ import { UserGradeType } from '@/generated/prisma';
 
 import { TUser } from '../types/TUser';
 
-const allowedGenerationForGrades: UserGradeType[] = ['MEMBER', 'PREMIUM'];
+const allowedGenerationForGrades: UserGradeType[] = ['BASIC', 'PRO'];
 
 export function checkIfGenerationAllowedForUser(user?: TUser) {
   // return false; // DEBUG

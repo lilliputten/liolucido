@@ -52,8 +52,8 @@ enum UserRole {
 
 enum UserGrade {
   GUEST
-  MEMBER
-  PREMIUM
+  BASIC // MEMBER
+  PRO // PREMIUM
 }
 
 model User {
