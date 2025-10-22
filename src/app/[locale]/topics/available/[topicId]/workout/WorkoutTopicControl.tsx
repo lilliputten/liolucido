@@ -5,15 +5,91 @@ import { useFormatter } from 'next-intl';
 
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
+import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
-import { useGoToTheRoute } from '@/hooks';
+import { TTopicId } from '@/features/topics/types';
+import { TWorkoutData } from '@/features/workouts/types';
+import { useGoToTheRoute, useSessionUser } from '@/hooks';
 
-export function WorkoutTopicControl() {
+function WorkoutInfo({ workout }: { workout?: TWorkoutData }) {
   const format = useFormatter();
-  const { topic, workout, pending, createWorkout, startWorkout } = useWorkoutContext();
+  if (!workout) {
+    return <>No workout created</>;
+  }
+  if (!workout.started || !workout.startedAt) {
+    if (workout.finished && workout.finishedAt) {
+      return (
+        <>
+          The workout is completed {getFormattedRelativeDate(format, workout.finishedAt)} in{' '}
+          {formatSecondsDuration(workout.currentTime || 0)} with a ratio of{' '}
+          {workout.currentRatio || 0}% ({workout.correctAnswers || 0} of{' '}
+          {workout.questionsCount || 0} with correct answers).
+        </>
+      );
+    }
+    return <>Workout hasn't been started yet</>;
+  }
+  if (workout.stepIndex) {
+    return (
+      <>
+        Your workout is in progress ({workout.stepIndex + 1} of {workout.questionsCount || 0}{' '}
+        questions, started {getFormattedRelativeDate(format, workout.startedAt)})
+      </>
+    );
+  }
+  return (
+    <>
+      The workout has been created {getFormattedRelativeDate(format, workout.startedAt)} and now is
+      ready to start
+    </>
+  );
+}
+
+export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
+  // const { topicId, workout, pending, createWorkout, startWorkout } = useWorkoutContext();
+  const user = useSessionUser();
+  const userId = user?.id;
+  const workoutQuery = useWorkoutQuery({ topicId, userId });
+  const {
+    workout,
+    questionIds,
+    // isOffline,
+    pending,
+    isLoading,
+    isFetched,
+    // localInitialized,
+    queryKey,
+    startWorkout,
+    createWorkout,
+    // enabled,
+    // preparing,
+    // isQuestionIdsPending,
+    // isQueryEnabled,
+    // finishWorkout,
+    // goNextQuestion,
+    // updateWorkoutData,
+  } = workoutQuery;
+
+  console.log('[WorkoutTopicControl:DEBUG]', {
+    user,
+    userId,
+    topicId,
+    questionIds,
+    workout,
+    // isOffline,
+    // localInitialized,
+    pending,
+    queryKey,
+    // enabled,
+    // preparing,
+    isLoading,
+    isFetched,
+    // isQuestionIdsPending,
+    // isQueryEnabled,
+  });
 
   const isWorkoutInProgress = workout?.started && !workout?.finished;
 
@@ -34,18 +110,18 @@ export function WorkoutTopicControl() {
         <p className="text-sm text-muted-foreground">No active workout found.</p>
         <Button onClick={createWorkout} disabled={pending} className="flex w-fit gap-2">
           <Icons.Activity className="size-4 opacity-50" />
-          <span>Start New Workout</span>
+          <span>Create New Workout</span>
         </Button>
       </div>
     );
   }
 
   const handleResumeWorkout = () => {
-    const url = `${availableTopicsRoute}/${topic.id}/workout/go`;
-    goToTheRoute(url);
+    goToTheRoute(`${availableTopicsRoute}/${topicId}/workout/go`);
   };
 
   const handleStartWorkout = () => {
+    debugger;
     startWorkout();
     setTimeout(handleResumeWorkout, 10);
   };
@@ -53,11 +129,7 @@ export function WorkoutTopicControl() {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
-        {workout.finished
-          ? `The workout is completed ${getFormattedRelativeDate(format, workout.finishedAt)} in ${formatSecondsDuration(workout.currentTime)} with a ratio of ${workout.currentRatio}% (${workout.correctAnswers} of ${workout.questionsCount} with correct answers).`
-          : workout.started
-            ? `Your workout is in progress (${(workout.stepIndex || 0) + 1} of ${workout.questionsCount} questions, started ${getFormattedRelativeDate(format, workout.startedAt)})` // TODO: Show the progress?
-            : `The workout has been created ${getFormattedRelativeDate(format, workout.startedAt)} and now is ready to start`}
+        <WorkoutInfo workout={workout} />
       </p>
       <div className="flex gap-2">
         <Button

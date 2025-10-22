@@ -25,7 +25,7 @@ import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableAnswersParams, TGetAvailableAnswersResults } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
 import { getAvailableAnswers } from '@/features/answers/actions/getAvailableAnswers';
-import { itemsLimit } from '@/features/answers/constants';
+import { itemsLimit as defaultItemsLimit } from '@/features/answers/constants';
 import { TAnswerId, TAvailableAnswer } from '@/features/answers/types';
 
 const staleTime = minuteMs * 10;
@@ -34,6 +34,7 @@ const staleTime = minuteMs * 10;
 
 interface TUseAvailableAnswersProps extends Omit<TGetAvailableAnswersParams, 'skip' | 'take'> {
   enabled?: boolean;
+  itemsLimit?: number | null;
 }
 
 /** Collection of the all used query keys (mb, already invalidated).
@@ -81,7 +82,8 @@ export function useAvailableAnswers(props: TUseAvailableAnswersProps = {}) {
           ...queryProps,
           questionId,
           skip: pageParam,
-          take: itemsLimit,
+          take:
+            queryProps.itemsLimit == null ? undefined : queryProps.itemsLimit || defaultItemsLimit,
         });
         return results;
       } catch (error) {

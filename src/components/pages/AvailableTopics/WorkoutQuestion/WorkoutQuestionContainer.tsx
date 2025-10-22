@@ -20,7 +20,7 @@ interface TMemo {
 
 export function WorkoutQuestionContainer() {
   const {
-    topic,
+    topicId,
     workout,
     saveResultAndGoNext,
     saveResult,
@@ -33,7 +33,7 @@ export function WorkoutQuestionContainer() {
 
   const memo = React.useMemo<TMemo>(() => ({}), []);
 
-  const workoutRoutePath = `${availableTopicsRoute}/${topic.id}/workout`;
+  const workoutRoutePath = `${availableTopicsRoute}/${topicId}/workout`;
 
   const goToTheRoute = useGoToTheRoute();
 

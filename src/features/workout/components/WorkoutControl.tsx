@@ -6,6 +6,7 @@ import { useFormatter } from 'next-intl';
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
+import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
@@ -29,23 +30,58 @@ export function WorkoutControl(props: TWorkoutControlProps) {
     className,
   } = props;
   const format = useFormatter();
-  const { topic, workout, pending, createWorkout, startWorkout } = useWorkoutContext();
+  const workoutContext = useWorkoutContext();
+  const {
+    topicId,
+    // workout,
+    // pending,
+    // createWorkout,
+    // startWorkout,
+    // data...
+    // questionIds,
+  } = workoutContext;
+
+  const user = useSessionUser();
+  const userId = user?.id;
+  const workoutQuery = useWorkoutQuery({ topicId, userId });
+  const {
+    workout,
+    questionIds,
+    // isOffline,
+    pending,
+    queryKey,
+    startWorkout,
+    // createWorkout,
+    // finishWorkout,
+    // goNextQuestion,
+    // updateWorkoutData,
+  } = workoutQuery;
+
+  console.log('[WorkoutControl:DEBUG]', {
+    user,
+    userId,
+    questionIds,
+    workout,
+    // isOffline,
+    pending,
+    queryKey,
+  });
 
   // const [pending, setPending] = React.useState(false);
-  const user = useSessionUser();
   const goToTheRoute = useGoToTheRoute();
 
   const isWorkoutInProgress = workout?.started && !workout?.finished;
 
   const handleCreateWorkout = () => {
-    goToTheRoute(`${availableTopicsRoute}/${topic.id}/workout`);
+    goToTheRoute(`${availableTopicsRoute}/${topicId}/workout`);
   };
 
   const handleResumeWorkout = () => {
-    goToTheRoute(`${availableTopicsRoute}/${topic.id}/workout/go`);
+    goToTheRoute(`${availableTopicsRoute}/${topicId}/workout/go`);
   };
 
   const handleStartWorkout = () => {
+    debugger;
     startWorkout();
     setTimeout(handleResumeWorkout, 10);
   };
@@ -54,7 +90,7 @@ export function WorkoutControl(props: TWorkoutControlProps) {
   //   if (!user?.id || !workout) return;
   //   setPending(true);
   //   try {
-  //     await updateWorkout(topic.id, {
+  //     await updateWorkout(topicId, {
   //       started: true,
   //       finished: false,
   //       startedAt: new Date(),

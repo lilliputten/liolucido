@@ -25,14 +25,17 @@ import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableQuestionsParams, TGetAvailableQuestionsResults } from '@/lib/zod-schemas';
 import { minuteMs } from '@/constants';
 import { getAvailableQuestions } from '@/features/questions/actions/getAvailableQuestions';
-import { itemsLimit } from '@/features/questions/constants';
+import { itemsLimit as defaultItemsLimit } from '@/features/questions/constants';
 import { TAvailableQuestion, TQuestionId } from '@/features/questions/types';
 
 const staleTime = minuteMs * 10;
 
 // TODO: Register all the query keys
 
-type TUseAvailableQuestionsProps = Omit<TGetAvailableQuestionsParams, 'skip' | 'take'>;
+interface TUseAvailableQuestionsProps extends Omit<TGetAvailableQuestionsParams, 'skip' | 'take'> {
+  enabled?: boolean;
+  itemsLimit?: number | null;
+}
 
 /** Collection of the all used query keys (mb, already invalidated).
  *
@@ -43,7 +46,7 @@ type TUseAvailableQuestionsProps = Omit<TGetAvailableQuestionsParams, 'skip' | '
 const allUsedKeys: TAllUsedKeys = {};
 
 export function useAvailableQuestions(props: TUseAvailableQuestionsProps = {}) {
-  const { topicId, ...queryProps } = props;
+  const { enabled = true, topicId, ...queryProps } = props;
   const queryClient = useQueryClient();
   // const invalidateKeys = useInvalidateReactQueryKeys();
   const routePath = usePathname();
@@ -66,6 +69,7 @@ export function useAvailableQuestions(props: TUseAvailableQuestionsProps = {}) {
     >({
       queryKey,
       staleTime, // Data validity period
+      enabled,
       initialPageParam: 0,
       getNextPageParam: (lastPage, allPages) => {
         const loadedCount = allPages.reduce((acc, page) => acc + page.items.length, 0);
@@ -79,7 +83,10 @@ export function useAvailableQuestions(props: TUseAvailableQuestionsProps = {}) {
             ...queryProps,
             topicId,
             skip: pageParam,
-            take: itemsLimit,
+            take:
+              queryProps.itemsLimit == null
+                ? undefined
+                : queryProps.itemsLimit || defaultItemsLimit,
           });
           return results;
           /* // OPTION 2: Using route api fetch

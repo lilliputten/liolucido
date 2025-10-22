@@ -12,31 +12,27 @@ interface WorkoutLayoutProps extends TAwaitedProps {
 }
 
 export default async function WorkoutLayout({ children, params }: WorkoutLayoutProps) {
-  const { topicId } = await params;
+  // const { topicId } = await params;
 
-  const user = await getCurrentUser();
-  const userId = user?.id;
+  // const user = await getCurrentUser();
+  // const userId = user?.id;
 
-  let topicResult: Awaited<ReturnType<typeof getAvailableTopicById>>;
+  // let topicResult: Awaited<ReturnType<typeof getAvailableTopicById>>;
 
-  try {
-    topicResult = await getAvailableTopicById({ id: topicId, includeQuestions: true });
-    if (!topicResult) {
-      throw new Error('No topic found');
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[src/app/[locale]/topics/available/[topicId]/workout/layout.tsx]', error);
-    debugger; // eslint-disable-line no-debugger
-    notFound();
-  }
+  // try {
+  //   topicResult = await getAvailableTopicById({ id: topicId, includeQuestions: true });
+  //   if (!topicResult) {
+  //     throw new Error('No topic found');
+  //   }
+  // } catch (error) {
+  //   // eslint-disable-next-line no-console
+  //   console.error('[src/app/[locale]/topics/available/[topicId]/workout/layout.tsx]', error);
+  //   debugger; // eslint-disable-line no-debugger
+  //   notFound();
+  // }
 
-  const { questions, ...topic } = topicResult;
-  const questionIds = questions.map((q) => q.id);
+  // const { questions, ...topic } = topicResult;
+  // const questionIds = questions.map((q) => q.id);
 
-  return (
-    <WorkoutContextProvider userId={userId} topic={topic} questionIds={questionIds}>
-      {children}
-    </WorkoutContextProvider>
-  );
+  return <>{children}</>;
 }

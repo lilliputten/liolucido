@@ -5,17 +5,18 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
-import { TAvailableTopic } from '@/features/topics/types';
+import { TTopicId } from '@/features/topics/types';
 
 import { WorkoutTopicControl } from './WorkoutTopicControl';
 
 interface TWorkoutTopicContentProps {
-  topic: TAvailableTopic;
+  // topic: TAvailableTopic;
+  topicId: TTopicId;
   className?: string;
 }
 
 export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
-  const { className } = props;
+  const { className, topicId } = props;
   return (
     <div
       className={cn(
@@ -33,7 +34,7 @@ export function WorkoutTopicContent(props: TWorkoutTopicContentProps) {
             className,
           )}
         >
-          <WorkoutTopicControl />
+          <WorkoutTopicControl topicId={topicId} />
         </div>
       </ScrollArea>
     </div>

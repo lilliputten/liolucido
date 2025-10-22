@@ -2,24 +2,23 @@
 
 import { prisma } from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { TTopicId } from '@/features/topics/types';
 
-export async function getWorkout(topicId: string) {
+export async function getWorkout(topicId: TTopicId) {
   const user = await getCurrentUser();
-  if (!user?.id) {
+  const userId = user?.id;
+  if (!userId) {
     throw new Error('Authentication required');
   }
 
   const workout = await prisma.userTopicWorkout.findUnique({
     where: {
-      userId_topicId: {
-        userId: user.id,
-        topicId,
-      },
+      userId_topicId: { userId, topicId },
     },
   });
 
   if (!workout) {
-    return null;
+    return undefined;
   }
 
   return workout;

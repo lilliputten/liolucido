@@ -6,7 +6,7 @@ import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
 import { safeJsonParse } from '@/lib/helpers/json';
 import { isDev } from '@/constants';
-import { TTopic, TTopicId } from '@/features/topics/types';
+import { TTopicId } from '@/features/topics/types';
 import { TUserId } from '@/features/users/types/TUser';
 import { TWorkoutData } from '@/features/workouts/types';
 
@@ -32,16 +32,24 @@ interface TMemo {
   // invalidateKeys?: ReturnType<typeof useInvalidateReactQueryKeys>;
 }
 
-export function useWorkout(topic: TTopic, questionIds: string[] = [], userId: TUserId | undefined) {
+interface TParams {
+  topicId: TTopicId | undefined;
+  questionIds: string[];
+  userId: TUserId | undefined;
+  isPreparing?: boolean;
+}
+
+export function useWorkout(params: TParams) {
+  const { topicId, questionIds, userId, isPreparing } = params;
   const memo = React.useMemo<TMemo>(() => ({}), []);
-  const topicId = (memo.topicId = topic.id);
+  // const topicId = (memo.topicId = topic.id);
   const [workout, setWorkout] = React.useState<TWorkoutData | null>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
   const invalidateKeys = useInvalidateReactQueryKeys();
   memo.userId = userId;
   memo.questionIds = questionIds;
-  memo.stepIndex = workout?.stepIndex;
+  memo.stepIndex = workout?.stepIndex ?? undefined;
 
   /** Low-level load data function */
   const retrieveData = React.useCallback(
@@ -54,7 +62,7 @@ export function useWorkout(topic: TTopic, questionIds: string[] = [], userId: TU
           if (isDev) {
             await new Promise((r) => setTimeout(r, 1000));
           }
-          if (userId) {
+          if (!isPreparing && userId) {
             // Fetch from server for authenticated user
             const url = `/api/workouts/${topicId}`;
             try {
@@ -110,7 +118,7 @@ export function useWorkout(topic: TTopic, questionIds: string[] = [], userId: TU
         });
       });
     },
-    [invalidateKeys],
+    [invalidateKeys, isPreparing],
   );
 
   /** Retrieve workout data from the server or local storage.
@@ -455,7 +463,8 @@ export function useWorkout(topic: TTopic, questionIds: string[] = [], userId: TU
 
   return {
     topicId,
-    topic,
+    // topic,
+    questionIds,
     workout,
     pending: isPending || !initialized,
     createWorkout,

@@ -11,11 +11,9 @@ import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
 import { WorkoutControl, WorkoutInfo } from '@/features/workout/components';
-import { TWorkout } from '@/features/workouts/types';
 
 interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;
-  workout?: TWorkout;
   className?: string;
 }
 
@@ -24,10 +22,10 @@ interface TViewAvailableTopicContentProps {
 
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
-  const { topic, workout, className } = props;
+  const { topic, className } = props;
   // Topic
   const {
-    id,
+    // id,
     // userId,
     // name,
     // description,
@@ -71,7 +69,7 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
             className="flex-1 max-sm:flex-col-reverse"
           />
           <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
-          <WorkoutInfo workout={workout} className="flex-1 text-sm" />
+          <WorkoutInfo className="flex-1 text-sm" />
           {allowedTraining && <WorkoutControl />}
         </div>
       </ScrollArea>
