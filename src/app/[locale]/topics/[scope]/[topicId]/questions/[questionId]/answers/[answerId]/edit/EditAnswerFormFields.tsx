@@ -126,7 +126,7 @@ export function EditAnswerFormFields(props: TEditAnswerFormFieldsProps) {
               </FormControl>
               <FormHint>
                 If the answer has been generated automatically, then it could be updated or removed
-                later?
+                later.
               </FormHint>
               <FormMessage />
             </FormItem>

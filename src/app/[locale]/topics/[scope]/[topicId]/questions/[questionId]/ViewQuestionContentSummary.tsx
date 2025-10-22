@@ -41,7 +41,15 @@ export function ViewQuestionContentSummary(props: TProps) {
       data-testid="__ViewQuestionContentSummary_Section_QuestionText"
       className="flex flex-col gap-4"
     >
-      <h3 className="text-lg font-semibold">Question Text</h3>
+      <div className="flex items-center gap-2">
+        <h3 className="text-lg font-semibold">Question Text</h3>
+        {question.isGenerated && (
+          <div className="flex items-center gap-1 rounded-md bg-theme-100 px-2 py-1 text-xs text-theme-600">
+            <Icons.WandSparkles className="size-3 opacity-50" />
+            AI Generated
+          </div>
+        )}
+      </div>
       <div className="rounded-lg bg-slate-500/10 p-4">
         <MarkdownText>{question.text}</MarkdownText>
       </div>

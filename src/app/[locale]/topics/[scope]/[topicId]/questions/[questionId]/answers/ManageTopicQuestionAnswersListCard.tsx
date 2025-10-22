@@ -138,19 +138,30 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
 
   const [isPending, startTransition] = React.useTransition();
 
+  const queryClient = useQueryClient();
+
+  const updateAndInvalidateAnswer = React.useCallback(
+    async (updatedAnswer: TAnswer) => {
+      // Update via server function
+      await updateAnswer(updatedAnswer);
+      // Update the item to the cached react-query data
+      availableAnswersQuery.updateAnswer(updatedAnswer);
+      // Invalidate all other keys...
+      availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+      // Invalidate all other possible related cached data
+      const invalidatePrefixes = [['available-answer', answer.id]].map(makeQueryKeyPrefix);
+      invalidateKeysByPrefixes(queryClient, invalidatePrefixes, [availableAnswersQuery.queryKey]);
+    },
+    [answer.id, availableAnswersQuery, queryClient],
+  );
+
   const handleToggleCorrect = React.useCallback(
     (checked: boolean) => {
       startTransition(async () => {
         const updatedAnswer = { ...answer, isCorrect: checked };
         try {
-          // TODO: Invalidate all possible question queries (see usage of `invalidateKeysByPrefixes`)?
           // Update via server function
-          await updateAnswer(updatedAnswer);
-          // Update the item to the cached react-query data
-          availableAnswersQuery.updateAnswer(updatedAnswer);
-          // TODO: Update or invalidate all other possible AvailableAnswer and AvailableAnswers cached data
-          // Invalidate all other keys...
-          availableAnswersQuery.invalidateAllKeysExcept([availableAnswersQuery.queryKey]);
+          await updateAndInvalidateAnswer(updatedAnswer);
         } catch (error) {
           const details = error instanceof APIError ? error.details : null;
           const message = 'Cannot update answer status';
@@ -165,7 +176,31 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
         }
       });
     },
-    [answer, availableAnswersQuery],
+    [answer, updateAndInvalidateAnswer],
+  );
+
+  const handleToggleGenerated = React.useCallback(
+    (checked: boolean) => {
+      startTransition(async () => {
+        const updatedAnswer = { ...answer, isGenerated: checked };
+        try {
+          // Update via server function
+          await updateAndInvalidateAnswer(updatedAnswer);
+        } catch (error) {
+          const details = error instanceof APIError ? error.details : null;
+          const message = 'Cannot update answer generated status';
+          // eslint-disable-next-line no-console
+          console.error('[AnswerTableRow:handleToggleGenerated]', message, {
+            details,
+            error,
+            answerId: answer.id,
+          });
+          debugger; // eslint-disable-line no-debugger
+          toast.error(message);
+        }
+      });
+    },
+    [answer, updateAndInvalidateAnswer],
   );
 
   return (
@@ -186,7 +221,7 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
         <div className="truncate">{idx + 1}</div>
       </TableCell>
       {isAdminMode && isDev && (
-        <TableCell id="answerId" className="max-w-[8em] truncate max-lg:hidden">
+        <TableCell id="answerId" className="max-w-[8em] truncate max-lg:hidden" title={id}>
           <div className="truncate">
             <span className="mr-[2px] opacity-30">#</span>
             {id}
@@ -207,7 +242,11 @@ function AnswerTableRow(props: TAnswerTableRowProps) {
         />
       </TableCell>
       <TableCell id="isGenerated" className="w-[8em] max-lg:hidden">
-        {isGenerated && <Icons.CircleCheck className="stroke-blue-500" />}
+        <Switch
+          checked={isGenerated}
+          onCheckedChange={handleToggleGenerated}
+          disabled={isPending}
+        />
       </TableCell>
       <TableCell id="actions" className="w-[2em] text-right">
         <div className="flex justify-end gap-1">
@@ -266,7 +305,7 @@ export function ManageTopicQuestionAnswersListCardContent(
   } = props;
 
   const user = useSessionUser();
-  const isLogged = !!user;
+  // const isLogged = !!user;
   const isAdmin = user?.role === 'ADMIN';
   const ifGenerationAllowed = useIfGenerationAllowed();
 

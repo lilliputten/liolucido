@@ -14,6 +14,7 @@ import { Card } from '@/components/ui/Card';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { ScrollAreaInfinite } from '@/components/ui/ScrollAreaInfinite';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { Switch } from '@/components/ui/Switch';
 import {
   Table,
   TableBody,
@@ -28,9 +29,9 @@ import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { PageEmpty } from '@/components/pages/shared';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-import { deleteQuestions } from '@/features/questions/actions';
+import { deleteQuestions, updateQuestion } from '@/features/questions/actions';
 import { useQuestionsBreadcrumbsItems } from '@/features/questions/components/QuestionsBreadcrumbs';
-import { TQuestion, TQuestionId } from '@/features/questions/types';
+import { TQuestion, TQuestionData, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
 import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
@@ -97,6 +98,9 @@ function QuestionTableHeader({
         <TableHead id="answers" className="truncate">
           Answers
         </TableHead>
+        <TableHead id="isGenerated" className="truncate max-lg:hidden">
+          Generated
+        </TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -112,6 +116,7 @@ interface TQuestionTableRowProps {
   isAdminMode: boolean;
   isSelected: boolean;
   toggleSelected: (questionId: TQuestionId) => void;
+  availableQuestionsQuery: ReturnType<typeof useAvailableQuestions>;
 }
 
 function QuestionTableRow(props: TQuestionTableRowProps) {
@@ -125,10 +130,53 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
     idx,
     isSelected,
     toggleSelected,
+    availableQuestionsQuery,
   } = props;
-  const { id, text, _count } = question;
+  const { id, text, _count, isGenerated } = question;
   const questionRoutePath = `${questionsListRoutePath}/${id}`;
   const answersCount = _count?.answers;
+
+  const [isPending, startTransition] = React.useTransition();
+  const queryClient = useQueryClient();
+
+  const updateAndInvalidateQuestion = React.useCallback(
+    async (updatedQuestion: TQuestion) => {
+      // Update via server function
+      await updateQuestion(updatedQuestion as TQuestionData);
+      // Update the item to the cached react-query data
+      availableQuestionsQuery.updateQuestion(updatedQuestion);
+      // Invalidate all other keys...
+      availableQuestionsQuery.invalidateAllKeysExcept([availableQuestionsQuery.queryKey]);
+      // Invalidate all other possible related cached data
+      const invalidatePrefixes = [['available-question', question.id]].map(makeQueryKeyPrefix);
+      invalidateKeysByPrefixes(queryClient, invalidatePrefixes, [availableQuestionsQuery.queryKey]);
+    },
+    [question.id, availableQuestionsQuery, queryClient],
+  );
+
+  const handleToggleGenerated = React.useCallback(
+    (checked: boolean) => {
+      startTransition(async () => {
+        const updatedQuestion = { ...question, isGenerated: checked };
+        try {
+          // Update via server function
+          await updateAndInvalidateQuestion(updatedQuestion);
+        } catch (error) {
+          const details = error instanceof APIError ? error.details : null;
+          const message = 'Cannot update question generated status';
+          // eslint-disable-next-line no-console
+          console.error('[QuestionTableRow:handleToggleGenerated]', message, {
+            details,
+            error,
+            questionId: question.id,
+          });
+          debugger; // eslint-disable-line no-debugger
+          toast.error(message);
+        }
+      });
+    },
+    [question, updateAndInvalidateQuestion],
+  );
   return (
     <TableRow className="truncate" data-question-id={id}>
       <TableCell
@@ -146,7 +194,7 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
         <div className="truncate">{idx + 1}</div>
       </TableCell>
       {isDev && (
-        <TableCell id="questionId" className="max-w-8 truncate max-sm:hidden">
+        <TableCell id="questionId" className="max-w-8 truncate max-sm:hidden" title={id}>
           <div className="truncate opacity-50">
             <span className="mr-1 opacity-30">#</span>
             {id}
@@ -154,19 +202,9 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
         </TableCell>
       )}
       <TableCell id="text" className="max-w-24 truncate" title={truncateMarkdown(text, 120)}>
-        <div className="flex items-center gap-2">
-          <Link
-            className="text-ellipsis whitespace-normal hover:underline"
-            href={questionRoutePath}
-          >
-            {truncateMarkdown(text, 80)}
-          </Link>
-          {question.isGenerated && (
-            <div title="AI Generated">
-              <Icons.WandSparkles className="size-4 opacity-50" />
-            </div>
-          )}
-        </div>
+        <Link className="text-ellipsis whitespace-normal hover:underline" href={questionRoutePath}>
+          {truncateMarkdown(text, 80)}
+        </Link>
       </TableCell>
       <TableCell id="answers" className="max-w-[8em] truncate">
         <div className="truncate">
@@ -176,6 +214,13 @@ function QuestionTableRow(props: TQuestionTableRowProps) {
             <span className="opacity-30">—</span>
           )}
         </div>
+      </TableCell>
+      <TableCell id="isGenerated" className="w-[8em] max-lg:hidden">
+        <Switch
+          checked={isGenerated}
+          onCheckedChange={handleToggleGenerated}
+          disabled={isPending}
+        />
       </TableCell>
       <TableCell id="actions" className="w-[2em] text-right">
         <div className="flex justify-end gap-1">
@@ -366,6 +411,7 @@ export function ManageTopicQuestionsListCardContent(
               isAdminMode={isAdmin}
               isSelected={selectedQuestions.has(question.id)}
               toggleSelected={toggleSelected}
+              availableQuestionsQuery={availableQuestionsQuery}
             />
           ))}
         </TableBody>
