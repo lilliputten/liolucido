@@ -54,17 +54,6 @@ export function MarkdownText({ children, className, omitLinks }: MarkdownProps) 
               </a>
             );
           },
-          /* // UNUSED: code
-           * code: (props) => {
-           *   const { children, ...rest } = props;
-           *   console.log('[MarkdownText:DEBUG] props', { props });
-           *   return (
-           *     <code className="rounded bg-muted px-1 py-0.5 text-sm" {...rest}>
-           *       {children}
-           *     </code>
-           *   );
-           * },
-           */
         }}
       >
         {children}

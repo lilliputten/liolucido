@@ -4,9 +4,9 @@ import React from 'react';
 
 import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
 import { generateArray } from '@/lib/helpers';
-import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -23,14 +23,8 @@ import { WorkoutTopicGoContent } from './WorkoutTopicGoContent';
 
 const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
 
-export function WorkoutTopicGo(props: TPropsWithClassName) {
-  const { className } = props;
+export function WorkoutTopicGo() {
   const { topicId, workout, pending } = useWorkoutContext();
-
-  console.log('[WorkoutTopicGo:DEBUG]', {
-    // questionIds,
-    workout,
-  });
 
   if (!topicId) {
     throw new Error('No workout topic ID found');
@@ -39,20 +33,6 @@ export function WorkoutTopicGo(props: TPropsWithClassName) {
   const availableTopicQuery = useAvailableTopicById({ id: topicId });
   const { topic, isLoading: isTopicLoading, isFetched: isTopicFetched } = availableTopicQuery;
   const isTopicPending = isTopicLoading && !isTopicFetched;
-
-  // const {
-  //   id,
-  //   userId,
-  //   // name,
-  //   // description,
-  //   // isPublic,
-  //   // langCode,
-  //   // langName,
-  //   // keywords,
-  //   // createdAt,
-  //   // updatedAt,
-  //   // _count,
-  // } = topic;
 
   const isWorkoutInProgress = workout?.started && !workout?.finished;
 
@@ -143,35 +123,49 @@ export function WorkoutTopicGo(props: TPropsWithClassName) {
       <Card
         className={cn(
           isDev && '__WorkoutTopicGo', // DEBUG
-          // 'xl:col-span-2', // ???
           'relative mx-6 flex flex-1 flex-col overflow-hidden',
-          className,
         )}
       >
-        <CardHeader
+        <ScrollArea
           className={cn(
-            isDev && '__WorkoutTopicGo_Header', // DEBUG
-            'item-start flex flex-col gap-4',
+            isDev && '__WorkoutTopicGo_Scroll', // DEBUG
+          )}
+          viewportClassName={cn(
+            isDev && '__WorkoutTopicGo_ScrollViewport', // DEBUG
+            '[&>div]:!flex [&>div]:flex-col [&>div]:gap-4 [&>div]:flex-1',
           )}
         >
-          <TopicHeader
-            scope={TopicsManageScopeIds.AVAILABLE_TOPICS}
-            topic={topic}
-            className="flex-1 max-sm:flex-col-reverse"
-            showDescription
-          />
-          <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
-        </CardHeader>
-        <CardContent
-          className={cn(
-            isDev && '__WorkoutTopicGo_Content', // DEBUG
-            'relative flex flex-1 flex-col overflow-hidden px-0',
-          )}
-        >
-          <WorkoutTopicGoContent topic={topic} />
-        </CardContent>
+          <CardHeader
+            className={cn(
+              isDev && '__WorkoutTopicGo_Header', // DEBUG
+              'item-start flex flex-col gap-4',
+            )}
+          >
+            <TopicHeader
+              scope={TopicsManageScopeIds.AVAILABLE_TOPICS}
+              topic={topic}
+              className="flex-1 max-sm:flex-col-reverse"
+              showDescription
+            />
+            <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
+          </CardHeader>
+          <CardContent
+            className={cn(
+              isDev && '__WorkoutTopicGo_Content', // DEBUG
+              'relative flex flex-1 flex-col overflow-hidden px-0',
+            )}
+          >
+            <WorkoutTopicGoContent topic={topic} />
+          </CardContent>
+        </ScrollArea>
       </Card>
     );
+
+  /* // DEMO: Show ContentSkeleton
+   * if (false) {
+   *   return <ContentSkeleton />;
+   * }
+   */
 
   return (
     <>

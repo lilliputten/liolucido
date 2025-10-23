@@ -4,27 +4,28 @@ import React from 'react';
 import { toast } from 'sonner';
 
 import { availableTopicsRoute } from '@/config/routesConfig';
-import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { MarkdownText } from '@/components/ui/MarkdownText';
+import { WorkoutQuestion } from '@/components/pages/AvailableTopics/WorkoutQuestion/WorkoutQuestion';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { useAvailableAnswers, useGoToTheRoute } from '@/hooks';
 
-import { WorkoutQuestion } from './WorkoutQuestion';
+import { WorkoutQuestionBlockSkeleton } from './WorkoutQuestionBlockSkeleton';
 
 interface TMemo {
   nextPageTimerHandler?: ReturnType<typeof setTimeout>;
   isGoingOut?: boolean;
 }
 
-export function WorkoutQuestionContainer() {
+export function WorkoutQuestionBlock() {
   const memo = React.useMemo<TMemo>(() => ({}), []);
   const {
     topicId,
     workout,
+    questionOrderedIds,
     saveResultAndGoNext,
     saveResult,
     saveAnswer,
@@ -33,80 +34,25 @@ export function WorkoutQuestionContainer() {
     goPrevQuestion,
   } = useWorkoutContext();
 
-  // Prepare data...
-  const questionsOrder = React.useMemo(
-    () => (workout?.questionsOrder ? workout?.questionsOrder.split(' ') : []),
-    [workout?.questionsOrder],
-  );
-
-  const totalSteps = questionsOrder.length;
+  const totalSteps = questionOrderedIds.length;
   const stepIndex = workout?.stepIndex || 0;
   const currentStep = stepIndex + 1;
-  const questionId = questionsOrder[stepIndex];
+  const questionId = questionOrderedIds[stepIndex];
   const isExceed = currentStep > totalSteps;
-
-  React.useEffect(() => {
-    console.log('[WorkoutQuestionContainer:DEBUG]', {
-      totalSteps,
-      questionsOrder,
-      questionId,
-      workout,
-      // question,
-      // answers,
-      // isAnswersLoading,
-      // isQuestionFetched,
-      // isQuestionLoading,
-    });
-  }, [totalSteps, questionsOrder, questionId, workout]);
 
   const workoutRoutePath = `${availableTopicsRoute}/${topicId}/workout`;
 
   const goToTheRoute = useGoToTheRoute();
 
   const handleFinishWorkout = React.useCallback(() => {
-    console.log('[WorkoutQuestionContainer:handleFinishWorkout]', {
+    console.log('[WorkoutQuestionBlock:handleFinishWorkout]', {
       workoutRoutePath,
     });
-    debugger;
     finishWorkout();
     setTimeout(() => {
       goToTheRoute(workoutRoutePath);
     }, 10);
   }, [finishWorkout, goToTheRoute, workoutRoutePath]);
-
-  /* // DEBUG
-   * React.useEffect(() => {
-   *   const diff_finishWorkout = memo.finishWorkout !== finishWorkout;
-   *   // const diff_isExceed = memo.isExceed !== isExceed;
-   *   // const diff_currentStep = memo.currentStep !== currentStep;
-   *   // const diff_totalSteps = memo.totalSteps !== totalSteps;
-   *   const diff_handleFinishWorkout = memo.handleFinishWorkout !== handleFinishWorkout;
-   *   // eslint-disable-next-line no-console
-   *   console.log('[WorkoutQuestionContainer:Effect:DEBUG]', {
-   *     memo,
-   *     //
-   *     diff_finishWorkout,
-   *     // diff_isExceed,
-   *     // diff_currentStep,
-   *     // diff_totalSteps,
-   *     diff_handleFinishWorkout,
-   *   });
-   *   debugger;
-   *   memo.finishWorkout = finishWorkout;
-   *   // memo.isExceed = isExceed;
-   *   // memo.currentStep = currentStep;
-   *   // memo.totalSteps = totalSteps;
-   *   memo.handleFinishWorkout = handleFinishWorkout;
-   * }, [
-   *   memo,
-   *   //
-   *   finishWorkout,
-   *   // isExceed,
-   *   // currentStep,
-   *   // totalSteps,
-   *   handleFinishWorkout,
-   * ]);
-   */
 
   React.useEffect(() => {
     if (isExceed && !memo.isGoingOut) {
@@ -114,7 +60,7 @@ export function WorkoutQuestionContainer() {
         `The step index (${currentStep}) exceeds the total steps count (${totalSteps})`,
       );
       // eslint-disable-next-line no-console
-      console.warn('[WorkoutQuestionContainer]', error, {
+      console.warn('[WorkoutQuestionBlock]', error, {
         totalSteps,
         currentStep,
       });
@@ -133,6 +79,7 @@ export function WorkoutQuestionContainer() {
 
   // Fetch answers using dedicated hook
   const availableAnswersQuery = useAvailableAnswers({
+    itemsLimit: null,
     questionId,
     // enabled: !!questionId,
   });
@@ -169,7 +116,29 @@ export function WorkoutQuestionContainer() {
     (answerId: string) => {
       const answer = answers.find(({ id }) => id === answerId);
       if (answer) {
-        const { isCorrect } = answer;
+        const { isCorrect, explanation } = answer;
+        console.log('[WorkoutQuestionBlock:onAnswerSelect]', {
+          answerId,
+          answer,
+          isCorrect,
+          explanation,
+        });
+        if (explanation) {
+          const markdownContent = (
+            <MarkdownText className="text-sm" omitLinks>
+              {explanation}
+            </MarkdownText>
+          );
+          const content = (
+            <div className="flex flex-col gap-2">
+              <p className="font-bold uppercase">
+                {isCorrect ? 'The answer is correct:' : 'The answer is incorrect:'}
+              </p>
+              {markdownContent}
+            </div>
+          );
+          toast.info(content);
+        }
         // Update workout with result and move to next question
         saveAnswer(answerId);
         saveResult(isCorrect);
@@ -189,27 +158,11 @@ export function WorkoutQuestionContainer() {
 
   if (isLoadingOverall) {
     return (
-      <div
+      <WorkoutQuestionBlockSkeleton
         className={cn(
-          isDev && '__WorkoutQuestionContainer_Skeleton', // DEBUG
-          'flex flex-col gap-4 py-2',
+          isDev && '__WorkoutQuestionBlock_Skeleton', // DEBUG
         )}
-      >
-        <Skeleton className="h-6 w-1/4" />
-        <Skeleton className="h-8 w-full" />
-        {/* Emulate answers */}
-        <div className="grid gap-4 py-2 md:grid-cols-2">
-          {generateArray(2).map((i) => (
-            <Skeleton key={i} className="h-14 w-full" />
-          ))}
-        </div>
-        {/* Emulate buttons */}
-        <div className="flex justify-center gap-4">
-          {generateArray(2).map((i) => (
-            <Skeleton key={i} className="h-10 w-28" />
-          ))}
-        </div>
-      </div>
+      />
     );
   }
 
@@ -222,7 +175,7 @@ export function WorkoutQuestionContainer() {
       return (
         <div className="flex flex-col gap-2 text-xs opacity-50">
           <div>
-            <span className="opacity-50">Questions order is:</span> {questionsOrder.join(' ')}
+            <span className="opacity-50">Questions order is:</span> {questionOrderedIds.join(' ')}
           </div>
           <div>
             <span className="opacity-50">Step:</span> {currentStep} / {totalSteps}
@@ -260,8 +213,6 @@ export function WorkoutQuestionContainer() {
       questionText={question?.text || ''}
       answers={answers}
       isAnswersLoading={isAnswersLoading}
-      currentStep={currentStep}
-      totalSteps={totalSteps}
       onAnswerSelect={onAnswerSelect}
       onSkip={onSkip}
       onFinish={handleFinishWorkout}

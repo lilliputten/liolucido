@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { TTopicId } from '@/features/topics/types';
-import { WorkoutStateDetails } from '@/features/workout/components';
+import { WorkoutStateDetails } from '@/features/workouts/components';
 import { useGoToTheRoute, useSessionUser } from '@/hooks';
 
 export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
@@ -18,14 +18,14 @@ export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
   const workoutQuery = useWorkoutQuery({ topicId, userId });
   const {
     workout,
-    questionIds,
+    // questionIds,
     // isOffline,
     pending,
-    isLoading,
-    isFetched,
+    // isLoading,
+    // isFetched,
     // localInitialized,
-    queryKey,
-    startOrCreateWorkout,
+    // queryKey,
+    startWorkout,
     // startWorkout,
     createWorkout,
     // enabled,
@@ -36,24 +36,6 @@ export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
     // goNextQuestion,
     // updateWorkoutData,
   } = workoutQuery;
-
-  console.log('[WorkoutTopicControl:DEBUG]', {
-    user,
-    userId,
-    topicId,
-    questionIds,
-    workout,
-    // isOffline,
-    // localInitialized,
-    pending,
-    queryKey,
-    // enabled,
-    // preparing,
-    isLoading,
-    isFetched,
-    // isQuestionIdsPending,
-    // isQueryEnabled,
-  });
 
   const isWorkoutInProgress = workout?.started && !workout?.finished;
 
@@ -85,8 +67,7 @@ export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
   };
 
   const handleStartWorkout = () => {
-    debugger;
-    startOrCreateWorkout();
+    startWorkout();
     setTimeout(handleResumeWorkout, 10);
   };
 

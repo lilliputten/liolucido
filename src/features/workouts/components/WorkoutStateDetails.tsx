@@ -17,8 +17,11 @@ export function WorkoutStateDetails({ workout }: { workout?: TWorkoutData }) {
         <>
           The workout is completed {getFormattedRelativeDate(format, workout.finishedAt)} in{' '}
           {formatSecondsDuration(workout.currentTime || 0)} with a ratio of{' '}
-          {workout.currentRatio || 0}% ({workout.correctAnswers || 0} of{' '}
-          {workout.questionsCount || 0} with correct answers).
+          {workout.currentRatio || 0}%{' '}
+          <span className="opacity-50">
+            ({workout.correctAnswers || 0} correct of {workout.questionsCount || 0} total answers)
+          </span>
+          .
         </>
       );
     }

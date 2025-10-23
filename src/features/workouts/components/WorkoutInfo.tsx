@@ -41,11 +41,11 @@ export function WorkoutInfo(props: TWorkoutInfoProps) {
     totalRounds,
     averageRatio,
     averageTime,
-    correctAnswers,
+    // correctAnswers,
     questionsCount,
     stepIndex,
     currentRatio,
-    currentTime,
+    // currentTime,
   } = workout;
 
   const isInProgress = started && !finished;

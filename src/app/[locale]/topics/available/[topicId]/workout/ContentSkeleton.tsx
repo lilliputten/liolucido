@@ -11,13 +11,13 @@ export function ContentSkeleton({ className }: TProps) {
   return (
     <div
       className={cn(
-        isDev && '__AvailableTopicsPage_ContentSkeleton', // DEBUG
+        isDev && '__WorkoutTopic_ContentSkeleton', // DEBUG
         'size-full rounded-lg',
         'flex flex-1 flex-col gap-4',
         className,
       )}
     >
-      {isDev && <p>AvailableTopicsPage_ContentSkeleton</p>}
+      {isDev && <p>WorkoutTopic_ContentSkeleton</p>}
       <Skeleton className="h-9 w-full rounded" />
       {generateArray(3).map((i) => (
         <Skeleton key={i} className="h-32 w-full rounded-xl" />

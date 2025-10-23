@@ -39,15 +39,7 @@ export default async function WorkoutTopicGoWrapper({ params }: TAwaitedProps) {
       )}
       limitWidth
     >
-      {/*
-      <PageHeader heading={'Workout Topic'} />
-      */}
-      <WorkoutTopicGo
-        className={cn(
-          isDev && '__page_ViewTopicGoPage', // DEBUG
-        )}
-        // topicId={topicId}
-      />
+      <WorkoutTopicGo />
     </PageWrapper>
   );
 }

@@ -4,23 +4,16 @@ import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { Progress } from '@/components/ui/Progress';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-
-interface Answer {
-  id: string;
-  text: string;
-  isCorrect: boolean;
-}
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
+import { TAvailableAnswer } from '@/features/answers/types';
 
 interface WorkoutQuestionProps {
   questionText: string;
-  answers: Answer[];
+  answers?: TAvailableAnswer[];
   isAnswersLoading?: boolean;
-  currentStep: number;
-  totalSteps: number;
   onAnswerSelect: (answerId: string) => void;
   onSkip: () => void;
   onFinish: () => void;
@@ -33,8 +26,6 @@ export function WorkoutQuestion({
   questionText,
   answers,
   isAnswersLoading,
-  currentStep,
-  totalSteps,
   onAnswerSelect,
   onSkip,
   onFinish,
@@ -42,85 +33,74 @@ export function WorkoutQuestion({
   goPrevQuestion,
   selectedAnswerId,
 }: WorkoutQuestionProps) {
-  const progressStep = selectedAnswerId ? currentStep : currentStep - 1;
-  const progress = totalSteps ? (progressStep / totalSteps) * 100 : 0;
+  const { workout, questionIds } = useWorkoutContext();
+  const totalSteps = questionIds?.length || 0;
+  const stepIndex = workout?.stepIndex || 0;
+  const currentStep = stepIndex + 1;
 
   const isSelectedCorrect =
-    !!selectedAnswerId && answers.find(({ id }) => id === selectedAnswerId)?.isCorrect;
+    !!workout?.selectedAnswerId &&
+    answers?.find(({ id }) => id === workout?.selectedAnswerId)?.isCorrect;
 
   const isFinished = currentStep >= totalSteps;
 
-  const answersContent = isAnswersLoading ? (
-    // Emulate answers...
-    generateArray(2).map((i) => <Skeleton key={i} className="h-14 w-full" />)
-  ) : !answers.length ? (
-    <p className="opacity-50">No answers created here. Just skip it.</p>
-  ) : (
-    answers.map((answer) => {
-      const isSelected = selectedAnswerId === answer.id;
-      const isCorrect = answer.isCorrect;
-      let borderColor = 'border-border';
-      let bgColor = 'bg-background/50';
-      if (selectedAnswerId) {
-        if (isCorrect) {
-          borderColor = isSelected ? 'border-green-500' : 'border-green-500 border-dashed';
-          bgColor = isSelected ? 'bg-green-500/20' : 'bg-green-500/5';
-        } else if (isSelected) {
-          borderColor = 'border-red-500';
-          bgColor = 'bg-red-500/20';
+  const answersContent =
+    isAnswersLoading || !answers ? (
+      // Emulate answers...
+      generateArray(2).map((i) => <Skeleton key={i} className="h-14 w-full" />)
+    ) : !answers.length ? (
+      <p className="opacity-50">No answers created here. Just skip it.</p>
+    ) : (
+      answers.map((answer) => {
+        const isSelected = selectedAnswerId === answer.id;
+        const isCorrect = answer.isCorrect;
+        let borderColor = 'border-border';
+        let bgColor = 'bg-background/50';
+        if (selectedAnswerId) {
+          if (isCorrect) {
+            borderColor = isSelected ? 'border-green-500' : 'border-green-500 border-dashed';
+            bgColor = isSelected ? 'bg-green-500/20' : 'bg-green-500/5';
+          } else if (isSelected) {
+            borderColor = 'border-red-500';
+            bgColor = 'bg-red-500/20';
+          }
         }
-      }
-      return (
-        <button
-          key={answer.id}
-          onClick={() => !selectedAnswerId && onAnswerSelect(answer.id)}
-          disabled={!!selectedAnswerId}
-          className={cn(
-            isDev && '__WorkoutQuestion_Answer',
-            'w-full rounded-lg border p-4 text-left transition',
-            'hover:bg-theme-500/15 hover:text-accent-foreground',
-            'disabled:cursor-not-allowed',
-            selectedAnswerId && 'disabled',
-            borderColor,
-            bgColor,
-          )}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <MarkdownText omitLinks>{answer.text}</MarkdownText>
-            </div>
-            {!!selectedAnswerId && (
-              <div className="ml-2 flex-shrink-0">
-                {isCorrect ? (
-                  <Icons.CheckIcon className="size-5 text-green-500" />
-                ) : isSelected ? (
-                  <Icons.XIcon className="size-5 text-red-500" />
-                ) : null}
-              </div>
+        return (
+          <button
+            key={answer.id}
+            onClick={() => !selectedAnswerId && onAnswerSelect(answer.id)}
+            disabled={!!selectedAnswerId}
+            className={cn(
+              isDev && '__WorkoutQuestion_Answer',
+              'w-full rounded-lg border p-4 text-left transition',
+              'hover:bg-theme-500/15 hover:text-accent-foreground',
+              selectedAnswerId && 'pointer-events-none',
+              borderColor,
+              bgColor,
             )}
-          </div>
-        </button>
-      );
-    })
-  );
-
-  const progressBar = (
-    <div data-testid="__WorkoutQuestion_Progress" className="space-y-2">
-      <div className="flex justify-between text-sm text-muted-foreground">
-        <span>
-          Question {currentStep || 0} of {totalSteps || 0}
-        </span>
-        <span>{Math.round(progress)}%</span>
-      </div>
-      <Progress value={progress} className="h-2 bg-theme-500/20 transition" />
-    </div>
-  );
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <MarkdownText omitLinks>{answer.text}</MarkdownText>
+              </div>
+              {!!selectedAnswerId && (
+                <div className="ml-2 flex-shrink-0">
+                  {isCorrect ? (
+                    <Icons.CheckIcon className="size-5 text-green-500" />
+                  ) : isSelected ? (
+                    <Icons.XIcon className="size-5 text-red-500" />
+                  ) : null}
+                </div>
+              )}
+            </div>
+          </button>
+        );
+      })
+    );
 
   const questionContent = (
-    <div data-testid="__WorkoutQuestion_Question" className="flex flex-col gap-4">
-      <div className="text-xl font-semibold">
-        <MarkdownText>{questionText}</MarkdownText>
-      </div>
+    <div data-testid="__WorkoutQuestion_Content" className="flex flex-col gap-4">
+      <MarkdownText className="text-lg">{questionText}</MarkdownText>
       {/* Answers */}
       <div
         data-testid="__WorkoutQuestion_Answers"
@@ -198,7 +178,6 @@ export function WorkoutQuestion({
 
   return (
     <div data-testid="__WorkoutQuestion" className="flex flex-col gap-4">
-      {progressBar}
       {questionContent}
       {buttonsContent}
     </div>

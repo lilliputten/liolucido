@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { availableTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { isDev } from '@/constants';
@@ -10,15 +9,12 @@ import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
-import { WorkoutControl, WorkoutInfo } from '@/features/workout/components';
+import { WorkoutControl, WorkoutInfo } from '@/features/workouts/components';
 
 interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;
   className?: string;
 }
-
-// const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
-// const routePath = topicsRoutes[manageScope];
 
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
