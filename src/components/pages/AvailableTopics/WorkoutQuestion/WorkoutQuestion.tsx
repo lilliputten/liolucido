@@ -43,7 +43,7 @@ export function WorkoutQuestion({
   selectedAnswerId,
 }: WorkoutQuestionProps) {
   const progressStep = selectedAnswerId ? currentStep : currentStep - 1;
-  const progress = (progressStep / totalSteps) * 100;
+  const progress = totalSteps ? (progressStep / totalSteps) * 100 : 0;
 
   const isSelectedCorrect =
     !!selectedAnswerId && answers.find(({ id }) => id === selectedAnswerId)?.isCorrect;
@@ -108,7 +108,7 @@ export function WorkoutQuestion({
     <div data-testid="__WorkoutQuestion_Progress" className="space-y-2">
       <div className="flex justify-between text-sm text-muted-foreground">
         <span>
-          Question {currentStep} of {totalSteps}
+          Question {currentStep || 0} of {totalSteps || 0}
         </span>
         <span>{Math.round(progress)}%</span>
       </div>

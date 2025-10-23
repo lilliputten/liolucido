@@ -1,52 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useFormatter } from 'next-intl';
 
 import { availableTopicsRoute } from '@/config/routesConfig';
-import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
-import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { TTopicId } from '@/features/topics/types';
-import { TWorkoutData } from '@/features/workouts/types';
+import { WorkoutStateDetails } from '@/features/workout/components';
 import { useGoToTheRoute, useSessionUser } from '@/hooks';
-
-function WorkoutInfo({ workout }: { workout?: TWorkoutData }) {
-  const format = useFormatter();
-  if (!workout) {
-    return <>No workout created</>;
-  }
-  if (!workout.started || !workout.startedAt) {
-    if (workout.finished && workout.finishedAt) {
-      return (
-        <>
-          The workout is completed {getFormattedRelativeDate(format, workout.finishedAt)} in{' '}
-          {formatSecondsDuration(workout.currentTime || 0)} with a ratio of{' '}
-          {workout.currentRatio || 0}% ({workout.correctAnswers || 0} of{' '}
-          {workout.questionsCount || 0} with correct answers).
-        </>
-      );
-    }
-    return <>Workout hasn't been started yet</>;
-  }
-  if (workout.stepIndex) {
-    return (
-      <>
-        Your workout is in progress ({workout.stepIndex + 1} of {workout.questionsCount || 0}{' '}
-        questions, started {getFormattedRelativeDate(format, workout.startedAt)})
-      </>
-    );
-  }
-  return (
-    <>
-      The workout has been created {getFormattedRelativeDate(format, workout.startedAt)} and now is
-      ready to start
-    </>
-  );
-}
 
 export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
   // const { topicId, workout, pending, createWorkout, startWorkout } = useWorkoutContext();
@@ -62,7 +25,8 @@ export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
     isFetched,
     // localInitialized,
     queryKey,
-    startWorkout,
+    startOrCreateWorkout,
+    // startWorkout,
     createWorkout,
     // enabled,
     // preparing,
@@ -122,14 +86,14 @@ export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
 
   const handleStartWorkout = () => {
     debugger;
-    startWorkout();
+    startOrCreateWorkout();
     setTimeout(handleResumeWorkout, 10);
   };
 
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
-        <WorkoutInfo workout={workout} />
+        <WorkoutStateDetails workout={workout} />
       </p>
       <div className="flex gap-2">
         <Button

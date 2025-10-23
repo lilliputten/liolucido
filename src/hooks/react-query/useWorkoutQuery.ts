@@ -17,7 +17,7 @@ import { useQuestionIdsForTopicId } from './useQuestionIdsForTopicId';
 
 const staleTime = minuteMs * 10;
 
-const _shuffleQuestionsStr = (ids?: string[]) => {
+const shuffleQuestionsStr = (ids?: string[]) => {
   if (!ids || !ids.length) {
     return '';
   }
@@ -117,8 +117,13 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
         if (!topicId || !userId) {
           return null;
         }
-        const result: TWorkoutData | undefined = await getWorkout(topicId);
-        return result || null;
+        const serverData: TWorkoutData | undefined = await getWorkout(topicId);
+        console.log('[useWorkoutQuery:queryFn] Received server data', {
+          topicId,
+          userId,
+          serverData,
+        });
+        return serverData || null;
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
         const message = 'Cannot load workout data';
@@ -140,20 +145,30 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
         setLocalWorkout(null);
         return;
       }
-      const updatedWorkout = memo.workout
+      const updatedData = memo.workout
         ? ({ ...memo.workout, ...data } as TWorkoutData)
         : (data as TWorkoutData);
+
+      console.log('[useWorkoutQuery:updateWorkout] Start', {
+        updatedData,
+      });
+      debugger;
+
       // Always save to localStorage
-      saveToLocalStorage(updatedWorkout);
-      setLocalWorkout(updatedWorkout);
+      saveToLocalStorage(updatedData);
+      setLocalWorkout(updatedData);
+
       // Save to server if online
-      if (!isOffline && userId) {
+      if (!isOffline) {
         try {
           if (data && topicId) {
-            debugger;
-            await updateWorkout(topicId, data);
+            const serverData = await updateWorkout(topicId, data);
+            console.log('[useWorkoutQuery:updateWorkout] Saved to server', {
+              serverData,
+              updatedData,
+            });
+            queryClient.setQueryData(queryKey, serverData);
           }
-          queryClient.invalidateQueries({ queryKey });
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Failed to update workout on server:', error);
@@ -162,14 +177,34 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
         }
       }
     },
-    [memo, saveToLocalStorage, isOffline, userId, topicId, queryClient, queryKey],
+    [memo, saveToLocalStorage, isOffline, topicId, queryClient, queryKey],
   );
 
+  React.useEffect(() => {
+    console.log('[useWorkoutQuery:CHANGED]', {
+      memo,
+      saveToLocalStorage,
+      isOffline,
+      topicId,
+      queryClient,
+      queryKey,
+    });
+    // debugger;
+  }, [
+    //
+    memo,
+    saveToLocalStorage,
+    isOffline,
+    topicId,
+    queryClient,
+    queryKey,
+  ]);
+
   const createWorkout = React.useCallback(() => {
-    const questionsOrder = _shuffleQuestionsStr(questionIds); // questionIds?.sort(() => Math.random() - 0.5).join(' ') || '';
+    const questionsOrder = shuffleQuestionsStr(memo.questionIds); // questionIds?.sort(() => Math.random() - 0.5).join(' ') || '';
     const now = new Date();
     const newWorkout: TWorkoutData = {
-      questionsCount: questionIds?.length || 0,
+      questionsCount: memo.questionIds?.length || 0,
       questionsOrder,
       questionResults: '',
       stepIndex: 0,
@@ -187,12 +222,17 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       startedAt: now,
       finishedAt: now,
     };
+    console.log('[useWorkoutQuery:createWorkout]', {
+      newWorkout,
+    });
+    debugger;
     updateWorkoutData(newWorkout);
-  }, [questionIds, updateWorkoutData]);
+  }, [memo, updateWorkoutData]);
 
   const startWorkout = React.useCallback(() => {
+    // const questionsOrder = shuffleQuestionsStr(memo.questionIds); // questionIds?.sort(() => Math.random() - 0.5).join(' ') || '';
     const now = new Date();
-    const update: Partial<TWorkoutData> = {
+    const updateData: Partial<TWorkoutData> = {
       startedAt: now, // (new Date()).toISOString()
       finishedAt: now,
       started: true,
@@ -204,8 +244,24 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       currentTime: 0, // Current time remained to thefinish, in seconds (if finished)
       correctAnswers: 0, // Current correct answers count (if finished)
     };
-    updateWorkoutData(update);
+    console.log('[useWorkoutQuery:startWorkout]', {
+      updateData,
+    });
+    debugger;
+    updateWorkoutData(updateData);
   }, [updateWorkoutData]);
+
+  const startOrCreateWorkout = React.useCallback(() => {
+    const { workout } = memo;
+    const isExists = !!workout;
+    console.log('[useWorkoutQuery:startOrCreateWorkout]', {
+      isExists,
+      workout,
+      memo,
+    });
+    debugger;
+    return isExists ? startWorkout() : createWorkout();
+  }, [memo, startWorkout, createWorkout]);
 
   const finishWorkout = React.useCallback(() => {
     if (!memo.workout) return;
@@ -229,7 +285,7 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     const averageTime = Math.round(
       allTimesList.reduce((sum, val) => sum + val, 0) / newTotalRounds,
     );
-    updateWorkoutData({
+    const updateData: Partial<TWorkoutData> = {
       started: false,
       finished: true,
       selectedAnswerId: '',
@@ -243,17 +299,25 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       currentRatio,
       averageRatio,
       averageTime,
+    };
+    console.log('[useWorkoutQuery:finishWorkout]', {
+      updateData,
     });
+    updateWorkoutData(updateData);
   }, [memo, questionIds, updateWorkoutData]);
 
   const goPrevQuestion = React.useCallback(() => {
     if (!memo.workout) return;
     const newStepIndex = memo.workout.stepIndex ? memo.workout.stepIndex - 1 : 0;
-    updateWorkoutData({
+    const updateData: Partial<TWorkoutData> = {
       stepIndex: newStepIndex,
       selectedAnswerId: '',
       finishedAt: new Date(),
+    };
+    console.log('[useWorkoutQuery:goPrevQuestion]', {
+      updateData,
     });
+    updateWorkoutData(updateData);
   }, [memo, updateWorkoutData]);
 
   const goNextQuestion = React.useCallback(() => {
@@ -263,11 +327,15 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     if (stepIndex >= totalSteps - 1) {
       return finishWorkout();
     }
-    updateWorkoutData({
+    const updateData: Partial<TWorkoutData> = {
       stepIndex: stepIndex + 1,
       selectedAnswerId: '',
       finishedAt: new Date(),
+    };
+    console.log('[useWorkoutQuery:goNextQuestion]', {
+      updateData,
     });
+    updateWorkoutData(updateData);
   }, [memo, questionIds, finishWorkout, updateWorkoutData]);
 
   const saveResult = React.useCallback(
@@ -280,27 +348,37 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       resultsList[idx] = resultVal;
       const correctAnswers = resultsList.filter(Boolean).length;
       const questionResults = JSON.stringify(resultsList);
-      updateWorkoutData({
+      const updateData: Partial<TWorkoutData> = {
         questionResults,
         correctAnswers,
         finishedAt: new Date(),
+      };
+      console.log('[useWorkoutQuery:saveResult]', {
+        updateData,
       });
+      updateWorkoutData(updateData);
     },
     [memo, updateWorkoutData],
   );
 
   const saveAnswer = React.useCallback(
     (selectedAnswerId?: string) => {
-      updateWorkoutData({
-        selectedAnswerId: selectedAnswerId || '',
+      const updateData: Partial<TWorkoutData> = {
         finishedAt: new Date(),
+      };
+      console.log('[useWorkoutQuery:saveAnswer]', {
+        updateData,
       });
+      updateWorkoutData(updateData);
     },
     [updateWorkoutData],
   );
 
   const saveResultAndGoNext = React.useCallback(
     (result: boolean | undefined) => {
+      console.log('[useWorkoutQuery:saveResultAndGoNext]', {
+        result,
+      });
       saveResult(result);
       goNextQuestion();
     },
@@ -314,6 +392,7 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     userId,
     pending: !query.isFetched || query.isLoading || !localInitialized,
     queryKey,
+    startOrCreateWorkout,
     createWorkout,
     startWorkout,
     finishWorkout,

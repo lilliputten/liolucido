@@ -54,7 +54,9 @@ describe('deleteQuestion UserTopicWorkout updates', () => {
       });
 
       for (const workout of workouts) {
-        const questionsOrder = (workout.questionsOrder || '').split(' ').filter(Boolean);
+        const questionsOrder = workout.questionsOrder
+          ? workout.questionsOrder.split(' ').filter(Boolean)
+          : [];
         const questionResults = workout.questionResults ? JSON.parse(workout.questionResults) : [];
         const questionIndex = questionsOrder.indexOf(question2.id);
 
@@ -161,7 +163,9 @@ describe('deleteQuestion UserTopicWorkout updates', () => {
       });
 
       for (const workout of workouts) {
-        const questionsOrder = (workout.questionsOrder || '').split(' ').filter(Boolean);
+        const questionsOrder = workout.questionsOrder
+          ? workout.questionsOrder.split(' ').filter(Boolean)
+          : [];
         const questionResults = workout.questionResults ? JSON.parse(workout.questionResults) : [];
         const questionIndex = questionsOrder.indexOf(question2.id);
 

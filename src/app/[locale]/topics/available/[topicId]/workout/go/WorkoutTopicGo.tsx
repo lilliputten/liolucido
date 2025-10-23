@@ -70,7 +70,7 @@ export function WorkoutTopicGo(props: TPropsWithClassName) {
 
   const currentQuestionId = React.useMemo(() => {
     if (!workout?.questionsOrder) return null;
-    const questionsOrder = workout.questionsOrder.split(' ');
+    const questionsOrder = workout.questionsOrder ? workout.questionsOrder.split(' ') : [];
     const currentIndex = workout.stepIndex || 0;
     return questionsOrder[currentIndex] || null;
   }, [workout?.questionsOrder, workout?.stepIndex]);

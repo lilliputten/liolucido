@@ -44,7 +44,7 @@ export async function deleteQuestion(questionId: TQuestionId) {
 
       // TODO: Use Promise.all to update all the affected workouts simultaneously
       for (const workout of workouts) {
-        const questionsOrder = (workout.questionsOrder || '').split(' ');
+        const questionsOrder = workout.questionsOrder ? workout.questionsOrder.split(' ') : [];
         const questionResults = workout.questionResults ? JSON.parse(workout.questionResults) : [];
         const questionIndex = questionsOrder.indexOf(question.id);
 

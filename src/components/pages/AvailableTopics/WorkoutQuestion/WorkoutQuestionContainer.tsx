@@ -17,9 +17,11 @@ import { WorkoutQuestion } from './WorkoutQuestion';
 
 interface TMemo {
   nextPageTimerHandler?: ReturnType<typeof setTimeout>;
+  isGoingOut?: boolean;
 }
 
 export function WorkoutQuestionContainer() {
+  const memo = React.useMemo<TMemo>(() => ({}), []);
   const {
     topicId,
     workout,
@@ -30,17 +32,10 @@ export function WorkoutQuestionContainer() {
     goNextQuestion,
     goPrevQuestion,
   } = useWorkoutContext();
-  const selectedAnswerId = workout?.selectedAnswerId;
-
-  const memo = React.useMemo<TMemo>(() => ({}), []);
-
-  const workoutRoutePath = `${availableTopicsRoute}/${topicId}/workout`;
-
-  const goToTheRoute = useGoToTheRoute();
 
   // Prepare data...
   const questionsOrder = React.useMemo(
-    () => (workout?.questionsOrder || '').split(' '),
+    () => (workout?.questionsOrder ? workout?.questionsOrder.split(' ') : []),
     [workout?.questionsOrder],
   );
 
@@ -50,27 +45,71 @@ export function WorkoutQuestionContainer() {
   const questionId = questionsOrder[stepIndex];
   const isExceed = currentStep > totalSteps;
 
-  console.log('[WorkoutQuestionContainer:DEBUG]', {
-    totalSteps,
-    questionsOrder,
-    questionId,
-    workout,
-    // question,
-    // answers,
-    // isAnswersLoading,
-    // isQuestionFetched,
-    // isQuestionLoading,
-  });
+  React.useEffect(() => {
+    console.log('[WorkoutQuestionContainer:DEBUG]', {
+      totalSteps,
+      questionsOrder,
+      questionId,
+      workout,
+      // question,
+      // answers,
+      // isAnswersLoading,
+      // isQuestionFetched,
+      // isQuestionLoading,
+    });
+  }, [totalSteps, questionsOrder, questionId, workout]);
 
-  const handleFinish = React.useCallback(() => {
+  const workoutRoutePath = `${availableTopicsRoute}/${topicId}/workout`;
+
+  const goToTheRoute = useGoToTheRoute();
+
+  const handleFinishWorkout = React.useCallback(() => {
+    console.log('[WorkoutQuestionContainer:handleFinishWorkout]', {
+      workoutRoutePath,
+    });
+    debugger;
     finishWorkout();
     setTimeout(() => {
       goToTheRoute(workoutRoutePath);
     }, 10);
   }, [finishWorkout, goToTheRoute, workoutRoutePath]);
 
+  /* // DEBUG
+   * React.useEffect(() => {
+   *   const diff_finishWorkout = memo.finishWorkout !== finishWorkout;
+   *   // const diff_isExceed = memo.isExceed !== isExceed;
+   *   // const diff_currentStep = memo.currentStep !== currentStep;
+   *   // const diff_totalSteps = memo.totalSteps !== totalSteps;
+   *   const diff_handleFinishWorkout = memo.handleFinishWorkout !== handleFinishWorkout;
+   *   // eslint-disable-next-line no-console
+   *   console.log('[WorkoutQuestionContainer:Effect:DEBUG]', {
+   *     memo,
+   *     //
+   *     diff_finishWorkout,
+   *     // diff_isExceed,
+   *     // diff_currentStep,
+   *     // diff_totalSteps,
+   *     diff_handleFinishWorkout,
+   *   });
+   *   debugger;
+   *   memo.finishWorkout = finishWorkout;
+   *   // memo.isExceed = isExceed;
+   *   // memo.currentStep = currentStep;
+   *   // memo.totalSteps = totalSteps;
+   *   memo.handleFinishWorkout = handleFinishWorkout;
+   * }, [
+   *   memo,
+   *   //
+   *   finishWorkout,
+   *   // isExceed,
+   *   // currentStep,
+   *   // totalSteps,
+   *   handleFinishWorkout,
+   * ]);
+   */
+
   React.useEffect(() => {
-    if (isExceed) {
+    if (isExceed && !memo.isGoingOut) {
       const error = new Error(
         `The step index (${currentStep}) exceeds the total steps count (${totalSteps})`,
       );
@@ -78,11 +117,12 @@ export function WorkoutQuestionContainer() {
       console.warn('[WorkoutQuestionContainer]', error, {
         totalSteps,
         currentStep,
-        workout,
       });
-      handleFinish();
+      // debugger;
+      handleFinishWorkout();
+      memo.isGoingOut = true;
     }
-  }, [handleFinish, isExceed, currentStep, totalSteps, workout]);
+  }, [memo, handleFinishWorkout, isExceed, currentStep, totalSteps]);
 
   const availableQuestionQuery = useAvailableQuestionById({ id: questionId });
   const {
@@ -224,10 +264,10 @@ export function WorkoutQuestionContainer() {
       totalSteps={totalSteps}
       onAnswerSelect={onAnswerSelect}
       onSkip={onSkip}
-      onFinish={handleFinish}
+      onFinish={handleFinishWorkout}
       onContinue={goToTheNextQuestion}
       goPrevQuestion={goToThePrevQuestion}
-      selectedAnswerId={selectedAnswerId || undefined}
+      selectedAnswerId={workout?.selectedAnswerId || undefined}
     />
   );
 }

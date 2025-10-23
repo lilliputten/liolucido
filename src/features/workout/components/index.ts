@@ -1,2 +1,3 @@
-export { WorkoutInfo } from './WorkoutInfo';
-export { WorkoutControl } from './WorkoutControl';
+export * from './WorkoutInfo';
+export * from './WorkoutControl';
+export * from './WorkoutStateDetails';

@@ -1,10 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useFormatter } from 'next-intl';
 
 import { availableTopicsRoute } from '@/config/routesConfig';
-import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -12,6 +10,8 @@ import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { useGoToTheRoute } from '@/hooks';
+
+import { WorkoutStateDetails } from './WorkoutStateDetails';
 
 interface TWorkoutControlProps {
   // topic: TAvailableTopic;
@@ -25,7 +25,6 @@ export function WorkoutControl(props: TWorkoutControlProps) {
     // workout,
     className,
   } = props;
-  const format = useFormatter();
   const workoutContext = useWorkoutContext();
   const {
     userId,
@@ -33,7 +32,8 @@ export function WorkoutControl(props: TWorkoutControlProps) {
     workout,
     pending,
     // createWorkout,
-    startWorkout,
+    // startWorkout,
+    startOrCreateWorkout,
     questionIds,
   } = workoutContext;
 
@@ -55,16 +55,21 @@ export function WorkoutControl(props: TWorkoutControlProps) {
   const isWorkoutInProgress = workout?.started && !workout?.finished;
 
   const handleCreateWorkout = () => {
+    console.log('[WorkoutControl:handleCreateWorkout]');
+    debugger;
     goToTheRoute(`${availableTopicsRoute}/${topicId}/workout`);
   };
 
   const handleResumeWorkout = () => {
+    console.log('[WorkoutControl:handleResumeWorkout]');
+    debugger;
     goToTheRoute(`${availableTopicsRoute}/${topicId}/workout/go`);
   };
 
   const handleStartWorkout = () => {
+    console.log('[WorkoutControl:handleStartWorkout]');
     debugger;
-    startWorkout();
+    startOrCreateWorkout();
     setTimeout(handleResumeWorkout, 10);
   };
 
@@ -110,11 +115,7 @@ export function WorkoutControl(props: TWorkoutControlProps) {
   return (
     <div className={cn(isDev && '__WorkoutControl', 'flex flex-col gap-4', className)}>
       <p className="text-sm text-muted-foreground">
-        {workout.finished
-          ? `The workout is completed ${workout.finishedAt ? getFormattedRelativeDate(format, workout.finishedAt) : ''} in ${formatSecondsDuration(workout.currentTime || 0)} with a ratio of ${workout.currentRatio}% (${workout.correctAnswers} of ${workout.questionsCount} with correct answers).`
-          : workout.started
-            ? `Your workout is in progress (${(workout.stepIndex || 0) + 1} of ${workout.questionsCount} questions, started ${workout.startedAt ? getFormattedRelativeDate(format, workout.startedAt) : ''})`
-            : `The workout has been created ${workout.startedAt ? getFormattedRelativeDate(format, workout.startedAt) : ''} and now is ready to start`}
+        <WorkoutStateDetails workout={workout} />
       </p>
       <div className="flex gap-2">
         <Button
