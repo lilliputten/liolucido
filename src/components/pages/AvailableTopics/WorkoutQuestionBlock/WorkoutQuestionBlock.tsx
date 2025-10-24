@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import { availableTopicsRoute } from '@/config/routesConfig';
 import { cn } from '@/lib/utils';
 import { useAvailableQuestionById } from '@/hooks/react-query/useAvailableQuestionById';
-import { MarkdownText } from '@/components/ui/MarkdownText';
 import { WorkoutQuestion } from '@/components/pages/AvailableTopics/WorkoutQuestion/WorkoutQuestion';
 import { PageError } from '@/components/shared/PageError';
 import { isDev } from '@/constants';
@@ -116,39 +115,36 @@ export function WorkoutQuestionBlock() {
     (answerId: string) => {
       const answer = answers.find(({ id }) => id === answerId);
       if (answer) {
-        const { isCorrect, explanation } = answer;
-        console.log('[WorkoutQuestionBlock:onAnswerSelect]', {
-          answerId,
-          answer,
-          isCorrect,
-          explanation,
-        });
-        if (explanation) {
-          const markdownContent = (
-            <MarkdownText className="text-sm" omitLinks>
-              {explanation}
-            </MarkdownText>
-          );
-          const content = (
-            <div className="flex flex-col gap-2">
-              <p className="font-bold uppercase">
-                {isCorrect ? 'The answer is correct:' : 'The answer is incorrect:'}
-              </p>
-              {markdownContent}
-            </div>
-          );
-          toast.info(content);
-        }
+        const { isCorrect } = answer;
+        /* // UNUSED: Show explanation toast (it's displayed in the selected answer block)
+         * if (explanation) {
+         *   const markdownContent = (
+         *     <MarkdownText className="text-sm" omitLinks>
+         *       {explanation}
+         *     </MarkdownText>
+         *   );
+         *   const content = (
+         *     <div className="flex flex-col gap-2">
+         *       <p className="font-bold uppercase">
+         *         {isCorrect ? 'The answer is correct:' : 'The answer is incorrect:'}
+         *       </p>
+         *       {markdownContent}
+         *     </div>
+         *   );
+         *   toast.info(content);
+         * }
+         */
         // Update workout with result and move to next question
         saveAnswer(answerId);
         saveResult(isCorrect);
-        // Auto-advance after delay
-        if (isCorrect) {
-          memo.nextPageTimerHandler = setTimeout(goToTheNextQuestion, 2000);
-        }
+        /* // UNUSED: Auto-advance after delay
+         * if (isCorrect) {
+         *   memo.nextPageTimerHandler = setTimeout(goToTheNextQuestion, 2000);
+         * }
+         */
       }
     },
-    [memo, answers, goToTheNextQuestion, saveResult, saveAnswer],
+    [answers, saveResult, saveAnswer],
   );
 
   const onSkip = React.useCallback(() => {
@@ -167,30 +163,12 @@ export function WorkoutQuestionBlock() {
   }
 
   if (!workout) {
-    return <div className="py-6">No active workout found.</div>;
-  }
-
-  function PutDevDebugInfo() {
-    if (isDev) {
-      return (
-        <div className="flex flex-col gap-2 text-xs opacity-50">
-          <div>
-            <span className="opacity-50">Questions order is:</span> {questionOrderedIds.join(' ')}
-          </div>
-          <div>
-            <span className="opacity-50">Step:</span> {currentStep} / {totalSteps}
-          </div>
-        </div>
-      );
-    }
+    return <PageError error="No active workout found." padded={false} border={false} />;
   }
 
   if (isExceed) {
     return (
-      <div className="flex flex-col gap-3 py-6">
-        <div>The workout has been (suddenly) finished.</div>
-        <PutDevDebugInfo />
-      </div>
+      <PageError error="The workout has been (suddenly) finished." padded={false} border={false} />
     );
   }
 
@@ -205,7 +183,9 @@ export function WorkoutQuestionBlock() {
   }
 
   if (!question) {
-    return <PageError error={`Not found question (${questionId}).`} padded={false} />;
+    return (
+      <PageError error={`Not found question (${questionId}).`} padded={false} border={false} />
+    );
   }
 
   return (
@@ -218,7 +198,6 @@ export function WorkoutQuestionBlock() {
       onFinish={handleFinishWorkout}
       onContinue={goToTheNextQuestion}
       goPrevQuestion={goToThePrevQuestion}
-      selectedAnswerId={workout?.selectedAnswerId || undefined}
     />
   );
 }

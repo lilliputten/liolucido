@@ -52,7 +52,7 @@ export function WorkoutControl(props: TWorkoutControlProps) {
         <p className="text-sm text-muted-foreground">No active workout found.</p>
         <Button onClick={handleStartWorkout} disabled={pending} className="flex w-fit gap-2">
           <Icons.Activity className="size-4 opacity-50" />
-          <span>Start New Workout</span>
+          <span>Start New Training</span>
         </Button>
       </div>
     );
@@ -73,10 +73,10 @@ export function WorkoutControl(props: TWorkoutControlProps) {
           <Icons.Activity className="size-4 opacity-50" />
           <span>
             {workout.finished
-              ? 'Restart Workout'
+              ? 'Restart Training'
               : workout.started
-                ? 'Resume Workout'
-                : 'Start Workout'}
+                ? 'Resume Training'
+                : 'Start Training'}
           </span>
         </Button>
       </div>

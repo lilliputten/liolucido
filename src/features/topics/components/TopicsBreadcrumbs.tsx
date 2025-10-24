@@ -28,7 +28,7 @@ export function useTopicsBreadcrumbsItems(props: TBreadcrumbsProps) {
   const { scope, topic, lastItem } = props;
   const topicsListRoutePath = topicsRoutes[scope];
   // TODO: Use i18n translation by `scope`
-  const listTitle = capitalizeString(scope) + ' Topics' + (isDev ? '*' : '');
+  const listTitle = capitalizeString(scope) + ' ' + 'Topics'; /* + (isDev ? '*' : '') */
   const items = filterOutEmpties<TBreadcrumbsItemProps>([
     { link: topicsListRoutePath, content: listTitle },
     !topic

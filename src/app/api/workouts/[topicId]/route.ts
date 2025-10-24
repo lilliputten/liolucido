@@ -22,7 +22,7 @@ export async function GET(
         ok: false,
         error: {
           code: 'NOT_FOUND',
-          message: 'Workout not found',
+          message: 'Training not found',
         },
       };
       return NextResponse.json(response, { status: 404 });

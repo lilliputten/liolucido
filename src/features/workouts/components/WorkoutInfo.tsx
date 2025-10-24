@@ -62,8 +62,8 @@ export function WorkoutInfo(props: TWorkoutInfoProps) {
         className,
       )}
     >
-      {/* Workout Status */}
-      <span className="flex items-center gap-1" title="Workout status">
+      {/* Training Status */}
+      <span className="flex items-center gap-1" title="Training status">
         <Icons.Activity className="mr-1 size-4 opacity-50" />
         {isInProgress && <span className="text-blue-600">In Progress</span>}
         {finished && <span className="text-green-600">Completed</span>}

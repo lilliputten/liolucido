@@ -3,11 +3,9 @@
 import React from 'react';
 
 import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
-import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import * as Icons from '@/components/shared/Icons';
@@ -19,6 +17,7 @@ import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 
+import { ContentSkeleton } from './ContentSkeleton';
 import { WorkoutTopicGoContent } from './WorkoutTopicGoContent';
 
 const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
@@ -109,16 +108,7 @@ export function WorkoutTopicGo() {
 
   const content =
     isTopicPending || !topic ? (
-      <div
-        className={cn(
-          isDev && '__WorkoutTopicGo_Card_Skeleton', // DEBUG
-          'grid w-full gap-4 p-6 md:grid-cols-2',
-        )}
-      >
-        {generateArray(5).map((i) => (
-          <Skeleton key={i} className="h-12 w-full" />
-        ))}
-      </div>
+      <ContentSkeleton omitHeader />
     ) : (
       <Card
         className={cn(

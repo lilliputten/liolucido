@@ -5,9 +5,10 @@ import { isDev } from '@/constants';
 
 interface TProps {
   className?: string;
+  omitHeader?: boolean;
 }
 
-export function ContentSkeleton({ className }: TProps) {
+export function ContentSkeleton({ className, omitHeader }: TProps) {
   return (
     <div
       className={cn(
@@ -16,11 +17,15 @@ export function ContentSkeleton({ className }: TProps) {
         className,
       )}
     >
-      <div className="flex flex-col gap-4">
-        <Skeleton className="h-4 w-2/3 rounded-lg" />
-        <Skeleton className="h-8 w-1/3 rounded-lg" />
-      </div>
-      <div className="h-4" />
+      {!omitHeader && (
+        <>
+          <div className="flex flex-col gap-4">
+            <Skeleton className="h-4 w-2/3 rounded-lg" />
+            <Skeleton className="h-8 w-1/3 rounded-lg" />
+          </div>
+          <div className="h-4" />
+        </>
+      )}
       <div className="flex flex-col gap-4">
         <Skeleton className="h-8 w-3/5 rounded-lg" />
         <Skeleton className="h-4 w-4/5 rounded-lg" />

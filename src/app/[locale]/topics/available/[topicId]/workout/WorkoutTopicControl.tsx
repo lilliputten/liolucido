@@ -56,7 +56,7 @@ export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
         <p className="text-sm text-muted-foreground">No active workout found.</p>
         <Button onClick={createWorkout} disabled={pending} className="flex w-fit gap-2">
           <Icons.Activity className="size-4 opacity-50" />
-          <span>Create New Workout</span>
+          <span>Start New Training</span>
         </Button>
       </div>
     );
@@ -86,17 +86,12 @@ export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
           <Icons.Activity className="size-4 opacity-50" />
           <span>
             {workout.finished
-              ? 'Restart Workout'
+              ? 'Restart Training'
               : workout.started
-                ? 'Resume Workout'
-                : 'Start Workout'}
+                ? 'Resume Training'
+                : 'Start Training'}
           </span>
         </Button>
-        {/*!!workout.stepIndex && (
-          <Button onClick={startWorkout} variant="outline">
-            Restart Workout
-          </Button>
-        )*/}
       </div>
     </div>
   );

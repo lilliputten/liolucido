@@ -20,7 +20,7 @@ export function WorkoutQuestionBlockSkeleton({ className }: TProps) {
     >
       <Skeleton className="h-10 w-full" />
       {/* Emulate answers */}
-      <div className="grid gap-4 py-2 md:grid-cols-2">
+      <div className="grid gap-4 py-2 lg:grid-cols-2">
         {generateArray(2).map((i) => (
           <Skeleton key={i} className="h-14 w-full" />
         ))}

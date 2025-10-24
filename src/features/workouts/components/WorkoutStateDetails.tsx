@@ -25,7 +25,7 @@ export function WorkoutStateDetails({ workout }: { workout?: TWorkoutData }) {
         </>
       );
     }
-    return <>Workout hasn't been started yet</>;
+    return <>Training hasn't been started yet</>;
   }
   if (workout.stepIndex) {
     return (
