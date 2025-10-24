@@ -197,7 +197,7 @@
     "prisma-db-push-all-UNUSED": "echo --Create all databases-- && npm-run-all prisma-db-push prisma-db-push-test",
     "prisma-studio": "echo --Run database explorer-- && prisma studio",
     "husky-init": "husky init",
-    "postinstall": "echo --Run database explorer, invoke custom migrates first-- && next telemetry disable && pnpm prisma migrate resolve --applied 20251022000000_added_user_grade_convert_role_to_enum && npm-run-all prisma-generate prisma-migrate",
+    "postinstall": "echo --Apply migrations, invoke custom migrates first-- && next telemetry disable && npm-run-all prisma-generate prisma-migrate",
     "prepare": "husky",
     "test": "echo --Run tests-- && jest",
     "test-update-snapshots": "echo --Run tests and update snapshots-- && jest --updateSnapshot",
