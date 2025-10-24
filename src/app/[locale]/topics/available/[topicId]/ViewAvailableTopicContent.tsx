@@ -9,7 +9,7 @@ import { TopicsManageScopeIds } from '@/contexts/TopicsContext';
 import { TopicHeader } from '@/features/topics/components/TopicHeader';
 import { TopicProperties } from '@/features/topics/components/TopicProperties';
 import { TAvailableTopic } from '@/features/topics/types';
-import { WorkoutControl, WorkoutInfo } from '@/features/workouts/components';
+import { WorkoutControl, WorkoutInfo, WorkoutStats } from '@/features/workouts/components';
 
 interface TViewAvailableTopicContentProps {
   topic: TAvailableTopic;
@@ -19,56 +19,32 @@ interface TViewAvailableTopicContentProps {
 export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps) {
   const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
   const { topic, className } = props;
-  // Topic
-  const {
-    // id,
-    // userId,
-    // name,
-    // description,
-    // isPublic,
-    // langCode,
-    // langName,
-    // keywords,
-    // createdAt,
-    // updatedAt,
-    _count,
-  } = topic;
-
-  // const user = useSessionUser();
-  // const isOwner = userId && userId === user?.id;
-  // const isAdminMode = user?.role === 'ADMIN';
-  // const allowedEdit = isAdminMode || isOwner;
-  const questionsCount = _count?.questions;
-  const allowedTraining = !!questionsCount;
 
   return (
-    <div
+    <ScrollArea
       className={cn(
-        isDev && '__ViewAvailableTopicContent', // DEBUG
-        'flex w-full flex-col gap-4 overflow-hidden',
+        isDev && '__ViewAvailableTopicContent_Scroll', // DEBUG
         className,
       )}
+      viewportClassName={cn(
+        isDev && '__ViewAvailableTopicContent_ScrollViewport', // DEBUG
+        'px-6 [&>div]:!flex [&>div]:flex-col [&>div]:gap-4 [&>div]:flex-1',
+      )}
     >
-      <ScrollArea>
-        <div
-          className={cn(
-            isDev && '__ViewAvailableTopicContent_Scroll', // DEBUG
-            'flex w-full flex-col gap-4 overflow-hidden',
-            'mx-6',
-            className,
-          )}
-        >
-          <TopicHeader
-            scope={manageScope}
-            topic={topic}
-            showDescription
-            className="flex-1 max-sm:flex-col-reverse"
-          />
-          <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
-          <WorkoutInfo className="flex-1 text-sm" />
-          {allowedTraining && <WorkoutControl />}
-        </div>
-      </ScrollArea>
-    </div>
+      <TopicHeader
+        scope={manageScope}
+        topic={topic}
+        showName={false}
+        showDescription
+        className={cn(
+          isDev && '__ViewAvailableTopicContent_TopicHeader', // DEBUG
+          'mt-4 flex-1 items-start max-sm:flex-col-reverse',
+        )}
+      />
+      <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
+      <WorkoutInfo className="flex-1" />
+      <WorkoutStats />
+      <WorkoutControl />
+    </ScrollArea>
   );
 }

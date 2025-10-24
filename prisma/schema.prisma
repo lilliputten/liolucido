@@ -184,24 +184,24 @@ model Answer {
 }
 
 model UserTopicWorkout {
-  userId           String    @map("user_id")
-  topicId          String    @map("topic_id")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at")
-  startedAt        DateTime? @map("started_at")
-  finishedAt       DateTime? @map("finished_at")
-  questionsCount   Int?      @map("questions_count")
-  questionsOrder   String?   @map("questions_order")
-  questionResults  String?   @map("question_results")
-  stepIndex        Int?      @map("step_index")
-  selectedAnswerId String?   @map("selected_answer_id")
-  currentRatio     Int?      @map("current_ratio")
-  currentTime      Int?      @map("current_time")
-  correctAnswers   Int?      @map("correct_answers")
-  started          Boolean   @default(false)
-  finished         Boolean   @default(false)
-  topic            Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String         @map("user_id")
+  topicId          String         @map("topic_id")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at")
+  startedAt        DateTime?      @map("started_at")
+  finishedAt       DateTime?      @map("finished_at")
+  questionsCount   Int?           @map("questions_count")
+  questionsOrder   String?        @map("questions_order")
+  questionResults  String?        @map("question_results")
+  stepIndex        Int?           @map("step_index")
+  selectedAnswerId String?        @map("selected_answer_id")
+  currentRatio     Int?           @map("current_ratio")
+  currentTime      Int?           @map("current_time")
+  correctAnswers   Int?           @map("correct_answers")
+  started          Boolean        @default(false)
+  finished         Boolean        @default(false)
+  topic            Topic          @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   workoutStats     WorkoutStats[]
 
   @@id([userId, topicId])
@@ -209,27 +209,27 @@ model UserTopicWorkout {
 }
 
 model WorkoutStats {
-  id               String   @id @default(cuid())
-  userId           String   @map("user_id")
-  topicId          String   @map("topic_id")
-  
+  id      String @id @default(cuid())
+  userId  String @map("user_id")
+  topicId String @map("topic_id")
+
   // Round statistics
-  roundNumber      Int      @map("round_number")
-  totalQuestions   Int      @map("total_questions")
-  correctAnswers   Int      @map("correct_answers")
-  ratio            Int      // Success percentage (0-100)
-  timeSeconds      Int      @map("time_seconds") // Time in seconds
-  
+  // roundNumber    Int @map("round_number")
+  totalQuestions Int @map("total_questions")
+  correctAnswers Int @map("correct_answers")
+  ratio          Int // Success percentage (0-100)
+  timeSeconds    Int @map("time_seconds") // Time in seconds
+
   // Timestamps
-  startedAt        DateTime @map("started_at")
-  finishedAt       DateTime @map("finished_at")
-  createdAt        DateTime @default(now()) @map("created_at")
-  
+  startedAt  DateTime @map("started_at")
+  finishedAt DateTime @map("finished_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
   // Relations
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  topic            Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  workout          UserTopicWorkout @relation(fields: [userId, topicId], references: [userId, topicId], onDelete: Cascade)
-  
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic   Topic            @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  workout UserTopicWorkout @relation(fields: [userId, topicId], references: [userId, topicId], onDelete: Cascade)
+
   @@index([userId])
   @@index([topicId])
   @@index([userId, topicId])

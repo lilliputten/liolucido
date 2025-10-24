@@ -9,7 +9,6 @@ import { safeJsonParse } from '@/lib/helpers/json';
 import { minuteMs } from '@/constants';
 import { TTopicId } from '@/features/topics/types';
 import { TUserId } from '@/features/users/types';
-import { getWorkoutStatsCount } from '@/features/workout-stats/actions/getWorkoutStatsCount';
 import { createWorkoutStats } from '@/features/workouts/actions/createWorkoutStats';
 import { getWorkout } from '@/features/workouts/actions/getWorkout';
 import { updateWorkout } from '@/features/workouts/actions/updateWorkout';
@@ -120,11 +119,12 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
           return null;
         }
         const serverData: TWorkoutData | undefined = await getWorkout(topicId);
-        console.log('[useWorkoutQuery:queryFn] Received server data', {
-          topicId,
-          userId,
-          serverData,
-        });
+        /* console.log('[useWorkoutQuery:queryFn] Received server data', {
+         *   topicId,
+         *   userId,
+         *   serverData,
+         * });
+         */
         return serverData || null;
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
@@ -155,24 +155,23 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       const updatedData = memo.workout
         ? ({ ...memo.workout, ...data } as TWorkoutData)
         : (data as TWorkoutData);
-
-      console.log('[useWorkoutQuery:updateWorkoutData] Start', {
-        updatedData,
-      });
-
+      /* console.log('[useWorkoutQuery:updateWorkoutData] Start', {
+       *   updatedData,
+       * });
+       */
       // Always save to localStorage
       saveToLocalStorage(updatedData);
       setLocalWorkout(updatedData);
-
       // Save to server if online
       if (!isOffline) {
         try {
           if (data && topicId) {
             const serverData = await updateWorkout(topicId, data);
-            console.log('[useWorkoutQuery:updateWorkoutData] Saved to server', {
-              serverData,
-              updatedData,
-            });
+            /* console.log('[useWorkoutQuery:updateWorkoutData] Saved to server', {
+             *   serverData,
+             *   updatedData,
+             * });
+             */
             queryClient.setQueryData(queryKey, serverData);
           }
         } catch (error) {
@@ -185,26 +184,6 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     },
     [memo, saveToLocalStorage, isOffline, topicId, queryClient, queryKey],
   );
-
-  React.useEffect(() => {
-    console.log('[useWorkoutQuery:CHANGED]', {
-      memo,
-      saveToLocalStorage,
-      isOffline,
-      topicId,
-      queryClient,
-      queryKey,
-    });
-    // debugger;
-  }, [
-    //
-    memo,
-    saveToLocalStorage,
-    isOffline,
-    topicId,
-    queryClient,
-    queryKey,
-  ]);
 
   const createNewWorkoutData = React.useCallback(() => {
     const questionsOrder = shuffleQuestionsStr(memo.questionIds);
@@ -229,9 +208,10 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
 
   const createWorkout = React.useCallback(() => {
     const newWorkout = createNewWorkoutData();
-    console.log('[useWorkoutQuery:createWorkout]', {
-      newWorkout,
-    });
+    /* console.log('[useWorkoutQuery:createWorkout]', {
+     *   newWorkout,
+     * });
+     */
     updateWorkoutData(newWorkout);
   }, [createNewWorkoutData, updateWorkoutData]);
 
@@ -251,9 +231,10 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       currentTime: 0, // Current time remained to thefinish, in seconds (if finished)
       correctAnswers: 0, // Current correct answers count (if finished)
     };
-    console.log('[useWorkoutQuery:startWorkout]', {
-      updatedWorkout,
-    });
+    /* console.log('[useWorkoutQuery:startWorkout]', {
+     *   updatedWorkout,
+     * });
+     */
     updateWorkoutData(updatedWorkout);
   }, [createNewWorkoutData, memo.workout, updateWorkoutData]);
 
@@ -272,18 +253,18 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
 
     // Save workout stats to database
     try {
-      // Get current round number (count existing stats + 1)
-      const existingStats = await getWorkoutStatsCount(topicId);
-
       await createWorkoutStats({
         topicId,
-        roundNumber: existingStats + 1,
         totalQuestions: totalSteps,
         correctAnswers,
         ratio: currentRatio,
         timeSeconds: currentTime,
         startedAt: startedAt || finishedAt,
         finishedAt,
+      });
+      // Invalidate queries
+      queryClient.invalidateQueries({
+        queryKey: ['workout-stats-history', topicId],
       });
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -301,12 +282,12 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       currentTime,
       currentRatio,
     };
-
-    console.log('[useWorkoutQuery:finishWorkout]', {
-      updateData,
-    });
+    /* console.log('[useWorkoutQuery:finishWorkout]', {
+     *   updateData,
+     * });
+     */
     updateWorkoutData(updateData);
-  }, [memo, questionIds, updateWorkoutData, topicId, userId]);
+  }, [memo, questionIds, updateWorkoutData, topicId, userId, queryClient]);
 
   const goPrevQuestion = React.useCallback(() => {
     if (!memo.workout) return;
@@ -316,9 +297,10 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       selectedAnswerId: '',
       finishedAt: new Date(),
     };
-    console.log('[useWorkoutQuery:goPrevQuestion]', {
-      updateData,
-    });
+    /* console.log('[useWorkoutQuery:goPrevQuestion]', {
+     *   updateData,
+     * });
+     */
     updateWorkoutData(updateData);
   }, [memo, updateWorkoutData]);
 
@@ -334,9 +316,10 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       selectedAnswerId: '',
       finishedAt: new Date(),
     };
-    console.log('[useWorkoutQuery:goNextQuestion]', {
-      updateData,
-    });
+    /* console.log('[useWorkoutQuery:goNextQuestion]', {
+     *   updateData,
+     * });
+     */
     updateWorkoutData(updateData);
   }, [memo, questionIds, finishWorkout, updateWorkoutData]);
 
@@ -355,9 +338,10 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
         correctAnswers,
         finishedAt: new Date(),
       };
-      console.log('[useWorkoutQuery:saveResult]', {
-        updateData,
-      });
+      /* console.log('[useWorkoutQuery:saveResult]', {
+       *   updateData,
+       * });
+       */
       updateWorkoutData(updateData);
     },
     [memo, updateWorkoutData],
@@ -369,9 +353,10 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
         selectedAnswerId: selectedAnswerId || '',
         finishedAt: new Date(),
       };
-      console.log('[useWorkoutQuery:saveAnswer]', {
-        updateData,
-      });
+      /* console.log('[useWorkoutQuery:saveAnswer]', {
+       *   updateData,
+       * });
+       */
       updateWorkoutData(updateData);
     },
     [updateWorkoutData],
@@ -379,9 +364,10 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
 
   const saveResultAndGoNext = React.useCallback(
     (result: boolean | undefined) => {
-      console.log('[useWorkoutQuery:saveResultAndGoNext]', {
-        result,
-      });
+      /* console.log('[useWorkoutQuery:saveResultAndGoNext]', {
+       *   result,
+       * });
+       */
       saveResult(result);
       goNextQuestion();
     },

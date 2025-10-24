@@ -15,6 +15,7 @@ import { usePathname } from '@/i18n/routing'; // TODO: Use 'next/navigation'
 
 interface TTopicHeaderOptions {
   showDates?: boolean;
+  showName?: boolean;
   showDescription?: boolean;
   withLink?: boolean;
 }
@@ -31,6 +32,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
     className,
     // Options...
     showDates,
+    showName = true,
     showDescription,
     withLink,
   } = props;
@@ -38,7 +40,6 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   const {
     id,
     userId,
-    // user,
     name,
     description,
     isPublic,
@@ -55,8 +56,8 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
   const PublicIcon = isPublic ? Icons.Eye : Icons.EyeOff;
   const topicRoutePath = `${topicsListRoutePath}/${id}`;
   const pathname = usePathname();
-  let nameContent = <>{name}</>;
-  if (withLink) {
+  let nameContent = showName ? <>{name}</> : null;
+  if (nameContent && withLink) {
     const isCurrentTopicRoutePath = comparePathsWithoutLocalePrefix(topicRoutePath, pathname);
     if (!isCurrentTopicRoutePath) {
       // Do not use a link if it's already on the its page
@@ -76,9 +77,11 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
       )}
     >
       <div id="left-name" className="flex flex-1 flex-col gap-2">
-        <h2 id="name" className="truncate text-2xl">
-          {nameContent}
-        </h2>
+        {nameContent && (
+          <h2 id="name" className="truncate text-2xl">
+            {nameContent}
+          </h2>
+        )}
         {/* TODO: Format descrption text */}
         {showDescription && !!description && (
           <div id="description" className="truncate text-base">
@@ -86,7 +89,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
           </div>
         )}
       </div>
-      <div id="right-tools" className="!mt-0 flex min-h-10 items-center gap-4 text-xs opacity-50">
+      <div id="right-tools" className="!mt-0 flex min-h-6 items-center gap-4 text-xs opacity-50">
         {isOwner && (
           <span id="isOwner" title="Your Topic">
             <Icons.ShieldCheck className="size-4 text-green-500" />
@@ -98,13 +101,13 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
           </span>
         )}
         {showDates && (
-          <span id="createdAt" className="flex items-center gap-1" title="Creation date">
+          <span id="createdAt" className="flex items-center gap-1 text-xs" title="Creation date">
             <Icons.CalendarDays className="mr-1 size-4 opacity-50" />{' '}
             {getFormattedRelativeDate(format, createdAt)}
           </span>
         )}
         {showDates && updatedAt && !!compareDates(updatedAt, createdAt) && (
-          <span id="createdAt" className="flex items-center gap-1" title="Updated date">
+          <span id="createdAt" className="flex items-center gap-1 text-xs" title="Updated date">
             <Icons.Pencil className="mr-1 size-4 opacity-50" />{' '}
             {getFormattedRelativeDate(format, updatedAt)}
           </span>

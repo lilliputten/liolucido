@@ -19,12 +19,14 @@ interface TWorkoutControlProps {
 
 export function WorkoutControl(props: TWorkoutControlProps) {
   const { className } = props;
+
   const workoutContext = useWorkoutContext();
-  const { topicId, workout, pending, startWorkout } = workoutContext;
+  const { topicId, workout, pending, startWorkout, questionIds } = workoutContext;
+  const isWorkoutInProgress = workout?.started && !workout?.finished;
+  const questionsCount = questionIds?.length || 0;
+  const allowedTraining = !!questionsCount;
 
   const goToTheRoute = useGoToTheRoute();
-
-  const isWorkoutInProgress = workout?.started && !workout?.finished;
 
   const handleResumeWorkout = () => {
     console.log('[WorkoutControl:handleResumeWorkout]');
@@ -44,6 +46,10 @@ export function WorkoutControl(props: TWorkoutControlProps) {
         <Skeleton className="h-10 w-32" />
       </div>
     );
+  }
+
+  if (!allowedTraining) {
+    return null;
   }
 
   if (!workout) {

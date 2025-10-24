@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
+import { truncateMarkdown } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
@@ -101,7 +102,7 @@ export function WorkoutTopicGo() {
     scope: manageScope,
     topic: topic,
     lastItem: {
-      content: 'Workout',
+      content: 'Training',
       // link: isWorkoutInProgress ? questionsContext.routePath : undefined,
     },
   });
@@ -135,6 +136,7 @@ export function WorkoutTopicGo() {
               scope={TopicsManageScopeIds.AVAILABLE_TOPICS}
               topic={topic}
               className="flex-1 max-sm:flex-col-reverse"
+              showName={false}
               showDescription
             />
             <TopicProperties topic={topic} className="flex-1 text-sm" showDates />
@@ -160,7 +162,7 @@ export function WorkoutTopicGo() {
   return (
     <>
       <DashboardHeader
-        heading="Workout"
+        heading={truncateMarkdown(topic?.name || '...', 100)}
         className={cn(
           isDev && '__WorkoutTopicGo_DashboardHeader', // DEBUG
           'mx-6',

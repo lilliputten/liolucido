@@ -3,39 +3,15 @@
 import React from 'react';
 
 import { availableTopicsRoute } from '@/config/routesConfig';
-import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
-import { TTopicId } from '@/features/topics/types';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { WorkoutStateDetails } from '@/features/workouts/components';
-import { useGoToTheRoute, useSessionUser } from '@/hooks';
+import { useGoToTheRoute } from '@/hooks';
 
-export function WorkoutTopicControl({ topicId }: { topicId: TTopicId }) {
-  // const { topicId, workout, pending, createWorkout, startWorkout } = useWorkoutContext();
-  const user = useSessionUser();
-  const userId = user?.id;
-  const workoutQuery = useWorkoutQuery({ topicId, userId });
-  const {
-    workout,
-    // questionIds,
-    // isOffline,
-    pending,
-    // isLoading,
-    // isFetched,
-    // localInitialized,
-    // queryKey,
-    startWorkout,
-    // startWorkout,
-    createWorkout,
-    // enabled,
-    // preparing,
-    // isQuestionIdsPending,
-    // isQueryEnabled,
-    // finishWorkout,
-    // goNextQuestion,
-    // updateWorkoutData,
-  } = workoutQuery;
+export function WorkoutTopicControl() {
+  const { topicId, workout, pending, createWorkout, startWorkout } = useWorkoutContext();
 
   const isWorkoutInProgress = workout?.started && !workout?.finished;
 

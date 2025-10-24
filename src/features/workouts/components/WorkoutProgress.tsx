@@ -39,7 +39,11 @@ export function WorkoutProgress() {
         </span>
         <span>{Math.round(progress)}%</span>
       </div>
-      <Progress value={progress} className="h-2 bg-theme-500/20 transition" />
+      <Progress
+        value={progress}
+        className="h-2 bg-theme-500/20 transition"
+        indicatorClassName="bg-secondary-500"
+      />
     </div>
   );
 }

@@ -2,8 +2,10 @@
 
 import React from 'react';
 
-import { myTopicsRoute } from '@/config/routesConfig';
+import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
+import { truncateMarkdown } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
+import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
 import { Card } from '@/components/ui/Card';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -28,6 +30,13 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(routePath);
+
+  // Get workout data for this topic
+  const workoutQuery = useWorkoutQuery({ topicId: topic.id, userId: undefined });
+  const { workout, questionIds } = workoutQuery;
+  const questionsCount = questionIds?.length || 0;
+  const allowedTraining = !!questionsCount;
+  const _isWorkoutInProgress = workout?.started && !workout?.finished;
 
   const {
     id,
@@ -60,17 +69,28 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         visibleFor: 'sm',
         onClick: goBack,
       },
-      /* // Included in extra actions block in the content
-       * {
-       *   id: 'Workout',
-       *   content: 'Workout',
-       *   variant: 'theme',
-       *   icon: Icons.Activity,
-       *   visibleFor: 'sm',
-       *   hidden: !allowedTraining,
-       *   onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
-       * },
-       */
+      {
+        id: 'StartTraining',
+        content: workout?.finished
+          ? 'Restart Training'
+          : workout?.started
+            ? 'Resume Training'
+            : 'Start Training',
+        variant: 'theme',
+        icon: Icons.Activity,
+        visibleFor: 'sm',
+        hidden: !allowedTraining,
+        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
+      },
+      {
+        id: 'ReviewTraining',
+        content: 'Review Training',
+        variant: 'ghost',
+        icon: Icons.LineChart,
+        visibleFor: 'lg',
+        hidden: !allowedTraining || !workout,
+        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
+      },
       {
         id: 'ManageTopic',
         content: 'Manage Topic',
@@ -81,7 +101,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         onClick: () => goToTheRoute(`${myTopicsRoute}/${id}`),
       },
     ],
-    [allowedEdit, goBack, goToTheRoute, id],
+    [allowedEdit, allowedTraining, goBack, goToTheRoute, id, workout],
   );
 
   const breadcrumbs = useTopicsBreadcrumbsItems({
@@ -92,7 +112,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   return (
     <>
       <DashboardHeader
-        heading="View Available Topic"
+        heading={truncateMarkdown(topic.name, 100)}
         className={cn(
           isDev && '__ViewAvailableTopic_DashboardHeader', // DEBUG
           'mx-6',
@@ -104,7 +124,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
       <Card
         className={cn(
           isDev && '__ViewAvailableTopic_Card', // DEBUG
-          'relative mx-6 flex flex-1 flex-col overflow-hidden py-6 xl:col-span-2',
+          'relative mx-6 flex flex-1 flex-col overflow-hidden xl:col-span-2',
         )}
       >
         <ViewAvailableTopicContent topic={topic} />
