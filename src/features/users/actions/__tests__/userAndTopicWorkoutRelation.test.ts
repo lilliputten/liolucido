@@ -24,11 +24,6 @@ test('should create relation and remove it if topic removed', async () => {
       data: {
         userId,
         topicId: topic1.id,
-        totalRounds: 0, // Total rounds for this workout
-        allRatios: '', // All score ratios through all rounds, json packed list of ints (percent)
-        allTimes: '', // All score times through all rounds, in seconds, json packed list of ints (seconds)
-        averageRatio: 0, // Average score ratio through all rounds, percent
-        averageTime: 0, // Average score time through all rounds, in seconds
       },
     });
     userTopicWorkouts.push(userTopicWorkout1);

@@ -9,6 +9,8 @@ import { safeJsonParse } from '@/lib/helpers/json';
 import { minuteMs } from '@/constants';
 import { TTopicId } from '@/features/topics/types';
 import { TUserId } from '@/features/users/types';
+import { getWorkoutStatsCount } from '@/features/workout-stats/actions/getWorkoutStatsCount';
+import { createWorkoutStats } from '@/features/workouts/actions/createWorkoutStats';
 import { getWorkout } from '@/features/workouts/actions/getWorkout';
 import { updateWorkout } from '@/features/workouts/actions/updateWorkout';
 import { TWorkoutData } from '@/features/workouts/types';
@@ -218,11 +220,7 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       currentTime: 0,
       correctAnswers: 0,
       selectedAnswerId: '',
-      totalRounds: 0,
-      allRatios: '',
-      allTimes: '',
-      averageRatio: 0,
-      averageTime: 0,
+
       startedAt: now,
       finishedAt: now,
     };
@@ -259,13 +257,11 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     updateWorkoutData(updatedWorkout);
   }, [createNewWorkoutData, memo.workout, updateWorkoutData]);
 
-  const finishWorkout = React.useCallback(() => {
-    if (!memo.workout) return;
-    const { questionResults, startedAt, totalRounds, allRatios, allTimes } = memo.workout;
+  const finishWorkout = React.useCallback(async () => {
+    if (!memo.workout || !topicId || !userId) return;
+
+    const { questionResults, startedAt } = memo.workout;
     const totalSteps = questionIds?.length || 0;
-    const allRatiosList = safeJsonParse<number[]>(allRatios, []);
-    const allTimesList = safeJsonParse<number[]>(allTimes, []);
-    const newTotalRounds = totalRounds + 1;
     const finishedAt = new Date();
     const results = safeJsonParse<number[]>(questionResults, []);
     const correctAnswers = results.filter(Boolean).length;
@@ -273,14 +269,28 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       ? Math.round((finishedAt.getTime() - startedAt.getTime()) / 1000)
       : 0;
     const currentRatio = totalSteps ? Math.round((100 * correctAnswers) / totalSteps) : 0;
-    allTimesList.push(currentTime);
-    allRatiosList.push(currentRatio);
-    const averageRatio = Math.round(
-      allRatiosList.reduce((sum, val) => sum + val, 0) / newTotalRounds,
-    );
-    const averageTime = Math.round(
-      allTimesList.reduce((sum, val) => sum + val, 0) / newTotalRounds,
-    );
+
+    // Save workout stats to database
+    try {
+      // Get current round number (count existing stats + 1)
+      const existingStats = await getWorkoutStatsCount(topicId);
+
+      await createWorkoutStats({
+        topicId,
+        roundNumber: existingStats + 1,
+        totalQuestions: totalSteps,
+        correctAnswers,
+        ratio: currentRatio,
+        timeSeconds: currentTime,
+        startedAt: startedAt || finishedAt,
+        finishedAt,
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to save workout stats:', error);
+      debugger; // eslint-disable-line no-debugger
+    }
+
     const updateData: Partial<TWorkoutData> = {
       started: false,
       finished: true,
@@ -288,19 +298,15 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       stepIndex: 0,
       correctAnswers,
       finishedAt,
-      totalRounds: newTotalRounds,
-      allRatios: JSON.stringify(allRatiosList),
-      allTimes: JSON.stringify(allTimesList),
       currentTime,
       currentRatio,
-      averageRatio,
-      averageTime,
     };
+
     console.log('[useWorkoutQuery:finishWorkout]', {
       updateData,
     });
     updateWorkoutData(updateData);
-  }, [memo, questionIds, updateWorkoutData]);
+  }, [memo, questionIds, updateWorkoutData, topicId, userId]);
 
   const goPrevQuestion = React.useCallback(() => {
     if (!memo.workout) return;

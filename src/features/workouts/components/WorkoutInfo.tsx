@@ -33,20 +33,8 @@ export function WorkoutInfo(props: TWorkoutInfoProps) {
     );
   }
 
-  const {
-    started,
-    finished,
-    startedAt,
-    finishedAt,
-    totalRounds,
-    averageRatio,
-    averageTime,
-    // correctAnswers,
-    questionsCount,
-    stepIndex,
-    currentRatio,
-    // currentTime,
-  } = workout;
+  const { started, finished, startedAt, finishedAt, questionsCount, stepIndex, currentRatio } =
+    workout;
 
   const isInProgress = started && !finished;
   const completionPercentage =
@@ -75,30 +63,6 @@ export function WorkoutInfo(props: TWorkoutInfoProps) {
         <span className="flex items-center gap-1" title="Current progress">
           <Icons.ChartNoAxesGantt className="mr-1 size-4 opacity-50" />
           {stepIndex + 1}/{questionsCount} ({completionPercentage}%)
-        </span>
-      )}
-
-      {/* Total rounds */}
-      {totalRounds > 0 && (
-        <span className="flex items-center gap-1" title="Total rounds completed">
-          <Icons.Refresh className="mr-1 size-4 opacity-50" />
-          {totalRounds} rounds
-        </span>
-      )}
-
-      {/* Average ratio */}
-      {averageRatio > 0 && (
-        <span className="flex items-center gap-1" title="Average success ratio">
-          <Icons.Flag className="mr-1 size-4 opacity-50" />
-          {averageRatio}% avg
-        </span>
-      )}
-
-      {/* Average time */}
-      {averageTime > 0 && (
-        <span className="flex items-center gap-1" title="Average time per question">
-          <Icons.CalendarDays className="mr-1 size-4 opacity-50" />
-          {Math.round(averageTime / 1000)}s avg
         </span>
       )}
 
