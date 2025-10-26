@@ -58,7 +58,7 @@ export function WorkoutInfo(props: TWorkoutInfoProps) {
         {!started && <span className="text-gray-500">Not Started</span>}
       </span>
 
-      {/* Progress for active workout */}
+      {/* Progress for active training */}
       {isInProgress && questionsCount && stepIndex !== null && stepIndex !== undefined && (
         <span className="flex items-center gap-1" title="Current progress">
           <Icons.ChartNoAxesGantt className="mr-1 size-4 opacity-50" />

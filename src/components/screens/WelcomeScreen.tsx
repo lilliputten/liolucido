@@ -23,13 +23,15 @@ export function WelcomeScreen(props: TPropsWithClassName & { isLogged: boolean }
       <div
         className={cn(
           isDev && '__WelcomeScreen_Info', // DEBUG
-          'relative flex flex-1 flex-col bg-theme-500/10 lg:overflow-auto',
+          'relative m-6 flex flex-1 flex-col rounded-xl bg-theme-500/10',
+          // 'overflow-hidden',
+          'lg:overflow-auto',
         )}
       >
         <div
           className={cn(
             isDev && '__WelcomeScreen_Gradient', // DEBUG
-            'absolute bottom-0 left-0 right-0 top-0 lg:overflow-hidden',
+            'absolute bottom-0 left-0 right-0 top-0 rounded-xl lg:overflow-hidden',
             'decorative-gradient',
           )}
         />

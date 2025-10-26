@@ -163,7 +163,7 @@ export function WorkoutQuestionBlock() {
   }
 
   if (!workout) {
-    return <PageError error="No active workout found." padded={false} border={false} />;
+    return <PageError error="No active training found." padded={false} border={false} />;
   }
 
   if (isExceed) {

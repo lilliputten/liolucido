@@ -65,7 +65,7 @@
   "WelcomePage": {
     "title": "Welcome"
   },
-  "SmallWelcomeText": {
+  "AppIntro": {
     "content": "<p>This is a small quiz cards' application. Take a look at a brief <infolink>instruction manual</infolink>.</p>",
     "title": "Welcome!"
   },
@@ -113,7 +113,7 @@
     "Admin": "Administration",
     "Dashboard": "Dashboard",
     "Settings": "Settings",
-    "Log out": "Log out"
+    "Log out": "Sign out"
   },
   "SiteMenu": {
     "AvailableTopics": "Available Topics",

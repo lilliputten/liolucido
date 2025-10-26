@@ -28,7 +28,7 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
       )}
       viewportClassName={cn(
         isDev && '__ViewAvailableTopicContent_ScrollViewport', // DEBUG
-        'px-6 [&>div]:!flex [&>div]:flex-col [&>div]:gap-4 [&>div]:flex-1',
+        'px-6 [&>div]:my-6 [&>div]:!flex [&>div]:flex-col [&>div]:gap-4 [&>div]:flex-1',
       )}
     >
       <TopicHeader
@@ -38,7 +38,7 @@ export function ViewAvailableTopicContent(props: TViewAvailableTopicContentProps
         showDescription
         className={cn(
           isDev && '__ViewAvailableTopicContent_TopicHeader', // DEBUG
-          'mt-4 flex-1 items-start max-sm:flex-col-reverse',
+          '__ViewAvailableTopicContent_ScrollViewport flex-1 items-start max-sm:flex-col-reverse',
         )}
       />
       <TopicProperties topic={topic} className="flex-1 text-sm" showDates />

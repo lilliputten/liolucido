@@ -84,7 +84,7 @@ export function TopicHeader(props: TTopicHeaderProps & TTopicHeaderOptions) {
         )}
         {/* TODO: Format descrption text */}
         {showDescription && !!description && (
-          <div id="description" className="truncate text-base">
+          <div id="description" className="text-ellipsis text-base">
             <MarkdownText>{description}</MarkdownText>
           </div>
         )}

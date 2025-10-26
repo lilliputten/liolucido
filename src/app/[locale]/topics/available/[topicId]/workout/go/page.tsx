@@ -26,7 +26,7 @@ export default async function WorkoutTopicGoWrapper({ params }: TAwaitedProps) {
     return <PageError error={'Not topic specified.'} />;
   }
 
-  // TODO: Check if no active workout and then go to workout review/control page (on the client, because the user might be unauthorized)
+  // TODO: Check if no active training and then go to workout review/control page (on the client, because the user might be unauthorized)
 
   return (
     <PageWrapper

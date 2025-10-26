@@ -12,45 +12,42 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TopicsManageScopeIds, topicsRoutes } from '@/contexts/TopicsContext';
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
 import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopic } from '@/features/topics/types';
 import { useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 
 import { ViewAvailableTopicContent } from './ViewAvailableTopicContent';
 
-interface TViewAvailableTopicProps {
-  topic: TTopic;
-}
-
 const manageScope = TopicsManageScopeIds.AVAILABLE_TOPICS;
 const routePath = topicsRoutes[manageScope];
 
+interface TViewAvailableTopicProps {
+  topic: TTopic;
+}
 export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const { topic } = props;
+  const topicId = topic.id;
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(routePath);
 
+  const workoutContext = useWorkoutContext();
+  const {
+    //  topicId, topic,
+    userId,
+    workout,
+    // pending,
+    startWorkout,
+    questionIds,
+  } = workoutContext;
+
   // Get workout data for this topic
-  const workoutQuery = useWorkoutQuery({ topicId: topic.id, userId: undefined });
-  const { workout, questionIds } = workoutQuery;
+  // const workoutQuery = useWorkoutQuery({ topicId: topic.id, userId: undefined });
+  // const { workout, questionIds } = workoutQuery;
   const questionsCount = questionIds?.length || 0;
   const allowedTraining = !!questionsCount;
-  const _isWorkoutInProgress = workout?.started && !workout?.finished;
-
-  const {
-    id,
-    userId,
-    // name,
-    // description,
-    // isPublic,
-    // langCode,
-    // langName,
-    // keywords,
-    // createdAt,
-    // updatedAt,
-    // _count,
-  } = topic;
+  const isWorkoutInProgress = workout?.started && !workout?.finished;
 
   const user = useSessionUser();
   const isOwner = userId && userId === user?.id;
@@ -58,6 +55,17 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   const allowedEdit = isAdminMode || isOwner;
   // const questionsCount = _count?.questions;
   // const allowedTraining = !!questionsCount;
+
+  const handleResumeWorkout = React.useCallback(() => {
+    console.log('[WorkoutControl:handleResumeWorkout]');
+    goToTheRoute(`${availableTopicsRoute}/${topicId}/workout/go`);
+  }, [goToTheRoute, topicId]);
+
+  const handleStartWorkout = React.useCallback(() => {
+    console.log('[WorkoutControl:handleStartWorkout]');
+    startWorkout();
+    setTimeout(handleResumeWorkout, 10);
+  }, [handleResumeWorkout, startWorkout]);
 
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
@@ -79,8 +87,8 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         variant: 'theme',
         icon: Icons.Activity,
         visibleFor: 'sm',
-        hidden: !allowedTraining,
-        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
+        disabled: !allowedTraining,
+        onClick: isWorkoutInProgress ? handleResumeWorkout : handleStartWorkout,
       },
       {
         id: 'ReviewTraining',
@@ -88,8 +96,8 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         variant: 'ghost',
         icon: Icons.LineChart,
         visibleFor: 'lg',
-        hidden: !allowedTraining || !workout,
-        onClick: () => goToTheRoute(`${availableTopicsRoute}/${id}/workout`),
+        // disabled: !workout,
+        onClick: () => goToTheRoute(`${availableTopicsRoute}/${topicId}/workout`),
       },
       {
         id: 'ManageTopic',
@@ -97,11 +105,22 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
         variant: 'ghost',
         icon: Icons.Edit,
         visibleFor: 'xl',
-        hidden: !allowedEdit,
-        onClick: () => goToTheRoute(`${myTopicsRoute}/${id}`),
+        disabled: !allowedEdit,
+        onClick: () => goToTheRoute(`${myTopicsRoute}/${topicId}`),
       },
     ],
-    [allowedEdit, allowedTraining, goBack, goToTheRoute, id, workout],
+    [
+      allowedEdit,
+      allowedTraining,
+      goBack,
+      goToTheRoute,
+      handleResumeWorkout,
+      handleStartWorkout,
+      isWorkoutInProgress,
+      topicId,
+      workout?.finished,
+      workout?.started,
+    ],
   );
 
   const breadcrumbs = useTopicsBreadcrumbsItems({
@@ -112,7 +131,7 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
   return (
     <>
       <DashboardHeader
-        heading={truncateMarkdown(topic.name, 100)}
+        heading={truncateMarkdown(topic?.name, 100)}
         className={cn(
           isDev && '__ViewAvailableTopic_DashboardHeader', // DEBUG
           'mx-6',

@@ -5,6 +5,7 @@ import React from 'react';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { InfoVisualBlock } from '@/components/blocks/InfoVisualBlock';
+import { AppIntro } from '@/components/content/AppIntro';
 import { UseScrollableLayout } from '@/components/shared/ScrollableLayout';
 import { isDev } from '@/constants';
 
@@ -22,7 +23,8 @@ export function InfoScreen(props: TPropsWithClassName & { isLogged: boolean }) {
       <div
         className={cn(
           isDev && '__InfoScreen_Info', // DEBUG
-          'relative flex flex-1 flex-col items-stretch justify-center gap-4 bg-theme-500/10 p-4 lg:overflow-auto',
+          'relative flex flex-1 flex-col items-center justify-center gap-4',
+          'bg-theme-500/10 p-6 lg:overflow-auto',
         )}
       >
         <div
@@ -30,7 +32,7 @@ export function InfoScreen(props: TPropsWithClassName & { isLogged: boolean }) {
             isDev && '__InfoScreen_Gradient', // DEBUG
             'absolute bottom-0 left-0 right-0 top-0 lg:overflow-hidden',
             'decorative-gradient',
-            // 'pointer-events-none',
+            'pointer-events-none',
           )}
         />
         <InfoVisualBlock className="z-10" />
@@ -38,13 +40,13 @@ export function InfoScreen(props: TPropsWithClassName & { isLogged: boolean }) {
           className={cn(
             isDev && '__IntroText', // DEBUG
             className,
-            'gap-4',
+            'flex max-w-md flex-col gap-4',
             'text-content',
-            'text-center', // Only for small texts
+            // 'text-center', // Only for small texts
           )}
         >
-          <h1>Information</h1>
-          <p>Some extra text...</p>
+          <h1 className="text-center">Information</h1>
+          <AppIntro />
           {/*generateArray(20).map((n) => (
             <p key={n}>Text {n + 1}</p>
           ))*/}

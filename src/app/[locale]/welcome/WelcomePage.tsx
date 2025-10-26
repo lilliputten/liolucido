@@ -37,7 +37,7 @@ export async function WelcomePage({ params }: TWelcomePageProps) {
         isDev && '__WelcomePage_Inner', // DEBUG
         'w-full h-full',
       )}
-      scrollable
+      // scrollable
       // limitWidth
     >
       <WelcomeScreen

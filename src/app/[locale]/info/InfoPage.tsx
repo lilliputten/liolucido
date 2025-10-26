@@ -37,7 +37,7 @@ export async function InfoPage({ params }: TInfoPageProps) {
         isDev && '__InfoPage_Inner', // DEBUG
         'w-full h-full',
       )}
-      scrollable
+      // scrollable
       // limitWidth
     >
       <InfoScreen

@@ -14,6 +14,7 @@ import { getWorkout } from '@/features/workouts/actions/getWorkout';
 import { updateWorkout } from '@/features/workouts/actions/updateWorkout';
 import { TWorkoutData } from '@/features/workouts/types';
 
+import { useAvailableTopicById } from './useAvailableTopicById';
 import { useQuestionIdsForTopicId } from './useQuestionIdsForTopicId';
 
 const staleTime = minuteMs * 10;
@@ -53,7 +54,13 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
   } = questionIdsQuery;
 
   const isQuestionIdsPending = isQuestionIdsLoading || !isQuestionIdsFetched;
-  const isOffline = isQuestionIdsPending || !userId || !topicId || !enabled || !!preparing;
+
+  const availableTopicQuery = useAvailableTopicById({ id: topicId || '' });
+  const { topic, isLoading: isTopicLoading, isFetched: isTopicFetched } = availableTopicQuery;
+  const isTopicPending = isTopicLoading || !isTopicFetched;
+
+  const isOffline =
+    isQuestionIdsPending || isTopicPending || !userId || !topicId || !enabled || !!preparing;
 
   memo.topicId = topicId;
   memo.userId = userId;
@@ -152,16 +159,14 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
         setLocalWorkout(null);
         return;
       }
-      const updatedData = memo.workout
-        ? ({ ...memo.workout, ...data } as TWorkoutData)
-        : (data as TWorkoutData);
-      /* console.log('[useWorkoutQuery:updateWorkoutData] Start', {
-       *   updatedData,
-       * });
-       */
+      const updatedData = memo.workout ? { ...memo.workout, ...data } : (data as TWorkoutData);
+      console.log('[useWorkoutQuery:updateWorkoutData]', {
+        updatedData,
+      });
       // Always save to localStorage
       saveToLocalStorage(updatedData);
       setLocalWorkout(updatedData);
+      memo.workout = updatedData;
       // Save to server if online
       if (!isOffline) {
         try {
@@ -199,7 +204,6 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       currentTime: 0,
       correctAnswers: 0,
       selectedAnswerId: '',
-
       startedAt: now,
       finishedAt: now,
     };
@@ -239,7 +243,7 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
   }, [createNewWorkoutData, memo.workout, updateWorkoutData]);
 
   const finishWorkout = React.useCallback(async () => {
-    if (!memo.workout || !topicId || !userId) return;
+    if (!memo.workout || !topicId) return;
 
     const { questionResults, startedAt } = memo.workout;
     const totalSteps = questionIds?.length || 0;
@@ -253,15 +257,17 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
 
     // Save workout stats to database
     try {
-      await createWorkoutStats({
-        topicId,
-        totalQuestions: totalSteps,
-        correctAnswers,
-        ratio: currentRatio,
-        timeSeconds: currentTime,
-        startedAt: startedAt || finishedAt,
-        finishedAt,
-      });
+      if (userId) {
+        await createWorkoutStats({
+          topicId,
+          totalQuestions: totalSteps,
+          correctAnswers,
+          ratio: currentRatio,
+          timeSeconds: currentTime,
+          startedAt: startedAt || finishedAt,
+          finishedAt,
+        });
+      }
       // Invalidate queries
       queryClient.invalidateQueries({
         queryKey: ['workout-stats-history', topicId],
@@ -286,6 +292,7 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
      *   updateData,
      * });
      */
+
     updateWorkoutData(updateData);
   }, [memo, questionIds, updateWorkoutData, topicId, userId, queryClient]);
 
@@ -295,7 +302,6 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     const updateData: Partial<TWorkoutData> = {
       stepIndex: newStepIndex,
       selectedAnswerId: '',
-      finishedAt: new Date(),
     };
     /* console.log('[useWorkoutQuery:goPrevQuestion]', {
      *   updateData,
@@ -314,7 +320,6 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     const updateData: Partial<TWorkoutData> = {
       stepIndex: stepIndex + 1,
       selectedAnswerId: '',
-      finishedAt: new Date(),
     };
     /* console.log('[useWorkoutQuery:goNextQuestion]', {
      *   updateData,
@@ -336,7 +341,6 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
       const updateData: Partial<TWorkoutData> = {
         questionResults,
         correctAnswers,
-        finishedAt: new Date(),
       };
       /* console.log('[useWorkoutQuery:saveResult]', {
        *   updateData,
@@ -351,7 +355,6 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     (selectedAnswerId?: string) => {
       const updateData: Partial<TWorkoutData> = {
         selectedAnswerId: selectedAnswerId || '',
-        finishedAt: new Date(),
       };
       /* console.log('[useWorkoutQuery:saveAnswer]', {
        *   updateData,
@@ -374,13 +377,18 @@ export function useWorkoutQuery(props: TUseWorkoutQueryProps) {
     [saveResult, goNextQuestion],
   );
 
+  const isFetched = query.isFetched || !isQueryEnabled;
+  const isPending = !isFetched || query.isLoading || !localInitialized;
+
   return {
     workout,
     questionIds,
     questionOrderedIds,
     topicId,
+    topic,
+    isTopicPending,
     userId,
-    pending: !query.isFetched || query.isLoading || !localInitialized,
+    pending: isPending,
     queryKey,
     createWorkout,
     startWorkout,

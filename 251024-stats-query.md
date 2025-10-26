@@ -23,3 +23,12 @@ Suggest other functions to gather all other possible statistic details, based on
 Don't forget to check ts errors (via tsc) when done.
 
 First suggest table structure and ongoing changes review to confirm.
+
+---
+
+Generate a text for the welcome user page, to describe the current application, líolúcido, for the following cases:
+
+- A regular user: it can view and work with public trainings, created by other people.
+- A logged in user (isLogged): Can create it's own trainings, can view detailed statistics and historical progress.
+
+Create aditional note for admin (isAdmin) users: they can monitor and cnotrol other users data and the users themselves.

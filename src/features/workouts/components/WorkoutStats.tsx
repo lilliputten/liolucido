@@ -3,6 +3,8 @@
 import React from 'react';
 import { useFormatter } from 'next-intl';
 
+import { welcomeRoute } from '@/config/routesConfig';
+import { getErrorText } from '@/lib/helpers';
 import { formatSecondsDuration, getFormattedRelativeDate } from '@/lib/helpers/dates';
 import { cn } from '@/lib/utils';
 import { useWorkoutStatsHistory } from '@/hooks/react-query/useWorkoutStatsHistory';
@@ -21,6 +23,7 @@ import {
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useWorkoutContext } from '@/contexts/WorkoutContext';
+import { Link } from '@/i18n/routing';
 
 interface TWorkoutStatsProps {
   className?: string;
@@ -32,7 +35,7 @@ export function WorkoutStats(props: TWorkoutStatsProps) {
   const format = useFormatter();
 
   const workoutContext = useWorkoutContext();
-  const { workout, questionIds, pending, topicId } = workoutContext;
+  const { workout, questionIds, pending: isWorkoutPending, topicId } = workoutContext;
 
   // Fetch historical data
   const {
@@ -40,6 +43,7 @@ export function WorkoutStats(props: TWorkoutStatsProps) {
     isLoading: isHistoricalLoading,
     error: historicalError,
   } = useWorkoutStatsHistory(topicId);
+  const historicalErrorText = historicalError && getErrorText(historicalError);
 
   const questionsCount = questionIds?.length || 0;
   const isWorkoutInProgress = workout?.started && !workout?.finished;
@@ -79,7 +83,14 @@ export function WorkoutStats(props: TWorkoutStatsProps) {
     consistencyScore: 0,
   };
 
-  if (pending || isHistoricalLoading) {
+  // React.useEffect(() => {
+  //   console.log('[WorkoutStats:DEBUG', {
+  //     isWorkoutPending,
+  //     isHistoricalLoading,
+  //   });
+  // }, [isWorkoutPending, isHistoricalLoading]);
+
+  if (isWorkoutPending || isHistoricalLoading) {
     return (
       <div className={cn(isDev && '__WorkoutStats_Skeleton', 'space-y-4', className)}>
         <Skeleton className="h-32 w-full" />
@@ -93,15 +104,24 @@ export function WorkoutStats(props: TWorkoutStatsProps) {
     return null;
   }
 
-  if (historicalError) {
+  if (historicalErrorText) {
+    // TODO: Display statistics based on the recent local data?
     return (
       <div className={cn(isDev && '__WorkoutStats_Error', 'space-y-4', className)}>
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <Icons.Warning className="mx-auto mb-2 size-8 text-destructive" />
-              <p className="text-sm text-muted-foreground">
-                Failed to load historical data. Please try again later.
+              <Icons.Warning className="mx-auto mb-2 size-8 text-orange-500 opacity-50" />
+              <p className="text-content text-sm text-muted-foreground">
+                {historicalErrorText === 'Authentication required' ? (
+                  <>
+                    You have to <Link href={welcomeRoute}>sign in</Link> to view your statistics.
+                  </>
+                ) : (
+                  <>
+                    Failed to load historical data ({historicalErrorText}). Please try again later.
+                  </>
+                )}
               </p>
             </div>
           </CardContent>
@@ -166,7 +186,7 @@ export function WorkoutStats(props: TWorkoutStatsProps) {
               ? 'Training in progress'
               : isWorkoutCompleted
                 ? 'Training completed'
-                : 'No active workout'}
+                : 'No active training'}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

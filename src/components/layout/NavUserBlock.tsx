@@ -172,6 +172,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
         onSelect={(event) => {
           event.preventDefault();
           closeOuterMenu?.();
+          localStorage.clear();
           signOut({
             callbackUrl: `${window.location.origin}/`,
           });

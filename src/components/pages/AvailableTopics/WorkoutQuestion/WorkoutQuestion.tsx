@@ -42,6 +42,13 @@ export function WorkoutQuestion({
 
   const isFinished = currentStep >= totalSteps;
 
+  React.useEffect(() => {
+    console.log('[WorkoutQuestion:DEBUG]', {
+      selectedAnswer,
+      workout,
+    });
+  }, [selectedAnswer, workout]);
+
   const answersContent = React.useMemo(() => {
     return isAnswersLoading || !answers ? (
       // Show answers skeleton...

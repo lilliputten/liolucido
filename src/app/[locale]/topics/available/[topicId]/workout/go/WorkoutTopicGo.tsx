@@ -58,7 +58,7 @@ export function WorkoutTopicGo() {
   React.useEffect(() => {
     if ((!workout || !isWorkoutInProgress) && !pending) {
       // eslint-disable-next-line no-console
-      console.warn('[WorkoutTopicGo] No active workout: go to the workout review page', {
+      console.warn('[WorkoutTopicGo] No active training: go to the workout review page', {
         workout,
       });
       goBack();

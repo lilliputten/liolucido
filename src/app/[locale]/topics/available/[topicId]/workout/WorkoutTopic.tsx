@@ -62,7 +62,7 @@ export function WorkoutTopic(props: TPropsWithClassName) {
         variant: 'ghost',
         icon: Icons.Edit,
         visibleFor: 'xl',
-        hidden: !allowedEdit,
+        disabled: !allowedEdit,
         onClick: () => goToTheRoute(`${myTopicsRoute}/${topicId}`),
       },
     ],
