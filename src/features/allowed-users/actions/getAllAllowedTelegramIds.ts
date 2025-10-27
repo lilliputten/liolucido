@@ -4,6 +4,6 @@ import { getAllowedUsers } from '@/features/allowed-users/actions/getAllowedUser
 import { AllowedUserTypes } from '@/features/allowed-users/types/AllowedUserType';
 
 export async function getAllAllowedTelegramIds() {
-  const allowedUsers = await getAllowedUsers({ where: { type: AllowedUserTypes.telegram } });
+  const allowedUsers = await getAllowedUsers({ where: { type: AllowedUserTypes.TELEGRAM } });
   return allowedUsers.map(({ value }) => Number(value));
 }

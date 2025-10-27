@@ -1,18 +1,10 @@
-import * as z from 'zod';
+import { AllowedUserTypeSchema, AllowedUserTypeType } from '@/generated/prisma';
 
-export const AllowedUserTypes = {
-  email: 'EMAIL',
-  telegram: 'TELEGRAM',
+export const AllowedUserTypes: Record<AllowedUserTypeType, AllowedUserTypeType> = {
+  EMAIL: 'EMAIL',
+  TELEGRAM: 'TELEGRAM',
 } as const;
-export const allowedUserTypesList = Object.values(AllowedUserTypes);
-export type TAllowedUserType = (typeof AllowedUserTypes)[keyof typeof AllowedUserTypes];
-export const defaultAllowedUserType: TAllowedUserType = AllowedUserTypes.email;
-
-export const AllowedUserTypeEnum = allowedUserTypesList.reduce(
-  (acc, type) => {
-    acc[type] = type;
-    return acc;
-  },
-  {} as Record<TAllowedUserType, TAllowedUserType>,
-);
-export const coercedAllosedUserTypeZType = z.nativeEnum(AllowedUserTypeEnum);
+export const allowedUserTypesList = AllowedUserTypeSchema.options; // Object.values(AllowedUserTypes);
+export type TAllowedUserType = AllowedUserTypeType; // (typeof AllowedUserTypes)[keyof typeof AllowedUserTypes];
+export const defaultAllowedUserType: TAllowedUserType = allowedUserTypesList[0]; // AllowedUserTypes.email;
+export const coercedAllosedUserTypeZType = AllowedUserTypeSchema; // z.nativeEnum(AllowedUserTypeEnum);

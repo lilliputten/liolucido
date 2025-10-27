@@ -101,17 +101,17 @@ model TelegramSession {
   @@map("telegram_session")
 }
 
-// enum AllowedUserType {
-//   EMAIL
-//   TELEGRAM
-// }
+enum AllowedUserType {
+  EMAIL
+  TELEGRAM
+}
 
 model AllowedUser {
   id Int @id @default(autoincrement())
 
   // Telegram or email.
-  type  String @default("EMAIL")
-  // type  AllowedUserType @default(EMAIL)
+  // type  String @default("EMAIL")
+  type  AllowedUserType @default(EMAIL)
   value String          @default("")
 
   @@unique([type, value])

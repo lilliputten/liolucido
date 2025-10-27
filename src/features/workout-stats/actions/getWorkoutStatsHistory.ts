@@ -21,4 +21,3 @@ export async function getWorkoutStatsHistory(topicId: string) {
 
   return workoutStats;
 }
-
