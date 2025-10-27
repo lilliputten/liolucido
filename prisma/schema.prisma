@@ -54,6 +54,7 @@ enum UserGrade {
   GUEST
   BASIC
   PRO
+  PREMIUM
 }
 
 model User {
