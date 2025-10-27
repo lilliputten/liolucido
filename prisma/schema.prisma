@@ -75,6 +75,7 @@ model User {
   userSettings     UserSettings?
   userTopicWorkout UserTopicWorkout[]
   workoutStats     WorkoutStats[]
+  // AIGenerations    AIGeneration[]
 
   @@map("users")
 }
@@ -100,10 +101,18 @@ model TelegramSession {
   @@map("telegram_session")
 }
 
+// enum AllowedUserType {
+//   EMAIL
+//   TELEGRAM
+// }
+
 model AllowedUser {
-  id    Int    @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
+  // Telegram or email.
   type  String @default("EMAIL")
-  value String @default("")
+  // type  AllowedUserType @default(EMAIL)
+  value String          @default("")
 
   @@unique([type, value])
   @@map("allowed_users")
@@ -126,6 +135,28 @@ model UserSettings {
   @@index([userId])
   @@map("user_settings")
 }
+
+// model AIGeneration {
+//   id String @id @default(cuid())
+//
+//   spentTimeNs Int @default(0) @map("spent_time_ms")
+//   spentTokens Int @default(0) @map("spent_tokens")
+//
+//   modelUsed String? @map("model_used")
+//
+//   topicId String? @map("topic_id")
+//
+//   createdAt  DateTime @default(now()) @map("created_at")
+//   finishedAt DateTime @default(now()) @map("finished_at")
+//   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+//
+//   userId String @map("user_id")
+//
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//
+//   @@index([userId])
+//   @@map("ai_generations")
+// }
 
 model Topic {
   id                 String             @id @default(cuid())
@@ -153,7 +184,6 @@ model Topic {
 
 model Question {
   id                 String   @id @default(cuid())
-  isGenerated        Boolean  @default(false) @map("is_generated")
   text               String
   answersCountRandom Boolean? @map("answers_count_random")
   answersCountMin    Int?     @map("answers_count_min")
@@ -161,6 +191,7 @@ model Question {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @default(now()) @updatedAt @map("updated_at")
   topicId            String   @map("topic_id")
+  isGenerated        Boolean  @default(false) @map("is_generated")
   answers            Answer[]
   topic              Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
@@ -217,8 +248,8 @@ model WorkoutStats {
   // roundNumber    Int @map("round_number")
   totalQuestions Int @map("total_questions")
   correctAnswers Int @map("correct_answers")
-  ratio          Int // Success percentage (0-100)
-  timeSeconds    Int @map("time_seconds") // Time in seconds
+  ratio          Int
+  timeSeconds    Int @map("time_seconds")
 
   // Timestamps
   startedAt  DateTime @map("started_at")
@@ -226,8 +257,8 @@ model WorkoutStats {
   createdAt  DateTime @default(now()) @map("created_at")
 
   // Relations
-  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   topic   Topic            @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   workout UserTopicWorkout @relation(fields: [userId, topicId], references: [userId, topicId], onDelete: Cascade)
 
   @@index([userId])

@@ -160,3 +160,4 @@ export function useWorkoutStatsHistory(topicId?: TTopicId) {
 
   return query;
 }
+
