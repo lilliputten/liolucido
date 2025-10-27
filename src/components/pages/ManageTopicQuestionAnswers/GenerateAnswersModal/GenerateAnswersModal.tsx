@@ -16,7 +16,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { sendAiTextQuery } from '@/features/ai/actions/sendAiTextQuery';
+import { sendUserAIRequest } from '@/features/ai/actions';
 import { createGenerateQuestionAnswersMessages } from '@/features/ai/helpers/createGenerateQuestionAnswersMessages';
 import { parseGeneratedQuestionAnswers } from '@/features/ai/helpers/parseGeneratedQuestionAnswers';
 import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnswersTypes';
@@ -132,7 +132,7 @@ export function GenerateAnswersModal() {
        *   params,
        * });
        */
-      const queryData = await sendAiTextQuery(messages, { debugData });
+      const queryData = await sendUserAIRequest(messages, { debugData });
       // const generatedAnswers = await generateQuestionAnswers(messages, debugData);
       /* console.log('[GenerateAnswersModal:generateAnswersMutation] Generated query data', {
        *   // content: queryData?.content,

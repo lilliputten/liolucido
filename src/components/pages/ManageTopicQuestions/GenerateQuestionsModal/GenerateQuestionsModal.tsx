@@ -16,9 +16,10 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { sendAiTextQuery } from '@/features/ai/actions/sendAiTextQuery';
+import { sendUserAIRequest } from '@/features/ai/actions';
 import { createGenerateTopicQuestionsMessages } from '@/features/ai/helpers/createGenerateTopicQuestionsMessages';
 import { parseGeneratedTopicQuestions } from '@/features/ai/helpers/parseGeneratedTopicQuestions';
+import { TAITextQueryData } from '@/features/ai/types';
 import { TGenerateTopicQuestionsParams } from '@/features/ai/types/GenerateQuestionsTypes';
 import { addMultipleQuestions } from '@/features/questions/actions/addMultipleQuestions';
 import { TAvailableQuestion, TNewQuestion } from '@/features/questions/types';
@@ -117,7 +118,7 @@ export function GenerateQuestionsModal() {
        *   params,
        * });
        */
-      const queryData = await sendAiTextQuery(messages, { debugData });
+      const queryData: TAITextQueryData = await sendUserAIRequest(messages, { debugData });
       /* // DEBUG
        * const content = __queryData?.content;
        * console.log('[GenerateQuestionsModal:generateQuestionsMutation] Generated query data', {

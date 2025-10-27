@@ -5,7 +5,6 @@ import React from 'react';
 import { availableTopicsRoute, myTopicsRoute } from '@/config/routesConfig';
 import { truncateMarkdown } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
-import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
 import { Card } from '@/components/ui/Card';
 import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -42,9 +41,6 @@ export function ViewAvailableTopic(props: TViewAvailableTopicProps) {
     questionIds,
   } = workoutContext;
 
-  // Get workout data for this topic
-  // const workoutQuery = useWorkoutQuery({ topicId: topic.id, userId: undefined });
-  // const { workout, questionIds } = workoutQuery;
   const questionsCount = questionIds?.length || 0;
   const allowedTraining = !!questionsCount;
   const isWorkoutInProgress = workout?.started && !workout?.finished;

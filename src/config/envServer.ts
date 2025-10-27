@@ -39,6 +39,10 @@ const envSchema = z.object({
   CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
   CLOUDFLARE_API_TOKEN: z.string().min(1),
 
+  // Generation limits
+  BASIC_USER_GENERATIONS: z.coerce.number(),
+  PRO_USER_MONTHLY_GENERATIONS: z.coerce.number(),
+
   // // Prisma
   // DATABASE_URL: z.string().min(1),
   // CONFIG_ID: z.coerce.number().optional(), // Default config slot
@@ -88,6 +92,9 @@ export const {
   GIGACHAT_MODEL,
   CLOUDFLARE_ACCOUNT_ID,
   CLOUDFLARE_API_TOKEN,
+  // Generation limits
+  BASIC_USER_GENERATIONS,
+  PRO_USER_MONTHLY_GENERATIONS,
   // Telegram
   BOT_ADMIN_USERNAME,
   BOT_ADMIN_USERID,
