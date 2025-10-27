@@ -75,7 +75,7 @@ model User {
   userSettings     UserSettings?
   userTopicWorkout UserTopicWorkout[]
   workoutStats     WorkoutStats[]
-  // AIGenerations    AIGeneration[]
+  AIGenerations    AIGeneration[]
 
   @@map("users")
 }
@@ -136,27 +136,27 @@ model UserSettings {
   @@map("user_settings")
 }
 
-// model AIGeneration {
-//   id String @id @default(cuid())
-//
-//   spentTimeNs Int @default(0) @map("spent_time_ms")
-//   spentTokens Int @default(0) @map("spent_tokens")
-//
-//   modelUsed String? @map("model_used")
-//
-//   topicId String? @map("topic_id")
-//
-//   createdAt  DateTime @default(now()) @map("created_at")
-//   finishedAt DateTime @default(now()) @map("finished_at")
-//   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
-//
-//   userId String @map("user_id")
-//
-//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-//
-//   @@index([userId])
-//   @@map("ai_generations")
-// }
+model AIGeneration {
+  id String @id @default(cuid())
+
+  modelUsed String? @map("model_used")
+
+  spentTimeMs Int @default(0) @map("spent_time_ms")
+  spentTokens Int @default(0) @map("spent_tokens")
+
+  topicId String? @map("topic_id")
+
+  createdAt  DateTime @default(now()) @map("created_at")
+  finishedAt DateTime @default(now()) @map("finished_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  userId String @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("ai_generations")
+}
 
 model Topic {
   id                 String             @id @default(cuid())
