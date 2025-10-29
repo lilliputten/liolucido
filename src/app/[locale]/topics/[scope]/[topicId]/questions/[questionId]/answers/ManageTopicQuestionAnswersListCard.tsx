@@ -34,7 +34,7 @@ import { useAnswersBreadcrumbsItems } from '@/features/answers/components/Answer
 import { TAnswer, TAnswerId, TAvailableAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
+import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableAnswers,
   useAvailableQuestionById,

@@ -33,7 +33,7 @@ import { deleteQuestions, updateQuestion } from '@/features/questions/actions';
 import { useQuestionsBreadcrumbsItems } from '@/features/questions/components/QuestionsBreadcrumbs';
 import { TQuestion, TQuestionData, TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
+import { useIfGenerationAllowed } from '@/features/users/hooks';
 import { useAvailableTopicById, useGoBack, useGoToTheRoute, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 

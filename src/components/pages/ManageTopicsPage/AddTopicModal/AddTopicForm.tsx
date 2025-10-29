@@ -147,7 +147,7 @@ export function AddTopicForm(props: TAddTopicFormProps) {
         <div className="flex w-full gap-4">
           <Button
             type="submit"
-            variant={isSubmitEnabled ? 'default' : 'disabled'}
+            variant={isSubmitEnabled ? 'success' : 'disabled'}
             disabled={!isSubmitEnabled}
             className="gap-2"
           >

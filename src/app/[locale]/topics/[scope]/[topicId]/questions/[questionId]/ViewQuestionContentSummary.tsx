@@ -16,7 +16,7 @@ import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { TAvailableTopic } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
+import { useIfGenerationAllowed } from '@/features/users/hooks';
 import { useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 

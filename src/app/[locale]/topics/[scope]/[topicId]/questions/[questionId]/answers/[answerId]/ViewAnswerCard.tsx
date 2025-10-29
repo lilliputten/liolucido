@@ -12,7 +12,7 @@ import { useAnswersBreadcrumbsItems } from '@/features/answers/components/Answer
 import { TAvailableAnswer } from '@/features/answers/types';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { TAvailableTopic } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
+import { useIfGenerationAllowed } from '@/features/users/hooks';
 import { useGoBack, useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 

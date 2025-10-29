@@ -14,6 +14,7 @@ import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopicId } from '@/features/topics/types';
+import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableTopicById,
   useAvailableTopicsByScope,
@@ -61,6 +62,8 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
   const allowedTraining = !!questionsCount;
 
   const breadcrumbs = useTopicsBreadcrumbsItems({ topic, scope: manageScope });
+
+  const ifGenerationAllowed = useIfGenerationAllowed();
 
   const handleReload = React.useCallback(() => {
     availableTopicQuery
@@ -138,6 +141,15 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),
       },
       {
+        id: 'Generate Questions',
+        content: 'Generate Questions',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'lg',
+        disabled: !ifGenerationAllowed,
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
+      },
+      {
         id: 'Delete Topic',
         content: 'Delete Topic',
         variant: 'destructive',
@@ -148,11 +160,12 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
     ],
     [
       goBack,
-      handleReload,
       allowedTraining,
+      handleReload,
+      ifGenerationAllowed,
       goToTheRoute,
-      topicRoutePath,
       topicId,
+      topicRoutePath,
       questionsListRoutePath,
       routePath,
     ],

@@ -23,7 +23,7 @@ import { isDev } from '@/constants';
 import { updateAnswer } from '@/features/answers/actions';
 import { useAnswersBreadcrumbsItems } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer } from '@/features/answers/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
+import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableAnswerById,
   useAvailableAnswers,

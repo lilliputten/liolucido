@@ -219,7 +219,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
         <div className="flex w-full gap-4">
           <Button
             type="submit"
-            variant={isSubmitEnabled ? 'theme' : 'disabled'}
+            variant={isSubmitEnabled ? 'secondary' : 'disabled'}
             disabled={!isSubmitEnabled}
             className="gap-2"
           >

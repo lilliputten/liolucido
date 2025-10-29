@@ -16,14 +16,16 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { createGenerateQuestionAnswersMessages } from '@/features/ai/helpers/createGenerateQuestionAnswersMessages';
-import { parseGeneratedQuestionAnswers } from '@/features/ai/helpers/parseGeneratedQuestionAnswers';
-import { useUserAIRequest } from '@/features/ai/hooks/useUserAIRequest';
+import {
+  createGenerateQuestionAnswersMessages,
+  parseGeneratedQuestionAnswers,
+} from '@/features/ai/helpers';
+import { useUserAIRequest } from '@/features/ai/hooks';
 import { TAITextQueryData } from '@/features/ai/types';
 import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnswersTypes';
 import { addMultipleAnswers } from '@/features/answers/actions/addMultipleAnswers';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
+import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableQuestionById,
   useGoBack,
