@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-import { allTopicsRoute, infoRoute, myTopicsRoute, welcomeRoute } from '@/config/routesConfig';
+import { infoRoute, myTopicsRoute, welcomeRoute } from '@/config/routesConfig';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';

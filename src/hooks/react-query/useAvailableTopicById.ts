@@ -6,7 +6,7 @@ import { APIError } from '@/lib/types/api';
 import { TAvailableTopicsResultsQueryData } from '@/lib/types/react-query';
 import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemas';
-import { minuteMs } from '@/constants';
+import { defaultStaleTime } from '@/constants';
 import { getAvailableTopicById } from '@/features/topics/actions';
 import { TAvailableTopic } from '@/features/topics/types';
 
@@ -15,7 +15,7 @@ interface TUseAvailableTopicByIdProps extends TGetAvailableTopicByIdParams {
   availableTopicsQueryKey?: QueryKey;
 }
 
-const staleTime = minuteMs * 10;
+const staleTime = defaultStaleTime;
 
 /** Get topic data from cached `useAvailableTopics` query data or fetch it now */
 export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {

@@ -6,7 +6,7 @@ import { APIError } from '@/lib/types/api';
 import { TAvailableAnswersResultsQueryData } from '@/lib/types/react-query';
 import { appendUrlQueries, composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableAnswerByIdParams } from '@/lib/zod-schemas';
-import { minuteMs } from '@/constants';
+import { defaultStaleTime } from '@/constants';
 import { getAvailableAnswerById } from '@/features/answers/actions/getAvailableAnswerById';
 import { TAvailableAnswer } from '@/features/answers/types';
 
@@ -16,7 +16,7 @@ interface TUseAvailableAnswerByIdProps extends TGetAvailableAnswerByIdParams {
   enabled?: boolean;
 }
 
-const staleTime = minuteMs * 10;
+const staleTime = defaultStaleTime;
 
 /** Get answer data from cached `useAvailableAnswers` query data or fetch it now */
 export function useAvailableAnswerById(props: TUseAvailableAnswerByIdProps) {

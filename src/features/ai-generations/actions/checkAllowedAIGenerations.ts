@@ -1,14 +1,11 @@
 'use server';
 
-import { cache } from 'react';
-
 import { BASIC_USER_GENERATIONS, PRO_USER_MONTHLY_GENERATIONS } from '@/config/envServer';
 import { prisma } from '@/lib/db';
 import { AIGenerationError } from '@/lib/errors/AIGenerationError';
-import { getErrorText } from '@/lib/helpers';
 import { getCurrentUser } from '@/lib/session';
 
-export const checkUserAllowedGenerations = cache(async (): Promise<boolean> => {
+export async function checkAllowedAIGenerations(): Promise<boolean> {
   const user = await getCurrentUser();
 
   try {
@@ -55,14 +52,15 @@ export const checkUserAllowedGenerations = cache(async (): Promise<boolean> => {
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
     // eslint-disable-next-line no-console
-    console.error('[checkUserAllowedGenerations]', errMsg, {
+    console.error('[checkAllowedAIGenerations]', errMsg, {
       error,
       user,
     });
     debugger; // eslint-disable-line no-debugger
-    if (error instanceof AIGenerationError) {
-      throw error;
-    }
-    throw new AIGenerationError('AN_ERROR_OCCURRED', getErrorText(error));
+    throw error;
+    // if (error instanceof AIGenerationError) {
+    //   throw error;
+    // }
+    // throw new AIGenerationError('AN_ERROR_OCCURRED', getErrorText(error));
   }
-});
+}

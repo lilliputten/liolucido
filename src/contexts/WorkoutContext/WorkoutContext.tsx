@@ -17,28 +17,6 @@ interface WorkoutContextProviderProps {
 }
 
 export function WorkoutContextProvider({ userId, topicId, children }: WorkoutContextProviderProps) {
-  // const availableTopicQuery = useAvailableTopicById({
-  //   id: topicId,
-  //   // availableTopicsQueryKey,
-  //   // // ...availableTopicsQueryProps,
-  //   // includeWorkout: availableTopicsQueryProps.includeWorkout,
-  //   // includeUser: availableTopicsQueryProps.includeUser,
-  //   // includeQuestionsCount: availableTopicsQueryProps.includeQuestionsCount,
-  // });
-  // const { topic, isFetched: isTopicFetched, isCached: isTopicCached } = availableTopicQuery;
-
-  // const availableQuestionsQuery = useAvailableQuestions({ topicId, itemsLimit: null });
-  // const {
-  //   allQuestions,
-  //   isFetched: isQuestionsFetched,
-  //   isLoading: isQuestionsLoading,
-  //   // queryKey: availableQuestionsQueryKey,
-  //   // queryProps: availableQuestionsQueryProps,
-  // } = availableQuestionsQuery;
-  // const isPreparing = !!isQuestionsFetched && !isQuestionsLoading;
-  //
-  // const questionIds = allQuestions.map((q) => q.id);
-
   const workoutData = useWorkoutQuery({ topicId, userId });
 
   return <WorkoutContext.Provider value={workoutData}>{children}</WorkoutContext.Provider>;

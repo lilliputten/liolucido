@@ -16,9 +16,10 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { sendUserAIRequest } from '@/features/ai/actions';
 import { createGenerateQuestionAnswersMessages } from '@/features/ai/helpers/createGenerateQuestionAnswersMessages';
 import { parseGeneratedQuestionAnswers } from '@/features/ai/helpers/parseGeneratedQuestionAnswers';
+import { useUserAIRequest } from '@/features/ai/hooks/useUserAIRequest';
+import { TAITextQueryData } from '@/features/ai/types';
 import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnswersTypes';
 import { addMultipleAnswers } from '@/features/answers/actions/addMultipleAnswers';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
@@ -44,6 +45,8 @@ const urlRegExp = new RegExp(idToken + urlQuestionToken + idToken + urlPostfix +
 export function GenerateAnswersModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(true);
+
+  const userAIRequest = useUserAIRequest();
 
   const { jumpToNewEntities } = useSettings();
 
@@ -132,8 +135,7 @@ export function GenerateAnswersModal() {
        *   params,
        * });
        */
-      const queryData = await sendUserAIRequest(messages, { debugData });
-      // const generatedAnswers = await generateQuestionAnswers(messages, debugData);
+      const queryData: TAITextQueryData = await userAIRequest(messages, { topicId, debugData });
       /* console.log('[GenerateAnswersModal:generateAnswersMutation] Generated query data', {
        *   // content: queryData?.content,
        *   queryData,

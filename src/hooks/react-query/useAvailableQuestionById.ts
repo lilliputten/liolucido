@@ -6,7 +6,7 @@ import { APIError } from '@/lib/types/api';
 import { TAvailableQuestionsResultsQueryData } from '@/lib/types/react-query';
 import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
-import { minuteMs } from '@/constants';
+import { defaultStaleTime } from '@/constants';
 import { getAvailableQuestionById } from '@/features/questions/actions';
 import { TAvailableQuestion } from '@/features/questions/types';
 
@@ -15,7 +15,7 @@ interface TUseAvailableQuestionByIdProps extends TGetAvailableQuestionByIdParams
   availableQuestionsQueryKey?: QueryKey;
 }
 
-const staleTime = minuteMs * 10;
+const staleTime = defaultStaleTime;
 
 /** Get question data from cached `useAvailableQuestions` query data or fetch it now */
 export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) {

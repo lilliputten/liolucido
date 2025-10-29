@@ -23,12 +23,11 @@ import {
 } from '@/lib/helpers/react-query';
 import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableAnswersParams, TGetAvailableAnswersResults } from '@/lib/zod-schemas';
-import { minuteMs } from '@/constants';
+import { defaultItemsLimit, defaultStaleTime } from '@/constants';
 import { getAvailableAnswers } from '@/features/answers/actions/getAvailableAnswers';
-import { itemsLimit as defaultItemsLimit } from '@/features/answers/constants';
 import { TAnswerId, TAvailableAnswer } from '@/features/answers/types';
 
-const staleTime = minuteMs * 10;
+const staleTime = defaultStaleTime;
 
 // TODO: Register all the query keys
 

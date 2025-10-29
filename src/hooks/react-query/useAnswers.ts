@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { APIError } from '@/lib/types/api';
 import { handleApiResponse } from '@/lib/api';
 import { useInvalidateReactQueryKeys } from '@/lib/data/invalidateReactQueryKeys';
-import { minuteMs } from '@/constants';
+import { defaultStaleTime } from '@/constants';
 import { TAnswerData } from '@/features/answers/types';
 
 interface UseAnswersOptions {
@@ -12,7 +12,7 @@ interface UseAnswersOptions {
   enabled?: boolean;
 }
 
-const staleTime = minuteMs * 10;
+const staleTime = defaultStaleTime;
 
 export function useAnswers({ questionId, enabled = true }: UseAnswersOptions) {
   const invalidateKeys = useInvalidateReactQueryKeys();

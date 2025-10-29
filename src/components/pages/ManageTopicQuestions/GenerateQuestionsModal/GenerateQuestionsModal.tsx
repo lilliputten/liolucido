@@ -16,9 +16,9 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { sendUserAIRequest } from '@/features/ai/actions';
 import { createGenerateTopicQuestionsMessages } from '@/features/ai/helpers/createGenerateTopicQuestionsMessages';
 import { parseGeneratedTopicQuestions } from '@/features/ai/helpers/parseGeneratedTopicQuestions';
+import { useUserAIRequest } from '@/features/ai/hooks/useUserAIRequest';
 import { TAITextQueryData } from '@/features/ai/types';
 import { TGenerateTopicQuestionsParams } from '@/features/ai/types/GenerateQuestionsTypes';
 import { addMultipleQuestions } from '@/features/questions/actions/addMultipleQuestions';
@@ -45,6 +45,8 @@ const urlRegExp = new RegExp(urlTopicsToken + idToken + '/' + idToken + urlPostf
 export function GenerateQuestionsModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(true);
+
+  const userAIRequest = useUserAIRequest();
 
   const { jumpToNewEntities } = useSettings();
 
@@ -118,7 +120,7 @@ export function GenerateQuestionsModal() {
        *   params,
        * });
        */
-      const queryData: TAITextQueryData = await sendUserAIRequest(messages, { debugData });
+      const queryData: TAITextQueryData = await userAIRequest(messages, { topicId, debugData });
       /* // DEBUG
        * const content = __queryData?.content;
        * console.log('[GenerateQuestionsModal:generateQuestionsMutation] Generated query data', {

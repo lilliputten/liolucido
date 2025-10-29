@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
 import { safeJsonParse } from '@/lib/helpers/json';
-import { minuteMs } from '@/constants';
+import { defaultStaleTime } from '@/constants';
 import { TTopicId } from '@/features/topics/types';
 import { TUserId } from '@/features/users/types';
 import { createWorkoutStats } from '@/features/workouts/actions/createWorkoutStats';
@@ -17,7 +17,7 @@ import { TWorkoutData } from '@/features/workouts/types';
 import { useAvailableTopicById } from './useAvailableTopicById';
 import { useQuestionIdsForTopicId } from './useQuestionIdsForTopicId';
 
-const staleTime = minuteMs * 10;
+const staleTime = defaultStaleTime;
 
 const shuffleQuestionsStr = (ids?: string[]) => {
   if (!ids || !ids.length) {

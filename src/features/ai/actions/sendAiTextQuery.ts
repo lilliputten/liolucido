@@ -4,19 +4,15 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { GigaChatCallOptions } from 'langchain-gigachat';
 
 import { getAiClient } from '@/lib/ai/getAiClient';
-import { defaultAiClientType, TAiClientType } from '@/lib/ai/types/TAiClientType';
+import { defaultAiClientType } from '@/lib/ai/types/TAiClientType';
 
 import { TPlainMessage } from '../types/messages';
+import { TAIQueryOptions } from '../types/TAIQueryOptions';
 import { TAITextQueryData } from '../types/TAITextQueryData';
 
 type TGenericMessage = HumanMessage | SystemMessage;
 
-interface TOptions {
-  clientType?: TAiClientType;
-  debugData?: boolean;
-}
-
-export async function sendAiTextQuery(messages: TPlainMessage[], opts: TOptions = {}) {
+export async function sendAiTextQuery(messages: TPlainMessage[], opts: TAIQueryOptions = {}) {
   const { clientType = defaultAiClientType, debugData: __returnDebugData } = opts;
   try {
     if (__returnDebugData) {
