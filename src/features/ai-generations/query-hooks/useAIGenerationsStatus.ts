@@ -65,29 +65,37 @@ export function useAIGenerationsStatus() {
   const allowed =
     (!!availableGenerations && availableGenerations > 0) ||
     availableGenerations === unlimitedGenerations;
+  const loading = !query.isFetched || query.isLoading;
+  const error = query.error;
 
-  React.useEffect(() => {
-    console.log('[useAIGenerationsStatus:DEBUG]', {
-      allowed,
+  return React.useMemo(() => {
+    /* console.log('[useAIGenerationsStatus:DEBUG]', {
+     *   availableGenerations, // number;
+     *   usedGenerations, // number;
+     *   generationMode, // TGenerationMode;
+     *   role, // UserRoleType;
+     *   grade, // UserGradeType;
+     *   reasonCode, // TAIGenerationErrorCode;
+     *   // Calculated properties...
+     *   allowed,
+     *   loading,
+     *   error,
+     * });
+     */
+    return {
+      // Core properties...
       availableGenerations, // number;
       usedGenerations, // number;
       generationMode, // TGenerationMode;
       role, // UserRoleType;
       grade, // UserGradeType;
       reasonCode, // TAIGenerationErrorCode;
-    });
+      // Calculated properties...
+      allowed,
+      loading,
+      error,
+    };
   }, [
-    allowed,
-    availableGenerations, // number;
-    usedGenerations, // number;
-    generationMode, // TGenerationMode;
-    role, // UserRoleType;
-    grade, // UserGradeType;
-    reasonCode, // TAIGenerationErrorCode;
-  ]);
-
-  return {
-    // Core properties...
     availableGenerations, // number;
     usedGenerations, // number;
     generationMode, // TGenerationMode;
@@ -96,7 +104,7 @@ export function useAIGenerationsStatus() {
     reasonCode, // TAIGenerationErrorCode;
     // Calculated properties...
     allowed,
-    loading: !!query.isFetched || query.isLoading,
-    error: query.error,
-  };
+    loading,
+    error,
+  ]);
 }

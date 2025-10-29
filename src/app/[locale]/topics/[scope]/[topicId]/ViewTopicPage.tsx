@@ -12,9 +12,9 @@ import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopicId } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableTopicById,
   useAvailableTopicsByScope,
@@ -63,7 +63,8 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
 
   const breadcrumbs = useTopicsBreadcrumbsItems({ topic, scope: manageScope });
 
-  const ifGenerationAllowed = useIfGenerationAllowed();
+  const aiGenerationsStatusQuery = useAIGenerationsStatus();
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = aiGenerationsStatusQuery;
 
   const handleReload = React.useCallback(() => {
     availableTopicQuery
@@ -146,7 +147,7 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'lg',
-        disabled: !ifGenerationAllowed,
+        disabled: !aiGenerationsAllowed || aiGenerationsLoading,
         onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
       },
       {
@@ -162,7 +163,8 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
       goBack,
       allowedTraining,
       handleReload,
-      ifGenerationAllowed,
+      aiGenerationsAllowed,
+      aiGenerationsLoading,
       goToTheRoute,
       topicId,
       topicRoutePath,

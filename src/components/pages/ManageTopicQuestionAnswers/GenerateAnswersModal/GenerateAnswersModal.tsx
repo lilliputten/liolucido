@@ -16,7 +16,6 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import {
   createGenerateQuestionAnswersMessages,
   parseGeneratedQuestionAnswers,
@@ -57,8 +56,8 @@ export function GenerateAnswersModal() {
   const topicId = match?.[1];
   const questionId = match?.[2];
 
-  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
-  const shouldBeVisible = aiGenerationsAllowed && !aiGenerationsLoading && !!match;
+  // const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
+  const shouldBeVisible = !!match;
 
   const session = useSession();
   const isSessionLoading = session.status === 'loading';
@@ -308,7 +307,7 @@ export function GenerateAnswersModal() {
           <ScrollArea
             className={cn(
               isDev && '__GenerateAnswersModal_Scroll', // DEBUG
-              'flex flex-1 flex-col',
+              // 'flex flex-1 flex-col',
             )}
           >
             <GenerateAnswersForm

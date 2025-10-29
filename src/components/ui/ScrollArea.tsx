@@ -95,7 +95,7 @@ const ScrollArea = React.forwardRef<
       ref={ref}
       className={cn(
         isDev && '__ScrollArea_Root', // DEBUG
-        'relative overflow-hidden',
+        'relative flex flex-col overflow-hidden',
         className,
       )}
       {...rest}

@@ -23,6 +23,11 @@ import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { AIGenerationsStatusInfo } from '@/features/ai-generations/components';
+import {
+  maxAnswersToGeneration,
+  maxQuestionsToGeneration,
+} from '@/features/ai-generations/constants';
 import {
   answersGenerationTypes,
   answersGenerationTypeTexts,
@@ -55,9 +60,6 @@ export interface TGenerateQuestionsFormProps {
   topicId: TTopicId;
   user?: ExtendedUser;
 }
-
-const maxQuestionsToGeneration = 10;
-const maxAnswersToGeneration = 10;
 
 export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
   const { className, handleGenerateQuestions, handleClose, isPending, user } = props;
@@ -117,6 +119,7 @@ export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
         onSubmit={onSubmit}
         className={cn(isDev && '__GenerateQuestionsForm', 'flex w-full flex-col gap-4', className)}
       >
+        <AIGenerationsStatusInfo />
         {__useDebugData && (
           <FormField
             name="debugData"

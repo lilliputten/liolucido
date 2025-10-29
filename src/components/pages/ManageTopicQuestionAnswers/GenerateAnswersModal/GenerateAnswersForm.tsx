@@ -23,6 +23,8 @@ import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { AIGenerationsStatusInfo } from '@/features/ai-generations/components';
+import { maxAnswersToGeneration } from '@/features/ai-generations/constants';
 import {
   answersGenerationTypes,
   answersGenerationTypeTexts,
@@ -48,8 +50,6 @@ export interface TGenerateAnswersFormProps {
   questionId: TQuestionId; // Is it required here?
   user?: ExtendedUser;
 }
-
-const maxAnswersToGeneration = 10;
 
 export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
   const {
@@ -119,6 +119,7 @@ export function GenerateAnswersForm(props: TGenerateAnswersFormProps) {
           className,
         )}
       >
+        <AIGenerationsStatusInfo />
         {__useDebugData && (
           <FormField
             name="debugData"
