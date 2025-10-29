@@ -22,6 +22,7 @@ import ModalProvider from '@/components/modals/providers';
 import { ReactQueryClientProvider } from '@/components/providers/ReactQueryClientProvider';
 import { TailwindIndicator } from '@/components/service/TailwindIndicator';
 import { fontDefault, fontHeading, fontMono } from '@/assets/fonts';
+import { isDev } from '@/config';
 import { SettingsContextProvider } from '@/contexts/SettingsContext';
 import { getSettings } from '@/features/settings/actions';
 import { routing } from '@/i18n/routing';
@@ -107,10 +108,10 @@ async function RootLayout(props: TRootLayoutProps) {
       </head>
       <body
         className={cn(
+          isDev && '__layout',
           'flex flex-col',
-          // 'bg-background',
           'font-default antialiased',
-          'decorative-gradient',
+          'bg-page-gradient',
           fontDefault.variable,
           fontHeading.variable,
           fontMono.variable,

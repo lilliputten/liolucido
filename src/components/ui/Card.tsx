@@ -12,7 +12,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
         'overflow-hidden rounded-lg border text-card-foreground shadow-sm',
         // 'bg-card',
         'bg-background/50',
-        // 'decorative-gradient',
+        // 'bg-decorative-gradient',
         'decorative-card',
         // 'inset-shadow-sm inset-shadow-indigo-500',
         // 'bg-welcome-radial-gradient',

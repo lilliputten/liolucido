@@ -9,6 +9,7 @@ import { TPlainMessage } from '../types/messages';
 
 type TOptions = TAIRequestOptions;
 
+/** Send AI query and invalidate allowedAIGenerationsQuery */
 export function useUserAIRequest() {
   const invalidateKeys = useInvalidateReactQueryKeys();
   return React.useCallback(

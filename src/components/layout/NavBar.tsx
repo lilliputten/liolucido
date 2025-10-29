@@ -46,22 +46,19 @@ export function NavBar(props: NavBarProps) {
     >
       <div // Ex: MaxWidthWrapper
         className={cn(
-          // prettier-ignore
           isDev && '__NavBar_Decor', // DEBUG
-          'absolute inset-0',
+          'absolute inset-0 overflow-hidden',
           'bg-header-gradient',
           'z-0',
         )}
       />
       <div // Ex: MaxWidthWrapper
         className={cn(
-          // prettier-ignore
           isDev && '__NavBar_Wrapper', // DEBUG
           'flex',
           'w-full',
           'items-center',
           'justify-between',
-          // 'max-sm:justify-center',
           'py-2',
           'z-10',
         )}
