@@ -12,12 +12,16 @@ import { TAITextQueryData } from '../types/TAITextQueryData';
 
 type TGenericMessage = HumanMessage | SystemMessage;
 
+const debugDataPrefix = './';
+const defaultDebugData = 'sample-data/GenerateQuestions/questions-query-data-01.json';
+
 export async function sendAiTextQuery(messages: TPlainMessage[], opts: TAIQueryOptions = {}) {
-  const { clientType = defaultAiClientType, debugData: __returnDebugData } = opts;
+  const { clientType = defaultAiClientType, debugData } = opts;
   try {
-    if (__returnDebugData) {
+    if (debugData) {
       await new Promise((r) => setTimeout(r, 1000));
-      const sampleJsonFile = './sample-data/GenerateQuestions/query-data-01.json';
+      const sampleJsonFile =
+        debugDataPrefix + (typeof debugData === 'string' ? debugData : defaultDebugData);
       const rawData = await import(sampleJsonFile);
       const data = { ...rawData.default } as TAITextQueryData;
       return data;

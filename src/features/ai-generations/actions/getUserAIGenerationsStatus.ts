@@ -8,7 +8,7 @@ import { getUserAIGenerationsStats } from './getUserAIGenerationsStats';
 
 const invalidResult = { availableGenerations: 0 };
 
-export async function getUserAIGenerationsLimits(): Promise<TAIGenerationsStatus> {
+export async function getUserAIGenerationsStatus(): Promise<TAIGenerationsStatus> {
   const user = await getCurrentUser();
 
   if (!user) {

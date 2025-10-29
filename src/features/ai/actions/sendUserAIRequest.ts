@@ -5,12 +5,12 @@ import { AIGenerationError } from '@/lib/errors/AIGenerationError';
 import { getCurrentUser } from '@/lib/session';
 import { checkAllowedAIGenerations, saveAIGeneration } from '@/features/ai-generations/actions';
 
+import { TAIQueryOptions } from '../types';
 import { TPlainMessage } from '../types/messages';
 import { TAITextQueryData } from '../types/TAITextQueryData';
 import { sendAiTextQuery } from './sendAiTextQuery';
 
-export interface TAIRequestOptions {
-  debugData?: boolean;
+export interface TAIRequestOptions extends TAIQueryOptions {
   topicId?: string;
 }
 
@@ -18,8 +18,7 @@ export async function sendUserAIRequest(
   messages: TPlainMessage[],
   opts: TAIRequestOptions = {},
 ): Promise<TAITextQueryData> {
-  const { debugData, topicId } = opts;
-  const clientType = defaultAiClientType;
+  const { topicId, clientType = defaultAiClientType, ...restOpts } = opts;
 
   // Check if user is allowed to perform generations
   await checkAllowedAIGenerations();
@@ -33,7 +32,7 @@ export async function sendUserAIRequest(
 
   try {
     // Call the AI text query
-    const queryData = await sendAiTextQuery(messages, { debugData, clientType });
+    const queryData = await sendAiTextQuery(messages, { ...restOpts, clientType });
 
     const endTime = new Date();
     const spentTimeMs = endTime.getTime() - startTime.getTime();

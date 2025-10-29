@@ -622,7 +622,8 @@ export function ManageTopicQuestionAnswersListCard(
   return (
     <>
       <DashboardHeader
-        heading="Manage Answers"
+        heading={truncateMarkdown(question.text, 100)} // "Manage Answers"
+        title={truncateMarkdown(question.text, 200)}
         className={cn(
           isDev && '__ManageTopicQuestionAnswersListCard_DashboardHeader', // DEBUG
           'mx-6',

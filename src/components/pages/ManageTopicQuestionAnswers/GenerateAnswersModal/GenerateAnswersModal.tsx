@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
-import { APIError } from '@/lib/types/api';
 import { getErrorText } from '@/lib/helpers';
 import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
@@ -43,9 +42,12 @@ const urlQuestionToken = '/questions/';
 const idToken = '([^/]*)';
 const urlRegExp = new RegExp(idToken + urlQuestionToken + idToken + urlPostfix + '$');
 
+const debugDataFile = 'sample-data/GenerateQuestions/answers-query-data-01.json';
+
 export function GenerateAnswersModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(true);
+  const [error, setError] = React.useState<string | undefined>();
 
   const userAIRequest = useUserAIRequest();
 
@@ -136,7 +138,10 @@ export function GenerateAnswersModal() {
        *   params,
        * });
        */
-      const queryData: TAITextQueryData = await userAIRequest(messages, { topicId, debugData });
+      const queryData: TAITextQueryData = await userAIRequest(messages, {
+        topicId,
+        debugData: debugData ? debugDataFile : undefined,
+      });
       /* console.log('[GenerateAnswersModal:generateAnswersMutation] Generated query data', {
        *   // content: queryData?.content,
        *   queryData,
@@ -144,36 +149,40 @@ export function GenerateAnswersModal() {
        *   params,
        * });
        */
+      setError(undefined);
       return queryData;
     },
     onError: (error, formData) => {
-      const details = error instanceof APIError ? error.details : null;
-      const message = 'Cannot generate answers';
+      // const details = error instanceof APIError ? error.details : null;
+      const humanMsg = 'Cannot generate answers';
+      const errDetails = getErrorText(error);
       // eslint-disable-next-line no-console
-      console.error('[GenerateAnswersModal:generateAnswersMutation]', message, {
+      console.error('[GenerateAnswersModal:generateAnswersMutation]', humanMsg, {
+        errDetails,
         error,
-        details,
         formData,
         questionId,
       });
       debugger; // eslint-disable-line no-debugger
+      setError(humanMsg);
     },
   });
 
   const addAnswersMutation = useMutation<TAvailableAnswer[], Error, TNewAnswer[]>({
     mutationFn: addMultipleAnswers,
-    onError: (error, newAnswers) => {
-      const details = error instanceof APIError ? error.details : null;
-      const message = 'Cannot create answer';
-      // eslint-disable-next-line no-console
-      console.error('[AddAnswersModal:addAnswersMutation]', message, {
-        error,
-        details,
-        newAnswers,
-        questionId,
-      });
-      debugger; // eslint-disable-line no-debugger
-    },
+    /* onError: (error, newAnswers) => {
+     *   const details = error instanceof APIError ? error.details : null;
+     *   const message = 'Cannot create answer';
+     *   // eslint-disable-next-line no-console
+     *   console.error('[AddAnswersModal:addAnswersMutation]', message, {
+     *     error,
+     *     details,
+     *     newAnswers,
+     *     questionId,
+     *   });
+     *   debugger; // eslint-disable-line no-debugger
+     * },
+     */
   });
 
   const handleGenerateAnswers = React.useCallback(
@@ -245,13 +254,16 @@ export function GenerateAnswersModal() {
         return addAnswersPromise;
       } catch (error) {
         const humanMsg = 'An error occurred while generating and adding question answers';
-        const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
+        const errDetails = getErrorText(error);
+        // const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
         // eslint-disable-next-line no-console
-        console.error('[GenerateAnswersModal] ❌', errMsg, {
+        console.error('[GenerateAnswersModal] ❌', humanMsg, {
+          errDetails,
           error,
         });
         debugger; // eslint-disable-line no-debugger
         toast.error(humanMsg);
+        setError(humanMsg);
       }
     },
     [

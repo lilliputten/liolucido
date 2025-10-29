@@ -1,2 +1,4 @@
-export const maxAnswersToGeneration = 10;
-export const maxQuestionsToGeneration = 10;
+import { isDev } from '@/config';
+
+export const maxAnswersToGeneration = isDev ? 10 : 20;
+export const maxQuestionsToGeneration = isDev ? 10 : 20;

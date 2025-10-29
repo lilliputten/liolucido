@@ -103,22 +103,7 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
             </FormItem>
           )}
         />
-        <FormField
-          name="isPublic"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className="flex w-full flex-col gap-4">
-              <Label htmlFor={isPublicKey}>Is the topic public?</Label>
-              <FormControl>
-                <Switch id={isPublicKey} checked={!!field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <FormHint>
-                If the topic is public it's available for all the users, not only for you.
-              </FormHint>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* keywords */}
         <FormField
           name="keywords"
           control={form.control}
@@ -136,6 +121,26 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
             </FormItem>
           )}
         />
+      </FormSection>
+      <FormSection>
+        {/* isPublic */}
+        <FormField
+          name="isPublic"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-4">
+              <Label htmlFor={isPublicKey}>Is the topic public?</Label>
+              <FormControl>
+                <Switch id={isPublicKey} checked={!!field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+              <FormHint>
+                If the topic is public it's available for all the users, not only for you.
+              </FormHint>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* langCode */}
         <FormField
           name="langCode"
           control={form.control}
@@ -175,8 +180,7 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
             );
           }}
         />
-      </FormSection>
-      <FormSection>
+        {/* answersCountRandom */}
         <FormField
           name="answersCountRandom"
           control={form.control}
@@ -204,6 +208,7 @@ export function EditTopicFormFields(props: TEditTopicFormFieldsProps) {
             </FormItem>
           )}
         />
+        {/* answersCountMin, answersCountMax */}
         {!!form.watch('answersCountRandom') && (
           <>
             <FormField

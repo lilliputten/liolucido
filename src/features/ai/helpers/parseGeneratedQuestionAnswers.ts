@@ -28,12 +28,11 @@ export function parseGeneratedQuestionAnswers(queryData: TAITextQueryData) {
       rawJson = rawJson.substring(mdStart.length, rawJson.length - mdEnd.length).trim();
     }
     rawData = JSON.parse(rawJson);
-    /* console.log('[parseGeneratedQuestionAnswers] Parsed raw data', {
-     *   rawData,
-     *   rawJson,
-     *   queryData,
-     * });
-     */
+    console.log('[parseGeneratedQuestionAnswers] Parsed raw data', {
+      rawData,
+      rawJson,
+      queryData,
+    });
     if (!rawData) {
       throw new Error('Got an invalid (empty) json object');
     }
@@ -48,9 +47,11 @@ export function parseGeneratedQuestionAnswers(queryData: TAITextQueryData) {
     return validatedData.answers;
   } catch (error) {
     const humanMsg = 'Can not parse generated question answers';
-    const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
+    const errDetails = getErrorText(error);
+    // const errMsg = [humanMsg, errDetails].filter(Boolean).join(': ');
     // eslint-disable-next-line no-console
-    console.error('[parseGeneratedQuestionAnswers] ❌', errMsg, {
+    console.error('[parseGeneratedQuestionAnswers] ❌', humanMsg, {
+      errDetails,
       error,
       rawJson,
       rawData,

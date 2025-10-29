@@ -14,8 +14,7 @@ export function parseGeneratedTopicQuestions(queryData: TAITextQueryData): TGene
   let rawData: unknown;
 
   try {
-    const { content } = queryData;
-    rawJson = content;
+    rawJson = queryData.content;
     /* console.log('[parseGeneratedTopicQuestions] Got raw text', {
      *   rawJson,
      *   queryData,
@@ -52,9 +51,11 @@ export function parseGeneratedTopicQuestions(queryData: TAITextQueryData): TGene
     return validatedData.questions;
   } catch (error) {
     const humanMsg = 'Can not parse generated topic questions';
-    const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
+    const errDetails = getErrorText(error);
+    // const errMsg = [humanMsg, errDetails].filter(Boolean).join(': ');
     // eslint-disable-next-line no-console
-    console.error('[parseGeneratedTopicQuestions] ❌', errMsg, {
+    console.error('[parseGeneratedTopicQuestions] ❌', humanMsg, {
+      errDetails,
       error,
       rawJson,
       rawData,

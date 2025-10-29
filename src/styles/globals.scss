@@ -376,10 +376,10 @@
       font-size: 1.5rem;
     }
     a {
-      color: rgb(var(--color-theme-500-RGB));
+      color: rgb(var(--color-theme-400-RGB));
       &:hover {
         text-decoration: underline;
-        color: rgb(var(--color-theme-600-RGB));
+        color: rgb(var(--color-theme-300-RGB));
       }
     }
   }

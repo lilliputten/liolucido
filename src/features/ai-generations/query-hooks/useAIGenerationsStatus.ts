@@ -8,7 +8,7 @@ import {
 } from '@/lib/errors/AIGenerationError';
 import { defaultStaleTime } from '@/constants';
 
-import { getUserAIGenerationsLimits } from '../actions';
+import { getUserAIGenerationsStatus } from '../actions';
 import { TAIGenerationsStatus, unlimitedGenerations } from '../types/TAIGenerationsStatus';
 
 const staleTime = defaultStaleTime;
@@ -22,7 +22,7 @@ export function useAIGenerationsStatus() {
     queryFn: async () => {
       // setReasonCode(undefined);
       try {
-        return await getUserAIGenerationsLimits();
+        return await getUserAIGenerationsStatus();
       } catch (error) {
         const isAIGenerationError =
           error instanceof AIGenerationError ||

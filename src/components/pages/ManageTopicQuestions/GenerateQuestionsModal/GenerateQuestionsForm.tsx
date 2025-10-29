@@ -59,10 +59,11 @@ export interface TGenerateQuestionsFormProps {
   isPending?: boolean;
   topicId: TTopicId;
   user?: ExtendedUser;
+  error?: string;
 }
 
 export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
-  const { className, handleGenerateQuestions, handleClose, isPending, user } = props;
+  const { className, handleGenerateQuestions, handleClose, isPending, user, error } = props;
   const isAdmin = user?.role === 'ADMIN';
 
   const __useDebugData = isDev || isAdmin;
@@ -119,6 +120,12 @@ export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
         onSubmit={onSubmit}
         className={cn(isDev && '__GenerateQuestionsForm', 'flex w-full flex-col gap-4', className)}
       >
+        {error && (
+          <div className="flex items-center gap-1 rounded-md border border-red-500/20 bg-red-500/20 p-3 py-2 text-sm">
+            <Icons.Warning className="mr-1 size-4 text-red-500 opacity-50" />
+            <span className="text-red-500">{error}</span>
+          </div>
+        )}
         <AIGenerationsStatusInfo />
         {__useDebugData && (
           <FormField

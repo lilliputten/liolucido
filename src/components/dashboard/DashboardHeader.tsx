@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { title } from 'process';
 
 import { TReactNode } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -13,6 +14,7 @@ interface DashboardHeaderProps {
   className?: string;
   children?: TReactNode;
   heading?: TReactNode;
+  title?: string;
   text?: TReactNode;
   actions?: TActionMenuItem[];
   breadcrumbs?: TBreadcrumbsItemProps[];
@@ -20,8 +22,16 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader(props: DashboardHeaderProps) {
-  const { className, children, heading, text, actions, breadcrumbs, inactiveLastBreadcrumb } =
-    props;
+  const {
+    className,
+    children,
+    heading,
+    title,
+    text,
+    actions,
+    breadcrumbs,
+    inactiveLastBreadcrumb,
+  } = props;
   return (
     <div
       className={cn(
@@ -29,6 +39,7 @@ export function DashboardHeader(props: DashboardHeaderProps) {
         'flex flex-col gap-2',
         className,
       )}
+      title={title}
     >
       {breadcrumbs && (
         <Breadcrumbs
