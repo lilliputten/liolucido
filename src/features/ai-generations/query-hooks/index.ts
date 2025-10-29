@@ -1,1 +1,1 @@
-export * from './useAllowedAIGenerationsQuery';
+export * from './useAIGenerationsStatus';

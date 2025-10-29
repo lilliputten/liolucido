@@ -1,9 +1,10 @@
 'use server';
 
 import { BASIC_USER_GENERATIONS, PRO_USER_MONTHLY_GENERATIONS } from '@/config/envServer';
-import { prisma } from '@/lib/db';
 import { AIGenerationError } from '@/lib/errors/AIGenerationError';
 import { getCurrentUser } from '@/lib/session';
+
+import { getUserAIGenerationsStats } from './getUserAIGenerationsStats';
 
 export async function checkAllowedAIGenerations(): Promise<boolean> {
   const user = await getCurrentUser();
@@ -23,27 +24,14 @@ export async function checkAllowedAIGenerations(): Promise<boolean> {
       return true;
     }
 
-    const userId = user.id;
+    const { totalGenerations, lastMonthGenerations } = await getUserAIGenerationsStats();
 
     if (grade === 'BASIC') {
-      const totalGenerations = await prisma.aIGeneration.count({
-        where: { userId },
-      });
       if (totalGenerations >= BASIC_USER_GENERATIONS) {
         throw new AIGenerationError('BASIC_USER_HAS_EXCEEDED_GENERATION_LIMIT');
       }
     } else if (grade === 'PRO') {
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      const monthlyGenerations = await prisma.aIGeneration.count({
-        where: {
-          userId,
-          finishedAt: {
-            gte: oneMonthAgo,
-          },
-        },
-      });
-      if (monthlyGenerations >= PRO_USER_MONTHLY_GENERATIONS) {
+      if (lastMonthGenerations >= PRO_USER_MONTHLY_GENERATIONS) {
         throw new AIGenerationError('PRO_USER_HAS_EXCEEDED_GENERATION_LIMIT');
       }
     }
