@@ -8,11 +8,11 @@ import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import { useAnswersBreadcrumbsItems } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAvailableAnswer } from '@/features/answers/types';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { TAvailableTopic } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks';
 import { useGoBack, useGoToTheRoute } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -38,7 +38,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
 
   const goToTheRoute = useGoToTheRoute();
   const goBack = useGoBack(answersListRoutePath);
-  const ifGenerationAllowed = useIfGenerationAllowed();
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
 
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
@@ -73,7 +73,7 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'xl',
-        disabled: !ifGenerationAllowed,
+        disabled: !aiGenerationsAllowed || aiGenerationsLoading,
         onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
       {
@@ -86,7 +86,14 @@ export function ViewAnswerCard(props: TViewAnswerCardProps) {
           goToTheRoute(`${answersListRoutePath}/delete?answerId=${answer.id}&from=ViewAnswerCard`),
       },
     ],
-    [goBack, goToTheRoute, answersListRoutePath, answer.id, ifGenerationAllowed],
+    [
+      goBack,
+      aiGenerationsAllowed,
+      aiGenerationsLoading,
+      goToTheRoute,
+      answersListRoutePath,
+      answer.id,
+    ],
   );
 
   const breadcrumbs = useAnswersBreadcrumbsItems({

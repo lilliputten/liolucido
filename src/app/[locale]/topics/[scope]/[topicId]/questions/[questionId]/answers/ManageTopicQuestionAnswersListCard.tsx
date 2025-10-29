@@ -29,12 +29,12 @@ import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { PageEmpty } from '@/components/pages/shared';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import { deleteAnswers, updateAnswer } from '@/features/answers/actions';
 import { useAnswersBreadcrumbsItems } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer, TAnswerId, TAvailableAnswer } from '@/features/answers/types';
 import { TQuestionId } from '@/features/questions/types';
 import { TTopicId } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableAnswers,
   useAvailableQuestionById,
@@ -307,7 +307,7 @@ export function ManageTopicQuestionAnswersListCardContent(
   const user = useSessionUser();
   // const isLogged = !!user;
   const isAdmin = user?.role === 'ADMIN';
-  const ifGenerationAllowed = useIfGenerationAllowed();
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
 
   const {
     allAnswers,
@@ -383,7 +383,7 @@ export function ManageTopicQuestionAnswersListCardContent(
                 Add New Answer
               </Link>
             </Button>
-            <Button disabled={!ifGenerationAllowed} variant="secondary">
+            <Button disabled={!aiGenerationsAllowed || aiGenerationsLoading} variant="secondary">
               <Link href={`${answersListRoutePath}/generate`} className="flex gap-2">
                 <Icons.WandSparkles className="hidden size-4 opacity-50 sm:flex" />
                 Generate Answers
@@ -549,7 +549,7 @@ export function ManageTopicQuestionAnswersListCard(
     setShowDeleteSelectedConfirm(false);
   }, []);
 
-  const ifGenerationAllowed = useIfGenerationAllowed();
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
 
   const actions: TActionMenuItem[] = React.useMemo(
     () => [
@@ -594,7 +594,7 @@ export function ManageTopicQuestionAnswersListCard(
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'lg',
-        disabled: !ifGenerationAllowed,
+        disabled: !aiGenerationsAllowed || aiGenerationsLoading,
         onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
     ],
@@ -604,7 +604,8 @@ export function ManageTopicQuestionAnswersListCard(
       selectedAnswers.size,
       deleteSelectedMutation.isPending,
       handleShowDeleteSelectedConfirm,
-      ifGenerationAllowed,
+      aiGenerationsAllowed,
+      aiGenerationsLoading,
       refetchAnswers,
       goToTheRoute,
       answersListRoutePath,

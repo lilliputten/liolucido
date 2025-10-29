@@ -16,6 +16,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import {
   createGenerateQuestionAnswersMessages,
   parseGeneratedQuestionAnswers,
@@ -25,7 +26,6 @@ import { TAITextQueryData } from '@/features/ai/types';
 import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnswersTypes';
 import { addMultipleAnswers } from '@/features/answers/actions/addMultipleAnswers';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableQuestionById,
   useGoBack,
@@ -57,8 +57,8 @@ export function GenerateAnswersModal() {
   const topicId = match?.[1];
   const questionId = match?.[2];
 
-  const ifGenerationAllowed = useIfGenerationAllowed();
-  const shouldBeVisible = ifGenerationAllowed && !!match;
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
+  const shouldBeVisible = aiGenerationsAllowed && !aiGenerationsLoading && !!match;
 
   const session = useSession();
   const isSessionLoading = session.status === 'loading';

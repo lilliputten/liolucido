@@ -14,9 +14,9 @@ import { Separator } from '@/components/ui/Separator';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import { TAvailableQuestion } from '@/features/questions/types';
 import { TAvailableTopic } from '@/features/topics/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks';
 import { useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -31,7 +31,7 @@ export function ViewQuestionContentSummary(props: TProps) {
   const format = useFormatter();
   const user = useSessionUser();
   const isLogged = !!user;
-  const ifGenerationAllowed = useIfGenerationAllowed();
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
 
   const isTopicLoadingOverall = false; // !topic && /* !isTopicsFetched || */ (!isTopicFetched || isTopicLoading);
   const isOwner = !!topic?.userId && topic?.userId === user?.id;
@@ -74,7 +74,11 @@ export function ViewQuestionContentSummary(props: TProps) {
               <span>Manage Answers</span>
             </Link>
           </Button>
-          <Button variant="secondary" size="sm" disabled={!ifGenerationAllowed}>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={!aiGenerationsAllowed || aiGenerationsLoading}
+          >
             <Link
               href={`${routePath}/${question.topicId}/questions/${question.id}/answers/generate`}
               className="flex items-center gap-2"
@@ -136,7 +140,7 @@ export function ViewQuestionContentSummary(props: TProps) {
               </Link>
             </Button>
           )}
-          <Button variant="secondary" size="sm" disabled={!ifGenerationAllowed}>
+          <Button variant="secondary" size="sm" disabled={!aiGenerationsAllowed}>
             <Link
               href={`${routePath}/${topic.id}/questions/generate`}
               className="flex items-center gap-2"

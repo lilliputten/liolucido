@@ -20,10 +20,10 @@ import {
 import { topicAnswerDeletedEventId } from '@/components/pages/ManageTopicQuestionAnswers/DeleteAnswerModal';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import { updateAnswer } from '@/features/answers/actions';
 import { useAnswersBreadcrumbsItems } from '@/features/answers/components/AnswersBreadcrumbs';
 import { TAnswer } from '@/features/answers/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks';
 import {
   useAvailableAnswerById,
   useAvailableAnswers,
@@ -186,7 +186,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
     [answer, queryClient, availableAnswersQuery, form],
   );
 
-  const ifGenerationAllowed = useIfGenerationAllowed();
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
 
   const handleReload = React.useCallback(() => {
     availableAnswerQuery
@@ -256,7 +256,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'xl',
-        disabled: !ifGenerationAllowed,
+        disabled: !aiGenerationsAllowed || aiGenerationsLoading,
         onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
       },
       {
@@ -273,7 +273,7 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
         variant: 'secondary',
         icon: Icons.WandSparkles,
         visibleFor: 'xl',
-        disabled: !ifGenerationAllowed,
+        disabled: !aiGenerationsAllowed || aiGenerationsLoading,
         onClick: () => goToTheRoute(`${answersListRoutePath}/generate`),
       },
       {
@@ -302,10 +302,11 @@ export function EditAnswerCard(props: TEditAnswerCardProps) {
       handleFormSubmit,
       availableAnswerQuery.isRefetching,
       handleReload,
-      ifGenerationAllowed,
+      aiGenerationsAllowed,
+      aiGenerationsLoading,
       goToTheRoute,
-      answersListRoutePath,
       questionsListRoutePath,
+      answersListRoutePath,
       answer.id,
     ],
   );
