@@ -43,7 +43,6 @@ function OAuthSignInButton(props: OAuthSignInButtonProps) {
     provider,
     ProviderIcon,
     text,
-    // inBody,
   } = props;
   const isClicked = !!currentProvider;
   const isThisClicked = currentProvider == provider;
@@ -122,7 +121,7 @@ interface TSignInFormProps {
 
 export function SignInForm(props: TSignInFormProps) {
   const { onSignInStart, onSignInDone, inBody } = props;
-  const [currentProvider, setCurrentProvider] = React.useState<TSignInProvider>(undefined);
+  const [currentProvider, setCurrentProvider] = React.useState<TSignInProvider>();
   const t = useTranslations('SignInForm');
 
   const handleSignInStart = React.useCallback(
@@ -144,7 +143,6 @@ export function SignInForm(props: TSignInFormProps) {
         provider="github"
         ProviderIcon={Icons.Github}
         text={t('sign-in-with-github')}
-        // inBody={inBody}
       />
       <OAuthSignInButton
         currentProvider={currentProvider}
@@ -153,7 +151,6 @@ export function SignInForm(props: TSignInFormProps) {
         provider="yandex"
         ProviderIcon={Icons.Yandex}
         text={t('sign-in-with-yandex')}
-        // inBody={inBody}
       />
       <OAuthSignInButton
         currentProvider={currentProvider}
@@ -162,7 +159,6 @@ export function SignInForm(props: TSignInFormProps) {
         provider="google"
         ProviderIcon={Icons.Google}
         text={t('sign-in-with-google')}
-        // inBody={inBody}
       />
       {/* Telegram login section */}
       <TelegramSignIn inBody={inBody} isLogging={!!currentProvider} />
