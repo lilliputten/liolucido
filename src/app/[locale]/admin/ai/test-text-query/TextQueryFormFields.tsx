@@ -38,7 +38,7 @@ export function TextQueryFormFields(props: TTextQueryFormFieldsProps) {
     <ScrollArea
       className={cn(
         isDev && '__TextQueryFormFields_Scroll', // DEBUG
-        'flex flex-col',
+        // 'flex flex-col',
         className,
       )}
       viewportClassName={cn(
