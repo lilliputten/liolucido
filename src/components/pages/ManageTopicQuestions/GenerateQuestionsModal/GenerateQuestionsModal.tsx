@@ -303,6 +303,7 @@ export function GenerateQuestionsModal() {
         className={cn(
           isDev && '__GenerateQuestionsModal_Wrapper', // DEBUG
           'relative flex min-h-24 flex-col overflow-hidden',
+          'text-foreground',
         )}
       >
         {!isSessionLoading && (

@@ -6,6 +6,8 @@ import appInfo from '../app-info.json';
 // System
 export const versionInfo = appInfo.versionInfo;
 
+export const appId = process.env.NEXT_PUBLIC_APP_ID;
+
 // Environment
 export const isDev = process.env.NODE_ENV === 'development';
 // NOTE: Beware direct console invocation

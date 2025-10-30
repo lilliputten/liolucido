@@ -129,7 +129,7 @@ export function AddAnswerModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__AddAnswerModal', // DEBUG
-        'gap-0',
+        'flex flex-col gap-0 text-theme-foreground',
         addAnswerMutation.isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -137,7 +137,7 @@ export function AddAnswerModal() {
         className={cn(
           isDev && '__AddAnswerModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
-          'flex flex-col border-b bg-accent px-8 py-4',
+          'flex flex-col border-b bg-theme px-6 py-4 text-theme-foreground',
         )}
       >
         <DialogTitle className="DialogTitle">Add New Answer</DialogTitle>
@@ -145,15 +145,13 @@ export function AddAnswerModal() {
           Add Answer Dialog
         </DialogDescription>
       </div>
-      <div className="flex flex-col px-8 py-4">
-        <AddAnswerForm
-          handleAddAnswer={handleAddAnswer}
-          className="p-8"
-          handleClose={hideModal}
-          isPending={addAnswerMutation.isPending}
-          questionId={questionId}
-        />
-      </div>
+      <AddAnswerForm
+        handleAddAnswer={handleAddAnswer}
+        className="flex flex-col p-6 text-foreground"
+        handleClose={hideModal}
+        isPending={addAnswerMutation.isPending}
+        questionId={questionId}
+      />
     </Modal>
   );
 }

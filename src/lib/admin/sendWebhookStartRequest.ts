@@ -3,6 +3,8 @@
 import { BOT_TOKEN, WEBHOOK_HOST } from '@/config/envServer';
 import { fetchJson } from '@/lib/helpers/requests';
 
+import { getErrorText } from '../helpers';
+
 type TSetWebHookResponse = {
   ok: boolean;
   result: boolean;
@@ -15,7 +17,7 @@ export async function sendWebhookStartRequest() {
     const data = await fetchJson<TSetWebHookResponse>(url);
     return data;
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = getErrorText(error);
     // eslint-disable-next-line no-console
     console.error('[StartBotPage:sendWebhookStartRequest]', errMsg, { error });
     debugger; // eslint-disable-line no-debugger

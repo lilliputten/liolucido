@@ -67,7 +67,19 @@ export function AIGenerationsStatusInfo(props: TPropsWithClassName) {
     <div
       className={cn(
         isDev && '__AIGenerationsStatusInfo', // DEBUG
-        'flex flex-wrap items-center gap-4 gap-y-1 rounded-md border border-theme-500/20 bg-theme-500/10 p-3 py-2 text-sm opacity-50',
+        'flex',
+        'flex-wrap',
+        'items-center',
+        'gap-4',
+        'gap-y-1',
+        'rounded-md',
+        'border',
+        'border-theme-400/5',
+        'bg-theme-400/5',
+        'p-3',
+        'py-2',
+        'text-sm',
+        // 'opacity-50',
         className,
       )}
     >

@@ -1,4 +1,4 @@
-import { truncateString } from '@/lib/helpers';
+import { truncateMarkdown, truncateString } from '@/lib/helpers';
 
 import {
   answersGenerationTypeQueries,
@@ -40,7 +40,9 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
   const topicTextStr = topicText?.trim();
   const extraTextStr = truncateString(extraText, maxExtraTextLength);
   // const existedAnswersJson = existedAnswers?.length ? JSON.stringify(existedAnswers) : undefined;
-  const existedAnswersText = existedAnswers?.map(({ text }) => '- ' + text).join('\n');
+  const existedAnswersText = existedAnswers
+    ?.map(({ text }) => '- ' + truncateMarkdown(text, 200))
+    .join('\n');
   const answerFieldsText = [
     `- "text" with the answer text in plain text or strict markdown markup (in the same language as the question),`,
     `- "explanation" the reason why this answer is correct or incorrect,`,

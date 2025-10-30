@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { MessageContent } from '@langchain/core/messages';
 import { useForm } from 'react-hook-form';
 
-import { truncateString } from '@/lib/helpers';
+import { getErrorText, truncateString } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { Form } from '@/components/ui/Form';
@@ -93,7 +93,7 @@ export function TextQueryForm() {
         addLog({ type: 'success', title: 'Received response:', content: `${resultText}` });
         toggleForm(false);
       } catch (error) {
-        const errMsg = error instanceof Error ? error.message : String(error);
+        const errMsg = getErrorText(error);
         // eslint-disable-next-line no-console
         console.error('[TextQueryForm:sendQuery]', errMsg, { error });
         debugger; // eslint-disable-line no-debugger

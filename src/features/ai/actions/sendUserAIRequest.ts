@@ -1,9 +1,13 @@
 'use server';
 
 import { defaultAiClientType } from '@/lib/ai/types/TAiClientType';
+import { debugObj } from '@/lib/debug';
 import { AIGenerationError } from '@/lib/errors/AIGenerationError';
+import { getErrorText } from '@/lib/helpers';
 import { getCurrentUser } from '@/lib/session';
+import { appId, versionInfo } from '@/config';
 import { checkAllowedAIGenerations, saveAIGeneration } from '@/features/ai-generations/actions';
+import { sendLoggingMessage } from '@/features/bot/actions';
 
 import { TAIQueryOptions } from '../types';
 import { TPlainMessage } from '../types/messages';
@@ -35,6 +39,13 @@ export async function sendUserAIRequest(
     throw new AIGenerationError('USER_NOT_LOGGED');
   }
 
+  const debugStr = debugObj({
+    versionInfo,
+    messages,
+    opts,
+  });
+  await sendLoggingMessage(`[${appId}:sendUserAIRequest]\n${debugStr}`);
+
   const startTime = new Date();
 
   try {
@@ -58,7 +69,7 @@ export async function sendUserAIRequest(
 
     return queryData;
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = getErrorText(error);
     // eslint-disable-next-line no-console
     console.error('[sendUserAIRequest]', errMsg, {
       error,

@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '@/lib/db';
 import { AIGenerationError } from '@/lib/errors/AIGenerationError';
+import { getErrorText } from '@/lib/helpers';
 import { getCurrentUser } from '@/lib/session';
 
 import { checkAllowedAIGenerations } from './checkAllowedAIGenerations';
@@ -27,7 +28,7 @@ export async function saveAIGeneration(data: TData) {
 
     return result;
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = getErrorText(error);
     // eslint-disable-next-line no-console
     console.error('[saveAIGeneration]', errMsg, {
       error,

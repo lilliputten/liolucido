@@ -1,9 +1,8 @@
 import React from 'react';
 import { QueryKey, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
-import { APIError } from '@/lib/types/api';
 import { TAvailableTopicsResultsQueryData } from '@/lib/types/react-query';
+import { getErrorText } from '@/lib/helpers';
 import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableTopicByIdParams } from '@/lib/zod-schemas';
 import { defaultStaleTime } from '@/constants';
@@ -66,19 +65,19 @@ export function useAvailableTopicById(props: TUseAvailableTopicByIdProps) {
         // OPTION 2: Using server function
         return await getAvailableTopicById({ id: topicId, ...queryProps });
       } catch (error) {
-        const details = error instanceof APIError ? error.details : null;
-        const message = 'Cannot load topic data';
+        const errDetails = getErrorText(error); // error instanceof APIError ? error.details : null;
+        const humanMsg = 'Cannot load topic data';
         // eslint-disable-next-line no-console
-        console.error('[useAvailableTopicById:queryFn]', message, {
-          details,
+        console.error('[useAvailableTopicById:queryFn]', humanMsg, {
+          errDetails,
           error,
           queryProps,
           topicId,
         });
         // eslint-disable-next-line no-debugger
         debugger;
-        toast.error(message);
-        throw error;
+        // toast.error(humanMsg);
+        throw new Error(humanMsg);
       }
     },
     enabled: !isCached, // Disable query if already cached

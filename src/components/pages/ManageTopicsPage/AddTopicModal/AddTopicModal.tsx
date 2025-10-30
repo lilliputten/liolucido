@@ -106,7 +106,7 @@ export function AddTopicModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__AddTopicModal', // DEBUG
-        'gap-0',
+        'flex flex-col gap-0 text-theme-foreground',
         addTopicMutation.isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -124,7 +124,7 @@ export function AddTopicModal() {
       </div>
       <AddTopicForm
         handleAddTopic={handleAddTopic}
-        className="p-8"
+        className="p-8 text-foreground"
         handleClose={hideModal}
         isPending={addTopicMutation.isPending}
       />

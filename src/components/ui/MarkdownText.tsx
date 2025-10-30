@@ -1,7 +1,10 @@
 'use client';
 
 import React from 'react';
+import { useTheme } from 'next-themes';
 import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { materialLight, nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import remarkGfm from 'remark-gfm';
 
 import { cn } from '@/lib/utils';
@@ -14,6 +17,10 @@ interface MarkdownProps {
 }
 
 export function MarkdownText({ children, className, omitLinks }: MarkdownProps) {
+  const { resolvedTheme } = useTheme();
+  // @see https://react-syntax-highlighter.github.io/react-syntax-highlighter/demo/
+  // @see https://www.npmjs.com/package/react-syntax-highlighter
+  const syntax = resolvedTheme === 'dark' ? nightOwl : materialLight;
   // @see https://github.com/remarkjs/react-markdown
   return (
     <div
@@ -52,6 +59,30 @@ export function MarkdownText({ children, className, omitLinks }: MarkdownProps) 
                 {children}
                 {isHttp && <Icons.ExternalLink className="opcaity-50 size-3" />}
               </a>
+            );
+          },
+          code: (props) => {
+            const { children, className, ...rest } = props;
+            const { ref, ...syntaxProps } = rest;
+            const match = /language-(\w+)/.exec(className || '');
+            return match ? (
+              (() => {
+                return (
+                  <SyntaxHighlighter
+                    className="SyntaxHighlighter"
+                    {...syntaxProps}
+                    PreTag="div"
+                    language={match[1]}
+                    style={syntax}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                );
+              })()
+            ) : (
+              <code ref={ref} {...syntaxProps} className={className}>
+                {children}
+              </code>
             );
           },
         }}

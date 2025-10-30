@@ -311,7 +311,8 @@ export function GenerateAnswersModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__GenerateAnswersModal', // DEBUG
-        'flex flex-col gap-0 text-theme-foreground',
+        'flex flex-col gap-0',
+        'text-theme-foreground',
         !isMobile && 'max-h-[90%]',
         // isQuestionPending && 'border border-red-500', // ???
         isOverallPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
@@ -333,6 +334,7 @@ export function GenerateAnswersModal() {
         className={cn(
           isDev && '__GenerateAnswersModal_Wrapper', // DEBUG
           'relative flex min-h-24 flex-col overflow-hidden',
+          'text-foreground',
         )}
       >
         {!isSessionLoading && (

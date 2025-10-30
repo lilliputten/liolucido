@@ -203,6 +203,28 @@
         display: none;
       }
     }
+    pre {
+      background-color: transparent !important;
+      border: none;
+      padding: 0 !important;
+    }
+    pre > code,
+    .SyntaxHighlighter > code {
+      padding: 0;
+    }
+    // stylelint-disable-next-line no-descending-specificity
+    pre > code,
+    pre > .SyntaxHighlighter {
+      border-radius: 0.5em;
+      // background-color: none !important;
+      // background-color: rgba(var(--color-theme-400-RGB) / 5%) !important;
+      background-color: rgba(var(--backgroundColorRGB) / 40%) !important;
+      border: 1px solid rgba(var(--color-theme-400-RGB) / 5%);
+    }
+    pre > .SyntaxHighlighter > code {
+      background-color: transparent !important;
+      border: none;
+    }
   }
 }
 

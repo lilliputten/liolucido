@@ -1,3 +1,5 @@
+import { truncateMarkdown } from '@/lib/helpers';
+
 import { TGenerateTopicQuestionsParams } from '../types/GenerateQuestionsTypes';
 import { TPlainMessage } from '../types/messages';
 import { getAnswersGenerationQuery } from './createGenerateQuestionAnswersMessages';
@@ -21,7 +23,7 @@ export function createGenerateTopicQuestionsMessages(
 
   // const hasExistedQuestions = !!existedQuestions?.length;
   const existedQuestionsText = existedQuestions?.length
-    ? existedQuestions.map(({ text }) => '- ' + text).join('\n')
+    ? existedQuestions.map(({ text }) => '- ' + truncateMarkdown(text, 200)).join('\n')
     : undefined;
 
   // const descriptionText = topicDescription ? `\nDescription: ${topicDescription}` : '';
