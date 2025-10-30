@@ -9,10 +9,10 @@ import { TPlainMessage } from '../types/messages';
 
 type TOptions = TAIRequestOptions;
 
-/** Send AI query and invalidate allowedAIGenerationsQuery */
 export function useUserAIRequest() {
   const invalidateKeys = useInvalidateReactQueryKeys();
-  return React.useCallback(
+  /** A hook to send AI query, calls `sendUserAIRequest`, see for reference */
+  const userAIRequest = React.useCallback(
     async (messages: TPlainMessage[], opts: TOptions = {}) => {
       const queryData: TAITextQueryData = await sendUserAIRequest(messages, opts);
       invalidateKeys([aiGenerationsStatusQueryKey]);
@@ -20,4 +20,5 @@ export function useUserAIRequest() {
     },
     [invalidateKeys],
   );
+  return userAIRequest;
 }

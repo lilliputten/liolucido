@@ -14,6 +14,13 @@ export interface TAIRequestOptions extends TAIQueryOptions {
   topicId?: string;
 }
 
+/** Send AI query
+ * @param {TPlainMessage[]} messages - Query messages list (user or system)
+ * @param {TAIRequestOptions} [opts] - Options
+ * @param {string} [opts.topicId] - Optional topicId, related to the query
+ * @param {TAiClientType} [opts.clientType] - Optional model type (eg, GigaChat or Cloudflare)
+ * @param {boolean | string} [opts.debugData] - Don't make a real API request, return demo data, default (true) or specified by a string value, a file name, relative to a `src/features/questions/actions/` folder
+ */
 export async function sendUserAIRequest(
   messages: TPlainMessage[],
   opts: TAIRequestOptions = {},

@@ -41,6 +41,7 @@ const urlTopicsToken = '/topics/';
 const idToken = '([^/]*)';
 const urlRegExp = new RegExp(urlTopicsToken + idToken + '/' + idToken + urlPostfix + '$');
 
+/** A debug data file, relative to `src/features/questions/actions/` */
 const debugDataFile = 'sample-data/GenerateQuestions/questions-query-data-02.json';
 
 export function GenerateQuestionsModal() {

@@ -42,7 +42,7 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
   // const existedAnswersJson = existedAnswers?.length ? JSON.stringify(existedAnswers) : undefined;
   const existedAnswersText = existedAnswers?.map(({ text }) => '- ' + text).join('\n');
   const answerFieldsText = [
-    `- "text" with the answer text in markdown format (in the same language as the question),`,
+    `- "text" with the answer text in plain text or strict markdown markup (in the same language as the question),`,
     `- "explanation" the reason why this answer is correct or incorrect,`,
     `- "isCorrect" as a boolean indicating if it is the correct answer.`,
   ].join('\n');
