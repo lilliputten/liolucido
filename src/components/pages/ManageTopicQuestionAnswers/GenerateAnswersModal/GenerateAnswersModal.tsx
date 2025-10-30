@@ -25,6 +25,7 @@ import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnsw
 import { addMultipleAnswers } from '@/features/answers/actions/addMultipleAnswers';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
 import {
+  useAvailableAnswers,
   useAvailableQuestionById,
   useGoBack,
   useGoToTheRoute,
@@ -86,9 +87,9 @@ export function GenerateAnswersModal() {
 
   const availableQuestionQuery = useAvailableQuestionById({
     id: questionId || '',
-    includeTopic: true,
-    includeAnswers: true,
-    includeAnswersCount: true,
+    // includeTopic: true,
+    // includeAnswers: true,
+    // includeAnswersCount: true,
   });
   const {
     question,
@@ -97,22 +98,19 @@ export function GenerateAnswersModal() {
   } = availableQuestionQuery;
   const isQuestionPending = !isQuestionFetched || isQuestionLoading;
 
-  // DEBUG
-  React.useEffect(() => {
-    console.log('[GenerateAnswersModal:DEBUG]', {
-      // ...availableQuestionQuery,
-      isQuestionFetched,
-      isQuestionLoading,
-      availableQuestionQuery,
-    });
-  }, [
-    //
-    availableQuestionQuery,
-    isQuestionFetched,
-    isQuestionLoading,
-  ]);
-
-  const answers = question?.answers;
+  // Fetch answers using dedicated hook
+  const availableAnswersQuery = useAvailableAnswers({
+    itemsLimit: null,
+    questionId,
+    // enabled: !!questionId,
+  });
+  const {
+    allAnswers: answers,
+    isLoading: isAnswersLoading,
+    isFetched: isAnswersFetched,
+    // error: answersError,
+  } = availableAnswersQuery;
+  const isAnswersPending = !isAnswersFetched || isAnswersLoading;
 
   useModalTitle('Generate Answers', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
@@ -304,7 +302,7 @@ export function GenerateAnswersModal() {
   }
 
   const areMutationsPending = generateAnswersMutation.isPending || addAnswersMutation.isPending;
-  const isOverallPending = isQuestionPending || areMutationsPending;
+  const isOverallPending = isAnswersPending || isQuestionPending || areMutationsPending;
 
   return (
     <Modal

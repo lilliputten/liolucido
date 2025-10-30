@@ -40,7 +40,7 @@ export const maxExtraTextLength = 30;
 
 export const generateQuestionAnswersParamsSchema = z.object({
   answersGenerationType: answersGenerationTypesSchema,
-  topicText: z.string(),
+  topicText: z.string().optional(),
   topicDescription: z.string().optional(),
   topicKeywords: z.string().optional(),
   existedAnswers: z.array(generatedAnswerSchema).optional(),

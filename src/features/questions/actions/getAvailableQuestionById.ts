@@ -17,7 +17,7 @@ export async function getAvailableQuestionById(params: TGetAvailableQuestionById
   const {
     id,
     // QuestionIncludeParamsSchema
-    includeTopic = false,
+    includeTopic = true,
     includeAnswersCount = true,
     includeAnswers = false,
     // Options (no error console output and debugger stops, for tests)
@@ -29,7 +29,7 @@ export async function getAvailableQuestionById(params: TGetAvailableQuestionById
    * const isAdmin = user?.role === 'ADMIN';
    */
   try {
-    if (isDev) {
+    if (isDev && !noDebug) {
       // DEBUG: Emulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }

@@ -37,6 +37,7 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
   } = params;
   // const topicDescriptionStr = topicDescription?.trim();
   // const topicKeywordsStr = topicKeywords?.trim();
+  const topicTextStr = topicText?.trim();
   const extraTextStr = truncateString(extraText, maxExtraTextLength);
   // const existedAnswersJson = existedAnswers?.length ? JSON.stringify(existedAnswers) : undefined;
   const existedAnswersText = existedAnswers?.map(({ text }) => '- ' + text).join('\n');
@@ -57,9 +58,9 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
     `Each answer object must have:`,
     answerFieldsText,
 
-    `Question: ${questionText}`,
+    questionText && `Question: ${questionText}`,
 
-    `This question and the answers are part of a common topic: ${topicText}`,
+    topicTextStr && `This question and the answers are part of a common topic: ${topicTextStr}`,
 
     extraTextStr,
 

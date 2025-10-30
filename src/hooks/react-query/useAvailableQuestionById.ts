@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
 import { TAvailableQuestionsResultsQueryData } from '@/lib/types/react-query';
+import { stringifyQueryKey } from '@/lib/helpers/react-query';
 import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
 import { defaultStaleTime } from '@/constants';
@@ -29,6 +30,7 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
     () => ['available-question', questionId, queryUrlHash],
     [queryUrlHash, questionId],
   );
+  const queryHash = stringifyQueryKey(queryKey);
 
   // Check cached infinite query data first
   const availableQuestionsData: TAvailableQuestionsResultsQueryData | undefined =
@@ -64,24 +66,14 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
          * return result.data as TAvailableQuestion;
          */
         // OPTION 2: Using server function
-        console.log('[useAvailableQuestionById:queryFn] start', {
-          queryKey,
-          queryProps,
-        });
-        debugger;
         const result = await getAvailableQuestionById({ id: questionId, ...queryProps });
-        console.log('[useAvailableQuestionById:queryFn] done', {
-          queryKey,
-          isCached,
-          enabled,
-          result,
-        });
         return result;
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
         const message = 'Cannot load question data';
         // eslint-disable-next-line no-console
         console.error('[useAvailableQuestionById:queryFn]', message, {
+          queryHash,
           queryKey,
           details,
           error,
@@ -94,17 +86,18 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
         throw error;
       }
     },
-    enabled: !!questionId && !isCached, // Disable query if no ID or already cached
+    enabled, // Disable query if no ID or already cached
   });
 
   return React.useMemo(() => {
-    console.log('[useAvailableQuestionById:DEBUG]', {
-      // enabled,
-      queryKey,
-      isCached,
-      isLoading: query.isLoading,
-      query: { ...query },
-    });
+    /* console.log('[useAvailableQuestionById:DEBUG]', queryHash, {
+     *   // enabled,
+     *   queryKey,
+     *   isCached,
+     *   isLoading: query.isLoading,
+     *   query: { ...query },
+     * });
+     */
     return {
       ...query,
       questionId,
