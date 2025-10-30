@@ -41,6 +41,7 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
     .find((question) => question.id === questionId);
 
   const isCached = !!cachedQuestion;
+  const enabled = !!questionId && !isCached; // Disable query if no ID or already cached
 
   // Only fetch if the question is not cached
   const query = useQuery<TAvailableQuestion>({
@@ -63,15 +64,27 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
          * return result.data as TAvailableQuestion;
          */
         // OPTION 2: Using server function
-        return await getAvailableQuestionById({ id: questionId, ...queryProps });
+        console.log('[useAvailableQuestionById:queryFn] start', {
+          queryKey,
+          queryProps,
+        });
+        debugger;
+        const result = await getAvailableQuestionById({ id: questionId, ...queryProps });
+        console.log('[useAvailableQuestionById:queryFn] done', {
+          queryKey,
+          isCached,
+          enabled,
+          result,
+        });
+        return result;
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
         const message = 'Cannot load question data';
         // eslint-disable-next-line no-console
         console.error('[useAvailableQuestionById:queryFn]', message, {
+          queryKey,
           details,
           error,
-          questionId,
           queryProps,
           // url,
         });
@@ -84,10 +97,21 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
     enabled: !!questionId && !isCached, // Disable query if no ID or already cached
   });
 
-  return {
-    ...query,
-    question: cachedQuestion ?? query.data,
-    isCached,
-    queryKey,
-  };
+  return React.useMemo(() => {
+    console.log('[useAvailableQuestionById:DEBUG]', {
+      // enabled,
+      queryKey,
+      isCached,
+      isLoading: query.isLoading,
+      query: { ...query },
+    });
+    return {
+      ...query,
+      questionId,
+      queryKey,
+      isLoading: query.isLoading,
+      question: cachedQuestion ?? query.data,
+      isCached,
+    };
+  }, [cachedQuestion, isCached, query, queryKey, questionId]);
 }

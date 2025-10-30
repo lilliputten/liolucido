@@ -90,8 +90,27 @@ export function GenerateAnswersModal() {
     includeAnswers: true,
     includeAnswersCount: true,
   });
-  const { question, isFetched, isLoading } = availableQuestionQuery;
-  const isQuestionPending = !isFetched || isLoading;
+  const {
+    question,
+    isFetched: isQuestionFetched,
+    isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  const isQuestionPending = !isQuestionFetched || isQuestionLoading;
+
+  // DEBUG
+  React.useEffect(() => {
+    console.log('[GenerateAnswersModal:DEBUG]', {
+      // ...availableQuestionQuery,
+      isQuestionFetched,
+      isQuestionLoading,
+      availableQuestionQuery,
+    });
+  }, [
+    //
+    availableQuestionQuery,
+    isQuestionFetched,
+    isQuestionLoading,
+  ]);
 
   const answers = question?.answers;
 
@@ -118,6 +137,7 @@ export function GenerateAnswersModal() {
         })),
       };
       const { debugData } = formData;
+
       /* // DEBUG
        * const topic = question?.topic;
        * console.log('[GenerateAnswersModal:generateAnswersMutation] Start', {
@@ -294,6 +314,7 @@ export function GenerateAnswersModal() {
         isDev && '__GenerateAnswersModal', // DEBUG
         'flex flex-col gap-0 text-theme-foreground',
         !isMobile && 'max-h-[90%]',
+        // isQuestionPending && 'border border-red-500', // ???
         isOverallPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -329,6 +350,7 @@ export function GenerateAnswersModal() {
               isPending={areMutationsPending}
               questionId={questionId}
               user={session.data?.user}
+              error={error}
             />
           </ScrollArea>
         )}
