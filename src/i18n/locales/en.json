@@ -65,7 +65,7 @@
   "WelcomePage": {
     "title": "Welcome"
   },
-  "AppIntro": {
+  "AppIntroBlock": {
     "content": "<p>This is a small quiz cards' application. Take a look at a brief <infolink>instruction manual</infolink>.</p>",
     "title": "Welcome!"
   },

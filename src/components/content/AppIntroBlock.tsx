@@ -10,8 +10,8 @@ import { getUserStatusText } from '@/features/users/helpers/getUserStatusText';
 import { useSessionUser } from '@/hooks';
 import { Link } from '@/i18n/routing';
 
-export function AppIntro(props: TPropsWithClassName) {
-  const t = useTranslations('AppIntro');
+export function AppIntroBlock(props: TPropsWithClassName) {
+  const t = useTranslations('AppIntroBlock');
   const { className } = props;
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';

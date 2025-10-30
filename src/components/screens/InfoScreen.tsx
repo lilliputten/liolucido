@@ -5,7 +5,7 @@ import React from 'react';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { InfoVisualBlock } from '@/components/blocks/InfoVisualBlock';
-import { AppIntro } from '@/components/content/AppIntro';
+import { AppIntroBlock } from '@/components/content/AppIntroBlock';
 import { UseScrollableLayout } from '@/components/shared/ScrollableLayout';
 import { isDev } from '@/constants';
 
@@ -46,7 +46,7 @@ export function InfoScreen(props: TPropsWithClassName & { isLogged: boolean }) {
           )}
         >
           <h1 className="text-center">Information</h1>
-          <AppIntro />
+          <AppIntroBlock />
           {/*generateArray(20).map((n) => (
             <p key={n}>Text {n + 1}</p>
           ))*/}

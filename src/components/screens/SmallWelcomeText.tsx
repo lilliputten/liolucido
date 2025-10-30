@@ -2,7 +2,7 @@
 
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { AppIntro } from '@/components/content/AppIntro';
+import { AppIntroBlock } from '@/components/content/AppIntroBlock';
 import { isDev } from '@/constants';
 
 export function SmallWelcomeText(props: TPropsWithClassName) {
@@ -18,7 +18,7 @@ export function SmallWelcomeText(props: TPropsWithClassName) {
       )}
     >
       <h1 className="text-center">Welcome!</h1>
-      <AppIntro />
+      <AppIntroBlock />
     </div>
   );
 }
