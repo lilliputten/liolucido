@@ -3,6 +3,8 @@ Display intermediate and final workout statististics, current workout state, etc
 37-display-workout-state
 2025.10.31
 
+Issue #37: Refactored workouts system with React Query, added AI generation features.
+
 New Features:
 
 - AI Generation System: Added toggleable "Generated" columns, AI badges, generation tracking, and usage limits with premium user controls
