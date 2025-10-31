@@ -2,7 +2,6 @@ import React from 'react';
 import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
-import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
@@ -19,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/Toaster';
 import { GenericLayout } from '@/components/layout/GenericLayout';
 import ModalProvider from '@/components/modals/providers';
+import { CustomNextIntlClientProvider } from '@/components/providers/CustomNextIntlClientProvider';
 import { ReactQueryClientProvider } from '@/components/providers/ReactQueryClientProvider';
 import { TailwindIndicator } from '@/components/service/TailwindIndicator';
 import { fontDefault, fontHeading, fontMono } from '@/assets/fonts';
@@ -49,7 +49,7 @@ async function RootLayout(props: TRootLayoutProps) {
   const { defaultLocale } = routing;
   let { locale = defaultLocale } = params;
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as TLocale)) {
+  if (!routing.locales.includes(locale)) {
     // NOTE: Sometimes we got `.well-known` value here. TODO?
     const error = new Error(`Invalid locale: ${locale}, using default: ${defaultLocale}`);
     // eslint-disable-next-line no-console
@@ -121,7 +121,11 @@ async function RootLayout(props: TRootLayoutProps) {
         <ReactQueryClientProvider>
           <SessionProvider>
             <EnvProvider BOT_USERNAME={BOT_USERNAME}>
-              <NextIntlClientProvider messages={messages}>
+              <CustomNextIntlClientProvider
+                locale={locale}
+                messages={messages}
+                // onError={handleIntlError}
+              >
                 <ThemeProvider
                   attribute="class"
                   defaultTheme="system"
@@ -167,7 +171,7 @@ async function RootLayout(props: TRootLayoutProps) {
                     <TailwindIndicator />
                   </ModalProvider>
                 </ThemeProvider>
-              </NextIntlClientProvider>
+              </CustomNextIntlClientProvider>
             </EnvProvider>
           </SessionProvider>
         </ReactQueryClientProvider>

@@ -63,7 +63,7 @@
     "title": "Info"
   },
   "WelcomePage": {
-    "title": "Welcome"
+    "title": "Welcome!"
   },
   "AppIntroBlock": {
     "content": "<p>This is a small quiz cards' application. Take a look at a brief <infolink>instruction manual</infolink>.</p>",
@@ -75,7 +75,7 @@
   },
   "NavLocaleSwitcher": {
     "label": "Change language",
-    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} other {Auto-detect}}"
+    "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} xx {🇺🇸 Debug} other {Auto-detect}}"
   },
   "Settings": {},
   "Themes": {
@@ -130,5 +130,6 @@
     "sign-in-with-yandex": "Sign In with Yandex",
     "sign-in-with-telegram": "Sign In with Telegram",
     "intro": "Login to be able editing your own data."
-  }
+  },
+  "WelcomePageTitle": "AAA"
 }

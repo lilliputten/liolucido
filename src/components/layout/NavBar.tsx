@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 
 import { siteMenu } from '@/config/siteMenu';
 import { commonXPaddingTwStyle } from '@/config/ui';
@@ -12,6 +12,7 @@ import { NavLocaleSwitcher } from '@/components/layout/NavLocaleSwitcher';
 import { NavModeToggle } from '@/components/layout/NavModeToggle';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useT } from '@/i18n';
 import { Link, usePathname } from '@/i18n/routing';
 import { TLocale } from '@/i18n/types';
 
@@ -25,7 +26,7 @@ interface NavBarProps {
 export function NavBar(props: NavBarProps) {
   const { isUser, open, setOpen } = props;
   const links = siteMenu.mainNav;
-  const t = useTranslations('SiteMenu');
+  const t = useT('SiteMenu');
   const locale = useLocale() as TLocale;
   const pathname = decodeURI(usePathname());
   return (

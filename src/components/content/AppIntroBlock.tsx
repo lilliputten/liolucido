@@ -1,17 +1,16 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-
 import { infoRoute, myTopicsRoute, welcomeRoute } from '@/config/routesConfig';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { isDev } from '@/constants';
 import { getUserStatusText } from '@/features/users/helpers/getUserStatusText';
 import { useSessionUser } from '@/hooks';
+import { useT } from '@/i18n';
 import { Link } from '@/i18n/routing';
 
 export function AppIntroBlock(props: TPropsWithClassName) {
-  const t = useTranslations('AppIntroBlock');
+  const t = useT('AppIntroBlock');
   const { className } = props;
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
@@ -21,7 +20,6 @@ export function AppIntroBlock(props: TPropsWithClassName) {
         isDev && '__IntroText', // DEBUG
         'flex flex-col gap-2',
         'text-content',
-        // 'text-center', // Only for small texts
         className,
       )}
     >

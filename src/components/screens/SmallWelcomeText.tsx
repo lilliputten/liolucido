@@ -4,9 +4,12 @@ import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { AppIntroBlock } from '@/components/content/AppIntroBlock';
 import { isDev } from '@/constants';
+import { useT } from '@/i18n';
 
 export function SmallWelcomeText(props: TPropsWithClassName) {
   const { className } = props;
+  const t = useT();
+
   return (
     <div
       className={cn(
@@ -14,10 +17,9 @@ export function SmallWelcomeText(props: TPropsWithClassName) {
         className,
         'flex max-w-md flex-col gap-4',
         'text-content',
-        // 'text-center', // Only for small texts
       )}
     >
-      <h1 className="text-center">Welcome!</h1>
+      <h1 className="text-center">{t('WelcomePageTitle')}</h1>
       <AppIntroBlock />
     </div>
   );

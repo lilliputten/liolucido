@@ -2,7 +2,6 @@
 
 import { useContext } from 'react';
 import { useSession } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
 
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -11,6 +10,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { ModalContext } from '@/components/modals/providers';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useT } from '@/i18n';
 
 import { NavUserAccount } from './NavUserAccount';
 import { NavUserBlock } from './NavUserBlock';
@@ -25,7 +25,7 @@ export function NavUserAuthButton(props: TNavAuthButtonProps) {
   const { onPrimary, onSidebar, isUser, className } = props;
   const { data: session, status } = useSession();
   const { setVisible: setSignInModalVisible } = useContext(ModalContext);
-  const t = useTranslations('NavAuthButton');
+  const t = useT('NavAuthButton');
   const hasValidUser = !!isUser && !!session && status === 'authenticated';
   return (
     <div

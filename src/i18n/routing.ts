@@ -8,7 +8,7 @@ import { defaultLocale, localesList } from './types';
 // @see https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
 export const routing = defineRouting({
   // A list of all locales that are supported
-  locales: localesList,
+  locales: localesList as unknown as string[],
 
   // Used when no locale matches
   defaultLocale,

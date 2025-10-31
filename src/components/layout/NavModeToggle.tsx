@@ -1,13 +1,12 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useT } from '@/i18n';
 
 import { NavModeToggleBlock } from './NavModeToggleBlock';
 
@@ -18,7 +17,7 @@ interface TNavModeToggleProps extends TPropsWithClassName {
 
 export function NavModeToggle(props: TNavModeToggleProps) {
   const { onPrimary, onSidebar, className } = props;
-  const t = useTranslations('NavModeToggle');
+  const t = useT('NavModeToggle');
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild aria-label={t('label')}>
