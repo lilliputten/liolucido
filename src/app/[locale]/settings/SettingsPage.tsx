@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
 import { removeNullUndefinedValues } from '@/lib/helpers';
@@ -21,6 +20,7 @@ import { isDev } from '@/constants';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { settingsSchema, TSettings } from '@/features/settings/types';
 import { TUserId } from '@/features/users/types/TUser';
+import { useT } from '@/i18n';
 
 import { CardContentSkeleton } from './skeletons';
 
@@ -44,7 +44,7 @@ export function SettingsPage(props: TSettingsPageProps) {
   const [isPending, startTransition] = React.useTransition();
   const [isReLoading, startReLoading] = React.useTransition();
   const [isReloadConfirmModalVisible, setReloadConfirmModalVisible] = React.useState(false);
-  const t = useTranslations('SettingsPage');
+  const t = useT('SettingsPage');
   const formSchema = React.useMemo(() => settingsSchema, []);
   const [isUserReady, setIsUserReady] = React.useState<boolean>(false);
 

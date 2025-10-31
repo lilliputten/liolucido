@@ -24,13 +24,13 @@ export function SignInBlock(props: TPropsWithClassName) {
     >
       <div
         className={cn(
-          // prettier-ignore
+          isDev && '__SignInBlock_Header', // DEBUG
           'flex',
           'flex-col',
           'items-center',
           'justify-center',
           'space-y-3',
-          'px-4',
+          'px-6',
           'py-6',
           'pt-8',
           'md:px-16',
@@ -40,12 +40,12 @@ export function SignInBlock(props: TPropsWithClassName) {
       </div>
       <div
         className={cn(
-          // prettier-ignore
+          isDev && '__SignInBlock_Form', // DEBUG
           'flex',
           'flex-col',
           'space-y-4',
-          'px-4',
-          'py-8',
+          'px-6',
+          'py-6',
           'md:px-16',
         )}
       >

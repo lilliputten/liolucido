@@ -41,8 +41,7 @@ export const IncludedUserTopicWorkoutSelect = {
   // totalRounds: true as const, // z.number().int(),
   // allRatios: true as const, // z.string(),
   // allTimes: true as const, // z.string(),
-  averageRatio: true as const, // z.number().int(),
-  averageTime: true as const, // z.number().int(),
+
   started: true as const, // z.boolean(),
   finished: true as const, // z.boolean(),
 };

@@ -79,12 +79,6 @@ export function ManageTopicQuestionAnswersPageHolder(
     // isCached: isAnswersCached,
   } = availableAnswersQuery;
 
-  // console.log('[ManageTopicQuestionAnswersPageHolder:DEBUG]', {
-  //   isAnswersFetched,
-  //   isQuestionReady,
-  //   isTopicReady,
-  // });
-
   // No data loaded yet - show skeleton
   if (!isAnswersFetched || !isQuestionReady || !isTopicReady) {
     return (

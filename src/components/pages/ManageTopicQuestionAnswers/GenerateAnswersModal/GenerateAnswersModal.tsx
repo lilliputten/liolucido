@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
-import { APIError } from '@/lib/types/api';
 import { getErrorText } from '@/lib/helpers';
 import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
@@ -16,14 +15,17 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { sendAiTextQuery } from '@/features/ai/actions/sendAiTextQuery';
-import { createGenerateQuestionAnswersMessages } from '@/features/ai/helpers/createGenerateQuestionAnswersMessages';
-import { parseGeneratedQuestionAnswers } from '@/features/ai/helpers/parseGeneratedQuestionAnswers';
+import {
+  createGenerateQuestionAnswersMessages,
+  parseGeneratedQuestionAnswers,
+} from '@/features/ai/helpers';
+import { useUserAIRequest } from '@/features/ai/hooks';
+import { TAITextQueryData } from '@/features/ai/types';
 import { TGenerateQuestionAnswersParams } from '@/features/ai/types/GenerateAnswersTypes';
 import { addMultipleAnswers } from '@/features/answers/actions/addMultipleAnswers';
 import { TAvailableAnswer, TNewAnswer } from '@/features/answers/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
+  useAvailableAnswers,
   useAvailableQuestionById,
   useGoBack,
   useGoToTheRoute,
@@ -41,9 +43,15 @@ const urlQuestionToken = '/questions/';
 const idToken = '([^/]*)';
 const urlRegExp = new RegExp(idToken + urlQuestionToken + idToken + urlPostfix + '$');
 
+/** A debug data file, relative to `src/features/questions/actions/` */
+const debugDataFile = 'sample-data/GenerateQuestions/answers-query-data-01.json';
+
 export function GenerateAnswersModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(true);
+  const [error, setError] = React.useState<string | undefined>();
+
+  const userAIRequest = useUserAIRequest();
 
   const { jumpToNewEntities } = useSettings();
 
@@ -52,8 +60,8 @@ export function GenerateAnswersModal() {
   const topicId = match?.[1];
   const questionId = match?.[2];
 
-  const ifGenerationAllowed = useIfGenerationAllowed();
-  const shouldBeVisible = ifGenerationAllowed && !!match;
+  // const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
+  const shouldBeVisible = !!match;
 
   const session = useSession();
   const isSessionLoading = session.status === 'loading';
@@ -80,14 +88,30 @@ export function GenerateAnswersModal() {
 
   const availableQuestionQuery = useAvailableQuestionById({
     id: questionId || '',
-    includeTopic: true,
-    includeAnswers: true,
-    includeAnswersCount: true,
+    // includeTopic: true,
+    // includeAnswers: true,
+    // includeAnswersCount: true,
   });
-  const { question, isFetched, isLoading } = availableQuestionQuery;
-  const isQuestionPending = !isFetched || isLoading;
+  const {
+    question,
+    isFetched: isQuestionFetched,
+    isLoading: isQuestionLoading,
+  } = availableQuestionQuery;
+  const isQuestionPending = !isQuestionFetched || isQuestionLoading;
 
-  const answers = question?.answers;
+  // Fetch answers using dedicated hook
+  const availableAnswersQuery = useAvailableAnswers({
+    itemsLimit: null,
+    questionId,
+    // enabled: !!questionId,
+  });
+  const {
+    allAnswers: answers,
+    isLoading: isAnswersLoading,
+    isFetched: isAnswersFetched,
+    // error: answersError,
+  } = availableAnswersQuery;
+  const isAnswersPending = !isAnswersFetched || isAnswersLoading;
 
   useModalTitle('Generate Answers', shouldBeVisible);
   useUpdateModalVisibility(setVisible, shouldBeVisible);
@@ -112,6 +136,7 @@ export function GenerateAnswersModal() {
         })),
       };
       const { debugData } = formData;
+
       /* // DEBUG
        * const topic = question?.topic;
        * console.log('[GenerateAnswersModal:generateAnswersMutation] Start', {
@@ -132,8 +157,10 @@ export function GenerateAnswersModal() {
        *   params,
        * });
        */
-      const queryData = await sendAiTextQuery(messages, { debugData });
-      // const generatedAnswers = await generateQuestionAnswers(messages, debugData);
+      const queryData: TAITextQueryData = await userAIRequest(messages, {
+        topicId,
+        debugData: debugData ? debugDataFile : undefined,
+      });
       /* console.log('[GenerateAnswersModal:generateAnswersMutation] Generated query data', {
        *   // content: queryData?.content,
        *   queryData,
@@ -141,36 +168,40 @@ export function GenerateAnswersModal() {
        *   params,
        * });
        */
+      setError(undefined);
       return queryData;
     },
     onError: (error, formData) => {
-      const details = error instanceof APIError ? error.details : null;
-      const message = 'Cannot generate answers';
+      // const details = error instanceof APIError ? error.details : null;
+      const humanMsg = 'Cannot generate answers';
+      const errDetails = getErrorText(error);
       // eslint-disable-next-line no-console
-      console.error('[GenerateAnswersModal:generateAnswersMutation]', message, {
+      console.error('[GenerateAnswersModal:generateAnswersMutation]', humanMsg, {
+        errDetails,
         error,
-        details,
         formData,
         questionId,
       });
       debugger; // eslint-disable-line no-debugger
+      setError(humanMsg);
     },
   });
 
   const addAnswersMutation = useMutation<TAvailableAnswer[], Error, TNewAnswer[]>({
     mutationFn: addMultipleAnswers,
-    onError: (error, newAnswers) => {
-      const details = error instanceof APIError ? error.details : null;
-      const message = 'Cannot create answer';
-      // eslint-disable-next-line no-console
-      console.error('[AddAnswersModal:addAnswersMutation]', message, {
-        error,
-        details,
-        newAnswers,
-        questionId,
-      });
-      debugger; // eslint-disable-line no-debugger
-    },
+    /* onError: (error, newAnswers) => {
+     *   const details = error instanceof APIError ? error.details : null;
+     *   const message = 'Cannot create answer';
+     *   // eslint-disable-next-line no-console
+     *   console.error('[AddAnswersModal:addAnswersMutation]', message, {
+     *     error,
+     *     details,
+     *     newAnswers,
+     *     questionId,
+     *   });
+     *   debugger; // eslint-disable-line no-debugger
+     * },
+     */
   });
 
   const handleGenerateAnswers = React.useCallback(
@@ -242,13 +273,16 @@ export function GenerateAnswersModal() {
         return addAnswersPromise;
       } catch (error) {
         const humanMsg = 'An error occurred while generating and adding question answers';
-        const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
+        const errDetails = getErrorText(error);
+        // const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
         // eslint-disable-next-line no-console
-        console.error('[GenerateAnswersModal] ❌', errMsg, {
+        console.error('[GenerateAnswersModal] ❌', humanMsg, {
+          errDetails,
           error,
         });
         debugger; // eslint-disable-line no-debugger
         toast.error(humanMsg);
+        setError(humanMsg);
       }
     },
     [
@@ -269,7 +303,7 @@ export function GenerateAnswersModal() {
   }
 
   const areMutationsPending = generateAnswersMutation.isPending || addAnswersMutation.isPending;
-  const isOverallPending = isQuestionPending || areMutationsPending;
+  const isOverallPending = isAnswersPending || isQuestionPending || areMutationsPending;
 
   return (
     <Modal
@@ -277,8 +311,10 @@ export function GenerateAnswersModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__GenerateAnswersModal', // DEBUG
-        'flex flex-col gap-0 text-theme-foreground',
+        'flex flex-col gap-0',
+        'text-theme-foreground',
         !isMobile && 'max-h-[90%]',
+        // isQuestionPending && 'border border-red-500', // ???
         isOverallPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -298,13 +334,14 @@ export function GenerateAnswersModal() {
         className={cn(
           isDev && '__GenerateAnswersModal_Wrapper', // DEBUG
           'relative flex min-h-24 flex-col overflow-hidden',
+          'text-foreground',
         )}
       >
         {!isSessionLoading && (
           <ScrollArea
             className={cn(
               isDev && '__GenerateAnswersModal_Scroll', // DEBUG
-              'flex flex-1 flex-col',
+              // 'flex flex-1 flex-col',
             )}
           >
             <GenerateAnswersForm
@@ -314,6 +351,7 @@ export function GenerateAnswersModal() {
               isPending={areMutationsPending}
               questionId={questionId}
               user={session.data?.user}
+              error={error}
             />
           </ScrollArea>
         )}

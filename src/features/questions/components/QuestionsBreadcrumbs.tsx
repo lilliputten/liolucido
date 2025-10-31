@@ -4,7 +4,6 @@ import React from 'react';
 
 import { generateArray, truncateMarkdown } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
-import { capitalizeString } from '@/lib/helpers/strings';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -36,7 +35,7 @@ export function useQuestionsBreadcrumbsItems(props: TBreadcrumbsProps) {
   const questionRoutePath =
     question && questionsListRoutePath && `${questionsListRoutePath}/${question.id}`;
   // TODO: Use i18n translations
-  const listTitle = capitalizeString(scope) + ' Questions' + (isDev ? '*' : '');
+  const listTitle = /* capitalizeString(scope) + ' ' */ 'Questions'; /* + (isDev ? '*' : '') */
   const topicItems = useTopicsBreadcrumbsItems({ scope, topic });
   if (isLoading) {
     return [];

@@ -1,7 +1,10 @@
 'use client';
 
 import React from 'react';
+import { useTheme } from 'next-themes';
 import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { materialLight, nightOwl } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import remarkGfm from 'remark-gfm';
 
 import { cn } from '@/lib/utils';
@@ -14,6 +17,10 @@ interface MarkdownProps {
 }
 
 export function MarkdownText({ children, className, omitLinks }: MarkdownProps) {
+  const { resolvedTheme } = useTheme();
+  // @see https://react-syntax-highlighter.github.io/react-syntax-highlighter/demo/
+  // @see https://www.npmjs.com/package/react-syntax-highlighter
+  const syntax = resolvedTheme === 'dark' ? nightOwl : materialLight;
   // @see https://github.com/remarkjs/react-markdown
   return (
     <div
@@ -54,17 +61,30 @@ export function MarkdownText({ children, className, omitLinks }: MarkdownProps) 
               </a>
             );
           },
-          /* // UNUSED: code
-           * code: (props) => {
-           *   const { children, ...rest } = props;
-           *   console.log('[MarkdownText:DEBUG] props', { props });
-           *   return (
-           *     <code className="rounded bg-muted px-1 py-0.5 text-sm" {...rest}>
-           *       {children}
-           *     </code>
-           *   );
-           * },
-           */
+          code: (props) => {
+            const { children, className, ...rest } = props;
+            const { ref, ...syntaxProps } = rest;
+            const match = /language-(\w+)/.exec(className || '');
+            return match ? (
+              (() => {
+                return (
+                  <SyntaxHighlighter
+                    className="SyntaxHighlighter"
+                    {...syntaxProps}
+                    PreTag="div"
+                    language={match[1]}
+                    style={syntax}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                );
+              })()
+            ) : (
+              <code ref={ref} {...syntaxProps} className={className}>
+                {children}
+              </code>
+            );
+          },
         }}
       >
         {children}

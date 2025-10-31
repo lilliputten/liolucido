@@ -98,8 +98,7 @@ export function EmailSignInForm({ className, isLogging }: TProps) {
       className={cn(
         isDev && '__EmailSignInForm', // DEBUG
         'flex flex-col gap-3',
-        // 'text-foreground',
-        isLogging && 'pointer-events-none opacity-50',
+        isLogging && 'pointer-events-none opacity-30',
         className,
       )}
     >
@@ -138,9 +137,6 @@ export function EmailSignInForm({ className, isLogging }: TProps) {
             )}
           >
             <SubmitIcon className={cn('size-4', isSubmitting && 'animate-spin')} />
-            {/*
-            <span>Sign in with Email</span>
-            */}
           </Button>
         </div>
         {errors.email && <span className="text-sm text-red-500">{errors.email.message}</span>}

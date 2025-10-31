@@ -1,4 +1,4 @@
-import { truncateString } from '@/lib/helpers';
+import { truncateMarkdown, truncateString } from '@/lib/helpers';
 
 import {
   answersGenerationTypeQueries,
@@ -37,11 +37,14 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
   } = params;
   // const topicDescriptionStr = topicDescription?.trim();
   // const topicKeywordsStr = topicKeywords?.trim();
+  const topicTextStr = topicText?.trim();
   const extraTextStr = truncateString(extraText, maxExtraTextLength);
   // const existedAnswersJson = existedAnswers?.length ? JSON.stringify(existedAnswers) : undefined;
-  const existedAnswersText = existedAnswers?.map(({ text }) => '- ' + text).join('\n');
+  const existedAnswersText = existedAnswers
+    ?.map(({ text }) => '- ' + truncateMarkdown(text, 200))
+    .join('\n');
   const answerFieldsText = [
-    `- "text" with the answer text in markdown format (in the same language as the question),`,
+    `- "text" with the answer text in plain text or strict markdown markup (in the same language as the question),`,
     `- "explanation" the reason why this answer is correct or incorrect,`,
     `- "isCorrect" as a boolean indicating if it is the correct answer.`,
   ].join('\n');
@@ -57,9 +60,9 @@ function getUserQueryText(params: TGenerateQuestionAnswersParams) {
     `Each answer object must have:`,
     answerFieldsText,
 
-    `Question: ${questionText}`,
+    questionText && `Question: ${questionText}`,
 
-    `This question and the answers are part of a common topic: ${topicText}`,
+    topicTextStr && `This question and the answers are part of a common topic: ${topicTextStr}`,
 
     extraTextStr,
 

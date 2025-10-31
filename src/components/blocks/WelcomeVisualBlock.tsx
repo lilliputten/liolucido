@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SmallWelcomeText } from '@/components/screens/SmallWelcomeText';
-import svgArt from '@/assets/arts/login-blue.svg';
+import svgArt from '@/assets/arts/girl-with-a-book.svg';
 import { isDev } from '@/constants';
 
 export function WelcomeVisualBlock(props: TPropsWithClassName) {
@@ -13,20 +13,18 @@ export function WelcomeVisualBlock(props: TPropsWithClassName) {
       className={cn(
         isDev && '__WelcomeVisualBlock', // DEBUG
         className,
-        'm-4',
-        'gap-4',
+        'm-6 gap-4',
         'flex flex-1 flex-col',
-        'items-stretch',
-        'justify-center',
+        'items-center justify-center',
       )}
     >
       <Image
         src={svgArt}
-        alt="Sign in illustration"
+        alt="Intro illustration"
         className={cn(
           isDev && '__WelcomeVisualBlock_Art', // DEBUG
           'mx-auto mt-4',
-          'sm:max-w-lg',
+          'w-full sm:max-w-md',
         )}
       />
       {/* // XXX: Alternate layout: the art as a background

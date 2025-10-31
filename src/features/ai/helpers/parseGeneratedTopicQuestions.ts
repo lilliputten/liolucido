@@ -14,12 +14,12 @@ export function parseGeneratedTopicQuestions(queryData: TAITextQueryData): TGene
   let rawData: unknown;
 
   try {
-    const { content } = queryData;
-    rawJson = content;
-    console.log('[parseGeneratedTopicQuestions] Got raw text', {
-      rawJson,
-      queryData,
-    });
+    rawJson = queryData.content;
+    /* console.log('[parseGeneratedTopicQuestions] Got raw text', {
+     *   rawJson,
+     *   queryData,
+     * });
+     */
     if (typeof rawJson !== 'string') {
       throw new Error(`Received unexpected result type instead of json string: ${typeof rawJson}`);
     }
@@ -31,11 +31,12 @@ export function parseGeneratedTopicQuestions(queryData: TAITextQueryData): TGene
       rawJson = rawJson.substring(mdStart.length, rawJson.length - mdEnd.length).trim();
     }
     rawData = JSON.parse(rawJson);
-    console.log('[parseGeneratedTopicQuestions] Parsed raw data', {
-      rawData,
-      rawJson,
-      queryData,
-    });
+    /* console.log('[parseGeneratedTopicQuestions] Parsed raw data', {
+     *   rawData,
+     *   rawJson,
+     *   queryData,
+     * });
+     */
     if (!rawData) {
       throw new Error('Got an invalid (empty) json object');
     }
@@ -50,9 +51,11 @@ export function parseGeneratedTopicQuestions(queryData: TAITextQueryData): TGene
     return validatedData.questions;
   } catch (error) {
     const humanMsg = 'Can not parse generated topic questions';
-    const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
+    const errDetails = getErrorText(error);
+    // const errMsg = [humanMsg, errDetails].filter(Boolean).join(': ');
     // eslint-disable-next-line no-console
-    console.error('[parseGeneratedTopicQuestions] ❌', errMsg, {
+    console.error('[parseGeneratedTopicQuestions] ❌', humanMsg, {
+      errDetails,
       error,
       rawJson,
       rawData,

@@ -121,7 +121,7 @@ export function AddQuestionModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__AddQuestionModal', // DEBUG
-        'gap-0',
+        'flex flex-col gap-0 text-theme-foreground',
         addQuestionMutation.isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -129,7 +129,7 @@ export function AddQuestionModal() {
         className={cn(
           isDev && '__AddQuestionModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
-          'flex flex-col border-b bg-accent px-8 py-4',
+          'flex flex-col border-b bg-theme px-6 py-4 text-theme-foreground',
         )}
       >
         <DialogTitle className="DialogTitle">Add New Question</DialogTitle>
@@ -137,15 +137,13 @@ export function AddQuestionModal() {
           Add question dialog
         </DialogDescription>
       </div>
-      <div className="flex flex-col px-8 py-4">
-        <AddQuestionForm
-          handleAddQuestion={handleAddQuestion}
-          className="p-8"
-          handleClose={hideModal}
-          isPending={addQuestionMutation.isPending}
-          topicId={topicId}
-        />
-      </div>
+      <AddQuestionForm
+        handleAddQuestion={handleAddQuestion}
+        className="flex flex-col p-6 text-foreground"
+        handleClose={hideModal}
+        isPending={addQuestionMutation.isPending}
+        topicId={topicId}
+      />
     </Modal>
   );
 }

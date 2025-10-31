@@ -194,10 +194,36 @@
 
   .MarkdownText {
     code {
+      font-size: 0.75rem;
+      background-color: rgba(var(--color-theme-400-RGB) / 5%);
+      border: 1px solid rgba(var(--color-theme-400-RGB) / 5%);
+      font-weight: normal;
       &:before,
       &:after {
         display: none;
       }
+    }
+    pre {
+      background-color: transparent !important;
+      border: none;
+      padding: 0 !important;
+    }
+    pre > code,
+    .SyntaxHighlighter > code {
+      padding: 0;
+    }
+    // stylelint-disable-next-line no-descending-specificity
+    pre > code,
+    pre > .SyntaxHighlighter {
+      border-radius: 0.5em;
+      // background-color: none !important;
+      // background-color: rgba(var(--color-theme-400-RGB) / 5%) !important;
+      background-color: rgba(var(--backgroundColorRGB) / 40%) !important;
+      border: 1px solid rgba(var(--color-theme-400-RGB) / 5%);
+    }
+    pre > .SyntaxHighlighter > code {
+      background-color: transparent !important;
+      border: none;
     }
   }
 }
@@ -223,13 +249,21 @@
     );
   }
 
-  .decorative-gradient {
-    // position: relative;
-    overflow: hidden;
+  .bg-page-gradient {
+    // background: radial-gradient(
+    //   50% 100% at 50% 0%,
+    //   rgb(90, 93, 255) 25%,
+    //   rgb(10, 132, 255) 100%
+    // );
+    // background: radial-gradient(
+    //   80% 100% at 80% 0%,
+    //   rgba(var(--color-purple-600-RGB) / 10%) 50%,
+    //   rgba(var(--color-theme-500-RGB) / 20%) 100%
+    // );
     background: radial-gradient(
       70% 60% at 40% 60%,
-      rgba(var(--color-theme-500-RGB) / 25%) 0%,
-      rgba(var(--color-theme-500-RGB) / 10%) 100%
+      rgba(var(--color-theme-500-RGB) / 15%) 0%,
+      rgba(var(--color-blue-400-RGB) / 15%) 100%
     );
     &:before {
       overflow: hidden;
@@ -242,8 +276,34 @@
       transform: rotate(-30deg);
       background: radial-gradient(
         50% 20% at 70% 50%,
-        rgba(var(--color-purple-400-RGB) / 20%) 0%,
-        rgba(var(--color-purple-300-RGB) / 2%) 100%
+        rgba(var(--color-blue-600-RGB) / 15%) 0%,
+        rgba(var(--color-blue-500-RGB) / 2%) 100%
+      );
+    }
+  }
+
+  .bg-decorative-gradient {
+    background: radial-gradient(
+      70% 60% at 40% 60%,
+      rgba(var(--color-theme-600-RGB) / 10%) 0%,
+      rgba(var(--color-theme-600-RGB) / 4%) 100% // rgba(var(--color-theme-500-RGB) / 25%) 0%,
+       // rgba(var(--color-theme-500-RGB) / 10%) 100%
+    );
+    &:before {
+      overflow: hidden;
+      position: absolute;
+      left: -75%;
+      right: -75%;
+      top: -75%;
+      bottom: -75%;
+      content: '';
+      transform: rotate(-30deg);
+      background: radial-gradient(
+        50% 20% at 70% 50%,
+        // rgba(var(--color-purple-400-RGB) / 20%) 0%,
+        // rgba(var(--color-purple-300-RGB) / 2%) 100%
+        rgba(var(--color-purple-600-RGB) / 6%) 0%,
+        rgba(var(--color-purple-500-RGB) / 3%) 100%
       );
     }
   }
@@ -268,6 +328,40 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .bg-header-gradient {
+    // background: radial-gradient(
+    //   50% 100% at 50% 0%,
+    //   rgb(90, 93, 255) 25%,
+    //   rgb(10, 132, 255) 100%
+    // );
+    // background: radial-gradient(
+    //   70% 60% at 40% 60%,
+    //   rgba(var(--color-theme-600-RGB) / 15%) 0%,
+    //   rgba(var(--color-theme-600-RGB) / 5%) 100%
+    // );
+    background: radial-gradient(
+      80% 100% at 80% 0%,
+      rgba(var(--color-purple-600-RGB) / 30%) 50%,
+      rgba(var(--color-purple-500-RGB) / 20%) 100%
+    );
+    &:before {
+      overflow: hidden;
+      position: absolute;
+      left: -75%;
+      right: -75%;
+      top: -75%;
+      bottom: -75%;
+      content: '';
+      // transform: rotate(-8deg);
+      background: radial-gradient(
+        // 15deg,
+        40% 80% at 35% 35%,
+        rgba(var(--color-purple-600-RGB) / 60%) 0%,
+        rgba(var(--color-purple-500-RGB) / 0%) 100%
+      );
+    }
   }
 
   .disabled {
@@ -304,10 +398,10 @@
       font-size: 1.5rem;
     }
     a {
-      color: rgb(var(--color-theme-500-RGB));
+      color: rgb(var(--color-theme-400-RGB));
       &:hover {
         text-decoration: underline;
-        color: rgb(var(--color-theme-600-RGB));
+        color: rgb(var(--color-theme-300-RGB));
       }
     }
   }

@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
-import { APIError } from '@/lib/types/api';
 import { getErrorText } from '@/lib/helpers';
 import { invalidateKeysByPrefixes, makeQueryKeyPrefix } from '@/lib/helpers/react-query';
 import { cn } from '@/lib/utils';
@@ -16,13 +15,14 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { WaitingSplash } from '@/components/ui/WaitingSplash';
 import { isDev } from '@/constants';
 import { useSettings } from '@/contexts/SettingsContext';
-import { sendAiTextQuery } from '@/features/ai/actions/sendAiTextQuery';
-import { createGenerateTopicQuestionsMessages } from '@/features/ai/helpers/createGenerateTopicQuestionsMessages';
-import { parseGeneratedTopicQuestions } from '@/features/ai/helpers/parseGeneratedTopicQuestions';
-import { TGenerateTopicQuestionsParams } from '@/features/ai/types/GenerateQuestionsTypes';
-import { addMultipleQuestions } from '@/features/questions/actions/addMultipleQuestions';
+import {
+  createGenerateTopicQuestionsMessages,
+  parseGeneratedTopicQuestions,
+} from '@/features/ai/helpers';
+import { useUserAIRequest } from '@/features/ai/hooks';
+import { TAITextQueryData, TGenerateTopicQuestionsParams } from '@/features/ai/types';
+import { addMultipleQuestions } from '@/features/questions/actions';
 import { TAvailableQuestion, TNewQuestion } from '@/features/questions/types';
-import { useIfGenerationAllowed } from '@/features/users/hooks/useIfGenerationAllowed';
 import {
   useAvailableTopicById,
   useGoBack,
@@ -41,9 +41,15 @@ const urlTopicsToken = '/topics/';
 const idToken = '([^/]*)';
 const urlRegExp = new RegExp(urlTopicsToken + idToken + '/' + idToken + urlPostfix + '$');
 
+/** A debug data file, relative to `src/features/questions/actions/` */
+const debugDataFile = 'sample-data/GenerateQuestions/questions-query-data-02.json';
+
 export function GenerateQuestionsModal() {
   const { manageScope } = useManageTopicsStore();
   const [isVisible, setVisible] = React.useState(true);
+  const [error, setError] = React.useState<string | undefined>();
+
+  const userAIRequest = useUserAIRequest();
 
   const { jumpToNewEntities } = useSettings();
 
@@ -51,8 +57,8 @@ export function GenerateQuestionsModal() {
   const match = pathname.match(urlRegExp);
   const topicId = match?.[2];
 
-  const ifGenerationAllowed = useIfGenerationAllowed();
-  const shouldBeVisible = ifGenerationAllowed && !!match;
+  // const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = useAIGenerationsStatus();
+  const shouldBeVisible = !!match;
 
   const session = useSession();
   const isSessionLoading = session.status === 'loading';
@@ -100,60 +106,72 @@ export function GenerateQuestionsModal() {
         existedQuestions: questions?.map(({ text }) => ({ text })),
       };
       const { debugData } = formData;
-      // const topic = availableTopicQuery.topic;
-      console.log('[GenerateQuestionsModal:generateQuestionsMutation] Start', {
-        debugData,
-        formData,
-        params,
-        topic,
-        questions,
-      });
+      /* console.log('[GenerateQuestionsModal:generateQuestionsMutation] Start', {
+       *   debugData,
+       *   formData,
+       *   params,
+       *   topic,
+       *   questions,
+       * });
+       */
       const messages = createGenerateTopicQuestionsMessages(params);
-      // DEBUG
-      const __debugMessagesStr = messages.map(({ content }) => content).join('\n\n');
-      console.log('[GenerateQuestionsModal:generateQuestionsMutation] Created messages', {
-        __debugMessagesStr,
-        messages,
-        params,
+      /* // DEBUG
+       * const __debugMessagesStr = messages.map(({ content }) => content).join('\n\n');
+       * console.log('[GenerateQuestionsModal:generateQuestionsMutation] Created messages', {
+       *   __debugMessagesStr,
+       *   messages,
+       *   params,
+       * });
+       */
+      const queryData: TAITextQueryData = await userAIRequest(messages, {
+        topicId,
+        debugData: debugData ? debugDataFile : undefined,
       });
-      const queryData = await sendAiTextQuery(messages, { debugData });
-      const content = queryData?.content;
-      console.log('[GenerateQuestionsModal:generateQuestionsMutation] Generated query data', {
-        content,
-        queryData,
-        messages,
-        params,
-      });
+      /* // DEBUG
+       * const content = __queryData?.content;
+       * console.log('[GenerateQuestionsModal:generateQuestionsMutation] Generated query data', {
+       *   __content,
+       *   queryData,
+       *   messages,
+       *   params,
+       * });
+       */
+      setError(undefined);
       return queryData;
     },
     onError: (error, formData) => {
-      const details = error instanceof APIError ? error.details : null;
-      const message = 'Cannot generate questions';
+      const details = getErrorText(error); // error instanceof APIError ? error.details : null;
+      const humanMsg = 'Error generating questions';
+      const errDetails = getErrorText(error);
+      // const errMsg = [humanMsg, errDetails].filter(Boolean).join(': ');
       // eslint-disable-next-line no-console
-      console.error('[GenerateQuestionsModal:generateQuestionsMutation]', message, {
+      console.error('[GenerateQuestionsModal:generateQuestionsMutation]', humanMsg, {
+        errDetails,
         error,
         details,
         formData,
         topicId,
       });
       debugger; // eslint-disable-line no-debugger
+      setError(humanMsg);
     },
   });
 
   const addQuestionsMutation = useMutation<TAvailableQuestion[], Error, TNewQuestion[]>({
     mutationFn: addMultipleQuestions,
-    onError: (error, newQuestions) => {
-      const details = error instanceof APIError ? error.details : null;
-      const message = 'Cannot create questions';
-      // eslint-disable-next-line no-console
-      console.error('[GenerateQuestionsModal:addQuestionsMutation]', message, {
-        error,
-        details,
-        newQuestions,
-        topicId,
-      });
-      debugger; // eslint-disable-line no-debugger
-    },
+    /* onError: (error, newQuestions) => {
+     *   const errDetails = getErrorText(error); //  instanceof APIError ? error.details : null;
+     *   const message = 'Cannot create questions';
+     *   // eslint-disable-next-line no-console
+     *   console.error('[GenerateQuestionsModal:addQuestionsMutation]', message, {
+     *     error,
+     *     errDetails,
+     *     newQuestions,
+     *     topicId,
+     *   });
+     *   debugger; // eslint-disable-line no-debugger
+     * },
+     */
   });
 
   const handleGenerateQuestions = React.useCallback(
@@ -163,20 +181,22 @@ export function GenerateQuestionsModal() {
           toast.error('No topic ID defined');
           return;
         }
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Start', {
-          formData,
-          topicId,
-        });
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Start', {
+         *   formData,
+         *   topicId,
+         * });
+         */
         const queryPromise = generateQuestionsMutation.mutateAsync(formData);
         toast.promise(queryPromise, {
           loading: 'Retrieving AI generated data...',
           success: 'Successfully retrieved AI generated data',
           error: 'Can not retrieve AI generated data',
         });
-        const queryData = await queryPromise;
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Got query data', {
-          queryData,
-        });
+        const queryData: TAITextQueryData = await queryPromise;
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Got query data', {
+         *   queryData,
+         * });
+         */
         // Parsing questions...
         const questions = parseGeneratedTopicQuestions(queryData);
         const newQuestions: TNewQuestion[] = questions.map(
@@ -191,22 +211,22 @@ export function GenerateQuestionsModal() {
             isGenerated: true,
           }),
         );
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Parsed questions', {
-          newQuestions,
-          questions,
-        });
-        debugger;
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Parsed questions', {
+         *   newQuestions,
+         *   questions,
+         * });
+         */
         const addQuestionsPromise = addQuestionsMutation.mutateAsync(newQuestions);
         toast.promise(addQuestionsPromise, {
           loading: 'Adding new questions...',
           success: 'Successfully added new questions',
           error: 'Cannot add questions',
         });
-        const addedQuestions = await addQuestionsPromise;
-        console.log('[GenerateQuestionsModal:handleGenerateQuestions] Questions added', {
-          addedQuestions,
-        });
-        debugger;
+        await addQuestionsPromise;
+        /* console.log('[GenerateQuestionsModal:handleGenerateQuestions] Questions added', {
+         *   addedQuestions,
+         * });
+         */
         // Invalidate parent topic and its questions...
         const invalidatePrefixes = [
           ['available-topic', topicId],
@@ -221,16 +241,20 @@ export function GenerateQuestionsModal() {
         } else {
           goBack();
         }
+        setError(undefined);
         return addQuestionsPromise;
       } catch (error) {
         const humanMsg = 'An error occurred while generating and adding topic questions';
-        const errMsg = [humanMsg, getErrorText(error)].filter(Boolean).join(': ');
+        const errDetails = getErrorText(error);
+        // const errMsg = [humanMsg, errDetails].filter(Boolean).join(': ');
         // eslint-disable-next-line no-console
-        console.error('[GenerateQuestionsModal] ❌', errMsg, {
+        console.error('[GenerateQuestionsModal] ❌', humanMsg, {
+          errDetails,
           error,
         });
         debugger; // eslint-disable-line no-debugger
         toast.error(humanMsg);
+        setError(humanMsg);
       }
     },
     [
@@ -279,13 +303,14 @@ export function GenerateQuestionsModal() {
         className={cn(
           isDev && '__GenerateQuestionsModal_Wrapper', // DEBUG
           'relative flex min-h-24 flex-col overflow-hidden',
+          'text-foreground',
         )}
       >
         {!isSessionLoading && (
           <ScrollArea
             className={cn(
               isDev && '__GenerateQuestionsModal_Scroll', // DEBUG
-              'flex flex-1 flex-col',
+              // 'flex flex-col',
             )}
           >
             <GenerateQuestionsForm
@@ -295,6 +320,7 @@ export function GenerateQuestionsModal() {
               isPending={areMutationsPending}
               topicId={topicId}
               user={session.data?.user}
+              error={error}
             />
           </ScrollArea>
         )}

@@ -4,24 +4,24 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { GigaChatCallOptions } from 'langchain-gigachat';
 
 import { getAiClient } from '@/lib/ai/getAiClient';
-import { defaultAiClientType, TAiClientType } from '@/lib/ai/types/TAiClientType';
+import { defaultAiClientType } from '@/lib/ai/types/TAiClientType';
 
 import { TPlainMessage } from '../types/messages';
+import { TAIQueryOptions } from '../types/TAIQueryOptions';
 import { TAITextQueryData } from '../types/TAITextQueryData';
 
 type TGenericMessage = HumanMessage | SystemMessage;
 
-interface TOptions {
-  clientType?: TAiClientType;
-  debugData?: boolean;
-}
+const debugDataPrefix = './';
+const defaultDebugData = 'sample-data/GenerateQuestions/questions-query-data-01.json';
 
-export async function sendAiTextQuery(messages: TPlainMessage[], opts: TOptions = {}) {
-  const { clientType = defaultAiClientType, debugData: __returnDebugData } = opts;
+export async function sendAiTextQuery(messages: TPlainMessage[], opts: TAIQueryOptions = {}) {
+  const { clientType = defaultAiClientType, debugData } = opts;
   try {
-    if (__returnDebugData) {
+    if (debugData) {
       await new Promise((r) => setTimeout(r, 1000));
-      const sampleJsonFile = './sample-data/GenerateQuestions/query-data-01.json';
+      const sampleJsonFile =
+        debugDataPrefix + (typeof debugData === 'string' ? debugData : defaultDebugData);
       const rawData = await import(sampleJsonFile);
       const data = { ...rawData.default } as TAITextQueryData;
       return data;

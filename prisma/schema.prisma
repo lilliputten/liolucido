@@ -52,7 +52,8 @@ enum UserRole {
 
 enum UserGrade {
   GUEST
-  MEMBER
+  BASIC
+  PRO
   PREMIUM
 }
 
@@ -74,6 +75,8 @@ model User {
   topics           Topic[]
   userSettings     UserSettings?
   userTopicWorkout UserTopicWorkout[]
+  workoutStats     WorkoutStats[]
+  AIGenerations    AIGeneration[]
 
   @@map("users")
 }
@@ -99,10 +102,18 @@ model TelegramSession {
   @@map("telegram_session")
 }
 
+enum AllowedUserType {
+  EMAIL
+  TELEGRAM
+}
+
 model AllowedUser {
-  id    Int    @id @default(autoincrement())
-  type  String @default("EMAIL")
-  value String @default("")
+  id Int @id @default(autoincrement())
+
+  // Telegram or email.
+  // type  String @default("EMAIL")
+  type  AllowedUserType @default(EMAIL)
+  value String          @default("")
 
   @@unique([type, value])
   @@map("allowed_users")
@@ -126,6 +137,28 @@ model UserSettings {
   @@map("user_settings")
 }
 
+model AIGeneration {
+  id String @id @default(cuid())
+
+  modelUsed String? @map("model_used")
+
+  spentTimeMs Int @default(0) @map("spent_time_ms")
+  spentTokens Int @default(0) @map("spent_tokens")
+
+  topicId String? @map("topic_id")
+
+  createdAt  DateTime @default(now()) @map("created_at")
+  finishedAt DateTime @default(now()) @map("finished_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  userId String @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("ai_generations")
+}
+
 model Topic {
   id                 String             @id @default(cuid())
   name               String
@@ -144,6 +177,7 @@ model Topic {
   questions          Question[]
   user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userTopicWorkout   UserTopicWorkout[]
+  workoutStats       WorkoutStats[]
 
   @@index([userId])
   @@map("topics")
@@ -151,7 +185,6 @@ model Topic {
 
 model Question {
   id                 String   @id @default(cuid())
-  isGenerated        Boolean  @default(false) @map("is_generated")
   text               String
   answersCountRandom Boolean? @map("answers_count_random")
   answersCountMin    Int?     @map("answers_count_min")
@@ -159,6 +192,7 @@ model Question {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @default(now()) @updatedAt @map("updated_at")
   topicId            String   @map("topic_id")
+  isGenerated        Boolean  @default(false) @map("is_generated")
   answers            Answer[]
   topic              Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
@@ -182,30 +216,54 @@ model Answer {
 }
 
 model UserTopicWorkout {
-  userId           String    @map("user_id")
-  topicId          String    @map("topic_id")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at")
-  startedAt        DateTime? @map("started_at")
-  finishedAt       DateTime? @map("finished_at")
-  questionsCount   Int?      @map("questions_count")
-  questionsOrder   String?   @map("questions_order")
-  questionResults  String?   @map("question_results")
-  stepIndex        Int?      @map("step_index")
-  selectedAnswerId String?   @map("selected_answer_id")
-  currentRatio     Int?      @map("current_ratio")
-  currentTime      Int?      @map("current_time")
-  correctAnswers   Int?      @map("correct_answers")
-  totalRounds      Int       @default(0) @map("total_rounds")
-  allRatios        String    @default("") @map("all_ratios")
-  allTimes         String    @default("") @map("all_times")
-  averageRatio     Int       @default(0) @map("average_ratio")
-  averageTime      Int       @default(0) @map("average_time")
-  started          Boolean   @default(false)
-  finished         Boolean   @default(false)
-  topic            Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String         @map("user_id")
+  topicId          String         @map("topic_id")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at")
+  startedAt        DateTime?      @map("started_at")
+  finishedAt       DateTime?      @map("finished_at")
+  questionsCount   Int?           @map("questions_count")
+  questionsOrder   String?        @map("questions_order")
+  questionResults  String?        @map("question_results")
+  stepIndex        Int?           @map("step_index")
+  selectedAnswerId String?        @map("selected_answer_id")
+  currentRatio     Int?           @map("current_ratio")
+  currentTime      Int?           @map("current_time")
+  correctAnswers   Int?           @map("correct_answers")
+  started          Boolean        @default(false)
+  finished         Boolean        @default(false)
+  topic            Topic          @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutStats     WorkoutStats[]
 
   @@id([userId, topicId])
   @@map("user_topic_workouts")
+}
+
+model WorkoutStats {
+  id      String @id @default(cuid())
+  userId  String @map("user_id")
+  topicId String @map("topic_id")
+
+  // Round statistics
+  // roundNumber    Int @map("round_number")
+  totalQuestions Int @map("total_questions")
+  correctAnswers Int @map("correct_answers")
+  ratio          Int
+  timeSeconds    Int @map("time_seconds")
+
+  // Timestamps
+  startedAt  DateTime @map("started_at")
+  finishedAt DateTime @map("finished_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  topic   Topic            @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workout UserTopicWorkout @relation(fields: [userId, topicId], references: [userId, topicId], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([topicId])
+  @@index([userId, topicId])
+  @@map("workout_stats")
 }

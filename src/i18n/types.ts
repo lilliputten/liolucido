@@ -1,6 +1,11 @@
-export const localesList = ['en', 'ru'] as const;
-export type TLocale = (typeof localesList)[number];
-export const defaultLocale: TLocale = localesList[0];
+export const strictLocalesList = ['en', 'es', 'ru'] as const;
+// export const localesList = strictLocalesList;
+export const localesList = process.env.NEXT_PUBLIC_DEBUG_LOCALE
+  ? ([...strictLocalesList, process.env.NEXT_PUBLIC_DEBUG_LOCALE] as const)
+  : strictLocalesList;
+export type TLocale = (typeof strictLocalesList)[number];
+export type TBroadLocale = (typeof localesList)[number];
+export const defaultLocale: TLocale = strictLocalesList[0];
 export type TLocaleParams = { locale: TLocale };
 export type TLocaleProps = { params: TLocaleParams };
 // TODO: Define extendable params type (allowing to receive other properties

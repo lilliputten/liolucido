@@ -15,6 +15,7 @@ import {
   VERCEL_URL,
   WEBHOOK_HOST,
 } from '@/config/envServer';
+import { getErrorText } from '@/lib/helpers';
 import { versionInfo } from '@/config';
 
 export async function getServerInfo() {
@@ -37,7 +38,7 @@ export async function getServerInfo() {
       isVercelProduction,
     };
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = getErrorText(error);
     // eslint-disable-next-line no-console
     console.error('[StartBotPage:getServerInfo]', errMsg, { error });
     debugger; // eslint-disable-line no-debugger

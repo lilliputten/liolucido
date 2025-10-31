@@ -12,6 +12,7 @@ import { MarkdownText } from '@/components/ui/MarkdownText';
 import { Separator } from '@/components/ui/Separator';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { AIGenerationsStatusInfo } from '@/features/ai-generations/components';
 import { useAvailableTopicById, useSessionUser } from '@/hooks';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
@@ -41,6 +42,8 @@ export function ViewTopicContentSummary({ availableTopicQuery }: TProps) {
         'mx-6 flex w-full flex-col gap-4',
       )}
     >
+      <AIGenerationsStatusInfo />
+
       {/* Topic Description */}
       {topic.description && (
         <div data-testid="__Section_TopicDescription" className="flex flex-col gap-4">

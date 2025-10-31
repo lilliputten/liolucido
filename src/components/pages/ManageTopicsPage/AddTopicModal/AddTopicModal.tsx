@@ -106,7 +106,7 @@ export function AddTopicModal() {
       hideModal={hideModal}
       className={cn(
         isDev && '__AddTopicModal', // DEBUG
-        'gap-0',
+        'flex flex-col gap-0 text-theme-foreground',
         addTopicMutation.isPending && '[&>*]:pointer-events-none [&>*]:opacity-50',
       )}
     >
@@ -114,7 +114,7 @@ export function AddTopicModal() {
         className={cn(
           isDev && '__AddTopicModal_Header', // DEBUG
           !isMobile && 'max-h-[90vh]',
-          'flex flex-col border-b bg-accent px-8 py-4',
+          'flex flex-col border-b bg-theme px-8 py-4 text-theme-foreground',
         )}
       >
         <DialogTitle className="DialogTitle">Add Topic</DialogTitle>
@@ -122,14 +122,12 @@ export function AddTopicModal() {
           Add Topic Dialog
         </DialogDescription>
       </div>
-      <div className="flex flex-col px-8 py-4">
-        <AddTopicForm
-          handleAddTopic={handleAddTopic}
-          className="p-8"
-          handleClose={hideModal}
-          isPending={addTopicMutation.isPending}
-        />
-      </div>
+      <AddTopicForm
+        handleAddTopic={handleAddTopic}
+        className="p-8 text-foreground"
+        handleClose={hideModal}
+        isPending={addTopicMutation.isPending}
+      />
     </Modal>
   );
 }

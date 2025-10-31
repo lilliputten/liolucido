@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
@@ -34,6 +33,7 @@ import { TopicsManageScopeIds, topicsNamespaces } from '@/contexts/TopicsContext
 import { deleteTopics } from '@/features/topics/actions';
 import { TTopic, TTopicId } from '@/features/topics/types';
 import { useAvailableTopicsByScope, useGoBack } from '@/hooks';
+import { useT } from '@/i18n';
 import { useManageTopicsStore } from '@/stores/ManageTopicsStoreProvider';
 
 const saveScrollHash = getRandomHashString();
@@ -407,7 +407,7 @@ export function ManageTopicsListCard(props: TManageTopicsListCardProps) {
   const { handleAddTopic, availableTopicsQuery } = props;
   const { manageScope } = useManageTopicsStore();
   const namespace = topicsNamespaces[manageScope];
-  const t = useTranslations(namespace);
+  const t = useT(namespace);
   const [selectedTopics, setSelectedTopics] = React.useState<Set<TTopicId>>(new Set());
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const queryClient = useQueryClient();

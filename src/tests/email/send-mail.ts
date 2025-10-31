@@ -3,6 +3,8 @@
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 
+import { getErrorText } from '@/lib/helpers';
+
 /* Test local smtp server.
  * Run it via:
  * python -m smtpd -c DebuggingServer -n localhost:1025
@@ -69,7 +71,7 @@ async function main() {
     });
     debugger;
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = getErrorText(error);
     console.error('[send-mail]', errMsg, { error });
     debugger;
     // throw error;

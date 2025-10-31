@@ -6,6 +6,9 @@ export function getErrorText(err: unknown, opts: TGetErrorTextOpts = {}): string
   if (!err) {
     return '';
   }
+  // if (err instanceof APIError) {
+  //   return err.details;
+  // }
   // Error object
   if (err instanceof Error) {
     return [

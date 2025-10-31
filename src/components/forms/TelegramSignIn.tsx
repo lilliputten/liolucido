@@ -63,8 +63,7 @@ export function TelegramSignIn({ className, inBody, isLogging }: TProps) {
       className={cn(
         isDev && '__TelegramSignIn', // DEBUG
         'flex flex-col gap-3',
-        // 'text-foreground',
-        isLogging && 'pointer-events-none opacity-50',
+        isLogging && 'pointer-events-none opacity-30',
         className,
       )}
     >

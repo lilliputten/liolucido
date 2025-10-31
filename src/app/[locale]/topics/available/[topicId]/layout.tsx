@@ -1,4 +1,6 @@
+import { getCurrentUser } from '@/lib/session';
 import { PageError } from '@/components/shared/PageError';
+import { WorkoutContextProvider } from '@/contexts/WorkoutContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
 type TAwaitedProps = TAwaitedLocaleProps<{
@@ -20,9 +22,16 @@ export default async function WorkoutTopicLayout(props: TWorkoutTopicLayoutProps
   // const topicRootRoutePath = `${topicsListRoutePath}/${topicId}`;
   // const routePath = `${topicsListRoutePath}/${topicId}/workout`;
 
+  const user = await getCurrentUser();
+  const userId = user?.id;
+
   if (!topicId) {
     return <PageError error={'Topic ID not specified.'} />;
   }
 
-  return children;
+  return (
+    <WorkoutContextProvider userId={userId} topicId={topicId}>
+      {children}
+    </WorkoutContextProvider>
+  );
 }

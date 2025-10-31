@@ -2,7 +2,6 @@ import React from 'react';
 import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
-import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
@@ -10,6 +9,8 @@ import { EnvProvider } from '@/contexts/EnvContext';
 
 import '@/styles/globals.scss';
 import '@/styles/root.scss';
+
+import { AbstractIntlMessages } from 'next-intl';
 
 import { BOT_USERNAME } from '@/config/envServer';
 import { defaultThemeColor } from '@/config/themeColors';
@@ -19,9 +20,11 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/Toaster';
 import { GenericLayout } from '@/components/layout/GenericLayout';
 import ModalProvider from '@/components/modals/providers';
+import { CustomNextIntlClientProvider } from '@/components/providers/CustomNextIntlClientProvider';
 import { ReactQueryClientProvider } from '@/components/providers/ReactQueryClientProvider';
 import { TailwindIndicator } from '@/components/service/TailwindIndicator';
 import { fontDefault, fontHeading, fontMono } from '@/assets/fonts';
+import { isDev } from '@/config';
 import { SettingsContextProvider } from '@/contexts/SettingsContext';
 import { getSettings } from '@/features/settings/actions';
 import { routing } from '@/i18n/routing';
@@ -48,7 +51,7 @@ async function RootLayout(props: TRootLayoutProps) {
   const { defaultLocale } = routing;
   let { locale = defaultLocale } = params;
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as TLocale)) {
+  if (!routing.locales.includes(locale)) {
     // NOTE: Sometimes we got `.well-known` value here. TODO?
     const error = new Error(`Invalid locale: ${locale}, using default: ${defaultLocale}`);
     // eslint-disable-next-line no-console
@@ -64,7 +67,14 @@ async function RootLayout(props: TRootLayoutProps) {
   const cookieStore = await cookies();
 
   // Provide i18n translations
-  const messages = await getMessages();
+  let messages: AbstractIntlMessages | undefined;
+  try {
+    messages = await getMessages();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('[layout:messages]', locale, error);
+    // debugger;
+  }
 
   const user = await getCurrentUser();
   // const userId = user?.id;
@@ -107,10 +117,10 @@ async function RootLayout(props: TRootLayoutProps) {
       </head>
       <body
         className={cn(
+          isDev && '__layout',
           'flex flex-col',
-          // 'bg-background',
           'font-default antialiased',
-          'decorative-gradient',
+          'bg-page-gradient',
           fontDefault.variable,
           fontHeading.variable,
           fontMono.variable,
@@ -120,7 +130,11 @@ async function RootLayout(props: TRootLayoutProps) {
         <ReactQueryClientProvider>
           <SessionProvider>
             <EnvProvider BOT_USERNAME={BOT_USERNAME}>
-              <NextIntlClientProvider messages={messages}>
+              <CustomNextIntlClientProvider
+                locale={locale}
+                messages={messages}
+                // onError={handleIntlError}
+              >
                 <ThemeProvider
                   attribute="class"
                   defaultTheme="system"
@@ -166,7 +180,7 @@ async function RootLayout(props: TRootLayoutProps) {
                     <TailwindIndicator />
                   </ModalProvider>
                 </ThemeProvider>
-              </NextIntlClientProvider>
+              </CustomNextIntlClientProvider>
             </EnvProvider>
           </SessionProvider>
         </ReactQueryClientProvider>

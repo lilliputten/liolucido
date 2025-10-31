@@ -4,92 +4,109 @@ import { generateArray } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { Progress } from '@/components/ui/Progress';
 import { Skeleton } from '@/components/ui/Skeleton';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
-
-interface Answer {
-  id: string;
-  text: string;
-  isCorrect: boolean;
-}
+import { useWorkoutContext } from '@/contexts/WorkoutContext';
+import { TAvailableAnswer } from '@/features/answers/types';
 
 interface WorkoutQuestionProps {
   questionText: string;
-  answers: Answer[];
+  answers?: TAvailableAnswer[];
   isAnswersLoading?: boolean;
-  currentStep: number;
-  totalSteps: number;
   onAnswerSelect: (answerId: string) => void;
   onSkip: () => void;
   onFinish: () => void;
   onContinue: () => void;
   goPrevQuestion: () => void;
-  selectedAnswerId?: string;
 }
 
 export function WorkoutQuestion({
   questionText,
   answers,
   isAnswersLoading,
-  currentStep,
-  totalSteps,
   onAnswerSelect,
   onSkip,
   onFinish,
   onContinue,
   goPrevQuestion,
-  selectedAnswerId,
 }: WorkoutQuestionProps) {
-  const progressStep = selectedAnswerId ? currentStep : currentStep - 1;
-  const progress = (progressStep / totalSteps) * 100;
+  const { workout, questionIds } = useWorkoutContext();
+  const totalSteps = questionIds?.length || 0;
+  const stepIndex = workout?.stepIndex || 0;
+  const currentStep = stepIndex + 1;
 
-  const isSelectedCorrect =
-    !!selectedAnswerId && answers.find(({ id }) => id === selectedAnswerId)?.isCorrect;
+  const selectedAnswer = workout?.selectedAnswerId
+    ? answers?.find(({ id }) => id === workout.selectedAnswerId)
+    : undefined;
 
   const isFinished = currentStep >= totalSteps;
 
-  const answersContent = isAnswersLoading ? (
-    // Emulate answers...
-    generateArray(2).map((i) => <Skeleton key={i} className="h-14 w-full" />)
-  ) : !answers.length ? (
-    <p className="opacity-50">No answers created here. Just skip it.</p>
-  ) : (
-    answers.map((answer) => {
-      const isSelected = selectedAnswerId === answer.id;
-      const isCorrect = answer.isCorrect;
-      let borderColor = 'border-border';
-      let bgColor = 'bg-card';
-      if (selectedAnswerId) {
-        if (isCorrect) {
-          borderColor = isSelected ? 'border-green-500' : 'border-green-500 border-dashed';
-          bgColor = isSelected ? 'bg-green-500/20' : 'bg-green-500/5';
-        } else if (isSelected) {
-          borderColor = 'border-red-500';
-          bgColor = 'bg-red-500/20';
+  React.useEffect(() => {
+    console.log('[WorkoutQuestion:DEBUG]', {
+      selectedAnswer,
+      workout,
+    });
+  }, [selectedAnswer, workout]);
+
+  const answersContent = React.useMemo(() => {
+    return isAnswersLoading || !answers ? (
+      // Show answers skeleton...
+      generateArray(2).map((i) => <Skeleton key={i} className="h-14 w-full" />)
+    ) : !answers.length ? (
+      <p className="opacity-50">No answers created here. Just skip it.</p>
+    ) : (
+      answers.map((answer) => {
+        const isSelected = selectedAnswer?.id === answer.id;
+        const isCorrect = answer.isCorrect;
+        let borderColor = 'border-border';
+        let bgColor = 'bg-background/50';
+        if (selectedAnswer) {
+          if (isCorrect) {
+            borderColor = isSelected ? 'border-green-500' : 'border-green-500 border-dashed';
+            bgColor = isSelected ? 'bg-green-500/20' : 'bg-green-500/5';
+          } else if (isSelected) {
+            borderColor = 'border-red-500';
+            bgColor = 'bg-red-500/20';
+          } else {
+            borderColor += ' opacity-50';
+          }
         }
-      }
-      return (
-        <button
-          key={answer.id}
-          onClick={() => !selectedAnswerId && onAnswerSelect(answer.id)}
-          disabled={!!selectedAnswerId}
-          className={cn(
-            isDev && '__WorkoutQuestion_Answer',
-            'w-full rounded-lg border-2 p-4 text-left transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
-            'disabled:cursor-not-allowed',
-            selectedAnswerId && 'disabled',
-            borderColor,
-            bgColor,
-          )}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
+        return (
+          <button
+            key={answer.id}
+            onClick={() => !selectedAnswer && onAnswerSelect(answer.id)}
+            disabled={!!selectedAnswer}
+            className={cn(
+              isDev && '__WorkoutQuestion_Answer',
+              'flex w-full items-center justify-between gap-4 rounded-lg border p-4 text-left transition',
+              'hover:bg-theme-500/15 hover:text-accent-foreground',
+              selectedAnswer && 'pointer-events-none',
+              borderColor,
+              bgColor,
+            )}
+          >
+            <div className="flex flex-1 flex-col gap-4">
               <MarkdownText omitLinks>{answer.text}</MarkdownText>
+              {isSelected && (
+                <div className="flex flex-col gap-2">
+                  <p
+                    className={cn(
+                      selectedAnswer?.isCorrect ? 'text-green-500' : 'text-red-500',
+                      'font-semibold uppercase',
+                    )}
+                  >
+                    {selectedAnswer?.isCorrect
+                      ? 'The answer is correct'
+                      : 'The answer is incorrect'}
+                  </p>
+                  {selectedAnswer?.explanation && (
+                    <MarkdownText>{selectedAnswer?.explanation}</MarkdownText>
+                  )}
+                </div>
+              )}
             </div>
-            {!!selectedAnswerId && (
+            {!!selectedAnswer && (
               <div className="ml-2 flex-shrink-0">
                 {isCorrect ? (
                   <Icons.CheckIcon className="size-5 text-green-500" />
@@ -98,109 +115,97 @@ export function WorkoutQuestion({
                 ) : null}
               </div>
             )}
-          </div>
-        </button>
-      );
-    })
-  );
+          </button>
+        );
+      })
+    );
+  }, [answers, isAnswersLoading, onAnswerSelect, selectedAnswer]);
 
-  const progressBar = (
-    <div data-testid="__WorkoutQuestion_Progress" className="space-y-2">
-      <div className="flex justify-between text-sm text-muted-foreground">
-        <span>
-          Question {currentStep} of {totalSteps}
-        </span>
-        <span>{Math.round(progress)}%</span>
-      </div>
-      <Progress value={progress} className="h-2 bg-theme-500/20 transition" />
-    </div>
-  );
-
-  const questionContent = (
-    <div data-testid="__WorkoutQuestion_Question" className="space-y-4">
-      <div className="text-xl font-semibold">
-        <MarkdownText>{questionText}</MarkdownText>
-      </div>
-      {/* Answers */}
-      <div
-        data-testid="__WorkoutQuestion_Answers"
-        className={cn(
-          isDev && '__WorkoutQuestion_Answers', // DEBUG
-          'grid md:grid-cols-2',
-          'gap-4 py-4',
-        )}
-      >
-        {answersContent}
-      </div>
-    </div>
-  );
-
-  const buttonsContent = (
-    <div className="mt-6 flex justify-center gap-2">
-      {/* Back Button */}
-      {currentStep > 1 && (
-        <Button
-          data-testid="__WorkoutQuestion_Skip_Button"
+  const questionContent = React.useMemo(
+    () => (
+      <div data-testid="__WorkoutQuestion_Content" className="flex flex-col gap-4">
+        <MarkdownText className="text-lg">{questionText}</MarkdownText>
+        {/* Answers */}
+        <div
+          data-testid="__WorkoutQuestion_Answers"
           className={cn(
-            'gap-2',
-            // selectedAnswerId && 'disabled',
+            isDev && '__WorkoutQuestion_Answers', // DEBUG
+            'grid lg:grid-cols-2',
+            'gap-4 py-2',
           )}
-          variant="outline"
-          onClick={goPrevQuestion}
         >
-          <Icons.ArrowLeft className="size-5 opacity-50" />
-          Back
-        </Button>
-      )}
-      {!isFinished &&
-        (selectedAnswerId ? (
+          {answersContent}
+        </div>
+      </div>
+    ),
+    [answersContent, questionText],
+  );
+
+  const actionsContent = React.useMemo(
+    () => (
+      <div className="flex justify-center gap-2">
+        {/* Back Button */}
+        {currentStep > 1 && (
           <Button
             data-testid="__WorkoutQuestion_Skip_Button"
-            className={cn(isSelectedCorrect && 'animate-pulse', 'gap-2')}
-            variant="theme"
-            onClick={onContinue}
+            className={cn('gap-2')}
+            variant="ghost"
+            onClick={goPrevQuestion}
           >
-            <Icons.ArrowRight className="size-5 opacity-50" />
-            Continue
+            <Icons.ArrowLeft className="size-5 opacity-50" />
+            Back
           </Button>
-        ) : (
-          <>
-            {/* Skip Button */}
-            {!selectedAnswerId /* && currentStep < totalSteps */ && (
-              <Button
-                data-testid="__WorkoutQuestion_Skip_Button"
-                className="gap-2"
-                variant="outline"
-                onClick={onSkip}
-              >
-                <Icons.ArrowRight className="size-5 opacity-50" />
-                Skip
-              </Button>
-            )}
-          </>
-        ))}
-      {/* Finish Button */}
-      <Button
-        data-testid="__WorkoutQuestion_Finish_Button"
-        className={cn(
-          'gap-2',
-          isFinished && selectedAnswerId && isSelectedCorrect && 'animate-pulse',
-          // selectedAnswerId && 'disabled',
         )}
-        variant={isFinished && selectedAnswerId ? 'theme' : 'outline'}
-        onClick={onFinish}
-      >
-        <Icons.Flag className="size-5 opacity-50" />
-        Finish
-      </Button>
-    </div>
+        {!isFinished &&
+          (selectedAnswer ? (
+            <Button
+              data-testid="__WorkoutQuestion_Skip_Button"
+              className={cn(selectedAnswer?.isCorrect && 'animate-pulse', 'gap-2')}
+              variant="theme"
+              onClick={onContinue}
+            >
+              <Icons.ArrowRight className="size-5 opacity-50" />
+              Continue
+            </Button>
+          ) : (
+            <>
+              {/* Skip Button */}
+              {!selectedAnswer /* && currentStep < totalSteps */ && (
+                <Button
+                  data-testid="__WorkoutQuestion_Skip_Button"
+                  className="gap-2"
+                  variant="ghost"
+                  onClick={onSkip}
+                >
+                  <Icons.ArrowRight className="size-5 opacity-50" />
+                  Skip
+                </Button>
+              )}
+            </>
+          ))}
+        {/* Finish Button */}
+        <Button
+          data-testid="__WorkoutQuestion_Finish_Button"
+          className={cn(
+            'gap-2',
+            isFinished && selectedAnswer?.isCorrect && 'animate-pulse',
+            // selectedAnswer && 'disabled',
+          )}
+          variant={isFinished && selectedAnswer ? 'theme' : 'ghost'}
+          onClick={onFinish}
+        >
+          <Icons.Flag className="size-5 opacity-50" />
+          Finish
+        </Button>
+      </div>
+    ),
+    [currentStep, goPrevQuestion, isFinished, onContinue, onFinish, onSkip, selectedAnswer],
   );
 
   return (
-    <div data-testid="__WorkoutQuestion" className="flex flex-col gap-6">
-      {progressBar}
+    <div data-testid="__WorkoutQuestion" className="flex flex-col gap-4">
       {questionContent}
-      {buttonsContent}
+      {actionsContent}
     </div>
   );
 }

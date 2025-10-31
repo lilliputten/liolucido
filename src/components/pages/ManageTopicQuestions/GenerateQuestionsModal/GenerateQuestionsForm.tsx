@@ -23,6 +23,11 @@ import { Textarea } from '@/components/ui/Textarea';
 import { FormHint } from '@/components/blocks/FormHint';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { AIGenerationsStatusInfo } from '@/features/ai-generations/components';
+import {
+  maxAnswersToGeneration,
+  maxQuestionsToGeneration,
+} from '@/features/ai-generations/constants';
 import {
   answersGenerationTypes,
   answersGenerationTypeTexts,
@@ -54,13 +59,11 @@ export interface TGenerateQuestionsFormProps {
   isPending?: boolean;
   topicId: TTopicId;
   user?: ExtendedUser;
+  error?: string;
 }
 
-const maxQuestionsToGeneration = 10;
-const maxAnswersToGeneration = 10;
-
 export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
-  const { className, handleGenerateQuestions, handleClose, isPending, user } = props;
+  const { className, handleGenerateQuestions, handleClose, isPending, user, error } = props;
   const isAdmin = user?.role === 'ADMIN';
 
   const __useDebugData = isDev || isAdmin;
@@ -117,6 +120,13 @@ export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
         onSubmit={onSubmit}
         className={cn(isDev && '__GenerateQuestionsForm', 'flex w-full flex-col gap-4', className)}
       >
+        {error && (
+          <div className="flex items-center gap-1 rounded-md border border-red-500/20 bg-red-500/20 p-3 py-2 text-sm">
+            <Icons.Warning className="mr-1 size-4 text-red-500 opacity-50" />
+            <span className="text-red-500">{error}</span>
+          </div>
+        )}
+        <AIGenerationsStatusInfo />
         {__useDebugData && (
           <FormField
             name="debugData"
@@ -261,7 +271,7 @@ export function GenerateQuestionsForm(props: TGenerateQuestionsFormProps) {
         <div className="flex w-full gap-4">
           <Button
             type="submit"
-            variant={isSubmitEnabled ? 'theme' : 'disabled'}
+            variant={isSubmitEnabled ? 'secondary' : 'disabled'}
             disabled={!isSubmitEnabled}
             className="gap-2"
           >

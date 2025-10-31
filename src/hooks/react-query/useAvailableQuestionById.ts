@@ -4,9 +4,10 @@ import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
 import { TAvailableQuestionsResultsQueryData } from '@/lib/types/react-query';
+import { stringifyQueryKey } from '@/lib/helpers/react-query';
 import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableQuestionByIdParams } from '@/lib/zod-schemas';
-import { minuteMs } from '@/constants';
+import { defaultStaleTime } from '@/constants';
 import { getAvailableQuestionById } from '@/features/questions/actions';
 import { TAvailableQuestion } from '@/features/questions/types';
 
@@ -15,7 +16,7 @@ interface TUseAvailableQuestionByIdProps extends TGetAvailableQuestionByIdParams
   availableQuestionsQueryKey?: QueryKey;
 }
 
-const staleTime = minuteMs * 10;
+const staleTime = defaultStaleTime;
 
 /** Get question data from cached `useAvailableQuestions` query data or fetch it now */
 export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) {
@@ -29,6 +30,7 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
     () => ['available-question', questionId, queryUrlHash],
     [queryUrlHash, questionId],
   );
+  const queryHash = stringifyQueryKey(queryKey);
 
   // Check cached infinite query data first
   const availableQuestionsData: TAvailableQuestionsResultsQueryData | undefined =
@@ -41,6 +43,7 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
     .find((question) => question.id === questionId);
 
   const isCached = !!cachedQuestion;
+  const enabled = !!questionId && !isCached; // Disable query if no ID or already cached
 
   // Only fetch if the question is not cached
   const query = useQuery<TAvailableQuestion>({
@@ -63,15 +66,17 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
          * return result.data as TAvailableQuestion;
          */
         // OPTION 2: Using server function
-        return await getAvailableQuestionById({ id: questionId, ...queryProps });
+        const result = await getAvailableQuestionById({ id: questionId, ...queryProps });
+        return result;
       } catch (error) {
         const details = error instanceof APIError ? error.details : null;
         const message = 'Cannot load question data';
         // eslint-disable-next-line no-console
         console.error('[useAvailableQuestionById:queryFn]', message, {
+          queryHash,
+          queryKey,
           details,
           error,
-          questionId,
           queryProps,
           // url,
         });
@@ -81,13 +86,25 @@ export function useAvailableQuestionById(props: TUseAvailableQuestionByIdProps) 
         throw error;
       }
     },
-    enabled: !!questionId && !isCached, // Disable query if no ID or already cached
+    enabled, // Disable query if no ID or already cached
   });
 
-  return {
-    ...query,
-    question: cachedQuestion ?? query.data,
-    isCached,
-    queryKey,
-  };
+  return React.useMemo(() => {
+    /* console.log('[useAvailableQuestionById:DEBUG]', queryHash, {
+     *   // enabled,
+     *   queryKey,
+     *   isCached,
+     *   isLoading: query.isLoading,
+     *   query: { ...query },
+     * });
+     */
+    return {
+      ...query,
+      questionId,
+      queryKey,
+      isLoading: query.isLoading,
+      question: cachedQuestion ?? query.data,
+      isCached,
+    };
+  }, [cachedQuestion, isCached, query, queryKey, questionId]);
 }

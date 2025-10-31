@@ -6,7 +6,7 @@ import { isDev } from '@/constants';
 import { TTopicsManageScopeId } from '@/contexts/TopicsContext';
 import { TAwaitedLocaleProps } from '@/i18n/types';
 
-import { ViewAvailableTopicHandler } from './ViewAvailableTopicHandler';
+import { ViewAvailableTopicPageWrapper } from './ViewAvailableTopicPageWrapper';
 
 type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId: string }>;
 
@@ -37,7 +37,7 @@ export default async function ViewTopicPageWrapper({ params }: TAwaitedProps) {
       )}
       limitWidth
     >
-      <ViewAvailableTopicHandler topicId={topicId} />
+      <ViewAvailableTopicPageWrapper topicId={topicId} />
     </PageWrapper>
   );
 }

@@ -23,8 +23,12 @@ const envSchema = z.object({
   VERCEL_URL: z.string().optional(),
 
   // Telegram
+  LOGGING_CHANNEL_ID: z.string().min(1),
+  CONTROLLER_CHANNEL_ID: z.string().min(1),
+
   BOT_ADMIN_USERNAME: z.string().min(1),
   BOT_ADMIN_USERID: z.coerce.number(),
+
   BOT_USERNAME: z.string().min(1),
   BOT_USERNAME_TEST: z.string().optional(),
   BOT_TOKEN: z.string().min(1),
@@ -38,6 +42,10 @@ const envSchema = z.object({
   // CloudFlare AI API
   CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
   CLOUDFLARE_API_TOKEN: z.string().min(1),
+
+  // Generation limits
+  BASIC_USER_GENERATIONS: z.coerce.number(),
+  PRO_USER_MONTHLY_GENERATIONS: z.coerce.number(),
 
   // // Prisma
   // DATABASE_URL: z.string().min(1),
@@ -88,9 +96,15 @@ export const {
   GIGACHAT_MODEL,
   CLOUDFLARE_ACCOUNT_ID,
   CLOUDFLARE_API_TOKEN,
+  // Generation limits
+  BASIC_USER_GENERATIONS,
+  PRO_USER_MONTHLY_GENERATIONS,
   // Telegram
+  LOGGING_CHANNEL_ID,
+  CONTROLLER_CHANNEL_ID,
   BOT_ADMIN_USERNAME,
   BOT_ADMIN_USERID,
+  // Other `BOT_*` variables are exporting conditionally below
   // Auth
   AUTH_SECRET,
   NEXTAUTH_URL,

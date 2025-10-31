@@ -55,7 +55,7 @@ function SignInModal(props: TSignInModalProps) {
         <ScrollArea
           className={cn(
             isDev && '__SignInModal_Scroll', // DEBUG
-            'flex flex-1 flex-col items-center justify-center',
+            'flex-1 items-center justify-center',
           )}
           viewportClassName={cn(
             isDev && '__SignInModal_ScrollViewport', // DEBUG

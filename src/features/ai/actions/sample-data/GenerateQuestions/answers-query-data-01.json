@@ -1,0 +1,24 @@
+{
+  "content": "```json\n{\n  \"answers\": [\n    {\n      \"text\": \"(DEMO) To control program flow\",\n      \"explanation\": \"While variables can be used to control program flow through conditional statements and loops, their primary purpose is not specifically about controlling flow but rather storing and manipulating data.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"(DEMO) To avoid typing errors by reusing names\",\n      \"explanation\": \"Reusing variable names can help reduce typos, but this is more of a side benefit than the main purpose of variables.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"(DEMO) To create functions\",\n      \"explanation\": \"Functions are defined separately from variables and serve different purposes. Variables are primarily used for holding values, not creating functions.\",\n      \"isCorrect\": false\n    },\n    {\n      \"text\": \"(DEMO) To store and manipulate data\",\n      \"explanation\": \"The primary purpose of variables in JavaScript is to store and manipulate data such as numbers, strings, booleans, arrays, and objects.\",\n      \"isCorrect\": true\n    }\n  ],\n  \"answersCount\": 4\n}\n```",
+  "additional_kwargs": {},
+  "response_metadata": {
+    "tokenUsage": {
+      "input_tokens": 209,
+      "output_tokens": 239,
+      "total_tokens": 448
+    },
+    "finish_reason": "stop",
+    "xHeaders": {
+      "xRequestID": "976191a6-027a-4a58-9d07-92bef522efe4",
+      "xSessionID": "d1a9d29e-1ca5-47d6-93e4-fc0959d7af7e"
+    }
+  },
+  "id": "976191a6-027a-4a58-9d07-92bef522efe4",
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "input_tokens": 209,
+    "output_tokens": 239,
+    "total_tokens": 448
+  }
+}

@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import svgArt from '@/assets/arts/data-blue.svg';
+import svgArt from '@/assets/arts/girl-with-a-book.svg';
 import { isDev } from '@/constants';
 
 export function InfoVisualBlock(props: TPropsWithClassName) {

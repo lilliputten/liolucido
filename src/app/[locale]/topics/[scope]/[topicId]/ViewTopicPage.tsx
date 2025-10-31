@@ -12,6 +12,7 @@ import { TActionMenuItem } from '@/components/dashboard/DashboardActions';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
+import { useAIGenerationsStatus } from '@/features/ai-generations/query-hooks';
 import { useTopicsBreadcrumbsItems } from '@/features/topics/components/TopicsBreadcrumbs';
 import { TTopicId } from '@/features/topics/types';
 import {
@@ -61,6 +62,9 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
   const allowedTraining = !!questionsCount;
 
   const breadcrumbs = useTopicsBreadcrumbsItems({ topic, scope: manageScope });
+
+  const aiGenerationsStatusQuery = useAIGenerationsStatus();
+  const { allowed: aiGenerationsAllowed, loading: aiGenerationsLoading } = aiGenerationsStatusQuery;
 
   const handleReload = React.useCallback(() => {
     availableTopicQuery
@@ -138,6 +142,15 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
         onClick: () => goToTheRoute(`${questionsListRoutePath}/add`),
       },
       {
+        id: 'Generate Questions',
+        content: 'Generate Questions',
+        variant: 'secondary',
+        icon: Icons.WandSparkles,
+        visibleFor: 'lg',
+        disabled: !aiGenerationsAllowed || aiGenerationsLoading,
+        onClick: () => goToTheRoute(`${questionsListRoutePath}/generate`),
+      },
+      {
         id: 'Delete Topic',
         content: 'Delete Topic',
         variant: 'destructive',
@@ -148,11 +161,13 @@ export function ViewTopicPage(props: TViewTopicPageProps) {
     ],
     [
       goBack,
-      handleReload,
       allowedTraining,
+      handleReload,
+      aiGenerationsAllowed,
+      aiGenerationsLoading,
       goToTheRoute,
-      topicRoutePath,
       topicId,
+      topicRoutePath,
       questionsListRoutePath,
       routePath,
     ],

@@ -1,0 +1,24 @@
+{
+  "content": "{\n  \"questionsCount\": 2,\n  \"questions\": [\n    {\n      \"text\": \"(DEMO) What is the purpose of using variables in JavaScript?\",\n      \"answersCount\": 2,\n      \"answers\": [\n        {\n          \"text\": \"(DEMO) To store and manipulate data\",\n          \"explanation\": \"Variables allow developers to assign values and perform operations on them.\",\n          \"isCorrect\": true\n        },\n        {\n          \"text\": \"(DEMO) To create functions\",\n          \"explanation\": \"Functions are defined separately from variables; they serve different purposes.\",\n          \"isCorrect\": false\n        }\n      ]\n    },\n    {\n      \"text\": \"(DEMO) Which keyword is used to define a function in JavaScript?\",\n      \"answersCount\": 2,\n      \"answers\": [\n        {\n          \"text\": \"(DEMO) function\",\n          \"explanation\": \"The 'function' keyword is used to declare a named function in JavaScript.\",\n          \"isCorrect\": true\n        },\n        {\n          \"text\": \"(DEMO) var\",\n          \"explanation\": \"The 'var' keyword is used to declare variables, not functions.\",\n          \"isCorrect\": false\n        }\n      ]\n    }\n  ]\n}",
+  "additional_kwargs": {},
+  "response_metadata": {
+    "tokenUsage": {
+      "input_tokens": 321,
+      "output_tokens": 241,
+      "total_tokens": 562
+    },
+    "finish_reason": "stop",
+    "xHeaders": {
+      "xRequestID": "1321b81f-d165-4792-b2e3-ee4682265133",
+      "xSessionID": "9749b81f-8a54-4f6c-bc78-0affb0f80577"
+    }
+  },
+  "id": "1321b81f-d165-4792-b2e3-ee4682265133",
+  "tool_calls": [],
+  "invalid_tool_calls": [],
+  "usage_metadata": {
+    "input_tokens": 321,
+    "output_tokens": 241,
+    "total_tokens": 562
+  }
+}

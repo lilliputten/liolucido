@@ -7,6 +7,8 @@ import { fetchJson } from '@/lib/helpers/requests';
 import { getBotCommands } from '@/features/bot/helpers/getBotCommands';
 import { TLocale } from '@/i18n/types';
 
+import { getErrorText } from '../helpers';
+
 // import { botCommands } from '@/features/bot/constants/botCommands';
 
 type TSetWebHookResponse = {
@@ -30,7 +32,7 @@ export async function sendSetCommandsRequest() {
     });
     return res;
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = getErrorText(error);
     // eslint-disable-next-line no-console
     console.error('[StartBotPage:sendSetCommandsRequest]', errMsg, { error });
     debugger; // eslint-disable-line no-debugger

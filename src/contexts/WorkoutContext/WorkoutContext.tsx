@@ -2,28 +2,22 @@
 
 import React from 'react';
 
-import { TAvailableTopic } from '@/features/topics/types';
+import { useWorkoutQuery } from '@/hooks/react-query/useWorkoutQuery';
+import { TTopicId } from '@/features/topics/types';
 import { TUserId } from '@/features/users/types/TUser';
-import { useWorkout } from '@/hooks';
 
-type TUseWorkout = ReturnType<typeof useWorkout>;
+type TUseWorkout = ReturnType<typeof useWorkoutQuery>;
 
 const WorkoutContext = React.createContext<TUseWorkout | undefined>(undefined);
 
 interface WorkoutContextProviderProps {
   userId?: TUserId;
+  topicId: TTopicId;
   children: React.ReactNode;
-  topic: TAvailableTopic;
-  questionIds: string[];
 }
 
-export function WorkoutContextProvider({
-  userId,
-  children,
-  topic,
-  questionIds,
-}: WorkoutContextProviderProps) {
-  const workoutData = useWorkout(topic, questionIds, userId);
+export function WorkoutContextProvider({ userId, topicId, children }: WorkoutContextProviderProps) {
+  const workoutData = useWorkoutQuery({ topicId, userId });
 
   return <WorkoutContext.Provider value={workoutData}>{children}</WorkoutContext.Provider>;
 }

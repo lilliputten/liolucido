@@ -13,6 +13,10 @@ export const ReactQueryClientProvider = ({ children }: { children: React.ReactNo
             staleTime: 60 * 1000,
           },
         },
+        // @ts-expect-error: parameter
+        experimental: {
+          prefetchInRender: true,
+        },
       }),
   );
 

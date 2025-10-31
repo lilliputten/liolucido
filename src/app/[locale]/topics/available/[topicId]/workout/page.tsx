@@ -11,7 +11,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId:
 
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
-  const title = 'Workout Topic Review';
+  const title = 'Training Topic Review';
   return constructMetadata({
     locale,
     title,
@@ -24,6 +24,8 @@ export default async function WorkoutTopicWrapper({ params }: TAwaitedProps) {
   if (!topicId) {
     throw new Error('No topic ID specified');
   }
+
+  // redirect(`/topics/available/${topicId}/workout/go`);
 
   return (
     <PageWrapper

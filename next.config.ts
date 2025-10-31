@@ -52,19 +52,8 @@ const nextConfig: NextConfig = {
     additionalData: scssVariables,
     silenceDeprecations: ['legacy-js-api'],
   },
-  turbopack: {
-    // Turbopack configuration (optional)
-  },
   compress: !isDev, // In favor of xtunnel (it loses `gzip` header)
   reactStrictMode: true,
-  webpack: (config) => {
-    return {
-      ...config,
-      watchOptions: {
-        ignored: ['**/.*.sw?'],
-      },
-    };
-  },
 };
 
 export default withNextIntl(nextConfig);

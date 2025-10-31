@@ -1,7 +1,6 @@
 'use client';
 
 import { signOut, useSession } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
 
 import { settingsRoute } from '@/config/routesConfig';
 import { TPropsWithClassName } from '@/lib/types';
@@ -14,6 +13,7 @@ import {
 import * as Icons from '@/components/shared/Icons';
 import { UserAvatar } from '@/components/shared/UserAvatar';
 import { isDev } from '@/constants';
+import { useT } from '@/i18n';
 import { Link } from '@/i18n/routing';
 
 interface TNavUserBlockProps extends TPropsWithClassName {
@@ -66,7 +66,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
   } = props;
   const { data: session } = useSession();
   const user = session?.user;
-  const t = useTranslations('NavUserAccount');
+  const t = useT('NavUserAccount');
 
   if (!user) {
     return null;
@@ -172,6 +172,7 @@ export function NavUserBlock(props: TNavUserBlockProps) {
         onSelect={(event) => {
           event.preventDefault();
           closeOuterMenu?.();
+          localStorage.clear();
           signOut({
             callbackUrl: `${window.location.origin}/`,
           });

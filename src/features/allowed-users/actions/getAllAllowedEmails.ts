@@ -4,6 +4,6 @@ import { getAllowedUsers } from '@/features/allowed-users/actions/getAllowedUser
 import { AllowedUserTypes } from '@/features/allowed-users/types/AllowedUserType';
 
 export async function getAllAllowedEmails() {
-  const allowedUsers = await getAllowedUsers({ where: { type: AllowedUserTypes.email } });
+  const allowedUsers = await getAllowedUsers({ where: { type: AllowedUserTypes.EMAIL } });
   return allowedUsers.map(({ value }) => value);
 }

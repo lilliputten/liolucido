@@ -23,19 +23,20 @@ import {
 } from '@/lib/helpers/react-query';
 import { composeUrlQuery } from '@/lib/helpers/urls';
 import { TGetAvailableTopicsParams, TGetAvailableTopicsResults } from '@/lib/zod-schemas';
-import { minuteMs } from '@/constants';
+import { defaultItemsLimit, defaultStaleTime } from '@/constants';
 import {
   defaultTopicsManageScope,
   TopicsManageScopeIds,
   TTopicsManageScopeId,
 } from '@/contexts/TopicsContext';
 import { getAvailableTopics } from '@/features/topics/actions';
-import { itemsLimit } from '@/features/topics/constants';
 import { TAvailableTopic, TTopicId } from '@/features/topics/types';
 
 import { useSessionUser } from '../useSessionUser';
 
-const staleTime = minuteMs * 10;
+const itemsLimit = defaultItemsLimit;
+
+const staleTime = defaultStaleTime;
 
 // TODO: Register all the query keys
 

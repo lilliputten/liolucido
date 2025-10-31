@@ -135,7 +135,7 @@ const DropdownMenuItem = React.forwardRef<
       'outline-none',
       'transition-colors',
       'hover:bg-theme/20',
-      'focus:bg-theme/20',
+      'focus-visible:bg-theme/20',
       'active:bg-theme',
       'active:text-theme-foreground',
       'cursor-pointer',

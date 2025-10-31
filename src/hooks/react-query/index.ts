@@ -5,3 +5,4 @@ export * from './useAvailableQuestionById';
 export * from './useAvailableQuestions';
 export * from './useAvailableTopicById';
 export * from './useAvailableTopics';
+export * from './useQuestionIdsForTopicId';

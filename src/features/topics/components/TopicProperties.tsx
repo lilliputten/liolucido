@@ -87,13 +87,13 @@ export function TopicProperties(props: TTopicPropertiesProps & TTopicPropertiesO
         </span>
       )}
       {showDates && (
-        <span id="createdAt" className="flex items-center gap-1" title="Creation date">
+        <span id="createdAt" className="flex items-center gap-1 text-xs" title="Creation date">
           <Icons.CalendarDays className="mr-1 size-4 opacity-50" />{' '}
           {getFormattedRelativeDate(format, createdAt)}
         </span>
       )}
       {showDates && updatedAt && !!compareDates(updatedAt, createdAt) && (
-        <span id="createdAt" className="flex items-center gap-1" title="Updated date">
+        <span id="createdAt" className="flex items-center gap-1 text-xs" title="Updated date">
           <Icons.Pencil className="mr-1 size-4 opacity-50" />{' '}
           {getFormattedRelativeDate(format, updatedAt)}
         </span>

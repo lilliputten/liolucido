@@ -104,7 +104,7 @@ export function ShowLogRecords(props: TShowLogRecordsProps) {
         <ScrollArea
           className={cn(
             isDev && '__ShowLogRecords_Scroll', // DEBUG
-            'flex flex-col gap-4',
+            // 'flex flex-col gap-4',
           )}
           viewportClassName={cn(
             isDev && '__ShowLogRecords_ScrollViewport', // DEBUG

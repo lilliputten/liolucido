@@ -1,6 +1,5 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 
 import { defaultSystemTheme, systemThemeIcons, TSystemThemeId } from '@/config/themes';
@@ -8,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { DropdownMenuContent, DropdownMenuItem } from '@/components/ui/DropdownMenu';
 import { isDev } from '@/config';
 import { useSettingsContext } from '@/contexts/SettingsContext';
+import { useT } from '@/i18n';
 
 import { SidebarMenuItem, SidebarWrapper, TSidebarBlockProps } from './SidebarComponents';
 
@@ -17,7 +17,7 @@ export function NavModeToggleBlock(props: TSidebarBlockProps) {
   const MenuItem = onSidebar ? SidebarMenuItem : DropdownMenuItem;
   const { theme: currentTheme = defaultSystemTheme, themes } = useTheme();
   const { setTheme } = useSettingsContext();
-  const t = useTranslations('NavModeToggle');
+  const t = useT('NavModeToggle');
   return (
     <Wrapper
       data-theme={currentTheme}
@@ -35,7 +35,7 @@ export function NavModeToggleBlock(props: TSidebarBlockProps) {
             key={thisTheme}
             className={cn(
               isDev && '__NavModeToggleBlock_MenuItem', // DEBUG
-              'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1.5 text-sm hover:bg-theme-500 hover:text-white',
+              'flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1.5 text-sm',
             )}
             disabled={thisTheme === currentTheme}
             onSelect={() => setTheme(thisTheme)}

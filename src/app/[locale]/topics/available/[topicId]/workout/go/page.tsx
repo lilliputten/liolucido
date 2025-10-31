@@ -12,7 +12,7 @@ type TAwaitedProps = TAwaitedLocaleProps<{ scope: TTopicsManageScopeId; topicId:
 
 export async function generateMetadata({ params }: TAwaitedProps) {
   const { locale } = await params;
-  const title = 'Workout Topic';
+  const title = 'Training Topic';
   return constructMetadata({
     locale,
     title,
@@ -26,7 +26,7 @@ export default async function WorkoutTopicGoWrapper({ params }: TAwaitedProps) {
     return <PageError error={'Not topic specified.'} />;
   }
 
-  // TODO: Check if no active workout and then go to workout review/control page (on the client, because the user might be unauthorized)
+  // TODO: Check if no active training and then go to workout review/control page (on the client, because the user might be unauthorized)
 
   return (
     <PageWrapper
@@ -39,15 +39,7 @@ export default async function WorkoutTopicGoWrapper({ params }: TAwaitedProps) {
       )}
       limitWidth
     >
-      {/*
-      <PageHeader heading={'Workout Topic'} />
-      */}
-      <WorkoutTopicGo
-        className={cn(
-          isDev && '__page_ViewTopicGoPage', // DEBUG
-        )}
-        // topicId={topicId}
-      />
+      <WorkoutTopicGo />
     </PageWrapper>
   );
 }

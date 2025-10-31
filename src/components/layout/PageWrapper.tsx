@@ -58,7 +58,7 @@ export function PageWrapper(props: TPageWrapperProps) {
         saveScrollHash={saveScrollHash}
         className={cn(
           isDev && '__PageWrapper_Scroll', // DEBUG
-          'flex flex-col items-center',
+          'items-center',
           'layout-scrollable',
         )}
         viewportClassName={cn(

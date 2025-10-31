@@ -19,6 +19,8 @@ import {
 } from '@/config/envServer';
 import { versionInfo } from '@/config';
 
+import { getErrorText } from '../helpers';
+
 export async function getServerInfo() {
   try {
     return {
@@ -41,7 +43,7 @@ export async function getServerInfo() {
       isVercelProduction,
     };
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = getErrorText(error);
     // eslint-disable-next-line no-console
     console.error('[StartBotPage:getServerInfo]', errMsg, { error });
     debugger; // eslint-disable-line no-debugger

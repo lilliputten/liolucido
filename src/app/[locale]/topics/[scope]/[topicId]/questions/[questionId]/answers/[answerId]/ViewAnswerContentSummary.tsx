@@ -106,10 +106,10 @@ export function ViewAnswerContentSummary(props: TViewAnswerContentSummaryProps) 
             variant="outline"
             className={cn(
               'flex items-center gap-1 px-2 py-1',
-              'border-slate-500/50 text-slate-500',
+              'bg-theme-100 text-xs text-theme-600',
             )}
           >
-            <Icons.Bot className="size-4 opacity-50" />
+            <Icons.WandSparkles className="size-3 opacity-50" />
             AI Generated
           </Badge>
         )}

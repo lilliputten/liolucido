@@ -30,14 +30,14 @@ export const dashboardLinks: SidebarNavItem[] = [
     titleId: 'Administration',
     authorizedOnly: 'ADMIN',
     items: [
-      { href: adminBotControlRoute, icon: Icons.FlaskConical, titleId: 'Bot Control' },
-      { href: adminAiTestTextQueryRoute, icon: Icons.FlaskConical, titleId: 'Test AI Text Query' },
+      { href: adminBotControlRoute, icon: Icons.Bot, titleId: 'Bot Control' },
+      { href: adminAiTestTextQueryRoute, icon: Icons.Bug, titleId: 'Test AI Text Query' },
     ],
   },
   {
     titleId: 'Application',
     items: [
-      { href: availableTopicsRoute, icon: Icons.Library, titleId: 'Available Topics' },
+      { href: availableTopicsRoute, icon: Icons.BookOpenCheck, titleId: 'Available Topics' },
       // { href: availableTopicsRoute, icon: Icons.Braces, titleId: 'Data' },
       { href: welcomeRoute, icon: Icons.Hand, titleId: 'Welcome' },
       // { href: adminRoute, icon: Icons.Laptop, titleId: 'Admin Panel', authorizedOnly: 'ADMIN', disabled: true },

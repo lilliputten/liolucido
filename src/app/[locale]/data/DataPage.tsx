@@ -47,7 +47,6 @@ export async function DataPage({ params }: TDataPageProps) {
         isDev && '__DataPage', // DEBUG
       )}
       innerClassName="w-full"
-      scrollable
       limitWidth
       xPadded
     >

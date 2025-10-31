@@ -21,7 +21,6 @@ export function NavUserAccount(props: TNavUserAccountProps) {
   const { onPrimary, onSidebar, className } = props;
   const { data: session } = useSession();
   const user = session?.user;
-  // const t = useTranslations('NavUserAccount');
 
   const [open, setOpen] = React.useState(false);
   const closeOuterMenu = React.useCallback(() => setOpen(false), []);

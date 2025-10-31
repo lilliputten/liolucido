@@ -1,8 +1,8 @@
 import ms from 'ms';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useFormatter } from 'next-intl';
 
 import { dayMs, halfYearMs, hourMs, minuteMs } from '@/constants';
-import { defaultLocale, TLocale } from '@/i18n/types';
+import { defaultLocale, TLocale, useT } from '@/i18n';
 
 /* // TODO: Translations:
  *
@@ -205,6 +205,6 @@ export function formatSecondsDuration(seconds: number = 0, t?: TIntlTranslator):
 }
 
 export function useFormattedDuration(seconds: number) {
-  const t = useTranslations('duration');
+  const t = useT('duration');
   return formatSecondsDuration(seconds, (key) => t(key.split('.')[1]));
 }

@@ -4,7 +4,6 @@ import React from 'react';
 
 import { truncateMarkdown } from '@/lib/helpers';
 import { filterOutEmpties } from '@/lib/helpers/arrays';
-import { capitalizeString } from '@/lib/helpers/strings';
 import { TPropsWithClassName } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -39,7 +38,7 @@ export function useAnswersBreadcrumbsItems(props: TBreadcrumbsProps) {
   const answersListRoutePath = questionRoutePath && `${questionRoutePath}/answers`;
   const answerRoutePath = answer && answersListRoutePath && `${answersListRoutePath}/${answer.id}`;
   // TODO: Use i18n translations
-  const listTitle = capitalizeString(scope) + ' Answers' + (isDev ? '*' : '');
+  const listTitle = /* capitalizeString(scope) + ' ' */ 'Answers'; /* + (isDev ? '*' : '') */
   const questionItems = useQuestionsBreadcrumbsItems({ scope, topic, question });
   if (isLoading) {
     return [];
