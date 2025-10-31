@@ -8,15 +8,12 @@ import { getBot } from '@/features/bot/core/getBot';
 import { getContextLocale } from '@/features/bot/helpers/getContextLocale';
 import { getTelegramUserAvatarUrl } from '@/features/bot/helpers/getTelegramUserAvatarUrl';
 import { createUserOrUpdateTelegramUser } from '@/features/users/actions';
+import { localeNames } from '@/i18n';
 
 const bot = getBot();
 
 bot.command('status', async (ctx: TCommandContext) => {
   const locale = getContextLocale(ctx);
-  const tNavLocaleSwitcher = await getTranslations({
-    locale: locale,
-    namespace: 'NavLocaleSwitcher',
-  });
   const t = await getTranslations({ namespace: 'Bot', locale });
   const ctxUser = ctx.from;
   if (!ctxUser) {
@@ -62,7 +59,7 @@ bot.command('status', async (ctx: TCommandContext) => {
     },
   });
   const format = await getFormatter({ locale });
-  const localeText = tNavLocaleSwitcher('locale', { locale });
+  const localeText = localeNames[locale];
   const showData = {
     locale,
     localeText,

@@ -3,7 +3,6 @@
 import React from 'react';
 import Image from 'next/image';
 import { signIn, SignInOptions } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
 
 import { siteTitle } from '@/config/env';
 import { myTopicsRoute, rootRoute } from '@/config/routesConfig';
@@ -15,7 +14,7 @@ import { TGenericIcon } from '@/components/shared/IconTypes';
 import logoWhiteSvg from '@/assets/logo/logo-image-w.svg';
 import logoSvg from '@/assets/logo/logo-image.svg';
 import { isDev } from '@/constants';
-import { Link } from '@/i18n/routing';
+import { Link, useT } from '@/i18n';
 
 import { EmailSignInForm } from './EmailSignInForm';
 import { TelegramSignIn } from './TelegramSignIn';
@@ -88,7 +87,7 @@ interface TSignInFormHeaderProps {
 
 export function SignInFormHeader(props: TSignInFormHeaderProps) {
   const { dark, inBody } = props;
-  const t = useTranslations('SignInForm');
+  const t = useT('SignInForm');
   const Title = inBody ? 'h3' : DialogTitle;
   const Descr = inBody ? 'p' : DialogDescription;
   return (
@@ -122,7 +121,7 @@ interface TSignInFormProps {
 export function SignInForm(props: TSignInFormProps) {
   const { onSignInStart, onSignInDone, inBody } = props;
   const [currentProvider, setCurrentProvider] = React.useState<TSignInProvider>();
-  const t = useTranslations('SignInForm');
+  const t = useT('SignInForm');
 
   const handleSignInStart = React.useCallback(
     (provider: TSignInProvider) => {

@@ -42,9 +42,9 @@
     "openApp": "Open App",
     "start": "👋 Hi, how can I /help you?",
     "selectLanguage": "Select language",
-    "languageChangedFor": "Language has been changed for",
     "help": "Send me some text, and I can make it bold for you.\n\nYou can change my language using the /language command."
   },
+  "Language Changed For": "Language has been changed for",
   "RootPage": {
     "title": "líolúcido!",
     "about": "Main page"
@@ -65,14 +65,12 @@
   "WelcomePage": {
     "title": "Welcome!"
   },
-  "AppIntroBlock": {
-    "content": "<p>This is a small quiz cards' application. Take a look at a brief <infolink>instruction manual</infolink>.</p>",
-    "title": "Welcome!"
-  },
+  "AppIntroBlockContent": "<p>This is a small quiz cards' application. Take a look at a brief <infolink>instruction manual</infolink>.</p>",
   "NavAuthButton": {
     "sign-in": "Sign In",
     "Dashboard": "Dashboard"
   },
+  "Select Language": "Select Language",
   "NavLocaleSwitcher": {
     "label": "Change language",
     "locale": "{locale, select, ru {🇷🇺 Русский} en {🇺🇸 English} xx {🇺🇸 Debug} other {Auto-detect}}"
@@ -131,5 +129,5 @@
     "sign-in-with-telegram": "Sign In with Telegram",
     "intro": "Login to be able editing your own data."
   },
-  "WelcomePageTitle": "AAA"
+  "WelcomePageTitle": "Welcome!"
 }

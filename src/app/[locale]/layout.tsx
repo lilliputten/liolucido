@@ -10,6 +10,8 @@ import { EnvProvider } from '@/contexts/EnvContext';
 import '@/styles/globals.scss';
 import '@/styles/root.scss';
 
+import { AbstractIntlMessages } from 'next-intl';
+
 import { BOT_USERNAME } from '@/config/envServer';
 import { defaultThemeColor } from '@/config/themeColors';
 import { constructMetadata } from '@/lib/constructMetadata';
@@ -65,7 +67,14 @@ async function RootLayout(props: TRootLayoutProps) {
   const cookieStore = await cookies();
 
   // Provide i18n translations
-  const messages = await getMessages();
+  let messages: AbstractIntlMessages | undefined;
+  try {
+    messages = await getMessages();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('[layout:messages]', locale, error);
+    // debugger;
+  }
 
   const user = await getCurrentUser();
   // const userId = user?.id;

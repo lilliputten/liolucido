@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
 import { UseFormReturn } from 'react-hook-form';
 
 import {
@@ -33,7 +32,7 @@ import { FormHint } from '@/components/blocks/FormHint';
 import * as Icons from '@/components/shared/Icons';
 import { isDev } from '@/constants';
 import { TSettings } from '@/features/settings/types';
-import { localesList } from '@/i18n/types';
+import { localeNames, localesList, useT } from '@/i18n';
 
 import { TSettingsFormData } from './types';
 
@@ -64,21 +63,14 @@ function FormSection({ children }: TPropsWithChildren) {
 
 export function SettingsFormFields(props: TSettingsFormFieldsProps) {
   const { className, form, selectLanguage } = props;
-  // Create unique keys for labels
-  const tNavLocaleSwitcher = useTranslations('NavLocaleSwitcher');
-
-  /* // DEBUG: Sample text fields, see src/features/settings/types/settings.ts
-   * const testInputKey = React.useId();
-   * const testTextareaKey = React.useId();
-   */
   const showOnlyMyTopicsKey = React.useId();
   const jumpToNewEntitiesKey = React.useId();
   const localeKey = React.useId();
   const themeColorKey = React.useId();
   const themeKey = React.useId();
   const langCodeKey = React.useId();
-  const tNavModeToggle = useTranslations('NavModeToggle');
-  const tThemes = useTranslations('Themes');
+  const tNavModeToggle = useT('NavModeToggle');
+  const tThemes = useT('Themes');
 
   // Reset language
   const resetLang = (ev: React.MouseEvent) => {
@@ -319,7 +311,7 @@ export function SettingsFormFields(props: TSettingsFormFieldsProps) {
                   <SelectContent>
                     {extendedLocalesList.map((locale) => (
                       <SelectItem key={locale} value={locale}>
-                        {tNavLocaleSwitcher('locale', { locale })}
+                        {localeNames[locale]}
                       </SelectItem>
                     ))}
                   </SelectContent>

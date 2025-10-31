@@ -10,7 +10,7 @@ import { useT } from '@/i18n';
 import { Link } from '@/i18n/routing';
 
 export function AppIntroBlock(props: TPropsWithClassName) {
-  const t = useT('AppIntroBlock');
+  const t = useT();
   const { className } = props;
   const user = useSessionUser();
   const isAdmin = user?.role === 'ADMIN';
@@ -23,7 +23,7 @@ export function AppIntroBlock(props: TPropsWithClassName) {
         className,
       )}
     >
-      {t.rich('content', {
+      {t.rich('AppIntroBlockContent', {
         p: (chunks) => <p>{chunks}</p>,
         infolink: (chunks) => <Link href={infoRoute}>{chunks}</Link>,
       })}

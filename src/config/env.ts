@@ -21,7 +21,7 @@ export const defaultLanguage = process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en';
 export const debugTranslations = ensureBoolean(process.env.NEXT_PUBLIC_DEBUG_TRANSLATIONS);
 
 /** Debug locale (to show translation ids instead of translated text in the UI) */
-export const debugLocale = String(process.env.NEXT_PUBLIC_DEBUG_LOCALE || '');
+export const debugLocale = String(process.env.NEXT_PUBLIC_DEBUG_LOCALE || 'xx');
 
 /**Show debug locale (show translation ids instead of translated text in the UI) */
 export const showDebugLocale = ensureBoolean(process.env.NEXT_PUBLIC_SHOW_DEBUG_LOCALE);

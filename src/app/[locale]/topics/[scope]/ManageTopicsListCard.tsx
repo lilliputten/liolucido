@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { APIError } from '@/lib/types/api';
